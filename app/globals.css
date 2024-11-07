@@ -2,20 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply font-primary bg-background text-primary leading-loose;
   }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  h1 {
+    @apply text-2xl font-semibold;
+  }
+  h2 {
+    @apply text-xl font-medium;
+  }
+  h3 {
+    @apply text-lg font-normal;
+  }
+  h4 {
+    @apply text-sm font-normal;
+  }
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+  .borders {
+    @apply border-2 border-primary;
+  }
+  .borders-t {
+    @apply border-t-2 border-primary;
+  }
+  .borders-b {
+    @apply border-b-2 border-primary;
+  }
+  .borders-tb {
+    @apply border-b-2 border-t-2 border-primary;
+  }
+  .content-grid {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-4;
+  }
+  .content-flex {
+    @apply flex flex-wrap;
+  }
+  :root {
+    --radius: 0.5rem;
+    --primary: rgb(31 41 55);
+    --secondary: rgb(55 65 81);
+    --accent: #1da1f2;
+    --accent-hover: #1877b4;
+    --background: #ffffff;
+    --foreground: #f5f5f5;
+  }
 }
