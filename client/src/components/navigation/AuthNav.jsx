@@ -1,53 +1,40 @@
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Heart, ShoppingBag, Store, UserCircle } from "lucide-react";
+import DropDown from "./DropDown";
+import CartItem from "../CartItem";
 import { Link } from "react-router-dom";
+import { CustomerNavLinks } from "../../config";
+import { Heart, ShoppingBag, Store } from "lucide-react";
 
 const AuthNav = () => {
   return (
     <nav className="flex items-center gap-x-6">
       <Heart />
-      <ShoppingBag />
+      <CartItem>
+        <ShoppingBag />
+      </CartItem>
+
       <Link to={`/shop`}>
         <Store />
       </Link>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <UserCircle />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-
-          <DropdownMenuItem>
-            <Link to="/user/settings">Profile</Link>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="/user/address">Address</Link>
-
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to="/user/transaction">transaction</Link>
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
-
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <DropDown>
+        {CustomerNavLinks.map((link) => {
+          return (
+            <Link to={link.href} key={link.href}>
+              <DropdownMenuItem
+                value={link.title}
+                className="w-full cursor-pointer"
+              >
+                {link.title}
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          );
+        })}
+      </DropDown>
     </nav>
   );
 };

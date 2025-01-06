@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import NonAuthNav from "../navigation/NonAuthNav";
 
 const NavMenu = () => {
-  const isUserAuth = true;
+  const isUserAuth = false;
   const location = useLocation();
 
   return (

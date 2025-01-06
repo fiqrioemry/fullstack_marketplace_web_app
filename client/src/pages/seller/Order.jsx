@@ -1,7 +1,7 @@
 const Order = () => {
   return (
     <section className="h-screen flex items-center justify-center">
-      <h1>order page</h1>
+      <h1>seller order</h1>
     </section>
   );
 };
