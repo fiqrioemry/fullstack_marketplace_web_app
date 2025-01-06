@@ -2,30 +2,6 @@
 // import { Navigate } from "react-router-dom";
 // import { useProvider } from "@/context/GlobalProvider";
 
-// const nonAuthPath = [
-//   "/signin",
-//   "/signup",
-//   "/",
-//   "/:storename",
-//   "/search",
-//   "/:storename/:slug",
-//   "/category",
-//   "/category/:slug",
-// ];
-// const customerAuthPath = [
-//   "/user",
-//   "/user/settings",
-//   "/user/address",
-//   "/user/transaction",
-// ];
-
-// const sellerAuthPath = [
-//   "/seller",
-//   "/seller/settings",
-//   "/seller/notification",
-//   "/seller/order",
-// ];
-
 // export const NonAuthRoute = ({ children }) => {
 //   const isUserAuth = null;
 
