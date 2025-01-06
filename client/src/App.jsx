@@ -22,6 +22,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import MainLayout from "./components/layout/MainLayout";
 import SellerLayout from "./components/layout/SellerLayout";
 import CustomerLayout from "./components/layout/CustomerLayout";
+import ProductDetail from "./pages/ProductDetail";
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
           <Route path="search" element={<SearchResult />} />
           <Route path="/open-shop" element={<OpenStore />} />
           <Route path="cart/checkout" element={<Checkout />} />
-          <Route path=":storename/:product" element={<Store />} />
+          <Route path=":storename/:product" element={<ProductDetail />} />
           <Route path="category/:category" element={<ProductCategory />} />
           <Route path="*" element={<NotFound />} />
         </Route>
