@@ -1,9 +1,9 @@
-const Settings = () => {
+const NotFound = () => {
   return (
     <section className="h-screen flex items-center justify-center">
-      <h1>Customer Settings</h1>
+      <h1>Page not found</h1>
     </section>
   );
 };
 
-export default Settings;
+export default NotFound;

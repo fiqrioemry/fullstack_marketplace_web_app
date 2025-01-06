@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-primary">
+    <footer className="bg-card">
       <div className="container mx-auto py-10">
         <div className="flex flex-col items-center justify-center space-y-4">
           <p>Create using NextJS for the frontend and NodeJS as backend</p>
