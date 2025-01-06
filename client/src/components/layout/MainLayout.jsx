@@ -7,7 +7,6 @@ const MainLayout = () => {
   return (
     <Fragment>
       <Header />
-
       <Outlet />
       <Footer />
     </Fragment>
