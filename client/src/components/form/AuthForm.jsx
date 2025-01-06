@@ -20,7 +20,9 @@ const AuthForm = ({
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-6">
       <div className="text-center">
-        <h3>Marketplace</h3>
+        <Link to="/">
+          <h4 className="text-primary">ShopyPedia</h4>
+        </Link>
       </div>
       <div className="grid gap-6">
         {controlForm.map((set) => (

@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import AuthForm from "@/components/form/AuthForm";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useHandleForm } from "@/hooks/useHandleForm";
@@ -16,7 +17,7 @@ const SignIn = () => {
     <div className="grid min-h-svh ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
+          <Card className="w-full max-w-xs p-4">
             <AuthForm
               onSubmit={(e) => handleSubmit(e, onSubmit)}
               formData={formData}
@@ -30,7 +31,7 @@ const SignIn = () => {
               handleChange={handleChange}
               isValid={isValid}
             />
-          </div>
+          </Card>
         </div>
       </div>
     </div>
