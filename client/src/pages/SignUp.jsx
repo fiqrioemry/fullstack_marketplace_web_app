@@ -1,9 +1,9 @@
-const SignUpSeller = () => {
+const SignUp = () => {
   return (
     <section className="h-screen flex items-center justify-center">
-      <h1>signup Seller</h1>
+      <h1>signup page</h1>
     </section>
   );
 };
 
-export default SignUpSeller;
+export default SignUp;
