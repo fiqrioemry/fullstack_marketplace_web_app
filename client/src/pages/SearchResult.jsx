@@ -10,7 +10,8 @@ import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 
 const SearchResult = () => {
   const location = useLocation();
-  const { formData, handleChange } = useHandleForm(initialSearchForm);
+  const { formData, setFormData, handleChange } =
+    useHandleForm(initialSearchForm);
 
   const {
     getProducts,
@@ -21,53 +22,37 @@ const SearchResult = () => {
     products,
   } = useProductStore();
 
-  const [filter, setFilter] = useState({
-    query: "",
-    category: [],
-    city: [],
-    minPrice: "",
-    maxPrice: "",
-    sortBy: "",
-    order: "",
-  });
-
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const query = queryParams.get("query") || "";
-    const category = queryParams.get("category") || [];
-    const city = queryParams.get("city") || [];
-    const minPrice = queryParams.get("minPrice") || "";
-    const maxPrice = queryParams.get("maxPrice") || "";
-    const sortBy = queryParams.get("sortBy") || "";
-    const order = queryParams.get("order") || "asc";
-    const page = queryParams.get("page") || 1;
-    setFilter({
-      query,
-      category,
-      city,
-      minPrice,
-      maxPrice,
-      sortBy,
-      page,
-      order,
-    });
-  }, []);
+    setFormData((prev) => ({
+      ...prev,
+      query: queryParams.get("query") || "",
+      sortBy: queryParams.get("sortBy") || "",
+      order: queryParams.get("order") || "asc",
+      minPrice: queryParams.get("minPrice") || "",
+      maxPrice: queryParams.get("maxPrice") || "",
+      cities: queryParams.get("cities")?.split(",") || [],
+      page: parseInt(queryParams.get("page")) || 1, // default to page 1
+      categories: queryParams.get("categories")?.split(",") || [],
+    }));
+  }, [location, setFormData]);
 
   useEffect(() => {
-    getProducts(filter);
+    console.log(formData);
+    getProducts(formData);
     getCities();
     getCategories();
-  }, [getCategories, getCities, getProducts, filter]);
+  }, [getCategories, getCities, getProducts, formData]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Checked items:");
   };
+
   return (
     <section className="container mx-auto">
-      <div className="px-2 md:px-6 py-6 md:py-12">
+      <div className="px-2 md:px-6 py-6">
         <div className="grid grid-cols-12 gap-4">
-          {/* filter */}
+          {/* Filter */}
           <div className="col-span-3">
             {!categories && !cities ? null : (
               <FilterBox
@@ -80,19 +65,22 @@ const SearchResult = () => {
             )}
           </div>
 
-          {/* display */}
+          {/* Display */}
           <div className="col-span-9">
             <div className="space-y-6">
-              {products ? (
+              {!products ? (
                 <ProductsSkeleton style="grid_display_4" value={9} />
               ) : (
-                <div className="grid_display_4">
-                  {[...Array(8)].map((_, index) => (
-                    <ProductCard product={index} key={index} />
-                  ))}
-                </div>
+                <>
+                  <div className="grid_display_4">
+                    {[...Array(products.data)].map((_, index) => (
+                      <ProductCard product={index} key={index} />
+                    ))}
+                  </div>
+
+                  <ProductPagination page={products.page} />
+                </>
               )}
-              <ProductPagination />
             </div>
           </div>
         </div>

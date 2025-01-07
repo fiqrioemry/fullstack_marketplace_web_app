@@ -60,19 +60,27 @@ export const useProductStore = create((set) => ({
     }
   },
 
-  getProducts: async (limit) => {
+  getProducts: async (filter) => {
     try {
+      console.log(filter);
       set({ isProductLoading: true });
-      setTimeout(() => {
-        console.log("get products : ", limit);
-        const response = ["products"];
-        set({ products: limit });
-        set({ isProductLoading: false }); // Dipindahkan ke sini
-      }, 1000);
+      // Simulated data fetching
+      const response = {
+        data: filter.limit,
+        cities: filter.map((item) => item.cities),
+        categories: filter.map((item) => item.categories),
+        page: filter.page,
+        minPrice: filter.minPrice,
+        maxPrice: filter.maxPrice,
+        sortBy: filter.sortBy,
+        order: filter.order,
+      };
+      set({ products: response });
     } catch (error) {
-      console.log(error);
-      set({ products: [] });
-      set({ isProductLoading: false }); // Tetap di sini untuk menangani error
+      console.error(error);
+      set({ products: { data: [], page: 1 } });
+    } finally {
+      set({ isProductLoading: false });
     }
   },
 }));

@@ -27,6 +27,7 @@ const FilterBox = ({
   cities,
   categories,
   formData,
+  setFormData,
   handleChange,
   handleSubmit,
 }) => {
@@ -41,23 +42,32 @@ const FilterBox = ({
             Category
           </AccordionTrigger>
           <AccordionContent>
-            <form onSubmit={handleSubmit} className="space-y-6 px-3">
+            <div className="space-y-3 px-3">
               {categories.map((item) => (
                 <div className="flex items-center space-x-3" key={item}>
                   <Checkbox
-                    value={formData[item]}
-                    type="checkbox"
-                    onChange={handleChange}
+                    id={item}
+                    checked={formData.categories.includes(item)}
+                    onChange={() =>
+                      handleChange({
+                        target: {
+                          name: "category",
+                          value: formData.categories.includes(item)
+                            ? formData.categories.filter((cat) => cat !== item)
+                            : [...formData.categories, item],
+                        },
+                      })
+                    }
                   />
                   <label
                     htmlFor={item}
-                    className="text-xs md:text-sm font-medium "
+                    className="text-xs md:text-sm font-medium"
                   >
                     {item}
                   </label>
                 </div>
               ))}
-            </form>
+            </div>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
@@ -65,21 +75,25 @@ const FilterBox = ({
             Location
           </AccordionTrigger>
           <AccordionContent>
-            <form onSubmit={handleSubmit} className="space-y-6 px-3">
+            <div className="space-y-3 px-3">
               {cities.map((item) => (
                 <div className="flex items-center space-x-3" key={item}>
                   <Checkbox
-                    value={formData[item]}
-                    type="checkbox"
                     id={item}
-                    onChange={handleChange}
+                    checked={formData.cities.includes(item)}
+                    onChange={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        cities: ,
+                      }))
+                    }
                   />
-                  <label htmlFor={item} className="text-sm font-medium ">
+                  <label htmlFor={item} className="text-sm font-medium">
                     {item}
                   </label>
                 </div>
               ))}
-            </form>
+            </div>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
@@ -98,7 +112,9 @@ const FilterBox = ({
                   </label>
                   <Input
                     id={item.name}
+                    name={item.name}
                     value={formData[item.name]}
+                    onChange={handleChange}
                     className="h-10 pl-11 rounded-lg"
                     placeholder={item.placeholder}
                   ></Input>
