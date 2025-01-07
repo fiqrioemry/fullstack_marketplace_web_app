@@ -2,10 +2,18 @@
 import { Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const ButtonAnimate = ({ title, variant, action, style, loading }) => {
+const ButtonAnimate = ({
+  type = "",
+  title = "submit",
+  variant,
+  action,
+  style,
+  loading,
+}) => {
   return (
     <div>
       <Button
+        type={type}
         onClick={action}
         variant={variant}
         className={style}

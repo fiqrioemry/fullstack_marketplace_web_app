@@ -57,7 +57,7 @@ const SearchResult = () => {
     getProducts(filter);
     getCities();
     getCategories();
-  }, [getProducts, filter]);
+  }, [getCategories, getCities, getProducts, filter]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -84,7 +84,7 @@ const SearchResult = () => {
           <div className="col-span-9">
             <div className="space-y-6">
               {products ? (
-                <ProductsSkeleton class="grid_display_4" value={2} />
+                <ProductsSkeleton style="grid_display_4" value={9} />
               ) : (
                 <div className="grid_display_4">
                   {[...Array(8)].map((_, index) => (
