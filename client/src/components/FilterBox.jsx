@@ -29,7 +29,6 @@ const FilterBox = ({
   formData,
   setFormData,
   handleChange,
-  handleSubmit,
 }) => {
   return (
     <Card className="h-full px-3">

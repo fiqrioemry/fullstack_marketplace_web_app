@@ -1,27 +1,15 @@
 import { useEffect } from "react";
 import FilterBox from "../components/FilterBox";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useHandleForm } from "../hooks/useHandleForm";
 import { useProductStore } from "../store/useProductStore";
-import { useSearchParams } from "react-router-dom";
 import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
+import { initialSearchForm } from "../config";
 
 const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { formData, setFormData, handleChange } = useHandleForm({
-    query: searchParams.get("query") || "",
-    categories: searchParams.get("categories")?.split(",") || [],
-    cities: searchParams.get("cities")?.split(",") || [],
-    minPrice: searchParams.get("minPrice") || "",
-    maxPrice: searchParams.get("maxPrice") || "",
-    sortBy: searchParams.get("sortBy") || "",
-    order: searchParams.get("order") || "asc",
-    page: parseInt(searchParams.get("page")) || 1,
-    limit: 8,
-  });
-
-  console.log(formData);
   const {
     getProducts,
     getCategories,
@@ -30,6 +18,9 @@ const SearchResult = () => {
     getCities,
     products,
   } = useProductStore();
+
+  const { formData, setFormData, handleChange } =
+    useHandleForm(initialSearchForm);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -45,23 +36,19 @@ const SearchResult = () => {
     }));
   }, [searchParams, setFormData]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const updatedParams = new URLSearchParams(formData);
+  useEffect(() => {
+    const updatedParams = new URLSearchParams();
 
-    if (formData.categories.length) {
-      updatedParams.set("categories", formData.categories.join(","));
-    } else {
-      updatedParams.delete("categories");
-    }
+    Object.entries(formData).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        updatedParams.set(key, value.join(","));
+      } else if (value) {
+        updatedParams.set(key, value);
+      }
+    });
 
-    if (formData.cities.length) {
-      updatedParams.set("cities", formData.cities.join(","));
-    } else {
-      updatedParams.delete("cities");
-    }
     setSearchParams(updatedParams);
-  };
+  }, [formData, setSearchParams]);
 
   useEffect(() => {
     getProducts(formData);
@@ -82,7 +69,6 @@ const SearchResult = () => {
               <FilterBox
                 formData={formData}
                 handleChange={handleChange}
-                handleSubmit={handleSubmit}
                 cities={cities}
                 categories={categories}
                 setFormData={setFormData}
