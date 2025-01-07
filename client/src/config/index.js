@@ -106,3 +106,14 @@ export const controlSignUpForm = [
     style: "flex items-center",
   },
 ];
+
+export const initialSearchForm = {
+  query: "",
+  category: [],
+  city: [],
+  minPrice: "",
+  maxPrice: "",
+  sortBy: "",
+  page: "",
+  order: "",
+};

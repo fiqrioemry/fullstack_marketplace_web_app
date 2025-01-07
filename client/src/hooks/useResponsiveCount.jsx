@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-const useResponsiveCount = () => {
-  const [count, setCount] = useState(5); // Default untuk ukuran layar xl
+const useResponsiveCount = (total) => {
+  const [count, setCount] = useState(total || 5); // Default untuk ukuran layar xl
 
   useEffect(() => {
     const updateCount = () => {
@@ -9,13 +9,13 @@ const useResponsiveCount = () => {
 
       if (width >= 1280) {
         // xl
-        setCount(5);
+        setCount(count + 1);
       } else if (width >= 1024) {
         // lg
-        setCount(4);
+        setCount(count + 1);
       } else if (width >= 768) {
         // md
-        setCount(3);
+        setCount(count + 1);
       } else {
         // sm dan lebih kecil
         setCount(2);

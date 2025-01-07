@@ -1,66 +1,67 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useEffect, useState } from "react";
+import { initialSearchForm } from "../config";
+import { useLocation } from "react-router-dom";
+import FilterBox from "../components/FilterBox";
 import ProductCard from "../components/ProductCard";
-import { Card, CardHeader } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { useHandleForm } from "../hooks/useHandleForm";
+import { useProductStore } from "../store/useProductStore";
 import { ProductPagination } from "../components/ProductPagination";
-
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-
-const items = [
-  {
-    id: "jakarta",
-    label: "Jakarta",
-  },
-  {
-    id: "bandung",
-    label: "Bandung",
-  },
-  {
-    id: "surabaya",
-    label: "Surabaya",
-  },
-  {
-    id: "medan",
-    label: "Medan",
-  },
-  {
-    id: "yogyakarta",
-    label: "Yogyakarta",
-  },
-  {
-    id: "palembang",
-    label: "Palembang",
-  },
-];
+import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 
 const SearchResult = () => {
-  const [checkedItems, setCheckedItems] = useState({});
+  const location = useLocation();
+  const { formData, handleChange } = useHandleForm(initialSearchForm);
 
-  const handleCheckboxChange = (event) => {
-    const { id, checked } = event.target;
-    setCheckedItems((prevState) => ({
-      ...prevState,
-      [id]: checked,
-    }));
-  };
+  const {
+    getProducts,
+    getCategories,
+    cities,
+    categories,
+    getCities,
+    products,
+  } = useProductStore();
+
+  const [filter, setFilter] = useState({
+    query: "",
+    category: [],
+    city: [],
+    minPrice: "",
+    maxPrice: "",
+    sortBy: "",
+    order: "",
+  });
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const query = queryParams.get("query") || "";
+    const category = queryParams.get("category") || [];
+    const city = queryParams.get("city") || [];
+    const minPrice = queryParams.get("minPrice") || "";
+    const maxPrice = queryParams.get("maxPrice") || "";
+    const sortBy = queryParams.get("sortBy") || "";
+    const order = queryParams.get("order") || "asc";
+    const page = queryParams.get("page") || 1;
+    setFilter({
+      query,
+      category,
+      city,
+      minPrice,
+      maxPrice,
+      sortBy,
+      page,
+      order,
+    });
+  }, []);
+
+  useEffect(() => {
+    getProducts(filter);
+    getCities();
+    getCategories();
+  }, [getProducts, filter]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Checked items:", checkedItems);
+    console.log("Checked items:");
   };
   return (
     <section className="container mx-auto">
@@ -68,133 +69,29 @@ const SearchResult = () => {
         <div className="grid grid-cols-12 gap-4">
           {/* filter */}
           <div className="col-span-3">
-            <Card className="h-full px-3">
-              <CardHeader className="text-center">
-                <h4>Filter Product</h4>
-              </CardHeader>
-              <Accordion collapsible className="w-full">
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="text-lg">
-                    Category
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <form onSubmit={handleSubmit} className="space-y-6 px-3">
-                      {items.map((item) => (
-                        <div
-                          className="flex items-center space-x-3"
-                          key={item.id}
-                        >
-                          <Checkbox
-                            type="checkbox"
-                            id={item.id}
-                            checked={checkedItems[item.id] || false}
-                            onChange={handleCheckboxChange}
-                          />
-                          <label
-                            htmlFor={item.id}
-                            className="text-sm font-medium "
-                          >
-                            {item.label}
-                          </label>
-                        </div>
-                      ))}
-                    </form>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-2">
-                  <AccordionTrigger className="text-lg">
-                    Location
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <form onSubmit={handleSubmit} className="space-y-6 px-3">
-                      {items.map((item) => (
-                        <div
-                          className="flex items-center space-x-3"
-                          key={item.id}
-                        >
-                          <Checkbox
-                            type="checkbox"
-                            id={item.id}
-                            checked={checkedItems[item.id] || false}
-                            onChange={handleCheckboxChange}
-                          />
-                          <label
-                            htmlFor={item.id}
-                            className="text-sm font-medium "
-                          >
-                            {item.label}
-                          </label>
-                        </div>
-                      ))}
-                    </form>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-3">
-                  <AccordionTrigger className="text-lg">Price</AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-3">
-                      <div className="relative p-1">
-                        <label
-                          htmlFor="minPrice"
-                          className="absolute flex items-center font-bold text-md justify-center h-10 w-10 bg-secondary "
-                        >
-                          Rp
-                        </label>
-                        <Input
-                          id="minPrice"
-                          className="h-10 pl-11 rounded-lg"
-                          placeholder="minimum price"
-                        ></Input>
-                      </div>
-
-                      <div className="relative p-1">
-                        <label
-                          htmlFor="maxPrice"
-                          className="absolute flex items-center font-bold text-md justify-center h-10 w-10 bg-secondary "
-                        >
-                          Rp
-                        </label>
-                        <Input
-                          id="maxPrice"
-                          className="h-10 pl-11 rounded-lg"
-                          placeholder="maximum price"
-                        ></Input>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </Card>
+            {!categories && !cities ? null : (
+              <FilterBox
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                cities={cities}
+                categories={categories}
+              />
+            )}
           </div>
 
           {/* display */}
           <div className="col-span-9">
-            <div className="flex items-center justify-between py-4">
-              <div>
-                <p>Menampilkan hasil pencarian untuk : Laptop Lenovo M4</p>
-              </div>
-              <div>
-                <Select>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Sort By" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="minimum">Minimum Price</SelectItem>
-                      <SelectItem value="maximum">Maximum Price</SelectItem>
-                      <SelectItem value="asc">From A to Z</SelectItem>
-                      <SelectItem value="desc">From Z to A</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                {[...Array(8)].map((_, index) => (
-                  <ProductCard product={index} key={index} />
-                ))}
-              </div>
+              {products ? (
+                <ProductsSkeleton class="grid_display_4" value={2} />
+              ) : (
+                <div className="grid_display_4">
+                  {[...Array(8)].map((_, index) => (
+                    <ProductCard product={index} key={index} />
+                  ))}
+                </div>
+              )}
               <ProductPagination />
             </div>
           </div>

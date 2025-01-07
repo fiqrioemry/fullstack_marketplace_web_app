@@ -10,17 +10,29 @@ export const useProductStore = create((set) => ({
   products: null,
   recommend: null,
   categories: null,
+  cities: null,
   isSearchLoading: false,
   isProductLoading: false,
 
   getCategories: async () => {
     try {
       console.log("get categories");
-      const response = ["categories"];
+      const response = ["electronics", "clothes", "apparel", "food", "drink"];
       set({ categories: response });
     } catch (error) {
       console.log(error);
       set({ categories: [] });
+    }
+  },
+
+  getCities: async () => {
+    try {
+      console.log("get cities");
+      const response = ["jakarta", "medan", "bandung", "surabaya"];
+      set({ cities: response });
+    } catch (error) {
+      console.log(error);
+      set({ cities: [] });
     }
   },
 
