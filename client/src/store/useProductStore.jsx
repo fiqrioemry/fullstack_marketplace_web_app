@@ -64,11 +64,10 @@ export const useProductStore = create((set) => ({
     try {
       console.log(filter);
       set({ isProductLoading: true });
-      // Simulated data fetching
       const response = {
         data: filter.limit,
-        cities: filter.map((item) => item.cities),
-        categories: filter.map((item) => item.categories),
+        cities: filter.cities.map((item) => item.cities),
+        categories: filter.categories.map((item) => item.categories),
         page: filter.page,
         minPrice: filter.minPrice,
         maxPrice: filter.maxPrice,

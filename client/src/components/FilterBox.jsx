@@ -49,20 +49,19 @@ const FilterBox = ({
                     id={item}
                     checked={formData.categories.includes(item)}
                     onChange={() =>
-                      handleChange({
-                        target: {
-                          name: "category",
-                          value: formData.categories.includes(item)
-                            ? formData.categories.filter((cat) => cat !== item)
-                            : [...formData.categories, item],
-                        },
+                      setFormData((prev) => {
+                        const isCitySelected = prev.categories.includes(item);
+
+                        return {
+                          ...prev,
+                          categories: isCitySelected
+                            ? prev.categories.filter((city) => city !== item)
+                            : [...prev.categories, item],
+                        };
                       })
                     }
                   />
-                  <label
-                    htmlFor={item}
-                    className="text-xs md:text-sm font-medium"
-                  >
+                  <label htmlFor={item} className="text-sm font-medium">
                     {item}
                   </label>
                 </div>
@@ -82,10 +81,15 @@ const FilterBox = ({
                     id={item}
                     checked={formData.cities.includes(item)}
                     onChange={() =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        cities: ,
-                      }))
+                      setFormData((prev) => {
+                        const isCitySelected = prev.cities.includes(item);
+                        return {
+                          ...prev,
+                          cities: isCitySelected
+                            ? prev.cities.filter((city) => city !== item)
+                            : [...prev.cities, item],
+                        };
+                      })
                     }
                   />
                   <label htmlFor={item} className="text-sm font-medium">

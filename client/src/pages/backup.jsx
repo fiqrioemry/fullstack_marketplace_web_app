@@ -1,27 +1,19 @@
 import { useEffect } from "react";
+import { initialSearchForm } from "../config";
 import FilterBox from "../components/FilterBox";
 import ProductCard from "../components/ProductCard";
 import { useHandleForm } from "../hooks/useHandleForm";
 import { useProductStore } from "../store/useProductStore";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 
 const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { formData, setFormData, handleChange } = useHandleForm({
-    query: searchParams.get("query") || "",
-    categories: searchParams.get("categories")?.split(",") || [],
-    cities: searchParams.get("cities")?.split(",") || [],
-    minPrice: searchParams.get("minPrice") || "",
-    maxPrice: searchParams.get("maxPrice") || "",
-    sortBy: searchParams.get("sortBy") || "",
-    order: searchParams.get("order") || "asc",
-    page: parseInt(searchParams.get("page")) || 1,
-    limit: 8,
-  });
+  const location = useLocation();
+  const { formData, setFormData, handleChange } =
+    useHandleForm(initialSearchForm);
 
-  console.log(formData);
   const {
     getProducts,
     getCategories,
@@ -32,46 +24,46 @@ const SearchResult = () => {
   } = useProductStore();
 
   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
     setFormData((prev) => ({
       ...prev,
-      query: searchParams.get("query") || "",
-      categories: searchParams.get("categories")?.split(",") || [],
-      cities: searchParams.get("cities")?.split(",") || [],
-      minPrice: searchParams.get("minPrice") || "",
-      maxPrice: searchParams.get("maxPrice") || "",
-      sortBy: searchParams.get("sortBy") || "",
-      order: searchParams.get("order") || "asc",
-      page: parseInt(searchParams.get("page")) || 1,
+      query: queryParams.get("query") || "",
+      sortBy: queryParams.get("sortBy") || "",
+      order: queryParams.get("order") || "asc",
+      minPrice: queryParams.get("minPrice") || "",
+      maxPrice: queryParams.get("maxPrice") || "",
+      cities: queryParams.get("cities")?.split(",") || [],
+      page: parseInt(queryParams.get("page")) || 1, // default to page 1
+      categories: queryParams.get("categories")?.split(",") || [],
     }));
-  }, [searchParams, setFormData]);
+  }, [location, setFormData]);
+
+  useEffect(() => {
+    console.log(formData);
+    getProducts(formData);
+    getCities();
+    getCategories();
+  }, [getCategories, getCities, getProducts, formData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Perbarui URL tanpa navigasi
     const updatedParams = new URLSearchParams(formData);
 
-    if (formData.categories.length) {
-      updatedParams.set("categories", formData.categories.join(","));
+    if (formData.category.length) {
+      updatedParams.set("category", formData.category.join(","));
     } else {
-      updatedParams.delete("categories");
+      updatedParams.delete("category");
     }
 
-    if (formData.cities.length) {
-      updatedParams.set("cities", formData.cities.join(","));
+    if (formData.city.length) {
+      updatedParams.set("city", formData.city.join(","));
     } else {
-      updatedParams.delete("cities");
+      updatedParams.delete("city");
     }
-    setSearchParams(updatedParams);
+
+    setSearchParams(updatedParams); // Perbarui URL tanpa navigasi
   };
-
-  useEffect(() => {
-    getProducts(formData);
-  }, [getProducts, formData]);
-
-  useEffect(() => {
-    getCities();
-    getCategories();
-  }, [getCategories, getCities]);
-
   return (
     <section className="container mx-auto">
       <div className="px-2 md:px-6 py-6">
@@ -85,7 +77,6 @@ const SearchResult = () => {
                 handleSubmit={handleSubmit}
                 cities={cities}
                 categories={categories}
-                setFormData={setFormData}
               />
             )}
           </div>
