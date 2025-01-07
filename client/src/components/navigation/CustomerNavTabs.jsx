@@ -1,6 +1,6 @@
+import { CustomerNavLinks } from "../../config";
 import { Link, useLocation } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CustomerNavLinks } from "../../config";
 
 const CustomerNavTabs = () => {
   const location = useLocation();

@@ -1,8 +1,10 @@
+/* eslint-disable react/prop-types */
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 
-const ProductCard = () => {
+const ProductCard = ({ product }) => {
   return (
-    <>
+    <Link to={`/storename/product${product}`}>
       <Card className="h-[300px] overflow-hidden">
         <CardContent>
           <img
@@ -16,7 +18,7 @@ const ProductCard = () => {
           </div>
         </CardContent>
       </Card>
-    </>
+    </Link>
   );
 };
 

@@ -4,7 +4,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import DropDown from "./DropDown";
 import { Link } from "react-router-dom";
-
 import { SellerNavLinks } from "../../config";
 
 const ShopNav = () => {

@@ -1,6 +1,6 @@
-import CategoryCarousel from "../components/home/CategoryCarousel";
-import HomeBanner from "../components/home/HomeBanner";
-import ProductRecommendation from "../components/home/ProductRecommendation";
+import HomeBanner from "@/components/home/HomeBanner";
+import CategoryCarousel from "@/components/home/CategoryCarousel";
+import ProductRecommendation from "@/components/home/ProductRecommendation";
 
 const Home = () => {
   return (

@@ -1,10 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share2, StoreIcon } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import StoreInfo from "../components/modal/StoreInfo";
 import StoreProduct from "../components/store/StoreProduct";
 import { ModalContainer } from "../components/modal/ModalContainer";
-import StoreInfo from "../components/modal/StoreInfo";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import StoreAbout from "../components/store/StoreAbout";
 
 const Store = () => {
   return (
@@ -59,7 +60,9 @@ const Store = () => {
             <TabsTrigger value="about">About store</TabsTrigger>
             <TabsTrigger value="product">Product Store</TabsTrigger>
           </TabsList>
-          <TabsContent value="about"></TabsContent>
+          <TabsContent value="about">
+            <StoreAbout />
+          </TabsContent>
           <TabsContent value="product">
             <StoreProduct />
           </TabsContent>
