@@ -62,6 +62,7 @@ export const useProductStore = create((set) => ({
 
   getProducts: async (filter) => {
     try {
+      console.log(filter);
       set({ isProductLoading: true });
       const response = {
         cities: filter.cities.map((item) => item.cities),

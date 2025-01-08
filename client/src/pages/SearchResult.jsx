@@ -62,6 +62,7 @@ const SearchResult = () => {
           <div className="col-span-3">
             <FilterBox
               formData={formData}
+              setFormData={setFormData}
               handleFilterChange={handleFilterChange}
             />
           </div>

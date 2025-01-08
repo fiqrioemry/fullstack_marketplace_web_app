@@ -7,26 +7,11 @@ import {
 } from "@/components/ui/accordion";
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
-
-import { Checkbox } from "@/components/ui/checkbox";
 import { useProductStore } from "../store/useProductStore";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import FilterBoxSkeleton from "./loading/FilterBoxSkeleton";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-const initialPriceForm = [
-  {
-    name: "minPrice",
-    placeholder: "minimum price",
-    label: "Rp",
-  },
-  {
-    name: "maxPrice",
-    placeholder: "maximum price",
-    label: "Rp",
-  },
-];
-
-const FilterBox = ({ formData, handleFilterChange }) => {
+const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
   const { categories, getCities, getCategories, cities } = useProductStore();
 
   useEffect(() => {
@@ -99,24 +84,48 @@ const FilterBox = ({ formData, handleFilterChange }) => {
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3">
-                  {initialPriceForm.map((item) => (
-                    <div className="relative p-1" key={item.name}>
-                      <label
-                        htmlFor={item.name}
-                        className="absolute flex items-center font-bold text-xs md:text-md justify-center h-10 w-10 bg-secondary "
-                      >
-                        {item.label}
-                      </label>
-                      <Input
-                        id={item.name}
-                        name={item.name}
-                        value={formData[item.name]}
-                        onChange={handleFilterChange}
-                        className="h-10 pl-11 rounded-lg"
-                        placeholder={item.placeholder}
-                      ></Input>
-                    </div>
-                  ))}
+                  <div className="relative p-1">
+                    <label
+                      htmlFor="minPrice"
+                      className="absolute flex items-center font-bold text-xs md:text-md justify-center h-10 w-10 bg-secondary "
+                    >
+                      Rp
+                    </label>
+                    <Input
+                      id="minPrice"
+                      name="minPrice"
+                      value={formData.minPrice}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          [e.target.name]: e.target.value,
+                        })
+                      }
+                      className="h-10 pl-11 rounded-lg"
+                      placeholder="Minimum Price"
+                    />
+                  </div>
+                  <div className="relative p-1">
+                    <label
+                      htmlFor="maxPrice"
+                      className="absolute flex items-center font-bold text-xs md:text-md justify-center h-10 w-10 bg-secondary "
+                    >
+                      Rp
+                    </label>
+                    <Input
+                      id="maxPrice"
+                      name="maxPrice"
+                      value={formData.maxPrice}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          [e.target.name]: e.target.value,
+                        })
+                      }
+                      className="h-10 pl-11 rounded-lg"
+                      placeholder="Maximum Price"
+                    />
+                  </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
