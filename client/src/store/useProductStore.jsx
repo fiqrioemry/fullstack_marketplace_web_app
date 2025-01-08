@@ -60,19 +60,9 @@ export const useProductStore = create((set) => ({
     }
   },
 
-  getProducts: async (filter) => {
+  getProducts: async (limit = 5) => {
     try {
-      console.log(filter);
-      set({ isProductLoading: true });
-      const response = {
-        city: filter.city.map((item) => item.city),
-        category: filter.category.map((item) => item.category),
-        page: filter.page,
-        minPrice: filter.minPrice,
-        maxPrice: filter.maxPrice,
-        sortBy: filter.sortBy,
-        order: filter.order,
-      };
+      const response = limit;
       set({ products: response });
     } catch (error) {
       console.error(error);

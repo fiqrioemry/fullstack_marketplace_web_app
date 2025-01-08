@@ -5,8 +5,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectLabel,
 } from "@/components/ui/select";
-const SortingBox = () => {
+const SortingBox = ({ formData, setFormData }) => {
   return (
     <div className="flex items-center justify-between py-4">
       <div>
@@ -19,6 +20,7 @@ const SortingBox = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
+              <SelectLabel>Select Parameter</SelectLabel>
               <SelectItem value="minimum">Minimum Price</SelectItem>
               <SelectItem value="maximum">Maximum Price</SelectItem>
               <SelectItem value="asc">From A to Z</SelectItem>

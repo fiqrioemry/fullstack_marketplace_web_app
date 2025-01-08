@@ -6,6 +6,7 @@ import ProductCard from "../components/ProductCard";
 import { useProductStore } from "../store/useProductStore";
 import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
+import SortingBox from "../components/SortingBox";
 
 const SearchResult = () => {
   const { getProducts, products } = useProductStore();
@@ -67,6 +68,7 @@ const SearchResult = () => {
 
           {/* Display */}
           <div className="col-span-9">
+            <SortingBox formData={formData} setFormData={setFormData} />
             <div className="space-y-6">
               {!products ? (
                 <ProductsSkeleton style="grid_display_4" value={9} />

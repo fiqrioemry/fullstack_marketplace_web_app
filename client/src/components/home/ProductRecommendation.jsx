@@ -21,7 +21,6 @@ const ProductRecommendation = () => {
 
   useEffect(() => {
     if (limit) {
-      console.log(limit);
       getProducts(limit);
     }
   }, [getProducts, limit]);
