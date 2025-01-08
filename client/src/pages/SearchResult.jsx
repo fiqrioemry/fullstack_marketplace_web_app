@@ -10,14 +10,7 @@ import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [formData, setFormData] = useState(initialSearchForm);
-  const {
-    getProducts,
-    getCategories,
-    cities,
-    categories,
-    getCities,
-    products,
-  } = useProductStore();
+  const { getProducts, products } = useProductStore();
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
@@ -37,60 +30,31 @@ const SearchResult = () => {
     getProducts(formData);
   }, [getProducts, formData]);
 
-  useEffect(() => {
-    getCities();
-    getCategories();
-  }, [getCategories, getCities]);
-
   const handleFilterChange = ({ target: { name, value } }) => {
-    setFormData((prevFormData) => {
-      const updatedFormData = { ...prevFormData };
+    const params = Object.fromEntries(searchParams.entries());
 
-      if (Array.isArray(updatedFormData[name])) {
-        if (updatedFormData[name].includes(value)) {
-          updatedFormData[name] = updatedFormData[name].filter(
-            (item) => item !== value
-          );
-        } else {
-          updatedFormData[name].push(value);
-        }
+    const arrayParams = ["cities", "categories"];
+
+    if (arrayParams.includes(name)) {
+      const currentValues = params[name] ? params[name].split(",") : [];
+      if (currentValues.includes(value)) {
+        params[name] = currentValues.filter((item) => item !== value).join(",");
       } else {
-        updatedFormData[name] = value;
+        params[name] = [...currentValues, value].join(",");
       }
+    } else {
+      params[name] = value;
+    }
 
-      // Update search params
-      const params = new URLSearchParams();
-      Object.entries(updatedFormData).forEach(([k, v]) => {
-        if (Array.isArray(v) && v.length > 0) {
-          params.set(k, v.join(","));
-        } else if (v) {
-          params.set(k, v);
-        }
-      });
-
-      setSearchParams(params);
-
-      return updatedFormData; // Return updated formData
-    });
-
-    // Fetch updated products
-    getProducts(formData);
+    setSearchParams(params);
   };
-
   return (
     <section className="container mx-auto">
       <div className="px-2 md:px-6 py-6">
         <div className="grid grid-cols-12 gap-4">
           {/* Filter */}
           <div className="col-span-3">
-            {!categories && !cities ? null : (
-              <FilterBox
-                formData={formData}
-                handleChange={handleFilterChange}
-                cities={cities}
-                categories={categories}
-              />
-            )}
+            <FilterBox formData={formData} handleChange={handleFilterChange} />
           </div>
 
           {/* Display */}
