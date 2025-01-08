@@ -9,7 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-export function ProductPagination({ formData }) {
+export function ProductPagination() {
   return (
     <Pagination>
       <PaginationContent>
@@ -20,7 +20,7 @@ export function ProductPagination({ formData }) {
           <PaginationLink href="#">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive={formData.page === 2}>
+          <PaginationLink href="#" isActive>
             2
           </PaginationLink>
         </PaginationItem>

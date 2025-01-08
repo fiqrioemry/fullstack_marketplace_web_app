@@ -25,7 +25,7 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
       ) : (
         <CardContent>
           <CardHeader className="text-center">
-            <h4 className="text-md md:text-lg">Filter Product</h4>
+            <h5 className="text-md md:text-lg">Filter Product</h5>
           </CardHeader>
           <Accordion collapsible className="w-full">
             <AccordionItem value="item-1">

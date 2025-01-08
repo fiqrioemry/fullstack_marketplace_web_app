@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { initialSearchForm } from "../config";
+import FilterBoxMobile from "./FilterBoxMobile";
 import FilterBox from "../components/FilterBox";
+import SortingBox from "../components/SortingBox";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useProductStore } from "../store/useProductStore";
 import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
-import SortingBox from "../components/SortingBox";
 
 const SearchResult = () => {
   const { getProducts, products } = useProductStore();
@@ -56,9 +57,11 @@ const SearchResult = () => {
   return (
     <section className="container mx-auto">
       <div className="px-2 md:px-4 py-4 md:py-8">
+        {/* mobile filter */}
+        <FilterBoxMobile />
         <div className="grid grid-cols-12 gap-4">
-          {/* Filter */}
-          <div className="col-span-3">
+          {/* desktop Filter */}
+          <div className="hidden md:block col-span-3">
             <FilterBox
               formData={formData}
               setFormData={setFormData}
@@ -67,7 +70,7 @@ const SearchResult = () => {
           </div>
 
           {/* Display */}
-          <div className="col-span-9">
+          <div className="col-span-12 md:col-span-9">
             <SortingBox setSearchParams={setSearchParams} />
             <div className="space-y-6">
               {!products ? (
@@ -80,11 +83,7 @@ const SearchResult = () => {
                     ))}
                   </div>
 
-                  {/* <ProductPagination
-                    handleFilterChange={handleFilterChange}
-                    totalPage={products.}
-                    currentPage={products.page}
-                  /> */}
+                  <ProductPagination />
                 </>
               )}
             </div>
