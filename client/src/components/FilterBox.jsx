@@ -104,7 +104,7 @@ const FilterBox = ({
             Price
           </AccordionTrigger>
           <AccordionContent>
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-3">
               {initialPriceForm.map((item) => (
                 <div className="relative p-1" key={item.name}>
                   <label
@@ -123,12 +123,7 @@ const FilterBox = ({
                   ></Input>
                 </div>
               ))}
-              <ButtonAnimate
-                title="filter price"
-                style="w-full"
-                type="submit"
-              />
-            </form>
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

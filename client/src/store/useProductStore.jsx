@@ -62,7 +62,6 @@ export const useProductStore = create((set) => ({
 
   getProducts: async (filter) => {
     try {
-      console.log(filter);
       set({ isProductLoading: true });
       const response = {
         data: filter.limit,

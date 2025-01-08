@@ -1,15 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { initialSearchForm } from "../config";
 import FilterBox from "../components/FilterBox";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { useHandleForm } from "../hooks/useHandleForm";
 import { useProductStore } from "../store/useProductStore";
 import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
-import { initialSearchForm } from "../config";
 
 const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [formData, setFormData] = useState(initialSearchForm);
   const {
     getProducts,
     getCategories,
@@ -18,9 +18,6 @@ const SearchResult = () => {
     getCities,
     products,
   } = useProductStore();
-
-  const { formData, setFormData, handleChange } =
-    useHandleForm(initialSearchForm);
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -37,20 +34,6 @@ const SearchResult = () => {
   }, [searchParams, setFormData]);
 
   useEffect(() => {
-    const updatedParams = new URLSearchParams();
-
-    Object.entries(formData).forEach(([key, value]) => {
-      if (Array.isArray(value) && value.length > 0) {
-        updatedParams.set(key, value.join(","));
-      } else if (value) {
-        updatedParams.set(key, value);
-      }
-    });
-
-    setSearchParams(updatedParams);
-  }, [formData, setSearchParams]);
-
-  useEffect(() => {
     getProducts(formData);
   }, [getProducts, formData]);
 
@@ -58,6 +41,42 @@ const SearchResult = () => {
     getCities();
     getCategories();
   }, [getCategories, getCities]);
+
+  const handleChange = ({ target: { name, value, checked } }) => {
+    switch (name) {
+      case "minPrice":
+        setSearchParams({ ...searchParams, minPrice: value });
+        break;
+      case "maxPrice":
+        setSearchParams({ ...searchParams, minPrice: value });
+        break;
+      case "sortBy":
+        setSearchParams({ ...searchParams, sortBy: value });
+        break;
+      case "categories":
+        updateCategories(value);
+        break;
+
+      case "cities":
+        updateCities(value);
+        break;
+      default:
+        console.error(`Unknown filter property: ${name}`);
+    }
+  };
+
+  const updateCities = (value) => {
+    const index = searchParams.cities.indexOf(value);
+    const updatedCities = [...searchParams.cities];
+    if (index > -1) {
+      updatedCities.splice(index, 1);
+    } else {
+      updatedCities.push(value);
+    }
+    setSearchParams({ ...searchParams, city: updatedCities });
+  };
+
+  const updateCategories = () => {};
 
   return (
     <section className="container mx-auto">

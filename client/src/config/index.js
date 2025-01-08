@@ -116,5 +116,5 @@ export const initialSearchForm = {
   sortBy: "",
   page: "",
   order: "",
-  limit: 8,
+  limit: 9,
 };
