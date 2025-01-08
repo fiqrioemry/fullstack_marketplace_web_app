@@ -20,18 +20,18 @@ const SearchResult = () => {
   } = useProductStore();
 
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      query: searchParams.get("query") || "",
-      categories: searchParams.get("categories")?.split(",") || [],
-      cities: searchParams.get("cities")?.split(",") || [],
-      minPrice: searchParams.get("minPrice") || "",
-      maxPrice: searchParams.get("maxPrice") || "",
-      sortBy: searchParams.get("sortBy") || "",
-      order: searchParams.get("order") || "asc",
-      page: parseInt(searchParams.get("page")) || 1,
-    }));
-  }, [searchParams, setFormData]);
+    const params = Object.fromEntries(searchParams.entries());
+    setFormData({
+      query: params.query || "",
+      order: params.order || "asc",
+      sortBy: params.sortBy || "",
+      minPrice: params.minPrice || "",
+      maxPrice: params.maxPrice || "",
+      page: parseInt(params.page) || 1,
+      cities: params.cities ? params.cities.split(",") : [],
+      categories: params.categories ? params.categories.split(",") : [],
+    });
+  }, [searchParams]);
 
   useEffect(() => {
     getProducts(formData);
@@ -42,41 +42,40 @@ const SearchResult = () => {
     getCategories();
   }, [getCategories, getCities]);
 
-  const handleChange = ({ target: { name, value, checked } }) => {
-    switch (name) {
-      case "minPrice":
-        setSearchParams({ ...searchParams, minPrice: value });
-        break;
-      case "maxPrice":
-        setSearchParams({ ...searchParams, minPrice: value });
-        break;
-      case "sortBy":
-        setSearchParams({ ...searchParams, sortBy: value });
-        break;
-      case "categories":
-        updateCategories(value);
-        break;
+  const handleFilterChange = ({ target: { name, value } }) => {
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData };
 
-      case "cities":
-        updateCities(value);
-        break;
-      default:
-        console.error(`Unknown filter property: ${name}`);
-    }
+      if (Array.isArray(updatedFormData[name])) {
+        if (updatedFormData[name].includes(value)) {
+          updatedFormData[name] = updatedFormData[name].filter(
+            (item) => item !== value
+          );
+        } else {
+          updatedFormData[name].push(value);
+        }
+      } else {
+        updatedFormData[name] = value;
+      }
+
+      // Update search params
+      const params = new URLSearchParams();
+      Object.entries(updatedFormData).forEach(([k, v]) => {
+        if (Array.isArray(v) && v.length > 0) {
+          params.set(k, v.join(","));
+        } else if (v) {
+          params.set(k, v);
+        }
+      });
+
+      setSearchParams(params);
+
+      return updatedFormData; // Return updated formData
+    });
+
+    // Fetch updated products
+    getProducts(formData);
   };
-
-  const updateCities = (value) => {
-    const index = searchParams.cities.indexOf(value);
-    const updatedCities = [...searchParams.cities];
-    if (index > -1) {
-      updatedCities.splice(index, 1);
-    } else {
-      updatedCities.push(value);
-    }
-    setSearchParams({ ...searchParams, city: updatedCities });
-  };
-
-  const updateCategories = () => {};
 
   return (
     <section className="container mx-auto">
@@ -87,10 +86,9 @@ const SearchResult = () => {
             {!categories && !cities ? null : (
               <FilterBox
                 formData={formData}
-                handleChange={handleChange}
+                handleChange={handleFilterChange}
                 cities={cities}
                 categories={categories}
-                setFormData={setFormData}
               />
             )}
           </div>

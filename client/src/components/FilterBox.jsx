@@ -23,13 +23,7 @@ const initialPriceForm = [
   },
 ];
 
-const FilterBox = ({
-  cities,
-  categories,
-  formData,
-  setFormData,
-  handleChange,
-}) => {
+const FilterBox = ({ cities, categories, formData, handleChange }) => {
   return (
     <Card className="h-full px-3">
       <CardHeader className="text-center">
@@ -46,20 +40,12 @@ const FilterBox = ({
                 <div className="flex items-center space-x-3" key={item}>
                   <Checkbox
                     id={item}
+                    name="categories"
+                    value={item}
                     checked={formData.categories.includes(item)}
-                    onChange={() =>
-                      setFormData((prev) => {
-                        const isCitySelected = prev.categories.includes(item);
-
-                        return {
-                          ...prev,
-                          categories: isCitySelected
-                            ? prev.categories.filter((city) => city !== item)
-                            : [...prev.categories, item],
-                        };
-                      })
-                    }
+                    onChange={handleChange}
                   />
+
                   <label htmlFor={item} className="text-sm font-medium">
                     {item}
                   </label>
@@ -78,19 +64,12 @@ const FilterBox = ({
                 <div className="flex items-center space-x-3" key={item}>
                   <Checkbox
                     id={item}
+                    name="cities"
+                    value={item}
                     checked={formData.cities.includes(item)}
-                    onChange={() =>
-                      setFormData((prev) => {
-                        const isCitySelected = prev.cities.includes(item);
-                        return {
-                          ...prev,
-                          cities: isCitySelected
-                            ? prev.cities.filter((city) => city !== item)
-                            : [...prev.cities, item],
-                        };
-                      })
-                    }
+                    onChange={handleChange}
                   />
+
                   <label htmlFor={item} className="text-sm font-medium">
                     {item}
                   </label>
