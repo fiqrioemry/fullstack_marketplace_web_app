@@ -68,7 +68,7 @@ const SearchResult = () => {
 
           {/* Display */}
           <div className="col-span-9">
-            <SortingBox formData={formData} setFormData={setFormData} />
+            <SortingBox setSearchParams={setSearchParams} />
             <div className="space-y-6">
               {!products ? (
                 <ProductsSkeleton style="grid_display_4" value={9} />
