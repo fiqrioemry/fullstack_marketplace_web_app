@@ -111,6 +111,10 @@
     @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4;
   }
 
+  .input_label {
+    @apply absolute flex items-center font-bold text-xs md:text-[16px] justify-center h-10 w-10 bg-secondary;
+  }
+
   .grid_display_4 {
     @apply grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4;
   }

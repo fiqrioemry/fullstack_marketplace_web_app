@@ -85,16 +85,14 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
               <AccordionContent>
                 <div className="space-y-3">
                   <div className="relative p-1">
-                    <label
-                      htmlFor="minPrice"
-                      className="absolute flex items-center font-bold text-xs md:text-md justify-center h-10 w-10 bg-secondary "
-                    >
+                    <label htmlFor="minPrice" className="input_label ">
                       Rp
                     </label>
                     <Input
                       id="minPrice"
                       name="minPrice"
                       value={formData.minPrice}
+                      onBlur={handleFilterChange}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -106,16 +104,14 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
                     />
                   </div>
                   <div className="relative p-1">
-                    <label
-                      htmlFor="maxPrice"
-                      className="absolute flex items-center font-bold text-xs md:text-md justify-center h-10 w-10 bg-secondary "
-                    >
+                    <label htmlFor="maxPrice" className="input_label">
                       Rp
                     </label>
                     <Input
                       id="maxPrice"
                       name="maxPrice"
                       value={formData.maxPrice}
+                      onBlur={handleFilterChange}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
