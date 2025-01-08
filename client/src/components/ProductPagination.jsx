@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Pagination,
   PaginationContent,
@@ -8,7 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-export function ProductPagination() {
+export function ProductPagination({ formData }) {
   return (
     <Pagination>
       <PaginationContent>
@@ -19,7 +20,7 @@ export function ProductPagination() {
           <PaginationLink href="#">1</PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#" isActive>
+          <PaginationLink href="#" isActive={formData.page === 2}>
             2
           </PaginationLink>
         </PaginationItem>

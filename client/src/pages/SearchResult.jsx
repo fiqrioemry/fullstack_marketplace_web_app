@@ -33,9 +33,7 @@ const SearchResult = () => {
   const handleFilterChange = ({ target: { name, value } }) => {
     const params = Object.fromEntries(searchParams.entries());
 
-    const arrayParams = ["city", "category"];
-
-    if (arrayParams.includes(name)) {
+    if (["city", "category"].includes(name)) {
       const currentValues = params[name] ? params[name].split(",") : [];
 
       if (currentValues.includes(value)) {
@@ -56,7 +54,7 @@ const SearchResult = () => {
 
   return (
     <section className="container mx-auto">
-      <div className="px-2 md:px-6 py-6">
+      <div className="px-2 md:px-4 py-4 md:py-8">
         <div className="grid grid-cols-12 gap-4">
           {/* Filter */}
           <div className="col-span-3">
@@ -80,7 +78,11 @@ const SearchResult = () => {
                     ))}
                   </div>
 
-                  <ProductPagination page={products.page} />
+                  {/* <ProductPagination
+                    handleFilterChange={handleFilterChange}
+                    totalPage={products.}
+                    currentPage={products.page}
+                  /> */}
                 </>
               )}
             </div>

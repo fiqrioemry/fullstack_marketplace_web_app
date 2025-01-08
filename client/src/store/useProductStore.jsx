@@ -65,8 +65,8 @@ export const useProductStore = create((set) => ({
       console.log(filter);
       set({ isProductLoading: true });
       const response = {
-        cities: filter.cities.map((item) => item.cities),
-        categories: filter.categories.map((item) => item.categories),
+        city: filter.city.map((item) => item.city),
+        category: filter.category.map((item) => item.category),
         page: filter.page,
         minPrice: filter.minPrice,
         maxPrice: filter.maxPrice,
@@ -76,7 +76,7 @@ export const useProductStore = create((set) => ({
       set({ products: response });
     } catch (error) {
       console.error(error);
-      set({ products: { data: [], page: 1 } });
+      set({ products: [] });
     } finally {
       set({ isProductLoading: false });
     }

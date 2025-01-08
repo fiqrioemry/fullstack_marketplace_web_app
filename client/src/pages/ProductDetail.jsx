@@ -8,10 +8,6 @@ import ProductRelated from "../components/product/ProductRelated";
 const ProductDetail = () => {
   const { slug } = useParams();
 
-  useEffect(() => {
-    console.log("get product detail");
-  }, []);
-
   return (
     <section>
       <div className="container mx-auto ">
