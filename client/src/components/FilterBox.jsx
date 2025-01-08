@@ -51,11 +51,12 @@ const FilterBox = ({ formData, handleFilterChange }) => {
                 <div className="space-y-3 px-3">
                   {categories.map((item) => (
                     <div className="flex items-center space-x-3" key={item}>
-                      <Checkbox
+                      <input
                         id={item}
-                        name="categories"
+                        type="checkbox"
+                        name="category"
                         value={item}
-                        checked={formData.categories.includes(item)}
+                        checked={formData.category.includes(item)}
                         onChange={handleFilterChange}
                       />
 
@@ -75,11 +76,12 @@ const FilterBox = ({ formData, handleFilterChange }) => {
                 <div className="space-y-3 px-3">
                   {cities.map((item) => (
                     <div className="flex items-center space-x-3" key={item}>
-                      <Checkbox
+                      <input
                         id={item}
-                        name="cities"
+                        type="checkbox"
+                        name="city"
                         value={item}
-                        checked={formData.cities.includes(item)}
+                        checked={formData.city.includes(item)}
                         onChange={handleFilterChange}
                       />
 

@@ -8,9 +8,9 @@ import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 
 const SearchResult = () => {
+  const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [formData, setFormData] = useState(initialSearchForm);
-  const { getProducts, products } = useProductStore();
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
@@ -21,8 +21,8 @@ const SearchResult = () => {
       minPrice: params.minPrice || "",
       maxPrice: params.maxPrice || "",
       page: parseInt(params.page) || 1,
-      cities: params.cities ? params.cities.split(",") : [],
-      categories: params.categories ? params.categories.split(",") : [],
+      city: params.city ? params.city.split(",") : [],
+      category: params.category ? params.category.split(",") : [],
     });
   }, [searchParams]);
 
@@ -33,10 +33,11 @@ const SearchResult = () => {
   const handleFilterChange = ({ target: { name, value } }) => {
     const params = Object.fromEntries(searchParams.entries());
 
-    const arrayParams = ["cities", "categories"];
+    const arrayParams = ["city", "category"];
 
     if (arrayParams.includes(name)) {
       const currentValues = params[name] ? params[name].split(",") : [];
+
       if (currentValues.includes(value)) {
         params[name] = currentValues.filter((item) => item !== value).join(",");
       } else {
@@ -46,15 +47,23 @@ const SearchResult = () => {
       params[name] = value;
     }
 
+    if (!params[name]) {
+      delete params[name];
+    }
+
     setSearchParams(params);
   };
+
   return (
     <section className="container mx-auto">
       <div className="px-2 md:px-6 py-6">
         <div className="grid grid-cols-12 gap-4">
           {/* Filter */}
           <div className="col-span-3">
-            <FilterBox formData={formData} handleChange={handleFilterChange} />
+            <FilterBox
+              formData={formData}
+              handleFilterChange={handleFilterChange}
+            />
           </div>
 
           {/* Display */}
@@ -65,7 +74,7 @@ const SearchResult = () => {
               ) : (
                 <>
                   <div className="grid_display_4">
-                    {[...Array(products.data)].map((_, index) => (
+                    {[...Array(8)].map((_, index) => (
                       <ProductCard product={index} key={index} />
                     ))}
                   </div>

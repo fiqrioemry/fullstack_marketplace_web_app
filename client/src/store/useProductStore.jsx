@@ -64,7 +64,6 @@ export const useProductStore = create((set) => ({
     try {
       set({ isProductLoading: true });
       const response = {
-        data: filter.limit,
         cities: filter.cities.map((item) => item.cities),
         categories: filter.categories.map((item) => item.categories),
         page: filter.page,

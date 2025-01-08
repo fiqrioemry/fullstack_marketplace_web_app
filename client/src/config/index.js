@@ -109,12 +109,11 @@ export const controlSignUpForm = [
 
 export const initialSearchForm = {
   query: "",
-  categories: [],
-  cities: [],
+  category: [],
+  city: [],
   minPrice: "",
   maxPrice: "",
   sortBy: "",
   page: "",
   order: "",
-  limit: 9,
 };
