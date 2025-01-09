@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -11,14 +9,9 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import ProductCartItem from "../components/cart/ProductCartItem";
+import UserAddress from "./UserAddress";
 
 const Checkout = () => {
-  const [state, setState] = useState({
-    productQty: 0,
-    productPrice: 0,
-    productPayment: [],
-  });
-
   return (
     <section className="bg-muted ">
       <div className="container mx-auto">
@@ -26,22 +19,7 @@ const Checkout = () => {
           <h4 className="text-2xl">Checkout</h4>
           <div className="grid grid-cols-12 gap-4 ">
             <div className="col-span-12 md:col-span-9 space-y-4">
-              <div className="bg-background rounded-md shadow-md space-y-2 p-4">
-                <h4 className="text-foreground/50">Shipment Address</h4>
-                <div className="flex items-center gap-2">
-                  <span>Home -</span>
-                  <span>Ahmad Fiqri Oemry</span>
-                </div>
-                <div>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Obcaecati similique aliquam hic, atque nemo iusto explicabo,
-                  doloribus et, ipsum esse illo? Vero eaque architecto quae.
-                </div>
-                <div className="space-x-4">
-                  <Button>Change Location</Button>
-                  <Button>Add Address</Button>
-                </div>
-              </div>
+              <UserAddress />
 
               <div>
                 <div className="bg-background rounded-md shadow-md space-y-2 p-4">
