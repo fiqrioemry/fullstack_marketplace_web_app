@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { initialSearchForm } from "../config";
-import FilterBoxMobile from "./FilterBoxMobile";
 import FilterBox from "../components/FilterBox";
 import SortingBox from "../components/SortingBox";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import PageBreadCrumb from "../components/PageBreadCrumb";
 import { useProductStore } from "../store/useProductStore";
 import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
-import PageBreadCrumb from "../components/PageBreadCrumb";
 
 const ProductCategory = () => {
   const { getProducts, products } = useProductStore();

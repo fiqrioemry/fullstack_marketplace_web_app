@@ -20,7 +20,7 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
   }, [getCategories, getCities]);
   return (
     <Card className="h-full py-4 px-3">
-      {!categories && !cities ? (
+      {!categories || !cities ? (
         <FilterBoxSkeleton />
       ) : (
         <CardContent>
