@@ -4,64 +4,57 @@ import { DrawerContainer } from "../components/drawer/DrawerContainer";
 
 const sortValue = [
   {
-    id: "price",
+    id: "minPrice",
     name: "price",
-    value: "asc",
+    value: "price:asc",
     label: "minimum price",
   },
   {
-    id: "price",
+    id: "maxPrice",
     name: "price",
-    value: "desc",
+    value: "price:desc",
     label: "maximum price",
   },
   {
-    id: "price",
-    name: "price",
-    value: "asc",
-    label: "minimum price",
+    id: "a-z",
+    name: "alphabet",
+    value: "alphabet:asc",
+    label: "From A to Z",
+  },
+  {
+    id: "z-a",
+    name: "alphabet",
+    value: "alphabet:desc",
+    label: "From Z to A",
   },
 ];
 
 const FilterBoxMobile = ({ formData }) => {
   return (
-    <div className="md:hidden block">
-      <div className="flex justify-end py-6">
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon">
-            <SlidersHorizontal />
-          </Button>
-          <DrawerContainer title={<SortAsc />}>
-            <div className="space-y-6 p-4">
-              <div className="flex items-center justify-between">
-                <label htmlFor="minPrice">Minimum price</label>
-                <input
-                  id="minPrice"
-                  className="rounded-full w-6 h-6"
-                  type="radio"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="minPrice">Minimum price</label>
-                <input
-                  id="minPrice"
-                  className="rounded-full w-6 h-6"
-                  checked={false}
-                  type="radio"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="minPrice">Minimum price</label>
-                <input
-                  id="minPrice"
-                  className="rounded-full w-6 h-6"
-                  checked={false}
-                  type="radio"
-                />
-              </div>
+    <div className="flex justify-end py-2">
+      <div className="flex gap-2">
+        <Button variant="outline" size="icon">
+          <SlidersHorizontal />
+        </Button>
+        <DrawerContainer title={<SortAsc />}>
+          <div className="space-y-6 p-4">
+            <div>
+              <h4>Sort By</h4>
             </div>
-          </DrawerContainer>
-        </div>
+            {sortValue.map((item) => (
+              <div className="flex justify-between" key={item.id}>
+                <label htmlFor="minPrice">{item.label}</label>
+                <input
+                  id={item.label}
+                  name={item.name}
+                  value={item.value}
+                  className="rounded-full w-6 h-6"
+                  type="radio"
+                />
+              </div>
+            ))}
+          </div>
+        </DrawerContainer>
       </div>
     </div>
   );

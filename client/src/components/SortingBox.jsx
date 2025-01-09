@@ -18,7 +18,7 @@ const SortingBox = ({ setSearchParams }) => {
   };
 
   return (
-    <div className="flex items-center justify-between py-4">
+    <div className="hidden md:flex items-center justify-between py-4">
       <div>
         <p>Menampilkan hasil pencarian untuk : Laptop Lenovo M4</p>
       </div>

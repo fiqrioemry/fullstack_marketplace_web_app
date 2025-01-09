@@ -56,9 +56,11 @@ const SearchResult = () => {
 
   return (
     <section className="container mx-auto">
-      <div className="px-2 md:px-4 py-4 md:py-8">
+      <div className="px-2 md:px-0 py-4 md:py-8 md:space-y-0 space-y-6">
         {/* mobile filter */}
-        <FilterBoxMobile />
+        <div className="md:hidden block">
+          <FilterBoxMobile />
+        </div>
         <div className="grid grid-cols-12 gap-4">
           {/* desktop Filter */}
           <div className="hidden md:block col-span-3">
