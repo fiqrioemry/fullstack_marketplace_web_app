@@ -117,3 +117,21 @@ export const initialSearchForm = {
   page: "",
   order: "",
 };
+
+export const shipmentMethods = [
+  {
+    method: "nextday",
+    time: "Estimated Time Today or Tomorrow",
+    price: 5.99,
+  },
+  {
+    method: "regular",
+    time: "Estimated Time 4 - 7 Days",
+    price: 3.99,
+  },
+  {
+    method: "cargo",
+    time: "Estimated Time 1 - 2 Weeks",
+    price: 1.99,
+  },
+];
