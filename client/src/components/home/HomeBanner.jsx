@@ -10,34 +10,23 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const HomeBanner = () => {
   const [api, setApi] = useState(null);
-  const [direction, setDirection] = useState("forward"); // Menyimpan arah gerakan
 
   useEffect(() => {
     if (!api) return;
 
     const interval = setInterval(() => {
-      if (direction === "forward") {
-        if (api.canScrollNext()) {
-          api.scrollNext();
-        } else {
-          setDirection("backward"); // Ubah arah ke mundur saat mencapai akhir
-          api.scrollPrevious();
-        }
-      } else if (direction === "backward") {
-        if (api.canScrollPrevious()) {
-          api.scrollPrevious();
-        } else {
-          setDirection("forward"); // Ubah arah ke maju saat mencapai awal
-          api.scrollNext();
-        }
+      if (api.canScrollNext()) {
+        api.scrollNext();
+      } else {
+        api.scrollTo(0);
       }
     }, 3500);
 
     return () => clearInterval(interval);
-  }, [api, direction]); // Tambahkan 'direction' ke dependencies
+  }, [api]);
 
   return (
-    <div className="px-2">
+    <div className="px-2 md:px-0">
       <div>
         <Carousel className="w-full" setApi={setApi}>
           <CarouselContent>

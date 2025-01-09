@@ -34,13 +34,16 @@ const CategoryCarousel = () => {
         ) : (
           <Carousel className="w-full ">
             <CarouselContent>
-              {[...Array(8)].map((_, index) => (
+              {[...Array(6)].map((_, index) => (
                 <CarouselItem
                   key={index}
                   className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 "
                 >
                   <Link to={`/category/namacategory${index}`}>
                     <CategoryCard />
+                    <div className="text-center py-2">
+                      <h4>Electronics</h4>
+                    </div>
                   </Link>
                 </CarouselItem>
               ))}
@@ -48,7 +51,7 @@ const CategoryCarousel = () => {
                 <Link to="/category">
                   <Card className="h-[225px] overflow-hidden">
                     <div className="h-full flex items-center justify-center hover:bg-muted-foreground/25 duration-300 transition-all">
-                      <h4>All Categories</h4>
+                      <h4>See All Categories</h4>
                     </div>
                   </Card>
                 </Link>

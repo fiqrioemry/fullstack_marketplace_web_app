@@ -84,7 +84,6 @@ const SearchResult = () => {
                       <ProductCard product={index} key={index} />
                     ))}
                   </div>
-
                   <ProductPagination />
                 </>
               )}

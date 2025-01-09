@@ -1,9 +1,8 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import PageBreadCrumb from "../components/PageBreadCrumb";
 import ProductImages from "../components/product/ProductImages";
-import ProductDescription from "../components/product/ProductDescription";
 import ProductRelated from "../components/product/ProductRelated";
+import ProductDescription from "../components/product/ProductDescription";
 
 const ProductDetail = () => {
   const { slug } = useParams();
