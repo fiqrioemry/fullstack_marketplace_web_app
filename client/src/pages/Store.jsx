@@ -65,8 +65,8 @@ const Store = () => {
           </div>
         </Card>
 
-        <Tabs defaultValue="about" className="">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="about">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="about">About store</TabsTrigger>
             <TabsTrigger value="product">Product Store</TabsTrigger>
           </TabsList>
