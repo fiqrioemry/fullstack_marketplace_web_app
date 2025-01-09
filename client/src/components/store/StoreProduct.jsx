@@ -1,10 +1,10 @@
 import {
   Select,
-  SelectContent,
   SelectGroup,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from "@/components/ui/select";
 import ProductCard from "../ProductCard";
 
@@ -26,7 +26,7 @@ const StoreProduct = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid_display_5">
         {[...Array(15)].map((_, index) => (
           <ProductCard product={index} key={index} />
         ))}
