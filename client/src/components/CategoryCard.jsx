@@ -1,8 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
-const CategoryCard = () => {
+const CategoryCard = ({ category }) => {
   return (
-    <>
+    <Link to={`/category/${category}`}>
       <Card className="h-[225px] overflow-hidden">
         <CardContent>
           <img
@@ -12,7 +13,10 @@ const CategoryCard = () => {
           />
         </CardContent>
       </Card>
-    </>
+      <div className="text-center">
+        <h4>Electronics {category}</h4>
+      </div>
+    </Link>
   );
 };
 

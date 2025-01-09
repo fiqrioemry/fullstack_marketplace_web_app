@@ -10,7 +10,7 @@ import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 import PageBreadCrumb from "../components/PageBreadCrumb";
 
-const SearchResult = () => {
+const ProductCategory = () => {
   const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [formData, setFormData] = useState(initialSearchForm);
@@ -94,4 +94,4 @@ const SearchResult = () => {
   );
 };
 
-export default SearchResult;
+export default ProductCategory;
