@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Select,
   SelectContent,
@@ -7,6 +8,7 @@ import {
   SelectValue,
   SelectLabel,
 } from "@/components/ui/select";
+
 const SortingBox = ({ setSearchParams }) => {
   const handleChange = (value) => {
     const [sortBy, order] = value.split(":");
