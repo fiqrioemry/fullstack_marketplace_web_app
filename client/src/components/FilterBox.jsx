@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/accordion";
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { useProductStore } from "../store/useProductStore";
 import FilterBoxSkeleton from "./loading/FilterBoxSkeleton";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
   const { categories, getCities, getCategories, cities } = useProductStore();
@@ -19,14 +19,14 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
     getCategories();
   }, [getCategories, getCities]);
   return (
-    <Card className="h-full px-3">
+    <Card className="h-full py-4 px-3">
       {!categories && !cities ? (
         <FilterBoxSkeleton />
       ) : (
         <CardContent>
-          <CardHeader className="text-center">
+          <div className="text-center mb-2 md:mb-4">
             <h5 className="text-md md:text-lg">Filter Product</h5>
-          </CardHeader>
+          </div>
           <Accordion collapsible className="w-full">
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-sm md:text-lg">
