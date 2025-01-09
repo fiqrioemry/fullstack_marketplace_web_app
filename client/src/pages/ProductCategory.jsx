@@ -60,9 +60,8 @@ const SearchResult = () => {
       <div className="container mx-auto">
         <div className="px-2 md:px-6 space-y-6 py-6">
           <PageBreadCrumb />
-          {/* mobile filter */}
-          <div className="grid grid-cols-12 gap-4">
-            {/* desktop Filter */}
+
+          <div className="grid grid-cols-12 gap-4 ">
             <div className="col-span-12 md:col-span-3">
               <FilterBox
                 formData={formData}
@@ -71,8 +70,7 @@ const SearchResult = () => {
               />
             </div>
 
-            {/* Display */}
-            <div className="col-span-12 md:col-span-9">
+            <div className="col-span-12 md:col-span-9 space-y-6">
               <SortingBox setSearchParams={setSearchParams} />
               <div className="space-y-6">
                 {!products ? (

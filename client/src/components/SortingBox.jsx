@@ -18,11 +18,11 @@ const SortingBox = ({ setSearchParams }) => {
   };
 
   return (
-    <div className="hidden md:flex items-center justify-between py-4">
-      <div>
+    <div className="flex md:flex-row flex-col justify-between">
+      <div className="order-2 md:order-1 flex items-center md:text-md text-sm">
         <p>Menampilkan hasil pencarian untuk : Laptop Lenovo M4</p>
       </div>
-      <div>
+      <div className="order-1 md:order-2 flex justify-end md:pb-0 pb-4">
         <Select onValueChange={handleChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sort By" />
