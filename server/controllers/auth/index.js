@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
+const speakeasy = require("speakeasy");
 const randomAvatar = require("../../utils/randomAvatar");
 const { User, Otp, Store, Reset } = require("../../models");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
@@ -77,7 +78,7 @@ async function userSignIn(req, res) {
       .send({ message: "Check email for OTP code", data: user.email });
   } catch (error) {
     return res.status(500).send({
-      message: "Failed to create new account",
+      message: "Failed to sign in",
       error: error.message,
     });
   }

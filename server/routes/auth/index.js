@@ -17,6 +17,6 @@ router.post("/signout", userSignOut);
 router.get("/verify/:token", verifyOtp);
 router.get("/refresh", userAuthRefresh);
 router.get("/me", isAuthenticate, userAuthCheck);
-router.put("/reset/:token", resetPassword.ResetPassword);
+router.put("/reset/:token", resetPassword);
 
 module.exports = router;

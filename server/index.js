@@ -14,9 +14,9 @@ app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
 // route
 app.use("/api/auth", services.authRoute);
-app.use("/api/user", services.userRoute);
-app.use("/api/product", services.productRoute);
-app.use("/api/category", services.categoryRoute);
+// app.use("/api/user", services.userRoute);
+// app.use("/api/product", services.productRoute);
+// app.use("/api/category", services.categoryRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
