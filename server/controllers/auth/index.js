@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const randomAvatar = require("../../utils/randomAvatar");
-const { User, Profile, Otp, Store, Reset } = require("../../models");
+const { User, Otp, Store, Reset } = require("../../models");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
 const createEmailTemplate = require("../../utils/createEmailTemplate");
 
@@ -27,13 +27,10 @@ async function userSignUp(req, res) {
       fullname,
       email,
       password: HashPassword,
-    });
-    await Profile.create({
-      userId: user.id,
       avatar: randomAvatar(),
     });
 
-    res.status(201).send({ message: "Sign up is success" });
+    res.status(201).send({ data: user, message: "Sign up is success" });
   } catch (error) {
     return res.status(500).send({
       message: "Failed to create new account",
@@ -101,14 +98,22 @@ async function verifyOtp(req, res) {
     const [user, otp] = await Promise.all([
       User.findOne({
         where: { email },
-        attributes: ["id", "fullname", "email", "role"],
+        attributes: [
+          "id",
+          "fullname",
+          "email",
+          "role",
+          "phone",
+          "birthday",
+          "gender",
+          "avatar",
+        ],
         include: [
           {
-            model: Profile,
-            as: "profile",
-            attributes: ["phone", "birthday", "gender", "avatar"],
+            model: Store,
+            as: "store",
+            attributes: ["id", "name", "avatar", "image", "city"],
           },
-          { model: Store, as: "store", attributes: ["id", "name", "city"] },
         ],
       }),
       Otp.findOne({
@@ -176,7 +181,8 @@ async function verifyOtp(req, res) {
           role: user.role,
           storeId: user.store?.id,
           storeName: user.store?.name,
-          avatar: user.profile.avatar,
+          storeAvatar: user.store?.avatar,
+          avatar: user.avatar,
         },
       },
     });
@@ -199,7 +205,7 @@ async function userAuthCheck(req, res) {
   const { userId } = req.user;
   try {
     const user = await User.findByPk(userId, {
-      include: [{ model: Profile, as: "profile", attributes: ["avatar"] }],
+      attributes: ["id", "email", "fullname", "avatar"],
     });
 
     if (!user)
@@ -211,7 +217,7 @@ async function userAuthCheck(req, res) {
       userId: user.id,
       email: user.email,
       fullname: user.fullname,
-      avatar: user.profile.avatar,
+      avatar: user.avatar,
     };
 
     res.status(200).send({
@@ -250,7 +256,7 @@ async function userAuthRefresh(req, res) {
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.ACCESS_TOKEN,
-      { expiresIn: "30m" }
+      { expiresIn: "1d" }
     );
 
     res.status(200).send({
@@ -306,6 +312,7 @@ async function forgotPassword(req, res) {
   try {
     const user = await User.findOne({
       where: { email },
+      attributes: ["id", "email", "fullname"],
     });
 
     if (!user) return res.status(401).send({ message: "Email is invalid" });

@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -10,19 +8,46 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.Cart);
+      this.hasMany(models.Galleries);
+      this.hasMany(models.OrderDetail);
+      this.belongsTo(models.Store, {
+        foreignKey: "storeId",
+        as: "store",
+      });
+      this.belongsTo(models.Categories, {
+        foreignKey: "categoryId",
+        as: "category",
+      });
     }
   }
-  Product.init({
-    storeId: DataTypes.INTEGER,
-    categoryId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    slug: DataTypes.STRING,
-    description: DataTypes.STRING,
-    stock: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Product',
-  });
+  Product.init(
+    {
+      storeId: DataTypes.INTEGER,
+      categoryId: DataTypes.INTEGER,
+      name: DataTypes.STRING,
+      slug: DataTypes.STRING,
+      description: DataTypes.STRING,
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+          isDecimal: true,
+          min: 0,
+        },
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          min: 0,
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Product",
+    }
+  );
   return Product;
 };

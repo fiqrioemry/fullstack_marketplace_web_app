@@ -2,42 +2,52 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Products", {
+    await queryInterface.createTable("Orders", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       storeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      categoryId: {
-        type: Sequelize.INTEGER,
-      },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      slug: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      description: {
-        type: Sequelize.STRING,
-      },
-      price: {
+      totalAmount: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
       },
-      stock: {
-        type: Sequelize.INTEGER,
+      amountToPay: {
+        type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
-        validate: {
-          min: 0,
-        },
+      },
+      orderStatus: {
+        type: Sequelize.ENUM,
+        values: ["pending", "challange", "failure", "success"],
+        defaultValue: "pending",
+        allowNull: false,
+      },
+      shippingAddress: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      shippingCost: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      shippingStatus: {
+        type: Sequelize.ENUM,
+        values: ["pending", "packaging", "shipped", "delivered"],
+        defaultValue: "pending",
+        allowNull: false,
+      },
+      shippingNumber: {
+        type: Sequelize.STRING(50),
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -50,6 +60,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Products");
+    await queryInterface.dropTable("Orders");
   },
 };

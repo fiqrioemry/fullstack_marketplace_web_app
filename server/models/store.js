@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.User);
+      this.hasMany(models.Product);
+      this.hasMany(models.Order);
     }
   }
   Store.init(
@@ -17,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       slug: DataTypes.STRING,
       description: DataTypes.STRING,
+      avatar: DataTypes.STRING,
       image: DataTypes.STRING,
       city: DataTypes.STRING,
     },
