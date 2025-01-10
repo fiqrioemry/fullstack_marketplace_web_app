@@ -4,20 +4,21 @@ const jwt = require("jsonwebtoken");
 const randomAvatar = require("../../utils/randomAvatar");
 const { User, Profile, Otp, Store, Reset } = require("../../models");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
+const createEmailTemplate = require("../../utils/createEmailTemplate");
 
 async function userSignUp(req, res) {
   const { fullname, email, password, passwordConfirm } = req.body;
   try {
     // password match check
     if (password !== passwordConfirm)
-      return res.status(500).send({ message: "Password tidak sesuai" });
+      return res.status(500).send({ message: "Password did not match" });
 
     // email existance check
     const isExist = await User.findOne({
       where: { email },
     });
     if (isExist)
-      return res.status(401).send({ message: "Email is Registered" });
+      return res.status(401).send({ message: "Email is already used" });
 
     // Password Encryption
     const salt = await bcrypt.genSalt();
@@ -47,14 +48,7 @@ async function userSignIn(req, res) {
 
     const user = await User.findOne({
       where: { email },
-      attributes: ["id", "fullname", "email", "password"],
-      include: [
-        {
-          model: Profile,
-          attributes: ["gender", "phone", "avatar", "birthday"],
-        },
-        { model: Store, attributes: ["id", "name", "city"] },
-      ],
+      attributes: ["email", "password"],
     });
 
     // email existance check
@@ -96,28 +90,44 @@ async function verifyOtp(req, res) {
   try {
     const { email, code } = req.body;
 
-    const user = await User.findOne({
-      where: { email },
-      attributes: ["id", "fullname", "email", "role"],
-      include: [
-        {
-          model: Profile,
-          attributes: ["phone", "birthday", "gender", "avatar"],
-        },
-        { model: Store, attributes: ["id", "name", "city"] },
-      ],
-    });
-
-    const otp = await Otp.findOne({
-      where: { userId: user.id, expiresAt: { [Op.gte]: new Date() } },
-    });
-
-    if (!otp) {
-      return res.status(400).send({ message: "OTP code is expired" });
+    // Validasi input
+    if (!email || !code) {
+      return res
+        .status(400)
+        .send({ message: "Email and OTP code are required" });
     }
 
-    // Verify OTP token
-    const isTokenValid = speakeasy.totp.verify({
+    // Query paralel
+    const [user, otp] = await Promise.all([
+      User.findOne({
+        where: { email },
+        attributes: ["id", "fullname", "email", "role"],
+        include: [
+          {
+            model: Profile,
+            as: "profile",
+            attributes: ["phone", "birthday", "gender", "avatar"],
+          },
+          { model: Store, as: "store", attributes: ["id", "name", "city"] },
+        ],
+      }),
+      Otp.findOne({
+        where: { email, expiresAt: { [Op.gte]: new Date() } },
+      }),
+    ]);
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    if (!otp) {
+      return res
+        .status(400)
+        .send({ message: "OTP code is invalid or expired" });
+    }
+
+    // Verifikasi OTP
+    const isTokenValid = speakeasy.otp.verify({
       secret: otp.code,
       encoding: "base32",
       token: code,
@@ -128,18 +138,10 @@ async function verifyOtp(req, res) {
       return res.status(401).json({ message: "Invalid OTP" });
     }
 
+    // Hapus OTP
     await Otp.destroy({ where: { userId: user.id } });
 
-    const payload = {
-      userId: user.id,
-      fullname: user.fullname,
-      email: user.email,
-      role: user.role,
-      storeId: user.Store?.id,
-      storeName: user.Store?.name,
-      avatar: user.Profile.avatar,
-    };
-
+    // Buat token
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.ACCESS_TOKEN,
@@ -159,18 +161,29 @@ async function verifyOtp(req, res) {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      secure: process.env.ENVIRONTMENT === "production",
+      secure: process.env.ENVIRONMENT === "production",
     });
 
+    // Kirim response
     return res.status(200).send({
-      message: "Login is Success",
+      message: "Login is Successful",
       data: {
         accessToken,
-        payload,
+        payload: {
+          userId: user.id,
+          fullname: user.fullname,
+          email: user.email,
+          role: user.role,
+          storeId: user.store?.id,
+          storeName: user.store?.name,
+          avatar: user.profile.avatar,
+        },
       },
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res
+      .status(500)
+      .send({ message: "An error occurred", error: error.message });
   }
 }
 
@@ -185,7 +198,9 @@ async function userSignOut(req, res) {
 async function userAuthCheck(req, res) {
   const { userId } = req.user;
   try {
-    const user = await User.findByPk(userId, { include: [{ model: Profile }] });
+    const user = await User.findByPk(userId, {
+      include: [{ model: Profile, as: "profile", attributes: ["avatar"] }],
+    });
 
     if (!user)
       return res
@@ -196,7 +211,7 @@ async function userAuthCheck(req, res) {
       userId: user.id,
       email: user.email,
       fullname: user.fullname,
-      avatar: user.Profile.avatar,
+      avatar: user.profile.avatar,
     };
 
     res.status(200).send({
@@ -253,34 +268,29 @@ async function userAuthRefresh(req, res) {
 async function resetPassword(req, res) {
   const token = req.params.token;
   try {
-    // check reset token
     const user = await Reset.findOne({
       where: { token, ExpiresAt: { [Op.gte]: new Date() } },
     });
     if (!user)
       return res.status(400).send({
-        message: "Reset Password Token is invalid or has been expired",
+        message: "Token is invalid or has been expired",
       });
 
     const { newPassword, newPasswordConfirm } = req.body;
-    // check password match
+
     if (newPassword !== newPasswordConfirm) {
-      return res
-        .status(400)
-        .send({ message: "Password confirmation did not match" });
+      return res.status(400).send({ message: "Password did not match" });
     }
-    // create new password encryption
+
     const newHashPassword = await bcrypt.hash(newPassword, 10);
 
-    // update new password to database table and destroy reset token
     (await User.update(
       { password: newHashPassword },
       { where: { id: user.userId } }
     )) && Reset.destroy({ where: { userId: user.userId } });
 
     res.status(200).send({
-      success: true,
-      message: `Your password has been succesfully updated`,
+      message: "Password is updated",
     });
   } catch (error) {
     return res.status(500).send({
@@ -298,23 +308,20 @@ async function forgotPassword(req, res) {
       where: { email },
     });
 
-    if (!user) return res.status(401).send({ message: `Email not valid` });
-    // Get ResetPassword Token
+    if (!user) return res.status(401).send({ message: "Email is invalid" });
+
     const resetToken = resetPasswordToken(user);
 
-    // Generate Link for password reset
-    const passwordResetURL = `${process.env.BASE_URL}/reset-password/${resetToken}`;
+    const passwordResetURL = `${process.env.CLIENT_URL}/reset/${resetToken}`;
 
-    // generate message for Email content
-    const message = getTemplate({ user, passwordResetURL });
+    const message = createEmailTemplate({ user, passwordResetURL });
     await sendEmail({
       email: user.email,
-      subject: `Ecommerce Password Recovery`,
+      subject: "Password Recovery",
       message,
     });
 
-    res.status(200).send({
-      success: true,
+    res.status(201).send({
       message: `Password Recovery Link has been sent to ${user.email}`,
     });
   } catch (error) {

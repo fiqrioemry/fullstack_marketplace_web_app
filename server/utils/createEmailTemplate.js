@@ -32,7 +32,7 @@ module.exports = function createEmailTemplate(options) {
                                       <tr>
                                         <td style="font-family: 'Nunito Sans', Helvetica, Arial, sans-serif; font-size: 14px; padding: 25px 0; text-align: center">
                                           <a
-                                            href=${process.env.BASE_URL}
+                                            href=${process.env.CLIENT_URL}
                                             style="font-size: 16px; font-weight: bold; color: #a8aaaf; text-decoration: none"
                                             target="_blank""
                                           >
@@ -45,7 +45,7 @@ module.exports = function createEmailTemplate(options) {
                                       <tr>
                                         <td style="font-family: 'Nunito Sans', Helvetica, Arial, sans-serif; font-size: 14px; padding: 35px">
                                           <div>
-                                            <h2 style="margin-top: 0; text-transform: capitalize; color: #333333; font-size: 16px; font-weight: bold; text-align: left">Halo, ${options.user.name}</h2>
+                                            <h2 style="margin-top: 0; text-transform: capitalize; color: #333333; font-size: 16px; font-weight: bold; text-align: left">Halo, ${options.user.fullname}</h2>
                                             <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0.4em 0 1.1875em; line-height: 1.625; color: #51545e">
                                               Kamu meminta penggantian kata sandi dari akun
                                               <a href="#" target="_blank">nextcommerce.com</a>

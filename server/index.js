@@ -5,12 +5,12 @@ const cors = require("cors");
 const cookies = require("cookie-parser");
 const services = require("./routes");
 
-const { PORT, CLIENT_HOST } = process.env;
+const { PORT, CLIENT_URL } = process.env;
 
 app.use(cookies());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: CLIENT_HOST, credentials: true }));
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
 // route
 app.use("/api/auth", services.authRoute);
