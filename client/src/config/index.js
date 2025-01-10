@@ -59,10 +59,10 @@ export const initialSignInForm = {
 };
 
 export const initialSignUpForm = {
-  username: "",
   fullname: "",
   email: "",
   password: "",
+  otp: "",
 };
 
 export const controlSignInForm = [
@@ -82,21 +82,16 @@ export const controlSignInForm = [
 
 export const controlSignUpForm = [
   {
-    name: "username",
-    type: "text",
-    placeholder: "Enter your username",
+    name: "email",
+    type: "email",
+    placeholder: "Enter your email",
     style: "flex items-center",
   },
+
   {
     name: "fullname",
     type: "text",
     placeholder: "Enter your full name",
-    style: "flex items-center",
-  },
-  {
-    name: "email",
-    type: "email",
-    placeholder: "Enter your email",
     style: "flex items-center",
   },
   {

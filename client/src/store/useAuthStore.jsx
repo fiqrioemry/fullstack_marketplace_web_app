@@ -6,18 +6,29 @@ import { Navigate } from "react-router-dom";
 
 export const useAuthStore = create((set) => ({
   userData: null,
-  isUserAuth: true,
-  isAuthLoading: null,
+  isUserAuth: null,
+  isAuthLoading: false,
 
-  userAuthCheck: async () => {
+  sendOtpSignUp: async (email) => {
     try {
-      const response = await axiosInstance.get("/api/auth/me");
+      set({ isAuthLoading: true });
+      const response = await axiosInstance.post("/api/auth/send-otp", email);
       set({ userData: response.data.data });
     } catch (error) {
       set({ userData: null });
       Promise.reject(error);
     } finally {
-      set({ isUserAuth: false });
+      set({ isAuthLoading: false });
+    }
+  },
+
+  verifyOtpSignUp: async () => {
+    try {
+      const response = await axiosInstance.post("/api/auth/verify-otp");
+      toast.success(response.data.message);
+      return response.data.success;
+    } catch (error) {
+      Promise.reject(error);
     }
   },
 
@@ -31,6 +42,18 @@ export const useAuthStore = create((set) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isAuthLoading: false });
+    }
+  },
+
+  userAuthCheck: async () => {
+    try {
+      const response = await axiosInstance.get("/api/auth/me");
+      set({ userData: response.data.data });
+    } catch (error) {
+      set({ userData: null });
+      Promise.reject(error);
+    } finally {
+      set({ isUserAuth: false });
     }
   },
 
