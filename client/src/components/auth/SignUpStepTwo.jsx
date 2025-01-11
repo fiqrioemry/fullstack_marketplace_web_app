@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Mail } from "lucide-react";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useState, useEffect } from "react";
 
 const SignUpStepTwo = ({
-  handleVerifyOtp,
-  handleSendOtp,
   formData,
-  handleChange,
+  setFormData,
+  handleSendOtp,
+  handleVerifyOtp,
 }) => {
   const [countdown, setCountdown] = useState(30);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
@@ -35,9 +35,17 @@ const SignUpStepTwo = ({
     handleSendOtp(e);
   };
 
-  const handleOtpChange = (e) => {
-    const { name, value } = e.target;
-    handleChange(name, value);
+  const handleOtpChange = (value) => {
+    // Update nilai OTP di formData
+    setFormData((prev) => {
+      const updatedFormData = { ...prev, otp: value };
+
+      if (value.length === 6) {
+        handleVerifyOtp(updatedFormData);
+      }
+
+      return updatedFormData;
+    });
   };
 
   return (
@@ -55,22 +63,14 @@ const SignUpStepTwo = ({
       </div>
 
       <div className="flex flex-col space-y-4 items-center justify-center">
-        <InputOTP
-          maxLength={6}
-          pattern={REGEXP_ONLY_DIGITS}
-          name="otp"
-          value={formData.otp}
-          onChange={handleOtpChange}
-        >
+        <InputOTP maxLength={6} value={formData.otp} onChange={handleOtpChange}>
           <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
+            {[0, 1, 2, 3, 4, 5].map((index) => (
+              <InputOTPSlot key={index} index={index} />
+            ))}
           </InputOTPGroup>
         </InputOTP>
+
         <div className="text-sm">
           {countdown > 0 ? (
             <span>
@@ -78,14 +78,14 @@ const SignUpStepTwo = ({
             </span>
           ) : (
             <span>
-              Didnt receive the code ?{" "}
+              Did not receive the code?{" "}
               <button
-                className="text-primary font-semibold"
+                className="text_button"
                 type="button"
                 onClick={handleResendCode}
                 disabled={isResendDisabled}
               >
-                resend
+                Resend
               </button>
             </span>
           )}

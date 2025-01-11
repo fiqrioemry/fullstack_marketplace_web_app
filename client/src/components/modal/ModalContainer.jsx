@@ -10,7 +10,7 @@ import {
 export function ModalContainer({ children, title }) {
   return (
     <Dialog>
-      <DialogTrigger className="cursor-pointer" asChild>
+      <DialogTrigger className="cursor-pointer text_button" asChild>
         {title}
       </DialogTrigger>
       <DialogTitle>

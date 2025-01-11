@@ -13,11 +13,12 @@ const SignUpStepOne = ({ handleSendOtp, formData, handleChange }) => {
   };
   return (
     <form onSubmit={handleSendOtp} className="space-y-6 w-full">
-      <div className="text-center">
-        <h4>Join our marketplace now</h4>
-        <span>
-          Already have an account? <Link to="/signin">Sign In</Link>
-        </span>
+      <div className="text-center space-y-4">
+        <h4>
+          Join <span className="text-primary text-semibold">ShopyPedia</span>{" "}
+          now
+        </h4>
+        <div className="text-sm">Choose to sign up with </div>
       </div>
 
       <Button variant="outline" className="w-full py-5">
@@ -40,7 +41,10 @@ const SignUpStepOne = ({ handleSendOtp, formData, handleChange }) => {
         Sign up
       </Button>
       <div className="text-center text-sm">
-        <span>By signing up, I accept the terms and conditions</span>
+        Already have an account?{" "}
+        <Link to="/signin" className="text-primary hover:font-semibold">
+          Sign In
+        </Link>
       </div>
     </form>
   );

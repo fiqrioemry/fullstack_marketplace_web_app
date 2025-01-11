@@ -118,4 +118,8 @@
   .grid_display_4 {
     @apply grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4;
   }
+
+  .text_button {
+    @apply text-primary font-bold hover:opacity-80 duration-300 transition-all;
+  }
 }

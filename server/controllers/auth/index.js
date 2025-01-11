@@ -46,11 +46,11 @@ async function verifyOtpSignUp(req, res) {
     const storedOtp = await client.get(`otp:${email}`);
 
     if (!storedOtp) {
-      return res.status(400).send("OTP is expired");
+      return res.status(400).send({ message: "OTP is expired" });
     }
 
     if (storedOtp !== otp) {
-      return res.status(400).send("Invalid OTP.");
+      return res.status(400).send({ message: "Invalid OTP code" });
     } else {
       return res
         .status(200)

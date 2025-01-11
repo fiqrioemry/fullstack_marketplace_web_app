@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const AuthForm = ({
+  children,
   handleChange,
   formData,
   controlForm,
@@ -24,7 +25,7 @@ const AuthForm = ({
           <h4 className="text-primary">ShopyPedia</h4>
         </Link>
       </div>
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         {controlForm.map((set) => (
           <div className="grid gap-2 capitalize" key={set.name}>
             <Label htmlFor={set.name} className>
@@ -41,7 +42,7 @@ const AuthForm = ({
             />
           </div>
         ))}
-
+        {children}
         <Button type="submit" size="md" disabled={!isValid} className="w-full">
           {isLoading ? "loading" : submitTitle}
         </Button>
@@ -50,6 +51,7 @@ const AuthForm = ({
             Or continue with
           </span>
         </div>
+
         <Button
           disabled={isLoading}
           variant="outline"
@@ -61,7 +63,7 @@ const AuthForm = ({
       </div>
       <div className="text-center text-sm">
         {footerTitle}
-        <Link to={path} className="underline underline-offset-4">
+        <Link to={path} className="text_button">
           {footerLink}
         </Link>
       </div>

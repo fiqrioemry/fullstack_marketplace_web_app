@@ -2,7 +2,9 @@ import { Card } from "@/components/ui/card";
 import AuthForm from "@/components/form/AuthForm";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useHandleForm } from "@/hooks/useHandleForm";
+import SignInHelp from "../components/modal/SignInHelp";
 import { controlSignInForm, initialSignInForm } from "@/config";
+import { ModalContainer } from "../components/modal/ModalContainer";
 
 const SignIn = () => {
   const { userSignIn, isAuthLoading } = useAuthStore();
@@ -30,7 +32,15 @@ const SignIn = () => {
               path="/signup"
               handleChange={handleChange}
               isValid={isValid}
-            />
+            >
+              <div className="flex justify-end text-center text-xs">
+                <ModalContainer
+                  title={<button type="button">Need help ?</button>}
+                >
+                  <SignInHelp />
+                </ModalContainer>
+              </div>
+            </AuthForm>
           </Card>
         </div>
       </div>

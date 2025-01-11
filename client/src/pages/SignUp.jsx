@@ -11,7 +11,7 @@ const SignUp = () => {
   const { step, userSignUp, sendOtpSignUp, verifyOtpSignUp, isAuthLoading } =
     useAuthStore();
 
-  const { formData, handleChange, handleValidate } =
+  const { formData, setFormData, handleChange, handleValidate } =
     useHandleForm(initialSignUpForm);
 
   const isValid = handleValidate();
@@ -21,12 +21,11 @@ const SignUp = () => {
     sendOtpSignUp(formData);
   };
 
-  const handleVerifyOtp = (e) => {
-    e.preventDefault();
+  const handleVerifyOtp = (formData) => {
     console.log(formData);
     verifyOtpSignUp(formData);
   };
-  console.log(formData);
+
   const handleSignUp = (e) => {
     e.preventDefault();
     userSignUp(formData);
@@ -55,6 +54,7 @@ const SignUp = () => {
                 {step === 2 && !isAuthLoading && (
                   <SignUpStepTwo
                     formData={formData}
+                    setFormData={setFormData}
                     handleChange={handleChange}
                     handleSendOtp={handleSendOtp}
                     handleVerifyOtp={handleVerifyOtp}
