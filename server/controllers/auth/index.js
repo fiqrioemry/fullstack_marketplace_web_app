@@ -24,8 +24,6 @@ async function sendOtpSignUp(req, res) {
       encoding: "base32",
     });
 
-    await connectRedis();
-
     await client.setEx(`otp:${email}`, 300, otp);
 
     await sendOtp(email, otp);
@@ -148,7 +146,9 @@ async function userSignOut(req, res) {
 
 async function userAuthCheck(req, res) {
   const { userId } = req.user;
+  await connectRedis();
 
+  console.log(await client.ping());
   try {
     // const cachedUser = await client.get(userId);
 
@@ -169,9 +169,11 @@ async function userAuthCheck(req, res) {
         "gender",
         "phone",
       ],
-      include: [{ model: Store, attributes: ["id", "name", "avatar"] }],
+      include: [
+        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
+      ],
     });
-    console.log("masuk", user);
+
     const payload = {
       userId: user.id,
       email: user.email,
@@ -181,9 +183,9 @@ async function userAuthCheck(req, res) {
       phone: user.phone,
       gender: user.gender,
       role: user.role,
-      storeId: user.Store?.id,
-      storeName: user.Store?.name,
-      storeAvatar: user.Store?.avatar,
+      storeId: user.store?.id,
+      storeName: user.store?.name,
+      storeAvatar: user.store?.avatar,
     };
 
     // await client.setEx(userId, 900, JSON.stringify(payload));

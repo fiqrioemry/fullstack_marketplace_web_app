@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasMany(models.Address);
-      this.hasOne(models.Store);
+      this.hasOne(models.Store, { foreignKey: "userId", as: "store" });
       this.hasMany(models.Reset);
       this.hasMany(models.Otp);
       this.hasMany(models.Cart);
