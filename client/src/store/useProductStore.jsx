@@ -1,35 +1,54 @@
 import Cookies from "js-cookie";
-import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/services";
 import { Navigate } from "react-router-dom";
+
+import { create } from "zustand";
 
 export const useProductStore = create((set) => ({
   search: null,
   product: null,
   products: null,
   recommend: null,
-  categories: null,
-  cities: null,
+  categories: [],
+  cities: [],
+  isCitiesLoading: false,
   isSearchLoading: false,
   isProductLoading: false,
+  isCategoriesLoading: false,
 
-  getCategories: async () => {
+  getCities: async () => {
+    set({ isCitiesLoading: true });
     try {
-      const response = ["electronics", "clothes", "apparel", "food", "drink"];
-      set({ categories: response });
+      // Simulasi fetch API
+      const response = [
+        { id: 1, name: "Jakarta" },
+        { id: 2, name: "Medan" },
+        { id: 3, name: "Bandung" },
+        { id: 4, name: "Surabaya" },
+        { id: 5, name: "Malang" },
+      ];
+      set({ cities: response, isCitiesLoading: false });
     } catch (error) {
-      console.log(error);
-      set({ categories: [] });
+      console.error("Failed to fetch cities:", error);
+      set({ cities: [], isCitiesLoading: false });
     }
   },
 
-  getCities: async () => {
+  getCategories: async () => {
+    set({ isCategoriesLoading: true });
     try {
-      const response = ["jakarta", "medan", "bandung", "surabaya"];
-      set({ cities: response });
+      const response = [
+        { id: 1, name: "Electronics" },
+        { id: 2, name: "Fashion" },
+        { id: 3, name: "Food & Beverages" },
+        { id: 4, name: "Home & Living" },
+        { id: 5, name: "Beauty" },
+      ];
+      set({ categories: response, isCategoriesLoading: false });
     } catch (error) {
-      set({ cities: [] });
+      console.error("Failed to fetch categories:", error);
+      set({ categories: [], isCategoriesLoading: false });
     }
   },
 

@@ -1,17 +1,16 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import FormControls from "./FormControl";
 
 const OpenStoreForm = ({
-  children,
-  handleChange,
   formData,
   controlForm,
   submitTitle,
   isLoading,
   isValid,
+  setFormData,
+  handleChange,
   onSubmit,
 }) => {
   return (
@@ -22,23 +21,12 @@ const OpenStoreForm = ({
         </Link>
       </div>
       <div className="grid gap-4">
-        {controlForm.map((set) => (
-          <div className="grid gap-2 capitalize" key={set.name}>
-            <Label htmlFor={set.name} className>
-              {set.name}
-            </Label>
-            <Input
-              id={set.name}
-              name={set.name}
-              type={set.type}
-              value={formData[set.name]}
-              onChange={handleChange}
-              placeholder={set.placeholder}
-              required
-            />
-          </div>
-        ))}
-        {children}
+        <FormControls
+          formData={formData}
+          handleChange={handleChange}
+          setFormData={setFormData}
+          formControls={controlForm}
+        />
         <Button type="submit" size="md" disabled={!isValid} className="w-full">
           {isLoading ? "loading" : submitTitle}
         </Button>

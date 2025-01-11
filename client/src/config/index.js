@@ -69,26 +69,41 @@ export const initialOpenStoreForm = {
   name: "",
   description: "",
   city: "",
+  category: "",
 };
 
 export const ControlOpenStoreForm = [
   {
     name: "name",
+    label: "name",
     type: "text",
     placeholder: "Enter your store name",
     style: "flex items-center capitalize",
+    componentType: "input",
   },
   {
     name: "description",
+    label: "description",
     type: "text",
-    placeholder: "Enter a short description of your store",
+    placeholder: "Write a short description of your store",
     style: "flex items-center capitalize",
+    componentType: "textarea",
   },
   {
     name: "city",
+    label: "city",
     type: "select",
-    placeholder: "Enter your city",
+    placeholder: "Select your city",
     style: "flex items-center capitalize",
+    componentType: "select",
+  },
+  {
+    name: "category",
+    label: "category",
+    type: "select",
+    placeholder: "Select your category",
+    style: "flex items-center capitalize",
+    componentType: "select",
   },
 ];
 

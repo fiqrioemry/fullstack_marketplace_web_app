@@ -10,7 +10,7 @@ const OpenStore = () => {
   const { userOpenStore, isAuthLoading } = useAuthStore();
   const { formData, handleChange, handleValidate } =
     useHandleForm(initialOpenStoreForm);
-
+  console.log(formData);
   const isValid = handleValidate();
 
   const onSubmit = () => userOpenStore(formData, navigate);
