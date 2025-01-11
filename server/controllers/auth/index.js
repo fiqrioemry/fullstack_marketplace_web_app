@@ -2,41 +2,86 @@ const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
+const sendOtp = require("../../utils/sendOtp");
 const randomAvatar = require("../../utils/randomAvatar");
 const { User, Otp, Store, Reset } = require("../../models");
+const { client, connectRedis } = require("../../utils/redis");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
 const createEmailTemplate = require("../../utils/createEmailTemplate");
 
-async function userSignUp(req, res) {
-  const { fullname, email, password, passwordConfirm } = req.body;
+async function sendOtpSignUp(req, res) {
+  const { email } = req.body;
+  console.log("check", req.body);
   try {
-    // password match check
-    if (password !== passwordConfirm)
-      return res.status(500).send({ message: "Password did not match" });
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).send({ message: "Email already registered" });
+    }
 
-    // email existance check
-    const isExist = await User.findOne({
-      where: { email },
+    const secret = speakeasy.generateSecret({ length: 20 });
+    const otp = speakeasy.totp({
+      secret: secret.base32,
+      encoding: "base32",
     });
-    if (isExist)
-      return res.status(401).send({ message: "Email is already used" });
 
-    // Password Encryption
-    const salt = await bcrypt.genSalt();
-    const HashPassword = await bcrypt.hash(password, salt);
-    const user = await User.create({
+    await connectRedis();
+
+    await client.setEx(`otp:${email}`, 300, otp);
+
+    await sendOtp(email, otp);
+    return res.status(200).send({ message: "OTP sent to email" });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "Failed to send OTP", error: error.message });
+  }
+}
+
+async function verifyOtpSignUp(req, res) {
+  const { email, otp } = req.body;
+
+  try {
+    const storedOtp = await client.get(`otp:${email}`);
+
+    if (!storedOtp) {
+      return res.status(400).send("OTP is expired");
+    }
+
+    if (storedOtp !== otp) {
+      return res.status(400).send("Invalid OTP.");
+    } else {
+      return res
+        .status(200)
+        .send({ success: true, message: "OTP is verified." });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "An error occurred", error: error.message });
+  }
+}
+
+async function userSignUp(req, res) {
+  const { fullname, email, password } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  try {
+    const newUser = await User.create({
       fullname,
       email,
-      password: HashPassword,
+      password: hashedPassword,
       avatar: randomAvatar(),
     });
 
-    res.status(201).send({ data: user, message: "Sign up is success" });
-  } catch (error) {
-    return res.status(500).send({
-      message: "Failed to create new account",
-      error: error.message,
+    res.status(201).send({
+      message: "Sign up is success",
+      user: newUser,
     });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "Failed to register user", error: error.message });
   }
 }
 
@@ -339,10 +384,14 @@ async function forgotPassword(req, res) {
 module.exports = {
   userSignIn,
   verifyOtp,
-  userSignUp,
   userSignOut,
   userAuthRefresh,
   userAuthCheck,
   resetPassword,
   forgotPassword,
+
+  // new
+  sendOtpSignUp,
+  verifyOtpSignUp,
+  userSignUp,
 };

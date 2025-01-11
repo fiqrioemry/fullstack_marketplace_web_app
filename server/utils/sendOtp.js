@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 module.exports = (email, otpcode) => {
   return new Promise((resolve, reject) => {
     const options = {
-      from: `NextCommerce <${process.env.USER_EMAIL}>`,
+      from: `Marketplace <${process.env.USER_EMAIL}>`,
       to: email,
       subject: "One-Time Password (OTP) for Login",
       text: `Your OTP Code is  ${otpcode}`,

@@ -18,36 +18,41 @@ import {
 import { Loader, Mail } from "lucide-react";
 
 const SignUp = () => {
+  const [verifyStatus, setVerifyStatus] = useState();
   const {
-    step,
     userSignUp,
     userData,
     sendOtpSignUp,
     verifyOtpSignUp,
     isAuthLoading,
   } = useAuthStore();
-
   const { formData, handleChange, handleValidate } =
     useHandleForm(initialSignUpForm);
 
   const isInputValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  const isInputOtpValid = () => {
+    formData.otp.length === 6;
+  };
 
   const isValid = handleValidate();
 
   const handleSendOtp = (e) => {
     e.preventDefault();
+    console.log(formData);
     sendOtpSignUp(formData);
   };
 
   const handleVerifyOtp = (e) => {
     e.preventDefault();
-    verifyOtpSignUp(formData);
+    const status = verifyOtpSignUp(formData.email, formData.otp);
+    setVerifyStatus(status);
   };
 
   const handleSignUp = (e) => {
     e.preventDefault();
     userSignUp(formData);
   };
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden bg-muted lg:block">
@@ -61,7 +66,7 @@ const SignUp = () => {
                 <Loader size={50} className="animate-spin" />
               </div>
             )}
-            {step === 2 && !isAuthLoading && (
+            {!isAuthLoading && !userData && (
               <form onSubmit={handleSendOtp} className="space-y-6 w-full">
                 <div className="text-center">
                   <h4>Join our marketplace now</h4>
@@ -99,7 +104,7 @@ const SignUp = () => {
               </form>
             )}
 
-            {step === 2 && !isAuthLoading && (
+            {userData && !verifyStatus && (
               <Card>
                 <CardContent className="p-4">
                   <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -120,6 +125,9 @@ const SignUp = () => {
                         maxLength={6}
                         pattern={REGEXP_ONLY_DIGITS}
                         value={formData.otp}
+                        onChange={(value) =>
+                          handleChange({ target: { name: "otp", value } })
+                        }
                       >
                         <InputOTPGroup>
                           <InputOTPSlot index={0} />
@@ -134,12 +142,16 @@ const SignUp = () => {
                         <span>Didnt receive the code? Resend</span>
                       </div>
                     </div>
+
+                    <Button disabled={!isInputOtpValid()} className="w-full">
+                      Submit
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
             )}
 
-            {step === 1 && !isAuthLoading && (
+            {verifyStatus && (
               <form onSubmit={handleSignUp} className="flex flex-col gap-6">
                 <div className="text-center">
                   <Link to="/">

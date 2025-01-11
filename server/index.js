@@ -2,30 +2,21 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const passport = require("passport");
-const session = require("cookie-session");
 const cookies = require("cookie-parser");
 const services = require("./routes");
 
-const { PORT, CLIENT_URL, SESSION_SECRET } = process.env;
-
-// Setup cookie session
-app.use(
-  session({
-    name: "session",
-    keys: [process.env.SESSION_SECRET],
-    maxAge: 24 * 60 * 60 * 1000,
-  })
-);
-
-// Initialize Passport
-app.use(passport.initialize());
-app.use(passport.session());
+const { PORT, CLIENT_URL } = process.env;
 
 app.use(cookies());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+app.use(
+  cors({
+    origin: CLIENT_URL,
+    credentials: true,
+    methods: ["POST", "PUT", "GET", "DELETE"],
+  })
+);
 
 // route
 app.use("/api/auth", services.authRoute);

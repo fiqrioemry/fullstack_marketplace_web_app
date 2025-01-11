@@ -2,33 +2,46 @@ import Cookies from "js-cookie";
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/services";
-import { Navigate } from "react-router-dom";
 
 export const useAuthStore = create((set) => ({
+  step: 1,
   userData: null,
   isUserAuth: null,
   isAuthLoading: false,
 
-  sendOtpSignUp: async (email) => {
+  sendOtpSignUp: async (formData) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/api/auth/send-otp", email);
-      set({ userData: response.data.data });
+      const response = await axiosInstance.post("/api/auth/send-otp", formData);
+      if (response.data.success) {
+        set({ step: 2 });
+      } else {
+        set({ step: 1 });
+      }
     } catch (error) {
-      set({ userData: null });
       Promise.reject(error);
     } finally {
       set({ isAuthLoading: false });
     }
   },
 
-  verifyOtpSignUp: async () => {
+  verifyOtpSignUp: async (formData) => {
     try {
-      const response = await axiosInstance.post("/api/auth/verify-otp");
+      set({ isAuthLoading: true });
+      const response = await axiosInstance.post(
+        "/api/auth/verify-otp",
+        formData
+      );
+
       toast.success(response.data.message);
-      return response.data.success;
+      if (response.data.success) {
+        set({ step: 3 });
+      }
     } catch (error) {
+      toast.error(error.response.data.message);
       Promise.reject(error);
+    } finally {
+      set({ isAuthLoading: false });
     }
   },
 
@@ -37,9 +50,9 @@ export const useAuthStore = create((set) => ({
       set({ isAuthLoading: true });
       const response = await axiosInstance.post("/api/auth/signup", formData);
       toast.success(response.data.message);
-      <Navigate to="/signin" />;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Signup failed");
+      throw error;
     } finally {
       set({ isAuthLoading: false });
     }
