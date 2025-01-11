@@ -42,6 +42,12 @@ function FormControls({
   function renderComponentByType(controlItem) {
     let element = null;
     const currentControlItemValue = formData[controlItem.name] || "";
+    const options =
+      controlItem.name === "city"
+        ? cities
+        : controlItem.name === "category"
+        ? categories
+        : controlItem.options || [];
 
     switch (controlItem.componentType) {
       case "input":
@@ -57,13 +63,6 @@ function FormControls({
         );
         break;
       case "select":
-        // eslint-disable-next-line no-case-declarations
-        const options =
-          controlItem.name === "city"
-            ? cities
-            : controlItem.name === "category"
-            ? categories
-            : controlItem.options || [];
         element = (
           <Select
             onValueChange={(value) =>
@@ -104,16 +103,28 @@ function FormControls({
       case "checkbox":
         element = (
           <>
-            <Input
-              id={controlItem.name}
-              name={controlItem.name}
-              placeholder={controlItem.placeholder}
-              type={controlItem.type}
-              value={controlItem.name}
-              checked={currentControlItemValue.includes(controlItem.name)}
-              onChange={handleChange}
-            />
-            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+            {isCitiesLoading || isCategoriesLoading ? (
+              <SelectItem disabled>Loading...</SelectItem>
+            ) : (
+              options.map((option) => (
+                <div className="flex items-center space-x-3" key={option.id}>
+                  <Input
+                    id={controlItem.name}
+                    name={controlItem.name}
+                    type={controlItem.type}
+                    value={controlItem.name}
+                    checked={currentControlItemValue.includes(controlItem.name)}
+                    onChange={handleChange}
+                  />
+                  <Label
+                    htmlFor={controlItem.name}
+                    className="text-sm font-medium"
+                  >
+                    {controlItem.label}
+                  </Label>
+                </div>
+              ))
+            )}
           </>
         );
         break;
