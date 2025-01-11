@@ -6,14 +6,13 @@ import { axiosInstance } from "@/services";
 export const useAuthStore = create((set) => ({
   step: 1,
   userData: null,
-  isUserAuth: null,
+  isCheckAuth: true,
   isAuthLoading: false,
 
   sendOtpSignUp: async (formData) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/api/auth/send-otp", formData);
-
+      const response = await axiosInstance.post("/send-otp", formData);
       if (response.data.success) {
         set({ step: 2 });
       }
@@ -21,7 +20,6 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       toast.error(error.response.data.message);
       Promise.reject(error);
-      set({ step: 1 });
     } finally {
       set({ isAuthLoading: false });
     }
@@ -30,10 +28,7 @@ export const useAuthStore = create((set) => ({
   verifyOtpSignUp: async (formData) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post(
-        "/api/auth/verify-otp",
-        formData
-      );
+      const response = await axiosInstance.post("/verify-otp", formData);
 
       toast.success(response.data.message);
       if (response.data.success) {
@@ -47,60 +42,56 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  userSignUp: async (formData) => {
+  userSignUp: async (formData, navigate) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/api/auth/signup", formData);
+      const response = await axiosInstance.post("/signup", formData);
+
       toast.success(response.data.message);
+
+      if (response.data.success) {
+        navigate("/signin");
+        set({ step: 1 });
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed");
-      throw error;
+      toast.error(error.response.data.message);
     } finally {
       set({ isAuthLoading: false });
     }
   },
-
   userAuthCheck: async () => {
     try {
-      const response = await axiosInstance.get("/api/auth/me");
+      const response = await axiosInstance.get("/me");
       set({ userData: response.data.data });
     } catch (error) {
       set({ userData: null });
       Promise.reject(error);
     } finally {
-      set({ isUserAuth: false });
+      set({ isCheckAuth: false });
     }
   },
 
-  userSignIn: async (formData) => {
+  userSignIn: async (formData, navigate) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/api/auth/signin", formData);
-      toast.success(response.data.message);
-
+      const response = await axiosInstance.post("/signin", formData);
       Cookies.set("accessToken", response.data.data.accessToken, {
-        path: "/",
-        secure: true,
-        sameSite: "strict",
-        expires: 1 / 48,
+        expires: 1 / 96,
       });
-
       set({ userData: response.data.data });
+      toast.success(response.data.message);
+      navigate("/");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Something went wrong, please try again."
-      );
+      toast.error(error.response.data.message);
     } finally {
       set({ isAuthLoading: false });
-      <Navigate to="/" />;
     }
   },
 
   userSignOut: async () => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/api/auth/signout");
+      const response = await axiosInstance.post("/auth/signout");
       toast.success(response.data.message);
       Cookies.remove("accessToken");
       set({ userData: [] });

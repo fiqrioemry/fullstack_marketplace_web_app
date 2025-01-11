@@ -18,52 +18,56 @@ import Transaction from "./pages/customer/Transaction";
 import Notification from "./pages/seller/Notification";
 import CustomerSettings from "./pages/customer/Settings";
 
-// layout
+// support
+
 import MainLayout from "./components/layout/MainLayout";
 import { Navigate, Route, Routes } from "react-router-dom";
 import SellerLayout from "./components/layout/SellerLayout";
 import CustomerLayout from "./components/layout/CustomerLayout";
+import AuthRoute from "./middleware";
 
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="signin" element={<SignIn />} />
-        <Route path="signup" element={<SignUp />} />
+      <AuthRoute>
+        <Routes>
+          <Route path="signin" element={<SignIn />} />
+          <Route path="signup" element={<SignUp />} />
 
-        {/* non auth path */}
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path=":storename" element={<Store />} />
-          <Route path="category" element={<Category />} />
-          <Route path="search" element={<SearchResult />} />
-          <Route path="open-shop" element={<OpenStore />} />
-          <Route path="cart/checkout" element={<Checkout />} />
-          <Route path=":storename/:product" element={<ProductDetail />} />
-          <Route path="category/:category" element={<ProductCategory />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
+          {/* non auth path */}
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path=":storename" element={<Store />} />
+            <Route path="category" element={<Category />} />
+            <Route path="search" element={<SearchResult />} />
+            <Route path="open-shop" element={<OpenStore />} />
+            <Route path="cart/checkout" element={<Checkout />} />
+            <Route path=":storename/:product" element={<ProductDetail />} />
+            <Route path="category/:category" element={<ProductCategory />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
 
-        {/* customer */}
-        <Route path="user" element={<CustomerLayout />}>
-          {/* Redirect from /user to /user/setting */}
-          <Route path="address" element={<Address />} />
-          <Route path="transaction" element={<Transaction />} />
-          <Route path="settings" element={<CustomerSettings />} />
-          <Route index element={<Navigate to="settings" replace />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
+          {/* customer */}
+          <Route path="user" element={<CustomerLayout />}>
+            {/* Redirect from /user to /user/setting */}
+            <Route path="address" element={<Address />} />
+            <Route path="transaction" element={<Transaction />} />
+            <Route path="settings" element={<CustomerSettings />} />
+            <Route index element={<Navigate to="settings" replace />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
 
-        {/* seller */}
-        <Route path="/shop" element={<SellerLayout />}>
-          <Route path="order" element={<Order />} />
-          <Route path="notification" element={<Notification />} />
-          <Route index path="settings" element={<ShopSettings />} />
-          <Route index element={<Navigate to="settings" replace />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+          {/* seller */}
+          <Route path="/shop" element={<SellerLayout />}>
+            <Route path="order" element={<Order />} />
+            <Route path="notification" element={<Notification />} />
+            <Route index path="settings" element={<ShopSettings />} />
+            <Route index element={<Navigate to="settings" replace />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </AuthRoute>
     </>
   );
 }
