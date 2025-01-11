@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import AuthForm from "@/components/form/AuthForm";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useHandleForm } from "@/hooks/useHandleForm";
@@ -7,13 +8,14 @@ import { controlSignInForm, initialSignInForm } from "@/config";
 import { ModalContainer } from "../components/modal/ModalContainer";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const { userSignIn, isAuthLoading } = useAuthStore();
   const { formData, handleChange, handleSubmit, handleValidate } =
     useHandleForm(initialSignInForm);
 
   const isValid = handleValidate();
 
-  const onSubmit = () => userSignIn(formData);
+  const onSubmit = () => userSignIn(formData, navigate);
 
   return (
     <div className="grid min-h-svh ">

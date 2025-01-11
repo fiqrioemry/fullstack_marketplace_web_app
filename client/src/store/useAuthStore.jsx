@@ -45,6 +45,7 @@ export const useAuthStore = create((set) => ({
   userSignUp: async (formData, navigate) => {
     try {
       set({ isAuthLoading: true });
+
       const response = await axiosInstance.post("/signup", formData);
 
       toast.success(response.data.message);
@@ -61,24 +62,22 @@ export const useAuthStore = create((set) => ({
   },
   userAuthCheck: async () => {
     try {
-      const response = await axiosInstance.get("/me");
+      const response = await axiosInstance.get("/auth/me");
       set({ userData: response.data.data });
     } catch (error) {
       set({ userData: null });
-      Promise.reject(error);
+      return Promise.reject(error);
     } finally {
       set({ isCheckAuth: false });
     }
   },
-
   userSignIn: async (formData, navigate) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/signin", formData);
+      const response = await axiosInstance.post("/auth/signin", formData);
       Cookies.set("accessToken", response.data.data.accessToken, {
         expires: 1 / 96,
       });
-      set({ userData: response.data.data });
       toast.success(response.data.message);
       navigate("/");
     } catch (error) {

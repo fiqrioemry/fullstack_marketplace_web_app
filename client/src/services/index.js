@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-const API_URL =
-  import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
+// const API_URL =
+//   import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
 
 export const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -28,14 +28,19 @@ axiosInstance.interceptors.response.use(
       !error.config.__isRetryRequest
     ) {
       try {
-        const response = await axios.get(`${API_URL}/auth/refresh`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/auth/refresh",
+          {
+            withCredentials: true,
+          }
+        );
 
         const newAccessToken = response.data.data.accessToken;
+
         Cookies.set("accessToken", newAccessToken, { expires: 1 / 96 });
 
         error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+
         return axiosInstance(error.config);
       } catch (refreshError) {
         return Promise.reject(refreshError);
