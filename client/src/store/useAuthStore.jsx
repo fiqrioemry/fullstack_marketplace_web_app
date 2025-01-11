@@ -12,7 +12,7 @@ export const useAuthStore = create((set) => ({
   sendOtpSignUp: async (formData) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/send-otp", formData);
+      const response = await axiosInstance.post("/auth/send-otp", formData);
       if (response.data.success) {
         set({ step: 2 });
       }
@@ -28,7 +28,7 @@ export const useAuthStore = create((set) => ({
   verifyOtpSignUp: async (formData) => {
     try {
       set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/verify-otp", formData);
+      const response = await axiosInstance.post("/auth/verify-otp", formData);
 
       toast.success(response.data.message);
       if (response.data.success) {
@@ -46,7 +46,7 @@ export const useAuthStore = create((set) => ({
     try {
       set({ isAuthLoading: true });
 
-      const response = await axiosInstance.post("/signup", formData);
+      const response = await axiosInstance.post("/auth/signup", formData);
 
       toast.success(response.data.message);
 

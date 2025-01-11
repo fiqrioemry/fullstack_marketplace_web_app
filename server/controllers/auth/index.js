@@ -3,9 +3,9 @@ const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
 const sendOtp = require("../../utils/sendOtp");
-const randomAvatar = require("../../utils/randomAvatar");
+const { client } = require("../../utils/redis");
 const { User, Store, Reset } = require("../../models");
-const { client, connectRedis } = require("../../utils/redis");
+const randomAvatar = require("../../utils/randomAvatar");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
 const createEmailTemplate = require("../../utils/createEmailTemplate");
 
@@ -146,18 +146,17 @@ async function userSignOut(req, res) {
 
 async function userAuthCheck(req, res) {
   const { userId } = req.user;
-  await connectRedis();
 
-  console.log(await client.ping());
   try {
-    // const cachedUser = await client.get(userId);
+    // get data with redis key
+    const cachedUser = await client.get(`user:${userId}`);
 
-    // if (cachedUser) {
-    //   return res.status(200).send({
-    //     data: JSON.parse(cachedUser),
-    //   });
-    // }
+    // return res if redis exist
+    if (cachedUser) {
+      return res.status(200).send({ data: JSON.parse(cachedUser) });
+    }
 
+    // fetch user data
     const user = await User.findByPk(userId, {
       attributes: [
         "id",
@@ -174,6 +173,7 @@ async function userAuthCheck(req, res) {
       ],
     });
 
+    // assign data value
     const payload = {
       userId: user.id,
       email: user.email,
@@ -188,7 +188,8 @@ async function userAuthCheck(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    // await client.setEx(userId, 900, JSON.stringify(payload));
+    // set expire in 15 min
+    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(200).send({
       data: payload,
@@ -305,6 +306,7 @@ async function forgotPassword(req, res) {
     return res.status(500).send({ message: error.message });
   }
 }
+
 module.exports = {
   userSignIn,
   userSignOut,

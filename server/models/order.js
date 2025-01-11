@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasMany(models.OrderDetail, {
         foreignKey: "orderId",
-        as: "orderDetails",
+        as: "orderDetail",
       });
-      this.belongsTo(models.Store, { foreignKey: "storeId", as: "store" });
-      this.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+      this.belongsTo(models.Store);
+      this.belongsTo(models.User);
     }
   }
   Order.init(

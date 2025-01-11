@@ -1,6 +1,4 @@
 const { createClient } = require("redis");
-const dotenv = require("dotenv");
-dotenv.config();
 
 const { REDIS_CLIENT_PASSWORD, REDIS_CLIENT_URL } = process.env;
 
@@ -15,13 +13,13 @@ const client = createClient({
 
 client.on("error", (err) => console.log("Redis Client Error", err));
 
-// Pastikan Redis terhubung
 const connectRedis = async () => {
   try {
     await client.connect();
-    console.log("Connected to Redis");
+    console.log("Redis is connected");
   } catch (err) {
     console.error("Error connecting to Redis", err);
+    process.exit(1);
   }
 };
 

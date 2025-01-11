@@ -2,8 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const cookies = require("cookie-parser");
 const services = require("./routes");
+const cookies = require("cookie-parser");
+const { connectRedis } = require("./utils/redis");
 
 const { PORT, CLIENT_URL } = process.env;
 
@@ -18,12 +19,13 @@ app.use(
   })
 );
 
-// route
-app.use("/api/auth", services.authRoute);
-// app.use("/api/user", services.userRoute);
-// app.use("/api/product", services.productRoute);
-// app.use("/api/category", services.categoryRoute);
+connectRedis().then(() => {
+  app.use("/api/auth", services.authRoute);
+  // app.use("/api/user", services.userRoute);
+  // app.use("/api/product", services.productRoute);
+  // app.use("/api/category", services.categoryRoute);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 });
