@@ -7,11 +7,13 @@ import {
 } from "@/components/ui/accordion";
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import FormControls from "./form/FormControl";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProductStore } from "../store/useProductStore";
 import FilterBoxSkeleton from "./loading/FilterBoxSkeleton";
+import { controlFilterCategory, controlFilterCity } from "../config";
 
-const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
+const FilterBox = ({ formData, handleChange, handleFilterChange }) => {
   const { categories, getCities, getCategories, cities } = useProductStore();
 
   useEffect(() => {
@@ -33,24 +35,11 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
                 Category
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-3 px-3">
-                  {categories.map((item) => (
-                    <div className="flex items-center space-x-3" key={item}>
-                      <input
-                        id={item}
-                        type="checkbox"
-                        name="category"
-                        value={item}
-                        checked={formData.category.includes(item)}
-                        onChange={handleFilterChange}
-                      />
-
-                      <label htmlFor={item} className="text-sm font-medium">
-                        {item}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                <FormControls
+                  formData={formData}
+                  handleChange={handleFilterChange}
+                  formControls={controlFilterCategory}
+                />
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
@@ -58,24 +47,11 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
                 Location
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-3 px-3">
-                  {cities.map((item) => (
-                    <div className="flex items-center space-x-3" key={item}>
-                      <input
-                        id={item}
-                        type="checkbox"
-                        name="city"
-                        value={item}
-                        checked={formData.city.includes(item)}
-                        onChange={handleFilterChange}
-                      />
-
-                      <label htmlFor={item} className="text-sm font-medium">
-                        {item}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                <FormControls
+                  formData={formData}
+                  formControls={controlFilterCity}
+                  handleChange={handleFilterChange}
+                />
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
@@ -93,12 +69,7 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
                       name="minPrice"
                       value={formData.minPrice}
                       onBlur={handleFilterChange}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
+                      onChange={handleChange}
                       className="h-10 pl-11 rounded-lg"
                       placeholder="Minimum Price"
                     />
@@ -112,12 +83,7 @@ const FilterBox = ({ formData, setFormData, handleFilterChange }) => {
                       name="maxPrice"
                       value={formData.maxPrice}
                       onBlur={handleFilterChange}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          [e.target.name]: e.target.value,
-                        })
-                      }
+                      onChange={handleChange}
                       className="h-10 pl-11 rounded-lg"
                       placeholder="Maximum Price"
                     />

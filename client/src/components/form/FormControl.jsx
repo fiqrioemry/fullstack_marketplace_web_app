@@ -11,12 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useProductStore } from "../../store/useProductStore";
 
-function FormControls({
-  formControls = [],
-  formData,
-  setFormData,
-  handleChange,
-}) {
+function FormControls({ formControls = [], formData, handleChange }) {
   const {
     getCities,
     getCategories,
@@ -62,6 +57,37 @@ function FormControls({
           />
         );
         break;
+      case "checkbox":
+        element = (
+          <>
+            {isCitiesLoading || isCategoriesLoading ? (
+              <SelectItem disabled>Loading...</SelectItem>
+            ) : (
+              options.map((option) => (
+                <div
+                  className="flex items-center space-x-3 py-2 px-3"
+                  key={option.id}
+                >
+                  <input
+                    id={controlItem.name}
+                    name={controlItem.name}
+                    type={controlItem.type}
+                    value={option.name}
+                    checked={currentControlItemValue.includes(option.name)}
+                    onChange={handleChange}
+                  />
+                  <Label
+                    htmlFor={controlItem.name}
+                    className="text-sm font-medium"
+                  >
+                    {option.name}
+                  </Label>
+                </div>
+              ))
+            )}
+          </>
+        );
+        break;
       case "select":
         element = (
           <Select
@@ -97,34 +123,6 @@ function FormControls({
               value={currentControlItemValue}
               onChange={handleChange}
             />
-          </>
-        );
-        break;
-      case "checkbox":
-        element = (
-          <>
-            {isCitiesLoading || isCategoriesLoading ? (
-              <SelectItem disabled>Loading...</SelectItem>
-            ) : (
-              options.map((option) => (
-                <div className="flex items-center space-x-3" key={option.id}>
-                  <Input
-                    id={controlItem.name}
-                    name={controlItem.name}
-                    type={controlItem.type}
-                    value={controlItem.name}
-                    checked={currentControlItemValue.includes(controlItem.name)}
-                    onChange={handleChange}
-                  />
-                  <Label
-                    htmlFor={controlItem.name}
-                    className="text-sm font-medium"
-                  >
-                    {controlItem.label}
-                  </Label>
-                </div>
-              ))
-            )}
           </>
         );
         break;

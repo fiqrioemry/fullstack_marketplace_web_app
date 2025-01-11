@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { initialSearchForm } from "../config";
 import FilterBox from "../components/FilterBox";
 import SortingBox from "../components/SortingBox";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { useHandleForm } from "../hooks/useHandleForm";
 import PageBreadCrumb from "../components/PageBreadCrumb";
 import { useProductStore } from "../store/useProductStore";
 import { ProductPagination } from "../components/ProductPagination";
@@ -12,7 +13,8 @@ import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 const SearchResult = () => {
   const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [formData, setFormData] = useState(initialSearchForm);
+  const { formData, setFormData, handleChange } =
+    useHandleForm(initialSearchForm);
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
@@ -26,7 +28,7 @@ const SearchResult = () => {
       city: params.city ? params.city.split(",") : [],
       category: params.category ? params.category.split(",") : [],
     });
-  }, [searchParams]);
+  }, [searchParams, setFormData]);
 
   useEffect(() => {
     getProducts(formData);
@@ -64,7 +66,7 @@ const SearchResult = () => {
             <div className="col-span-12 md:col-span-3">
               <FilterBox
                 formData={formData}
-                setFormData={setFormData}
+                handleChange={handleChange}
                 handleFilterChange={handleFilterChange}
               />
             </div>

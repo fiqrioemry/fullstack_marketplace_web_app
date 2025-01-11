@@ -107,6 +107,25 @@ export const ControlOpenStoreForm = [
   },
 ];
 
+export const controlFilterCategory = [
+  {
+    name: "category",
+    label: "category",
+    type: "checkbox",
+    style: "flex items-center capitalize",
+    componentType: "checkbox",
+  },
+];
+
+export const controlFilterCity = [
+  {
+    name: "city",
+    label: "city",
+    type: "checkbox",
+    style: "flex items-center capitalize",
+    componentType: "checkbox",
+  },
+];
 export const controlSignInForm = [
   {
     name: "email",
