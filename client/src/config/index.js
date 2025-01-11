@@ -65,6 +65,33 @@ export const initialSignUpForm = {
   otp: "",
 };
 
+export const initialOpenStoreForm = {
+  name: "",
+  description: "",
+  city: "",
+};
+
+export const ControlOpenStoreForm = [
+  {
+    name: "name",
+    type: "text",
+    placeholder: "Enter your store name",
+    style: "flex items-center capitalize",
+  },
+  {
+    name: "description",
+    type: "text",
+    placeholder: "Enter a short description of your store",
+    style: "flex items-center capitalize",
+  },
+  {
+    name: "city",
+    type: "select",
+    placeholder: "Enter your city",
+    style: "flex items-center capitalize",
+  },
+];
+
 export const controlSignInForm = [
   {
     name: "email",

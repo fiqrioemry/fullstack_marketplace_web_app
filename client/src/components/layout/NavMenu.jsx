@@ -2,18 +2,21 @@ import { Fragment } from "react";
 import { ShopAuthPath } from "../../config";
 import AuthNav from "../navigation/AuthNav";
 import ShopNav from "../navigation/ShopNav";
-import { useLocation } from "react-router-dom";
 import NonAuthNav from "../navigation/NonAuthNav";
+import { useProvider } from "../../context/GlobalProvider";
 
 const NavMenu = () => {
-  const isUserAuth = false;
-  const location = useLocation();
+  const { userData, currentPath } = useProvider();
 
   return (
     <Fragment>
-      {!isUserAuth && <NonAuthNav />}
-      {isUserAuth && !ShopAuthPath.includes(location.pathname) && <AuthNav />}
-      {isUserAuth && ShopAuthPath.includes(location.pathname) && <ShopNav />}
+      {!userData && <NonAuthNav />}
+      {userData && !ShopAuthPath.includes(currentPath) && (
+        <AuthNav user={userData} />
+      )}
+      {userData && ShopAuthPath.includes(currentPath) && (
+        <ShopNav user={userData} />
+      )}
     </Fragment>
   );
 };

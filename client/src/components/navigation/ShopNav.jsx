@@ -2,7 +2,7 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import DropDown from "./DropDown";
+import DropDown from "../dropdown/DropDownContainer";
 import { Link } from "react-router-dom";
 import { SellerNavLinks } from "../../config";
 

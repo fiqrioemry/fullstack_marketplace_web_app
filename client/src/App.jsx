@@ -34,17 +34,16 @@ function App() {
           <Route path="signin" element={<SignIn />} />
           <Route path="signup" element={<SignUp />} />
 
-          {/* non auth path */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="cart" element={<Cart />} />
             <Route path=":storename" element={<Store />} />
             <Route path="category" element={<Category />} />
             <Route path="search" element={<SearchResult />} />
-            <Route path="open-shop" element={<OpenStore />} />
             <Route path="cart/checkout" element={<Checkout />} />
             <Route path=":storename/:product" element={<ProductDetail />} />
             <Route path="category/:category" element={<ProductCategory />} />
+            <Route path="open-shop" element={<OpenStore />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 

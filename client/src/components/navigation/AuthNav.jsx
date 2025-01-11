@@ -1,14 +1,14 @@
-import {
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-} from "@/components/ui/dropdown-menu";
-import DropDown from "./DropDown";
+/* eslint-disable react/prop-types */
 import CartItem from "../CartItem";
+import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
-import { CustomerNavLinks } from "../../config";
+import UserNavMenu from "../dropdown/UserNavMenu";
+import ShopNavMenu from "../dropdown/ShopNavMenu";
 import { Heart, ShoppingBag, Store } from "lucide-react";
+import DropDownContainer from "../dropdown/DropDownContainer";
 
-const AuthNav = () => {
+const AuthNav = ({ user }) => {
+  console.log(user);
   return (
     <nav className="flex items-center gap-x-6">
       <Heart />
@@ -16,25 +16,19 @@ const AuthNav = () => {
         <ShoppingBag />
       </CartItem>
 
-      <Link to={`/shop`}>
-        <Store />
-      </Link>
+      {user.role === "customer" ? (
+        <DropDownContainer trigger={<Store />}>
+          <ShopNavMenu />
+        </DropDownContainer>
+      ) : (
+        <Link to="/shop">
+          <UserAvatar avatar={user.store?.storeAvatar} />
+        </Link>
+      )}
 
-      <DropDown>
-        {CustomerNavLinks.map((link) => {
-          return (
-            <Link to={link.href} key={link.href}>
-              <DropdownMenuItem
-                value={link.title}
-                className="w-full cursor-pointer"
-              >
-                {link.title}
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </Link>
-          );
-        })}
-      </DropDown>
+      <DropDownContainer trigger={<UserAvatar avatar={user.avatar} />}>
+        <UserNavMenu />
+      </DropDownContainer>
     </nav>
   );
 };

@@ -60,6 +60,24 @@ export const useAuthStore = create((set) => ({
       set({ isAuthLoading: false });
     }
   },
+
+  userOpenStore: async (formData, navigate) => {
+    try {
+      set({ isAuthLoading: true });
+
+      const response = await axiosInstance.post("/auth/open-store", formData);
+
+      toast.success(response.data.message);
+
+      if (response.data.success) {
+        navigate("/shop");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isAuthLoading: false });
+    }
+  },
   userAuthCheck: async () => {
     try {
       const response = await axiosInstance.get("/auth/me");
