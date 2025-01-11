@@ -9,8 +9,6 @@ const ProductRecommendation = () => {
   const count = useResponsiveCount();
   const [limit, setLimit] = useState(null);
   const { getProducts, products, isProductLoading } = useProductStore();
-
-  console.log(isProductLoading);
   useEffect(() => {
     setLimit(count);
   }, [count]);

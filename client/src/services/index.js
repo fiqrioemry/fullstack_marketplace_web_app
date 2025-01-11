@@ -1,7 +1,5 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-// const API_URL =
-//   import.meta.env.MODE === "development" ? "http://localhost:5000/api" : "/api";
 
 export const axiosInstance = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -11,6 +9,7 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = Cookies.get("accessToken") || null;
+
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

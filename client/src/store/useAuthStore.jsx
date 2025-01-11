@@ -75,7 +75,7 @@ export const useAuthStore = create((set) => ({
     try {
       set({ isAuthLoading: true });
       const response = await axiosInstance.post("/auth/signin", formData);
-      Cookies.set("accessToken", response.data.data.accessToken, {
+      Cookies.set("accessToken", response.data.data, {
         expires: 1 / 96,
       });
       toast.success(response.data.message);
