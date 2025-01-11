@@ -4,12 +4,13 @@ import { FcGoogle } from "react-icons/fc";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const SignUpStepOne = ({
-  handleSendOtp,
-  formData,
-  handleChange,
-  isValidEmail,
-}) => {
+const SignUpStepOne = ({ handleSendOtp, formData, handleChange }) => {
+  const isValidEmail = () => {
+    return (
+      formData.email.length !== 0 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    );
+  };
   return (
     <form onSubmit={handleSendOtp} className="space-y-6 w-full">
       <div className="text-center">
@@ -35,7 +36,7 @@ const SignUpStepOne = ({
         placeholder="Enter your email"
         className="w-full py-5"
       />
-      <Button disabled={!isValidEmail} type="submit" className="w-full">
+      <Button disabled={!isValidEmail()} type="submit" className="w-full">
         Sign up
       </Button>
       <div className="text-center text-sm">

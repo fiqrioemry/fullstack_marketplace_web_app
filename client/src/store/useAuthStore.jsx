@@ -17,7 +17,9 @@ export const useAuthStore = create((set) => ({
       if (response.data.success) {
         set({ step: 2 });
       }
+      toast.success(response.data.message);
     } catch (error) {
+      toast.error(error.response.data.message);
       Promise.reject(error);
       set({ step: 1 });
     } finally {

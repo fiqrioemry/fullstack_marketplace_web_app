@@ -14,28 +14,19 @@ const SignUp = () => {
   const { formData, handleChange, handleValidate } =
     useHandleForm(initialSignUpForm);
 
-  const isValidEmail = () => {
-    return (
-      formData.email.length !== 0 &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    );
-  };
-
-  console.log(step);
-
   const isValid = handleValidate();
 
   const handleSendOtp = (e) => {
     e.preventDefault();
-    console.log("success");
     sendOtpSignUp(formData);
   };
 
   const handleVerifyOtp = (e) => {
     e.preventDefault();
+    console.log(formData);
     verifyOtpSignUp(formData);
   };
-
+  console.log(formData);
   const handleSignUp = (e) => {
     e.preventDefault();
     userSignUp(formData);
@@ -58,7 +49,6 @@ const SignUp = () => {
                     formData={formData}
                     handleChange={handleChange}
                     handleSendOtp={handleSendOtp}
-                    isValidEmail={isValidEmail()}
                   />
                 )}
 
@@ -66,6 +56,7 @@ const SignUp = () => {
                   <SignUpStepTwo
                     formData={formData}
                     handleChange={handleChange}
+                    handleSendOtp={handleSendOtp}
                     handleVerifyOtp={handleVerifyOtp}
                   />
                 )}
