@@ -13,13 +13,13 @@ export const useAuthStore = create((set) => ({
     try {
       set({ isAuthLoading: true });
       const response = await axiosInstance.post("/api/auth/send-otp", formData);
+
       if (response.data.success) {
         set({ step: 2 });
-      } else {
-        set({ step: 1 });
       }
     } catch (error) {
       Promise.reject(error);
+      set({ step: 1 });
     } finally {
       set({ isAuthLoading: false });
     }

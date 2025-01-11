@@ -29,7 +29,9 @@ async function sendOtpSignUp(req, res) {
     await client.setEx(`otp:${email}`, 300, otp);
 
     await sendOtp(email, otp);
-    return res.status(200).send({ message: "OTP sent to email" });
+    return res
+      .status(200)
+      .send({ success: true, message: "OTP sent to email" });
   } catch (error) {
     return res
       .status(500)
