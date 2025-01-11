@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
 
 module.exports = async function isAuthenticate(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -19,6 +21,7 @@ module.exports = async function isAuthenticate(req, res, next) {
           return res.sendStatus(403);
         }
       }
+
       req.user = decode;
 
       next();

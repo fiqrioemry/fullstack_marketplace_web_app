@@ -4,14 +4,14 @@ const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
 const sendOtp = require("../../utils/sendOtp");
 const randomAvatar = require("../../utils/randomAvatar");
-const { User, Otp, Store, Reset } = require("../../models");
+const { User, Store, Reset } = require("../../models");
 const { client, connectRedis } = require("../../utils/redis");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
 const createEmailTemplate = require("../../utils/createEmailTemplate");
 
 async function sendOtpSignUp(req, res) {
   const { email } = req.body;
-  console.log("check", req.body);
+
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -91,110 +91,20 @@ async function userSignIn(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({
-      where: { email },
-      attributes: ["email", "password"],
-    });
-
-    // email existance check
-    if (!user)
-      return res.status(401).json({ message: "Email is not registered" });
-
-    // password match checking
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ message: "Password is Wrong" });
-
-    // Generate OTP secret
-    const secret = speakeasy.generateSecret({ length: 20 });
-    const otp = speakeasy.totp({
-      secret: secret.base32,
-      encoding: "base32",
-    });
-
-    // Save OTP to database
-    await Otp.create({
-      userId: user.id,
-      code: secret.base32,
-      expiresAt: Date.now() + 120 * 1000,
-    });
-
-    // Send OTP to user's email
-    await sendOtp(user.email, otp);
-    return res
-      .status(200)
-      .send({ message: "Check email for OTP code", data: user.email });
-  } catch (error) {
-    return res.status(500).send({
-      message: "Failed to sign in",
-      error: error.message,
-    });
-  }
-}
-
-async function verifyOtp(req, res) {
-  try {
-    const { email, code } = req.body;
-
-    // Validasi input
-    if (!email || !code) {
-      return res
-        .status(400)
-        .send({ message: "Email and OTP code are required" });
+    if (!email || !password) {
+      return res.status(401).send({ message: "All Field required" });
     }
 
     // Query paralel
-    const [user, otp] = await Promise.all([
-      User.findOne({
-        where: { email },
-        attributes: [
-          "id",
-          "fullname",
-          "email",
-          "role",
-          "phone",
-          "birthday",
-          "gender",
-          "avatar",
-        ],
-        include: [
-          {
-            model: Store,
-            as: "store",
-            attributes: ["id", "name", "avatar", "image", "city"],
-          },
-        ],
-      }),
-      Otp.findOne({
-        where: { email, expiresAt: { [Op.gte]: new Date() } },
-      }),
-    ]);
+    const user = await User.findOne({
+      where: { email },
+      attributes: ["id"],
+    });
 
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    if (!otp) {
-      return res
-        .status(400)
-        .send({ message: "OTP code is invalid or expired" });
-    }
-
-    // Verifikasi OTP
-    const isTokenValid = speakeasy.otp.verify({
-      secret: otp.code,
-      encoding: "base32",
-      token: code,
-      window: 3,
-    });
-
-    if (!isTokenValid) {
-      return res.status(401).json({ message: "Invalid OTP" });
-    }
-
-    // Hapus OTP
-    await Otp.destroy({ where: { userId: user.id } });
-
-    // Buat token
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.ACCESS_TOKEN,
@@ -217,22 +127,9 @@ async function verifyOtp(req, res) {
       secure: process.env.ENVIRONMENT === "production",
     });
 
-    // Kirim response
     return res.status(200).send({
-      message: "Login is Successful",
-      data: {
-        accessToken,
-        payload: {
-          userId: user.id,
-          fullname: user.fullname,
-          email: user.email,
-          role: user.role,
-          storeId: user.store?.id,
-          storeName: user.store?.name,
-          storeAvatar: user.store?.avatar,
-          avatar: user.avatar,
-        },
-      },
+      message: "Login is success",
+      data: accessToken,
     });
   } catch (error) {
     return res
@@ -251,22 +148,45 @@ async function userSignOut(req, res) {
 
 async function userAuthCheck(req, res) {
   const { userId } = req.user;
+
   try {
+    // const cachedUser = await client.get(userId);
+
+    // if (cachedUser) {
+    //   return res.status(200).send({
+    //     data: JSON.parse(cachedUser),
+    //   });
+    // }
+
     const user = await User.findByPk(userId, {
-      attributes: ["id", "email", "fullname", "avatar"],
+      attributes: [
+        "id",
+        "email",
+        "fullname",
+        "avatar",
+        "role",
+        "birthday",
+        "gender",
+        "phone",
+      ],
+      include: [{ model: Store, attributes: ["id", "name", "avatar"] }],
     });
-
-    if (!user)
-      return res
-        .status(401)
-        .send({ success: false, message: "Unauthorized Access !!!" });
-
+    console.log("masuk", user);
     const payload = {
       userId: user.id,
       email: user.email,
       fullname: user.fullname,
       avatar: user.avatar,
+      birthday: user.birthday,
+      phone: user.phone,
+      gender: user.gender,
+      role: user.role,
+      storeId: user.Store?.id,
+      storeName: user.Store?.name,
+      storeAvatar: user.Store?.avatar,
     };
+
+    // await client.setEx(userId, 900, JSON.stringify(payload));
 
     res.status(200).send({
       data: payload,
@@ -293,7 +213,7 @@ async function userAuthRefresh(req, res) {
 
     const userId = decoded.userId;
 
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, { attributes: ["id"] });
 
     if (!user) {
       return res.status(403).send({
@@ -385,7 +305,6 @@ async function forgotPassword(req, res) {
 }
 module.exports = {
   userSignIn,
-  verifyOtp,
   userSignOut,
   userAuthRefresh,
   userAuthCheck,
