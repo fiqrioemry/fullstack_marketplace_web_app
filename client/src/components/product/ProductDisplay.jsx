@@ -26,7 +26,7 @@ const ProductDisplay = ({ product }) => {
   };
 
   const handleCheckout = () => {
-    if (userData && userData.length !== 0) {
+    if (userData.length !== 0) {
       navigate("/cart/checkout", {
         state: {
           product: {

@@ -7,15 +7,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import UserAddress from "./UserAddress";
+import { useUserStore } from "../store/useUserStore";
+import AddressDisplay from "../components/AddressDisplay";
 import ProductCartItem from "../components/cart/ProductCartItem";
-
-import { useLocation } from "react-router-dom";
+import AddressSkeleton from "../components/loading/AddressSkeleton";
 
 const Checkout = () => {
-  const location = useLocation();
-  console.log(location.state);
+  const { address, getUserAddress } = useUserStore();
+
+  useEffect(() => {
+    getUserAddress();
+  }, [getUserAddress]);
+
   return (
     <section className="bg-muted ">
       <div className="container mx-auto">
@@ -23,8 +28,17 @@ const Checkout = () => {
           <h4 className="text-2xl">Checkout</h4>
           <div className="grid grid-cols-12 gap-4 ">
             <div className="col-span-12 md:col-span-9 space-y-4">
-              {/* <UserAddress /> */}
+              {!address && <AddressSkeleton />}
 
+              {address && (
+                <>
+                  {address
+                    .filter((item) => item.isMain === true)
+                    .map((data) => (
+                      <AddressDisplay address={data} key={data.id} />
+                    ))}
+                </>
+              )}
               <div>
                 <div className="bg-background rounded-md shadow-md space-y-2 p-4">
                   <ProductCartItem />
