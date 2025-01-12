@@ -97,9 +97,10 @@ async function updateProfile(req, res) {
 
 async function getAddress(req, res) {
   const { userId } = req.user;
+
   try {
     const cachedAddress = await client.get(`address:${userId}`);
-
+    console.log(cachedAddress);
     if (cachedAddress) {
       return res.status(200).send({ data: JSON.parse(cachedAddress) });
     }
@@ -200,25 +201,16 @@ async function updateAddress(req, res) {
         .send({ message: "Address not found or no changes made" });
     }
 
-    const updatedAddress = await Address.findByPk(addressId);
+    const updatedAddress = await Address.findAll({ where: { userId } });
 
-    const cachedAddress = await client.get(`address:${userId}`);
-    if (cachedAddress) {
-      let parsedAddress = JSON.parse(cachedAddress);
-
-      const index = parsedAddress.findIndex((addr) => addr.id === addressId);
-      if (index !== -1) {
-        parsedAddress[index] = updatedAddress;
-        await client.setEx(
-          `address:${userId}`,
-          900,
-          JSON.stringify(parsedAddress)
-        );
-      }
-    }
+    await client.setEx(
+      `address:${userId}`,
+      900,
+      JSON.stringify(updatedAddress)
+    );
 
     return res.status(200).send({
-      message: "Address updated successfully",
+      message: "Address is Updated",
       data: updatedAddress,
     });
   } catch (error) {

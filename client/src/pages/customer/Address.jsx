@@ -7,17 +7,12 @@ import { useHandleForm } from "../../hooks/useHandleForm";
 import { AddressForm } from "../../components/modal/AddressForm";
 import { controlAddressForm, initialAddressForm } from "../../config";
 import UserAddressSkeleton from "../../components/loading/UserAddressSkeleton";
+import AddressDisplay from "../../components/AddressDisplay";
 
 const Address = () => {
   const { formData, setFormData, handleChange } =
     useHandleForm(initialAddressForm);
-  const {
-    address,
-    getUserAddress,
-    addUserAddress,
-    deleteUserAddress,
-    updateUserAddress,
-  } = useUserStore();
+  const { address, getUserAddress, addUserAddress } = useUserStore();
 
   useEffect(() => {
     getUserAddress();
@@ -26,16 +21,6 @@ const Address = () => {
   const handleAddNewAddress = (e) => {
     e.preventDefault();
     addUserAddress(formData);
-  };
-
-  const handleUpdateAddress = (e) => {
-    e.preventDefault();
-    updateUserAddress(formData);
-  };
-
-  const handleDeleteAddress = (e, addressId) => {
-    e.preventDefault();
-    deleteUserAddress(addressId);
   };
 
   return (
@@ -65,15 +50,7 @@ const Address = () => {
             <ScrollArea className="h-96 bg-muted p-4">
               <div className="space-y-4">
                 {address.map((item) => (
-                  <UserAddress
-                    data={item}
-                    key={item.id}
-                    setFormData={setFormData}
-                    handleChange={handleChange}
-                    formControls={controlAddressForm}
-                    handleUpdateAddress={handleUpdateAddress}
-                    handleDeleteAddress={handleDeleteAddress}
-                  />
+                  <AddressDisplay address={item} key={item.id} />
                 ))}
               </div>
             </ScrollArea>

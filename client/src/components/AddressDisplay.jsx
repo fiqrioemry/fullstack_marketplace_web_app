@@ -24,6 +24,7 @@ const AddressDisplay = ({ address }) => {
 
   const handleUpdateAddress = (e) => {
     e.preventDefault();
+    console.log(formData);
     updateUserAddress(formData, address.id);
   };
 
@@ -31,9 +32,6 @@ const AddressDisplay = ({ address }) => {
     e.preventDefault();
     deleteUserAddress();
   };
-
-  console.log("masyuk pak eko");
-  console.log(isAddressLoading);
 
   if (isAddressLoading) return <AddressSkeleton />;
 
@@ -53,12 +51,12 @@ const AddressDisplay = ({ address }) => {
           {address.address} {address.province} {address.city} {address.zipcode}
         </p>
 
-        {!isCurrent && (
+        {isCurrent && (
           <div className="flex space-x-4">
             <Button>Select Address</Button>
           </div>
         )}
-        {isCurrent && (
+        {!isCurrent && (
           <div className="flex space-x-4">
             <AddressForm
               formData={formData}

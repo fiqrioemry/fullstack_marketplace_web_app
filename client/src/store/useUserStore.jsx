@@ -52,6 +52,7 @@ export const useUserStore = create((set) => ({
         formData
       );
       toast.success(response.data.message);
+      set({ address: response.data.data });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -67,6 +68,7 @@ export const useUserStore = create((set) => ({
         formData
       );
       toast.success(response.data.message);
+      set({ address: response.data.data });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
