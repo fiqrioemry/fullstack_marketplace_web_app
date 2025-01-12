@@ -1,3 +1,49 @@
+const provinceData = [
+  {
+    id: 1,
+    name: "Sumatera Utara",
+  },
+  {
+    id: 2,
+    name: "DKI Jakarta",
+  },
+  {
+    id: 3,
+    name: "Jawa Barat",
+  },
+  {
+    id: 4,
+    name: "Jawa Tengah",
+  },
+  {
+    id: 5,
+    name: "Jawa Timur",
+  },
+];
+
+const cityData = [
+  {
+    id: 1,
+    name: "Medan",
+  },
+  {
+    id: 2,
+    name: "Jakarta",
+  },
+  {
+    id: 3,
+    name: "Bandung",
+  },
+  {
+    id: 4,
+    name: "Semarang",
+  },
+  {
+    id: 5,
+    name: "Surabaya",
+  },
+];
+
 export const nonAuthPath = [
   "/signin",
   "/signup",
@@ -211,32 +257,6 @@ export const initialAddressForm = {
   zipcode: "",
   phone: "",
 };
-
-const provinceData = [
-  "DKI Jakarta",
-  "Jawa Timur",
-  "Sumatera Utara",
-  "Jawa Barat",
-  "Jawa Barat",
-  "Jawa Tengah",
-  "Sumatera Selatan",
-  "Banten",
-  "Jawa Barat",
-  "Sulawesi Selatan",
-];
-
-const cityData = [
-  "Jakarta",
-  "Surabaya",
-  "Medan",
-  "Bandung",
-  "Bekasi",
-  "Semarang",
-  "Palembang",
-  "Tangerang",
-  "Depok",
-  "Makassar",
-];
 
 export const controlAddressForm = [
   {

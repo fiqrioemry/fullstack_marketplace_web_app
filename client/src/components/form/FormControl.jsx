@@ -12,24 +12,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useProductStore } from "../../store/useProductStore";
 
 function FormControls({ formControls = [], formData, disabled, handleChange }) {
-  const {
-    getCities,
-    getCategories,
-    cities,
-    categories,
-    isCitiesLoading,
-    isCategoriesLoading,
-  } = useProductStore();
+  const { getCities, getCategories, cities, categories } = useProductStore();
 
   useEffect(() => {
     formControls.forEach((control) => {
-      if (control.componentType === "select") {
-        if (control.name === "city" && cities.length === 0) {
-          getCities();
-        }
-        if (control.name === "category" && categories.length === 0) {
-          getCategories();
-        }
+      if (control.name === "city" && !cities) {
+        getCities();
+      }
+      if (control.name === "category" && !categories) {
+        getCategories();
       }
     });
   }, [formControls, getCities, getCategories, cities, categories]);
@@ -51,13 +42,13 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
             <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
             <Input
               id={controlItem.name}
+              onChange={handleChange}
               name={controlItem.name}
               type={controlItem.type}
               value={currentControlItemValue}
-              disabled={disabled}
-              placeholder={controlItem.placeholder}
-              onChange={handleChange}
               maxlength={controlItem.maxlength}
+              placeholder={controlItem.placeholder}
+              disabled={disabled}
               required
             />
           </>
@@ -66,31 +57,27 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
       case "checkbox":
         element = (
           <>
-            {options.length === 0 ? (
-              <div className="px-3">Loading...</div>
-            ) : (
-              options.map((option) => (
-                <div
-                  className="flex items-center space-x-3 py-2 px-3"
-                  key={option.id}
+            {options.map((option) => (
+              <div
+                className="flex items-center space-x-3 py-2 px-3"
+                key={option.id}
+              >
+                <input
+                  id={controlItem.name}
+                  type={controlItem.type}
+                  name={controlItem.name}
+                  value={option.name}
+                  onChange={handleChange}
+                  checked={currentControlItemValue.includes(option.name)}
+                />
+                <Label
+                  htmlFor={controlItem.name}
+                  className="text-sm font-medium"
                 >
-                  <input
-                    id={controlItem.name}
-                    name={controlItem.name}
-                    type={controlItem.type}
-                    value={option.name}
-                    checked={currentControlItemValue.includes(option.name)}
-                    onChange={handleChange}
-                  />
-                  <Label
-                    htmlFor={controlItem.name}
-                    className="text-sm font-medium"
-                  >
-                    {option.name}
-                  </Label>
-                </div>
-              ))
-            )}
+                  {option.name}
+                </Label>
+              </div>
+            ))}
           </>
         );
         break;
@@ -129,18 +116,11 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
                 <SelectValue placeholder={controlItem.placeholder} />
               </SelectTrigger>
               <SelectContent>
-                {isCitiesLoading || isCategoriesLoading ? (
-                  <SelectItem disabled>Loading...</SelectItem>
-                ) : (
-                  options.map((option) => (
-                    <SelectItem
-                      key={option.id || option}
-                      value={option.name || option}
-                    >
-                      {option.name || option}
-                    </SelectItem>
-                  ))
-                )}
+                {options.map((option) => (
+                  <SelectItem key={option.id} value={option.name}>
+                    {option.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </>
@@ -151,12 +131,12 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
           <>
             <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
             <Textarea
+              disabled={disabled}
               id={controlItem.name}
               name={controlItem.name}
-              placeholder={controlItem.placeholder}
-              value={currentControlItemValue}
               onChange={handleChange}
-              disabled={disabled}
+              value={currentControlItemValue}
+              placeholder={controlItem.placeholder}
               maxlength="200"
               className="resize-none"
             />

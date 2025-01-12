@@ -130,22 +130,15 @@ async function addAddress(req, res) {
   const { userId } = req.user;
   const { name, phone, address, province, city, zipcode, isMain } = req.body;
 
-  console.log(req.body);
-
   try {
-    // Validate input fields
     if (!name || !phone || !address || !province || !city || !zipcode) {
-      return res
-        .status(400)
-        .send({ message: "All address fields are required" });
+      return res.status(400).send({ message: "All fields are required" });
     }
 
-    // Set all existing addresses to non-main if a new main address is being added
     if (isMain === true) {
       await Address.update({ isMain: false }, { where: { userId } });
     }
 
-    // Create the new address
     const newAddress = await Address.create({
       userId,
       name,
@@ -157,23 +150,13 @@ async function addAddress(req, res) {
       isMain,
     });
 
-    const cachedAddress = await client.get(`address:${userId}`);
-    if (cachedAddress) {
-      let parsedAddress = JSON.parse(cachedAddress);
+    const updatedAddresses = await Address.findAll({ where: { userId } });
 
-      parsedAddress.push(newAddress);
-      await client.setEx(
-        `address:${userId}`,
-        900,
-        JSON.stringify(parsedAddress)
-      );
-    } else {
-      await client.setEx(
-        `address:${userId}`,
-        900,
-        JSON.stringify([newAddress])
-      );
-    }
+    await client.setEx(
+      `address:${userId}`,
+      900,
+      JSON.stringify(updatedAddresses)
+    );
 
     return res.status(201).send({
       message: "New Address is added",

@@ -9,7 +9,7 @@ import FormControls from "../form/FormControl";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export function ModalContainer({
+export function AddressForm({
   buttonTitle,
   handleSubmit,
   formData,

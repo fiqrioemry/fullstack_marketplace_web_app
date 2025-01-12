@@ -1,8 +1,20 @@
 /* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
+import { AddressForm } from "../components/modal/AddressForm";
+import { useEffect } from "react";
 
-const UserAddress = ({ data, formData }) => {
-  console.log(data);
+const UserAddress = ({
+  data,
+  formData,
+  handleChange,
+  formControls,
+  setFormData,
+  handleDeleteAddress,
+  handleUpdateAddress,
+}) => {
+  useEffect(() => {
+    setFormData(data);
+  });
   return (
     <div className="bg-background rounded-md shadow-md space-y-2 p-4">
       <h4 className="text-foreground/50">Address</h4>
@@ -20,8 +32,15 @@ const UserAddress = ({ data, formData }) => {
       <p className="capitalize">
         {data.address}, {data.province}, {data.city}, {data.zipcode}
       </p>
-      <div className="space-x-4">
-        <Button>Edit Address</Button>
+      <div className="flex space-x-4">
+        <AddressForm
+          formData={formData}
+          handleChange={handleChange}
+          formTitle={"Create New Address"}
+          formControls={formControls}
+          handleSubmit={handleUpdateAddress}
+          buttonTitle={"Edit Address"}
+        />
 
         {!data.isMain && <Button>Select as main</Button>}
       </div>
