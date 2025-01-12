@@ -3,6 +3,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/services";
 import { Navigate } from "react-router-dom";
+import axios from "axios";
 
 export const useCartStore = create((set) => ({
   cart: null,
@@ -21,12 +22,10 @@ export const useCartStore = create((set) => ({
   addCartItem: async ({ productId, quantity }) => {
     try {
       set({ isCartLoading: true });
-      const response = console.log(
-        "adding product to cart",
+      const response = await axiosInstance.post("/cart", {
         productId,
-        "and",
-        quantity
-      );
+        quantity,
+      });
       toast.success(response);
     } catch (error) {
       console.log(error);

@@ -1,9 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useProvider } from "../../context/GlobalProvider";
 
 const ProductDisplay = ({ product }) => {
+  const navigate = useNavigate();
+  const { userData } = useProvider();
   const [total, setTotal] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -21,8 +25,24 @@ const ProductDisplay = ({ product }) => {
     });
   };
 
+  const handleCheckout = () => {
+    if (userData && userData.length !== 0) {
+      navigate("/cart/checkout", {
+        state: {
+          product: {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: total,
+          },
+        },
+      });
+    } else {
+      navigate("/signin");
+    }
+  };
   const handleAddToCart = () => {
-    if(!userDat)
+    console.log("add to cart");
   };
 
   const handleSetThumbnail = (index) => {
@@ -100,10 +120,16 @@ const ProductDisplay = ({ product }) => {
 
         {/* button */}
         <div className="space-y-4">
-          <Button variant="secondary" className="w-full py-6">
+          <Button
+            onClick={handleAddToCart}
+            variant="secondary"
+            className="w-full py-6"
+          >
             Add to Card
           </Button>
-          <Button className="w-full py-6">Checkout</Button>
+          <Button onClick={handleCheckout} className="w-full py-6">
+            Checkout
+          </Button>
         </div>
       </div>
     </div>
