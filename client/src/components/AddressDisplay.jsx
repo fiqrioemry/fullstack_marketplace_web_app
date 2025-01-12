@@ -18,10 +18,15 @@ const AddressDisplay = ({ address }) => {
     setFormData(address);
   }, [address, setFormData]);
 
-  const handleUpdateAddress =(e)=>{
-    e.preventDefault()
-    updateUserAddress()
-  }
+  const handleUpdateAddress = (e) => {
+    e.preventDefault();
+    updateUserAddress();
+  };
+
+  const handleDeleteAddress = (e) => {
+    e.preventDefault();
+    deleteUserAddress();
+  };
   return (
     <Card>
       <CardContent className="p-4 space-y-2">
@@ -38,16 +43,29 @@ const AddressDisplay = ({ address }) => {
           {address.address} {address.province} {address.city} {address.zipcode}
         </p>
 
-        {isCurrent && (
+        {!isCurrent && (
           <div className="flex space-x-4">
             <Button>Select Address</Button>
           </div>
         )}
-        {!isCurrent && (
+        {isCurrent && (
           <div className="flex space-x-4">
-            <AddressForm handleSubmit={} buttonTitle="Edit Address" formData={formData} handleChange={handleChange} formControls={controlAddressForm} formTitle={"Edit Address"}/>
-            <Button>Edit Address</Button>
-            <Button>Delete Address</Button>
+            <AddressForm
+              formData={formData}
+              buttonTitle="Edit Address"
+              formTitle={"Edit Address"}
+              handleChange={handleChange}
+              formControls={controlAddressForm}
+              handleSubmit={handleUpdateAddress}
+            />
+            <AddressForm
+              formData={formData}
+              buttonTitle="Delete Address"
+              formTitle={"Delete Address"}
+              handleChange={handleChange}
+              formControls={controlAddressForm}
+              handleSubmit={handleUpdateAddress}
+            />
             <Button>Select as main </Button>
           </div>
         )}
