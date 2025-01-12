@@ -1,17 +1,17 @@
-const { Op } = require("sequelize");
-const { client } = require("../../utils/redis");
-const { User, Address } = require("../../models");
 const {
   uploadMediaToCloudinary,
   deleteMediaFromCloudinary,
 } = require("../../utils/cloudinary");
+const { Op } = require("sequelize");
+const { client } = require("../../utils/redis");
+const { User, Address } = require("../../models");
 
 async function getProfile(req, res) {
   const { userId } = req.user;
 
   try {
     const cachedUser = await client.get(`user:${userId}`);
-
+    console.log(cachedUser);
     if (cachedUser) {
       return res.status(200).send({
         data: JSON.parse(cachedUser),
@@ -81,24 +81,21 @@ async function updateProfile(req, res) {
 async function getAddress(req, res) {
   const { userId } = req.user;
   try {
-    // Cek apakah data alamat ada di cache
     const cachedAddress = await client.get(`address:${userId}`);
 
     if (cachedAddress) {
       return res.status(200).send({ data: JSON.parse(cachedAddress) });
     }
 
-    // Jika tidak ada, ambil alamat dari database
     const address = await Address.findAll({ where: { userId } });
 
     if (address.length === 0) {
-      return res.status(404).send({
-        message: "You don't have an address",
+      return res.status(200).send({
+        message: "No Address is found, Try to add one",
         data: [],
       });
     }
 
-    // Simpan hasil query ke dalam cache, pastikan dikonversi menjadi string
     await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
 
     return res.status(200).send({
@@ -117,17 +114,19 @@ async function addAddress(req, res) {
   const { name, phone, address, province, city, zipcode, isMain } = req.body;
 
   try {
-    // Validasi input
+    // Validate input fields
     if (!name || !phone || !address || !province || !city || !zipcode) {
       return res
         .status(400)
         .send({ message: "All address fields are required" });
     }
 
+    // Set all existing addresses to non-main if a new main address is being added
     if (isMain === true) {
       await Address.update({ isMain: false }, { where: { userId } });
     }
 
+    // Create the new address
     const newAddress = await Address.create({
       userId,
       name,
@@ -141,23 +140,20 @@ async function addAddress(req, res) {
 
     const cachedAddress = await client.get(`address:${userId}`);
     if (cachedAddress) {
-      const parsedAddress = JSON.parse(cachedAddress);
+      let parsedAddress = JSON.parse(cachedAddress);
 
-      const updatedAddresses = parsedAddress.address.map((addr) => ({
-        ...addr,
-        isMain: false,
-      }));
-
-      if (isMain) {
-        updatedAddresses.forEach((addr) => {
-          addr.isMain = false;
-        });
-      }
-
-      updatedAddresses.push(newAddress);
-      parsedUser.address = updatedAddresses;
-
-      await client.setEx(`address:${userId}`, 900, JSON.stringify(parsedUser));
+      parsedAddress.push(newAddress);
+      await client.setEx(
+        `address:${userId}`,
+        900,
+        JSON.stringify(parsedAddress)
+      );
+    } else {
+      await client.setEx(
+        `address:${userId}`,
+        900,
+        JSON.stringify([newAddress])
+      );
     }
 
     return res.status(201).send({
@@ -202,24 +198,26 @@ async function updateAddress(req, res) {
         .send({ message: "Address not found or no changes made" });
     }
 
-    const cachedUser = await client.get(`user:${userId}`);
-    if (cachedUser) {
-      const parsedUser = JSON.parse(cachedUser);
-      const updatedAddresses = parsedUser.address.map((addr) =>
-        addr.id === addressId
-          ? { ...addr, name, phone, address, province, city, zipcode, isMain }
-          : isMain
-          ? { ...addr, isMain: false }
-          : addr
-      );
+    const updatedAddress = await Address.findByPk(addressId);
 
-      parsedUser.address = updatedAddresses;
-      await client.setEx(`user:${userId}`, 900, JSON.stringify(parsedUser));
+    const cachedAddress = await client.get(`address:${userId}`);
+    if (cachedAddress) {
+      let parsedAddress = JSON.parse(cachedAddress);
+
+      const index = parsedAddress.findIndex((addr) => addr.id === addressId);
+      if (index !== -1) {
+        parsedAddress[index] = updatedAddress;
+        await client.setEx(
+          `address:${userId}`,
+          900,
+          JSON.stringify(parsedAddress)
+        );
+      }
     }
 
     return res.status(200).send({
-      success: true,
       message: "Address updated successfully",
+      data: updatedAddress,
     });
   } catch (error) {
     return res
@@ -228,7 +226,44 @@ async function updateAddress(req, res) {
   }
 }
 
-async function deleteAddress(req, res) {}
+async function deleteAddress(req, res) {
+  const { addressId } = req.params;
+  const { userId } = req.user;
+
+  try {
+    const currentAddress = await Address.findByPk(addressId);
+
+    if (!currentAddress || currentAddress.userId !== userId) {
+      return res.status(404).send({ message: "Address not found" });
+    }
+
+    await Address.destroy({ where: { id: addressId } });
+
+    const cachedAddress = await client.get(`address:${userId}`);
+    if (cachedAddress) {
+      let parsedAddress = JSON.parse(cachedAddress);
+
+      parsedAddress = parsedAddress.filter(
+        (address) => address.id !== addressId
+      );
+
+      await client.setEx(
+        `address:${userId}`,
+        900,
+        JSON.stringify(parsedAddress)
+      );
+    }
+
+    return res.status(200).send({
+      message: "Address deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Failed to Delete Address",
+      error: error.message,
+    });
+  }
+}
 
 module.exports = {
   getProfile,
@@ -236,4 +271,5 @@ module.exports = {
   updateAddress,
   deleteAddress,
   addAddress,
+  getAddress,
 };
