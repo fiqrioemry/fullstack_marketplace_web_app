@@ -13,13 +13,17 @@ import UserAddressSkeleton from "../../components/loading/UserAddressSkeleton";
 const Address = () => {
   const { formData, setFormData, handleChange } =
     useHandleForm(initialAddressForm);
-  const { address, getUserAddress } = useUserStore();
-
+  const { address, getUserAddress, addUserAddress } = useUserStore();
+  console.log(address);
   useEffect(() => {
     getUserAddress();
   }, [getUserAddress]);
 
-  console.log(formData);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addUserAddress(formData);
+  };
+
   return (
     <div className="space-y-4">
       {!address && <UserAddressSkeleton />}
@@ -40,6 +44,7 @@ const Address = () => {
                   formData={formData}
                   formControls={controlAddressForm}
                   handleChange={handleChange}
+                  handleSubmit={handleSubmit}
                 />
               </ModalContainer>
             </div>

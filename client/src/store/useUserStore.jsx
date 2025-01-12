@@ -64,7 +64,7 @@ export const useUserStore = create((set) => ({
     try {
       set({ isAddressLoading: true });
       const response = await axiosInstance.post(
-        ` /user/profile/address`,
+        `/user/profile/address`,
         formData
       );
       toast.success(response.data.message);

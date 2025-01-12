@@ -119,7 +119,12 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
         element = (
           <>
             <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
-            <Select disabled={disabled} onValueChange={handleChange}>
+            <Select
+              disabled={disabled}
+              onValueChange={(value) =>
+                handleChange({ target: { name: controlItem.name, value } })
+              }
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={controlItem.placeholder} />
               </SelectTrigger>

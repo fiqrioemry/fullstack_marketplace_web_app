@@ -130,6 +130,8 @@ async function addAddress(req, res) {
   const { userId } = req.user;
   const { name, phone, address, province, city, zipcode, isMain } = req.body;
 
+  console.log(req.body);
+
   try {
     // Validate input fields
     if (!name || !phone || !address || !province || !city || !zipcode) {
