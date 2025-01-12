@@ -2,13 +2,13 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AddressForm } from "./modal/AddressForm";
+import { useUserStore } from "../store/useUserStore";
 import { useHandleForm } from "../hooks/useHandleForm";
+import AddressSkeleton from "./loading/AddressSkeleton";
 import { useProvider } from "../context/GlobalProvider";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConfirmationBox } from "./modal/ConfirmationBox";
-import { controlAddressForm, initialAddressForm } from "../config";
-import { useUserStore } from "../store/useUserStore";
-import AddressSkeleton from "./loading/AddressSkeleton";
+import { controlEditAddressForm, initialAddressForm } from "../config";
 
 const AddressDisplay = ({ address }) => {
   const { currentPath } = useProvider();
@@ -42,9 +42,11 @@ const AddressDisplay = ({ address }) => {
 
         <div className="flex items-center space-x-2 text-sm">
           <span>{address.name}</span>
-          <span className="bg-primary px-3 py-[0.5px] text-white rounded-md">
-            main
-          </span>
+          {address.isMain && (
+            <span className="bg-primary px-3 py-[0.5px] text-white rounded-md">
+              main
+            </span>
+          )}
         </div>
         <div>{address.phone}</div>
         <p>
@@ -63,8 +65,8 @@ const AddressDisplay = ({ address }) => {
               buttonTitle="Edit Address"
               formTitle={"Edit Address"}
               handleChange={handleChange}
-              formControls={controlAddressForm}
               handleSubmit={handleUpdateAddress}
+              formControls={controlEditAddressForm}
             />
 
             <ConfirmationBox
@@ -74,7 +76,7 @@ const AddressDisplay = ({ address }) => {
               description="Are you sure want to delete this address?"
             />
 
-            <Button>Select as main </Button>
+            {!address.isMain && <Button>Select as main </Button>}
           </div>
         )}
       </CardContent>

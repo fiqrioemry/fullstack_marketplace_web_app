@@ -299,3 +299,58 @@ export const controlAddressForm = [
     componentType: "checkbox",
   },
 ];
+
+export const controlEditAddressForm = [
+  {
+    name: "name",
+    label: "name",
+    type: "text",
+    placeholder: "Enter receipient name",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "address",
+    label: "address",
+    type: "text",
+    placeholder: "Enter receipient address",
+    style: "flex items-center capitalize",
+    componentType: "textarea",
+  },
+  {
+    name: "province",
+    label: "province",
+    type: "select",
+    placeholder: "Enter receipient province",
+    style: "flex items-center capitalize",
+    componentType: "select",
+    options: provinceData,
+  },
+  {
+    name: "city",
+    label: "city",
+    type: "select",
+    placeholder: "Enter receipient city",
+    style: "flex items-center capitalize",
+    componentType: "select",
+  },
+  {
+    name: "zipcode",
+    label: "zipcode",
+    type: "text",
+    placeholder: "Enter receipient zipcode",
+    style: "flex items-center capitalize",
+    componentType: "input",
+    maxlength: "6",
+  },
+
+  {
+    name: "phone",
+    label: "phone number",
+    type: "tel",
+    placeholder: "Enter receipient phone",
+    style: "flex items-center capitalize",
+    componentType: "input",
+    maxlength: "13",
+  },
+];

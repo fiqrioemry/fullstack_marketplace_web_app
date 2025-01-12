@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Plus } from "lucide-react";
-import UserAddress from "../UserAddress";
 import { useUserStore } from "../../store/useUserStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useHandleForm } from "../../hooks/useHandleForm";
@@ -10,8 +9,7 @@ import UserAddressSkeleton from "../../components/loading/UserAddressSkeleton";
 import AddressDisplay from "../../components/AddressDisplay";
 
 const Address = () => {
-  const { formData, setFormData, handleChange } =
-    useHandleForm(initialAddressForm);
+  const { formData, handleChange } = useHandleForm(initialAddressForm);
   const { address, getUserAddress, addUserAddress } = useUserStore();
 
   useEffect(() => {
