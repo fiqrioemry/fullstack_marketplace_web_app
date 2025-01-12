@@ -11,16 +11,18 @@ import { Button } from "@/components/ui/button";
 export function ConfirmationBox({
   title,
   description,
+  buttonConfirm,
+  buttonVariant,
   buttonTitle,
   handleSubmit,
 }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>{buttonTitle}</Button>
+        <Button variant={buttonVariant}>{buttonTitle}</Button>
       </DialogTrigger>
       <DialogTitle>
-        <DialogContent variant="options" className=" sm:max-w-[425px]">
+        <DialogContent variant="options" className=" sm:max-w-[525px]">
           <div className="space-y-6">
             <h4>{title}</h4>
             <p>{description}</p>
@@ -32,11 +34,11 @@ export function ConfirmationBox({
               </DialogClose>
               <DialogClose asChild>
                 <Button
-                  variant="destructive"
+                  variant={buttonVariant}
                   onClick={handleSubmit}
                   type="button"
                 >
-                  Delete
+                  {buttonConfirm}
                 </Button>
               </DialogClose>
             </div>

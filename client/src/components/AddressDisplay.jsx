@@ -24,7 +24,6 @@ const AddressDisplay = ({ address }) => {
 
   const handleUpdateAddress = (e) => {
     e.preventDefault();
-    console.log(formData);
     updateUserAddress(formData, address.id);
   };
 
@@ -69,14 +68,27 @@ const AddressDisplay = ({ address }) => {
               formControls={controlEditAddressForm}
             />
 
-            <ConfirmationBox
-              title="delete address"
-              buttonTitle="Delete Address"
-              handleSubmit={handleDeleteAddress}
-              description="Are you sure want to delete this address?"
-            />
+            {!address.isMain && (
+              <ConfirmationBox
+                title="Delete Address"
+                buttonVariant="destructive"
+                buttonConfirm="Delete"
+                buttonTitle="Delete Address"
+                handleSubmit={handleDeleteAddress}
+                description="Are you sure you want to delete this address? Deleted addresses cannot be restored."
+              />
+            )}
 
-            {!address.isMain && <Button>Select as main </Button>}
+            {!address.isMain && (
+              <ConfirmationBox
+                title="Select main address"
+                buttonVariant="default"
+                buttonConfirm="Select as main"
+                buttonTitle="Select as main"
+                handleSubmit={handleUpdateAddress}
+                description={`Are you sure you want to set this address as your primary address? \n\n You can only select one primary address.`}
+              />
+            )}
           </div>
         )}
       </CardContent>
