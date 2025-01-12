@@ -36,7 +36,6 @@ export const useUserStore = create((set) => ({
     try {
       set({ isAddressLoading: true });
       const response = await axiosInstance.get("/user/profile/address");
-      toast.success(response.data.message);
       set({ address: response.data.data });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -48,7 +47,7 @@ export const useUserStore = create((set) => ({
   updateUserAddress: async (formData, addressId) => {
     try {
       set({ isAddressLoading: true });
-      const response = await axiosInstance.delete(
+      const response = await axiosInstance.put(
         `/user/profile/address/${addressId}`,
         formData
       );

@@ -61,7 +61,7 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
             <Fragment>
               {options.map((option) => (
                 <div
-                  className="flex items-center space-x-3 py-2 px-3"
+                  className="flex  items-center space-x-3 py-2 px-3"
                   key={option.id}
                 >
                   <input
@@ -83,7 +83,7 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
             </Fragment>
           ) : (
             <div
-              className="flex items-center space-x-3 py-2 px-3"
+              className="flex items-center  space-x-3 py-2 px-3"
               key={control.name}
             >
               <input
@@ -92,6 +92,7 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
                 type={control.type}
                 checked={currentValue}
                 onChange={handleChange}
+                className="w-6 h-6"
               />
               <Label htmlFor={control.name} className="text-sm font-medium">
                 {control.label}

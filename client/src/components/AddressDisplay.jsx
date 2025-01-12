@@ -1,18 +1,22 @@
 /* eslint-disable react/prop-types */
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { AddressForm } from "./modal/AddressForm";
+import { useHandleForm } from "../hooks/useHandleForm";
 import { useProvider } from "../context/GlobalProvider";
 import { Card, CardContent } from "@/components/ui/card";
-import { useHandleForm } from "../hooks/useHandleForm";
+import { ConfirmationBox } from "./modal/ConfirmationBox";
 import { controlAddressForm, initialAddressForm } from "../config";
-import { useEffect } from "react";
-import { AddressForm } from "./modal/AddressForm";
+import { useUserStore } from "../store/useUserStore";
+import AddressSkeleton from "./loading/AddressSkeleton";
 
 const AddressDisplay = ({ address }) => {
   const { currentPath } = useProvider();
-  const { updateUserAddress, deleteUserAddress } = useProvider();
+  const isCurrent = currentPath === "/cart/checkout";
   const { formData, setFormData, handleChange } =
     useHandleForm(initialAddressForm);
-  const isCurrent = currentPath === "/cart/checkout";
+  const { updateUserAddress, deleteUserAddress, isAddressLoading } =
+    useUserStore();
 
   useEffect(() => {
     setFormData(address);
@@ -20,13 +24,19 @@ const AddressDisplay = ({ address }) => {
 
   const handleUpdateAddress = (e) => {
     e.preventDefault();
-    updateUserAddress();
+    updateUserAddress(formData, address.id);
   };
 
   const handleDeleteAddress = (e) => {
     e.preventDefault();
     deleteUserAddress();
   };
+
+  console.log("masyuk pak eko");
+  console.log(isAddressLoading);
+
+  if (isAddressLoading) return <AddressSkeleton />;
+
   return (
     <Card>
       <CardContent className="p-4 space-y-2">
@@ -58,14 +68,14 @@ const AddressDisplay = ({ address }) => {
               formControls={controlAddressForm}
               handleSubmit={handleUpdateAddress}
             />
-            <AddressForm
-              formData={formData}
+
+            <ConfirmationBox
+              title="delete address"
               buttonTitle="Delete Address"
-              formTitle={"Delete Address"}
-              handleChange={handleChange}
-              formControls={controlAddressForm}
-              handleSubmit={handleUpdateAddress}
+              handleSubmit={handleDeleteAddress}
+              description="Are you sure want to delete this address?"
             />
+
             <Button>Select as main </Button>
           </div>
         )}

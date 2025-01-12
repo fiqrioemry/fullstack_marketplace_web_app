@@ -292,9 +292,10 @@ export const controlAddressForm = [
   {
     name: "isMain",
     value: true,
-    label: "Set as main address",
     type: "checkbox",
+    method: "single",
+    label: "Set as main address",
     style: "flex items-center capitalize",
-    componentType: "binary",
+    componentType: "checkbox",
   },
 ];

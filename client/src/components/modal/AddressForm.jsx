@@ -4,6 +4,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import FormControls from "../form/FormControl";
 import { Button } from "@/components/ui/button";
@@ -23,19 +24,22 @@ export function AddressForm({
         <Button>{buttonTitle}</Button>
       </DialogTrigger>
       <DialogTitle>
-        <DialogContent variant="options" className=" sm:max-w-[425px]">
+        <DialogContent variant="options" className="sm:max-w-[425px]">
           <div className="space-y-6">
             <h4>{formTitle}</h4>
-            <ScrollArea className="h-60">
+            <ScrollArea className="h-96">
               <form onSubmit={handleSubmit} className="space-y-6 px-2">
                 <FormControls
                   formData={formData}
                   handleChange={handleChange}
                   formControls={formControls}
                 />
-                <Button className="w-full" type="submit">
-                  Save
-                </Button>
+
+                <DialogClose asChild>
+                  <Button className="w-full" type="submit">
+                    Save
+                  </Button>
+                </DialogClose>
               </form>
             </ScrollArea>
           </div>
