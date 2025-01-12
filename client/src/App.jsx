@@ -39,11 +39,11 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path=":storename" element={<Store />} />
             <Route path="category" element={<Category />} />
+            <Route path="open-shop" element={<OpenStore />} />
             <Route path="search" element={<SearchResult />} />
             <Route path="cart/checkout" element={<Checkout />} />
-            <Route path=":storename/:product" element={<ProductDetail />} />
-            <Route path="category/:category" element={<ProductCategory />} />
-            <Route path="open-shop" element={<OpenStore />} />
+            <Route path=":storename/:slug" element={<ProductDetail />} />
+            <Route path="category/:slug" element={<ProductCategory />} />
             <Route path="*" element={<NotFound />} />
           </Route>
 

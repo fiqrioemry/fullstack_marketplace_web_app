@@ -21,29 +21,6 @@ const provinceData = [
   },
 ];
 
-const cityData = [
-  {
-    id: 1,
-    name: "Medan",
-  },
-  {
-    id: 2,
-    name: "Jakarta",
-  },
-  {
-    id: 3,
-    name: "Bandung",
-  },
-  {
-    id: 4,
-    name: "Semarang",
-  },
-  {
-    id: 5,
-    name: "Surabaya",
-  },
-];
-
 export const nonAuthPath = [
   "/signin",
   "/signup",
@@ -291,7 +268,6 @@ export const controlAddressForm = [
     placeholder: "Enter receipient city",
     style: "flex items-center capitalize",
     componentType: "select",
-    options: cityData,
   },
   {
     name: "zipcode",

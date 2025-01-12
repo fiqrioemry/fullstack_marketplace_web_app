@@ -2,10 +2,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share2, StoreIcon } from "lucide-react";
 import StoreInfo from "../components/modal/StoreInfo";
+import StoreAbout from "../components/store/StoreAbout";
 import StoreProduct from "../components/store/StoreProduct";
 import { ModalContainer } from "../components/modal/ModalContainer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import StoreAbout from "../components/store/StoreAbout";
 
 const Store = () => {
   return (

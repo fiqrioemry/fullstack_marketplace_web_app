@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import CategoryCard from "../components/CategoryCard";
 import PageBreadCrumb from "../components/PageBreadCrumb";
 import { useProductStore } from "../store/useProductStore";
@@ -9,7 +9,7 @@ const Category = () => {
 
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [getCategories]);
 
   return (
     <section>
@@ -20,12 +20,14 @@ const Category = () => {
           <h3 className="capitalize">List of Product Categories</h3>
 
           <div className="grid_display_5 ">
-            {!categories ? (
-              <CategoriesSkeleton />
-            ) : (
-              [...Array(10)].map((_, index) => (
-                <CategoryCard category={index} key={index} />
-              ))
+            {!categories && <CategoriesSkeleton />}
+
+            {categories && (
+              <Fragment>
+                {categories.map((category) => (
+                  <CategoryCard category={category} key={category.id} />
+                ))}
+              </Fragment>
             )}
           </div>
         </div>

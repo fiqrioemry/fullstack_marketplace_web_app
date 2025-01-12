@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const ProductCard = ({ product }) => {
   return (
-    <Link to={`/storename/product${product}`}>
+    <Link to={`/${product.storeName}/${product.slug}`}>
       <Card className="h-[300px] overflow-hidden">
         <CardContent>
           <img
@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
             alt=""
           />
           <div className="space-y-2 px-2">
-            <h4>Laptop Lenovo M4</h4>
+            <h4>{product.name}</h4>
             <span>Rp. 5.000.000</span>
           </div>
         </CardContent>

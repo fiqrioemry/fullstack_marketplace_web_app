@@ -9,7 +9,7 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 
-const SortingBox = ({ setSearchParams }) => {
+const SortingBox = ({ setSearchParams, result }) => {
   const handleChange = (value) => {
     const [sortBy, order] = value.split(":");
     setSearchParams((prev) => ({
@@ -22,7 +22,9 @@ const SortingBox = ({ setSearchParams }) => {
   return (
     <div className="flex md:flex-row flex-col justify-between">
       <div className="order-2 md:order-1 flex items-center justify-center md:text-md text-sm">
-        <p>Menampilkan hasil pencarian untuk : Laptop Lenovo M4</p>
+        {result && (
+          <p>Menampilkan hasil pencarian untuk : Laptop Lenovo M4 : {result}</p>
+        )}
       </div>
       <div className="order-1 md:order-2 flex justify-end md:pb-0 pb-4">
         <Select onValueChange={handleChange}>

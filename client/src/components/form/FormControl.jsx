@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Select,
   SelectContent,
@@ -5,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,29 +26,29 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
     });
   }, [formControls, getCities, getCategories, cities, categories]);
 
-  function renderComponentByType(controlItem) {
+  function renderComponentByType(control) {
     let element = null;
-    const currentControlItemValue = formData[controlItem.name] || "";
     const options =
-      controlItem.name === "city"
+      control.name === "city"
         ? cities
-        : controlItem.name === "category"
+        : control.name === "category"
         ? categories
-        : controlItem.options || [];
+        : control.options || [];
+    const currentValue = formData[control.name] || "";
 
-    switch (controlItem.componentType) {
+    switch (control.componentType) {
       case "input":
         element = (
           <>
-            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+            <Label htmlFor={control.name}>{control.label}</Label>
             <Input
-              id={controlItem.name}
+              id={control.name}
               onChange={handleChange}
-              name={controlItem.name}
-              type={controlItem.type}
-              value={currentControlItemValue}
-              maxlength={controlItem.maxlength}
-              placeholder={controlItem.placeholder}
+              name={control.name}
+              type={control.type}
+              value={currentValue}
+              maxlength={control.maxlength}
+              placeholder={control.placeholder}
               disabled={disabled}
               required
             />
@@ -55,65 +56,62 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
         );
         break;
       case "checkbox":
-        element = (
-          <>
-            {options.map((option) => (
-              <div
-                className="flex items-center space-x-3 py-2 px-3"
-                key={option.id}
-              >
-                <input
-                  id={controlItem.name}
-                  type={controlItem.type}
-                  name={controlItem.name}
-                  value={option.name}
-                  onChange={handleChange}
-                  checked={currentControlItemValue.includes(option.name)}
-                />
-                <Label
-                  htmlFor={controlItem.name}
-                  className="text-sm font-medium"
+        element =
+          control.method === "multiple" ? (
+            <Fragment>
+              {options.map((option) => (
+                <div
+                  className="flex items-center space-x-3 py-2 px-3"
+                  key={option.id}
                 >
-                  {option.name}
-                </Label>
-              </div>
-            ))}
-          </>
-        );
-        break;
-      case "binary":
-        element = (
-          <>
+                  <input
+                    id={`${control.name}-${option.id}`}
+                    type={control.type}
+                    name={control.name}
+                    value={option.name}
+                    onChange={handleChange}
+                    checked={currentValue.includes(option.name)}
+                  />
+                  <Label
+                    htmlFor={`${control.name}-${option.id}`}
+                    className="text-sm font-medium"
+                  >
+                    {option.name}
+                  </Label>
+                </div>
+              ))}
+            </Fragment>
+          ) : (
             <div
               className="flex items-center space-x-3 py-2 px-3"
-              key={controlItem.name}
+              key={control.name}
             >
               <input
-                id={controlItem.name}
-                name={controlItem.name}
-                type={controlItem.type}
-                checked={currentControlItemValue}
+                id={control.name}
+                name={control.name}
+                type={control.type}
+                checked={currentValue}
                 onChange={handleChange}
               />
-              <Label htmlFor={controlItem.name} className="text-sm font-medium">
-                {controlItem.label}
+              <Label htmlFor={control.name} className="text-sm font-medium">
+                {control.label}
               </Label>
             </div>
-          </>
-        );
+          );
         break;
+
       case "select":
         element = (
           <>
-            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+            <Label htmlFor={control.name}>{control.label}</Label>
             <Select
               disabled={disabled}
               onValueChange={(value) =>
-                handleChange({ target: { name: controlItem.name, value } })
+                handleChange({ target: { name: control.name, value } })
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={controlItem.placeholder} />
+                <SelectValue placeholder={control.placeholder} />
               </SelectTrigger>
               <SelectContent>
                 {options.map((option) => (
@@ -128,35 +126,35 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
         break;
       case "textarea":
         element = (
-          <>
-            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+          <Fragment>
+            <Label htmlFor={control.name}>{control.label}</Label>
             <Textarea
               disabled={disabled}
-              id={controlItem.name}
-              name={controlItem.name}
+              id={control.name}
+              name={control.name}
               onChange={handleChange}
-              value={currentControlItemValue}
-              placeholder={controlItem.placeholder}
+              value={currentValue}
+              placeholder={control.placeholder}
               maxlength="200"
               className="resize-none"
             />
-          </>
+          </Fragment>
         );
         break;
       default:
         element = (
-          <>
-            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+          <Fragment>
+            <Label htmlFor={control.name}>{control.label}</Label>
             <Input
-              id={controlItem.name}
-              name={controlItem.name}
-              placeholder={controlItem.placeholder}
-              type={controlItem.type}
-              value={currentControlItemValue}
+              id={control.name}
+              name={control.name}
+              type={control.type}
               onChange={handleChange}
+              value={currentValue}
+              placeholder={control.placeholder}
               disabled={disabled}
             />
-          </>
+          </Fragment>
         );
         break;
     }
@@ -166,8 +164,8 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {formControls.map((controlItem) => (
-        <div key={controlItem.name}>{renderComponentByType(controlItem)}</div>
+      {formControls.map((control) => (
+        <div key={control.name}>{renderComponentByType(control)}</div>
       ))}
     </div>
   );

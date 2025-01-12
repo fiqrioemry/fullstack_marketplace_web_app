@@ -33,8 +33,8 @@ const ProductRecommendation = () => {
       ) : (
         <div className="space-y-6">
           <div className="grid_display_5">
-            {[...Array(products)].map((_, index) => (
-              <ProductCard product={index} key={index} />
+            {products.map((product) => (
+              <ProductCard product={product} key={product.id} />
             ))}
           </div>
           {isProductLoading && <ProductsSkeleton />}
