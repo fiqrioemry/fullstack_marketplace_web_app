@@ -122,4 +122,7 @@
   .text_button {
     @apply text-primary font-bold hover:opacity-80 duration-300 transition-all;
   }
+  .default_border {
+    @apply border border-muted-foreground/50 rounded-md;
+  }
 }

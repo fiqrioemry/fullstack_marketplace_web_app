@@ -1,34 +1,26 @@
 /* eslint-disable react/prop-types */
-import CartItem from "../CartItem";
 import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
-import UserNavMenu from "../dropdown/UserNavMenu";
-import ShopNavMenu from "../dropdown/ShopNavMenu";
-import { Heart, ShoppingBag, Store } from "lucide-react";
-import DropDownContainer from "../dropdown/DropDownContainer";
+import UserMenu from "../dropdown/UserMenu";
+import OpenShop from "../dropdown/OpenShop";
+import { Heart } from "lucide-react";
+import ShoppingCart from "../ShoppingCart";
+import NotificationMenu from "../dropdown/NotificationMenu";
 
 const AuthNav = ({ user }) => {
-  console.log(user);
   return (
     <nav className="flex items-center gap-x-6">
       <Heart />
-      <CartItem>
-        <ShoppingBag />
-      </CartItem>
-
+      <NotificationMenu />
+      <ShoppingCart />
       {user.role === "customer" ? (
-        <DropDownContainer trigger={<Store />}>
-          <ShopNavMenu />
-        </DropDownContainer>
+        <OpenShop />
       ) : (
         <Link to="/shop">
           <UserAvatar avatar={user.store?.storeAvatar} />
         </Link>
       )}
-
-      <DropDownContainer trigger={<UserAvatar avatar={user.avatar} />}>
-        <UserNavMenu />
-      </DropDownContainer>
+      <UserMenu user={user} />
     </nav>
   );
 };

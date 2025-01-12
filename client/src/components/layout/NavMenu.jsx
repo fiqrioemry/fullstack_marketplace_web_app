@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { ShopAuthPath } from "../../config";
 import AuthNav from "../navigation/AuthNav";
 import ShopNav from "../navigation/ShopNav";
@@ -7,17 +6,18 @@ import { useProvider } from "../../context/GlobalProvider";
 
 const NavMenu = () => {
   const { userData, currentPath } = useProvider();
+  const isShopAuthPath = userData && ShopAuthPath.includes(currentPath);
 
   return (
-    <Fragment>
+    <>
       {!userData && <NonAuthNav />}
-      {userData && !ShopAuthPath.includes(currentPath) && (
-        <AuthNav user={userData} />
-      )}
-      {userData && ShopAuthPath.includes(currentPath) && (
-        <ShopNav user={userData} />
-      )}
-    </Fragment>
+      {userData &&
+        (isShopAuthPath ? (
+          <ShopNav user={userData} />
+        ) : (
+          <AuthNav user={userData} />
+        ))}
+    </>
   );
 };
 

@@ -163,6 +163,15 @@ export const controlSignUpForm = [
   },
 ];
 
+export const initialProfileForm = {
+  fullname: "",
+  birthday: "",
+  gender: "",
+  phone: "",
+  email: "",
+  avatar: "",
+};
+
 export const initialSearchForm = {
   query: "",
   category: [],
@@ -189,5 +198,107 @@ export const shipmentMethods = [
     method: "cargo",
     time: "Estimated Time 1 - 2 Weeks",
     price: 1.99,
+  },
+];
+
+// address
+export const initialAddressForm = {
+  name: "",
+  isMain: false,
+  address: "",
+  province: "",
+  city: "",
+  zipcode: "",
+  phone: "",
+};
+
+const provinceData = [
+  "DKI Jakarta",
+  "Jawa Timur",
+  "Sumatera Utara",
+  "Jawa Barat",
+  "Jawa Barat",
+  "Jawa Tengah",
+  "Sumatera Selatan",
+  "Banten",
+  "Jawa Barat",
+  "Sulawesi Selatan",
+];
+
+const cityData = [
+  "Jakarta",
+  "Surabaya",
+  "Medan",
+  "Bandung",
+  "Bekasi",
+  "Semarang",
+  "Palembang",
+  "Tangerang",
+  "Depok",
+  "Makassar",
+];
+
+export const controlAddressForm = [
+  {
+    name: "name",
+    label: "name",
+    type: "text",
+    placeholder: "Enter receipient name",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "address",
+    label: "address",
+    type: "text",
+    placeholder: "Enter receipient address",
+    style: "flex items-center capitalize",
+    componentType: "textarea",
+  },
+  {
+    name: "province",
+    label: "province",
+    type: "select",
+    placeholder: "Enter receipient province",
+    style: "flex items-center capitalize",
+    componentType: "select",
+    options: provinceData,
+  },
+  {
+    name: "city",
+    label: "city",
+    type: "select",
+    placeholder: "Enter receipient city",
+    style: "flex items-center capitalize",
+    componentType: "select",
+    options: cityData,
+  },
+  {
+    name: "zipcode",
+    label: "zipcode",
+    type: "text",
+    placeholder: "Enter receipient zipcode",
+    style: "flex items-center capitalize",
+    componentType: "input",
+    maxlength: "6",
+  },
+
+  {
+    name: "phone",
+    label: "phone number",
+    type: "tel",
+    placeholder: "Enter receipient phone",
+    style: "flex items-center capitalize",
+    componentType: "input",
+    maxlength: "13",
+  },
+
+  {
+    name: "isMain",
+    value: true,
+    label: "Set as main address",
+    type: "checkbox",
+    style: "flex items-center capitalize",
+    componentType: "binary",
   },
 ];

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-const UserAddress = () => {
+const UserAddress = ({ addr }) => {
   return (
     <div className="bg-background rounded-md shadow-md space-y-2 p-4">
       <h4 className="text-foreground/50">Shipment Address</h4>

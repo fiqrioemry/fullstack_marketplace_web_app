@@ -5,9 +5,14 @@ export const useHandleForm = (initialFormState) => {
   const [formData, setFormData] = useState(initialFormState);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, type, value, checked, files } = e.target;
 
-    if (files && files.length > 0) {
+    if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+    } else if (files && files.length > 0) {
       const fileArray = Array.from(files);
 
       setFormData((prev) => ({

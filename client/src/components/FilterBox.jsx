@@ -5,95 +5,82 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import FormControls from "./form/FormControl";
 import { Card, CardContent } from "@/components/ui/card";
-import { useProductStore } from "../store/useProductStore";
-import FilterBoxSkeleton from "./loading/FilterBoxSkeleton";
 import { controlFilterCategory, controlFilterCity } from "../config";
 
 const FilterBox = ({ formData, handleChange, handleFilterChange }) => {
-  const { categories, getCities, getCategories, cities } = useProductStore();
-
-  useEffect(() => {
-    getCities();
-    getCategories();
-  }, [getCategories, getCities]);
   return (
     <Card className="h-full py-4 px-3">
-      {!categories || !cities ? (
-        <FilterBoxSkeleton />
-      ) : (
-        <CardContent>
-          <div className="text-center mb-2 md:mb-4">
-            <h5 className="text-md md:text-lg">Filter Product</h5>
-          </div>
-          <Accordion collapsible className="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger className="text-sm md:text-lg">
-                Category
-              </AccordionTrigger>
-              <AccordionContent>
-                <FormControls
-                  formData={formData}
-                  handleChange={handleFilterChange}
-                  formControls={controlFilterCategory}
-                />
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-2">
-              <AccordionTrigger className="text-sm md:text-lg">
-                Location
-              </AccordionTrigger>
-              <AccordionContent>
-                <FormControls
-                  formData={formData}
-                  formControls={controlFilterCity}
-                  handleChange={handleFilterChange}
-                />
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-3">
-              <AccordionTrigger className="text-sm md:text-lg">
-                Price
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-3">
-                  <div className="relative p-1">
-                    <label htmlFor="minPrice" className="input_label ">
-                      Rp
-                    </label>
-                    <Input
-                      id="minPrice"
-                      name="minPrice"
-                      value={formData.minPrice}
-                      onBlur={handleFilterChange}
-                      onChange={handleChange}
-                      className="h-10 pl-11 rounded-lg"
-                      placeholder="Minimum Price"
-                    />
-                  </div>
-                  <div className="relative p-1">
-                    <label htmlFor="maxPrice" className="input_label">
-                      Rp
-                    </label>
-                    <Input
-                      id="maxPrice"
-                      name="maxPrice"
-                      value={formData.maxPrice}
-                      onBlur={handleFilterChange}
-                      onChange={handleChange}
-                      className="h-10 pl-11 rounded-lg"
-                      placeholder="Maximum Price"
-                    />
-                  </div>
+      <CardContent>
+        <div className="text-center mb-2 md:mb-4">
+          <h5 className="text-md md:text-lg">Filter Product</h5>
+        </div>
+        <Accordion collapsible className="w-full">
+          <AccordionItem value="category">
+            <AccordionTrigger className="text-sm md:text-lg">
+              Category
+            </AccordionTrigger>
+            <AccordionContent>
+              <FormControls
+                formData={formData}
+                handleChange={handleFilterChange}
+                formControls={controlFilterCategory}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="city">
+            <AccordionTrigger className="text-sm md:text-lg">
+              City
+            </AccordionTrigger>
+            <AccordionContent>
+              <FormControls
+                formData={formData}
+                formControls={controlFilterCity}
+                handleChange={handleFilterChange}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="price">
+            <AccordionTrigger className="text-sm md:text-lg">
+              Price
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-3">
+                <div className="relative p-1">
+                  <label htmlFor="minPrice" className="input_label ">
+                    Rp
+                  </label>
+                  <Input
+                    id="minPrice"
+                    name="minPrice"
+                    value={formData.minPrice}
+                    onBlur={handleFilterChange}
+                    onChange={handleChange}
+                    className="h-10 pl-11 rounded-lg"
+                    placeholder="Minimum Price"
+                  />
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-      )}
+                <div className="relative p-1">
+                  <label htmlFor="maxPrice" className="input_label">
+                    Rp
+                  </label>
+                  <Input
+                    id="maxPrice"
+                    name="maxPrice"
+                    value={formData.maxPrice}
+                    onBlur={handleFilterChange}
+                    onChange={handleChange}
+                    className="h-10 pl-11 rounded-lg"
+                    placeholder="Maximum Price"
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardContent>
     </Card>
   );
 };

@@ -4,14 +4,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Fragment } from "react";
+import { ShoppingBag } from "lucide-react";
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
-// eslint-disable-next-line react/prop-types
-const CartItem = ({ children }) => {
+const ShoppingCart = () => {
   return (
     <Fragment>
       <Popover>
-        <PopoverTrigger>{children}</PopoverTrigger>
+        <PopoverTrigger>
+          <ShoppingBag />
+        </PopoverTrigger>
         <PopoverContent>
           <h5>Shopping Cart</h5>
           <DropdownMenuSeparator />
@@ -24,4 +26,4 @@ const CartItem = ({ children }) => {
   );
 };
 
-export default CartItem;
+export default ShoppingCart;

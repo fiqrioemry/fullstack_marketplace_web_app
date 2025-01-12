@@ -2,7 +2,6 @@ import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/services";
 import { Navigate } from "react-router-dom";
-
 import { create } from "zustand";
 
 export const useProductStore = create((set) => ({
@@ -20,7 +19,6 @@ export const useProductStore = create((set) => ({
   getCities: async () => {
     set({ isCitiesLoading: true });
     try {
-      // Simulasi fetch API
       const response = [
         { id: 1, name: "Jakarta" },
         { id: 2, name: "Medan" },
@@ -55,7 +53,6 @@ export const useProductStore = create((set) => ({
   searchProducts: async ({ params }) => {
     try {
       set({ isSearchLoading: true });
-      console.log("search Product");
       const response = ["products"];
       set({ search: response });
     } catch (error) {

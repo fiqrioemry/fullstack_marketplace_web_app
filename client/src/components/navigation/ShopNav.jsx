@@ -1,35 +1,12 @@
-import {
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-} from "@/components/ui/dropdown-menu";
-import DropDown from "../dropdown/DropDownContainer";
-import { Link } from "react-router-dom";
-import { SellerNavLinks } from "../../config";
+/* eslint-disable react/prop-types */
+import ShopMenu from "../dropdown/ShopMenu";
+import NotificationMenu from "../dropdown/NotificationMenu";
 
-const ShopNav = () => {
+const ShopNav = ({ user }) => {
   return (
     <nav className="flex items-center gap-x-6">
-      <DropDown>
-        {SellerNavLinks.map((link) => {
-          return (
-            <Link to={link.href} key={link.href}>
-              <DropdownMenuItem
-                value={link.title}
-                className="w-full cursor-pointer"
-              >
-                {link.title}
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </Link>
-          );
-        })}
-        <Link to="/user/settings">
-          <DropdownMenuItem className="w-full cursor-pointer">
-            My-Dashboard
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </Link>
-      </DropDown>
+      <NotificationMenu />
+      <ShopMenu user={user} />
     </nav>
   );
 };

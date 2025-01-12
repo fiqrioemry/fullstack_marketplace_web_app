@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import {
   Select,
-  SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectTrigger,
   SelectValue,
   SelectLabel,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
 } from "@/components/ui/select";
 
 const SortingBox = ({ setSearchParams }) => {

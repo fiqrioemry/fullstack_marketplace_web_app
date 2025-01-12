@@ -1,7 +1,3 @@
-import { useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -9,9 +5,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useProductStore } from "../../store/useProductStore";
 
-function FormControls({ formControls = [], formData, handleChange }) {
+function FormControls({ formControls = [], formData, disabled, handleChange }) {
   const {
     getCities,
     getCategories,
@@ -24,10 +24,10 @@ function FormControls({ formControls = [], formData, handleChange }) {
   useEffect(() => {
     formControls.forEach((control) => {
       if (control.componentType === "select") {
-        if (control.name === "city" && !cities.length) {
+        if (control.name === "city" && cities.length === 0) {
           getCities();
         }
-        if (control.name === "category" && !categories.length) {
+        if (control.name === "category" && categories.length === 0) {
           getCategories();
         }
       }
@@ -47,21 +47,27 @@ function FormControls({ formControls = [], formData, handleChange }) {
     switch (controlItem.componentType) {
       case "input":
         element = (
-          <Input
-            id={controlItem.name}
-            name={controlItem.name}
-            type={controlItem.type}
-            value={currentControlItemValue}
-            placeholder={controlItem.placeholder}
-            onChange={handleChange}
-          />
+          <>
+            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+            <Input
+              id={controlItem.name}
+              name={controlItem.name}
+              type={controlItem.type}
+              value={currentControlItemValue}
+              disabled={disabled}
+              placeholder={controlItem.placeholder}
+              onChange={handleChange}
+              maxlength={controlItem.maxlength}
+              required
+            />
+          </>
         );
         break;
       case "checkbox":
         element = (
           <>
-            {isCitiesLoading || isCategoriesLoading ? (
-              <SelectItem disabled>Loading...</SelectItem>
+            {options.length === 0 ? (
+              <div className="px-3">Loading...</div>
             ) : (
               options.map((option) => (
                 <div
@@ -88,28 +94,51 @@ function FormControls({ formControls = [], formData, handleChange }) {
           </>
         );
         break;
+      case "binary":
+        element = (
+          <>
+            <div
+              className="flex items-center space-x-3 py-2 px-3"
+              key={controlItem.name}
+            >
+              <input
+                id={controlItem.name}
+                name={controlItem.name}
+                type={controlItem.type}
+                checked={currentControlItemValue}
+                onChange={handleChange}
+              />
+              <Label htmlFor={controlItem.name} className="text-sm font-medium">
+                {controlItem.label}
+              </Label>
+            </div>
+          </>
+        );
+        break;
       case "select":
         element = (
-          <Select
-            onValueChange={(value) =>
-              handleChange({ target: { name: controlItem.name, value } })
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={controlItem.placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {isCitiesLoading || isCategoriesLoading ? (
-                <SelectItem disabled>Loading...</SelectItem>
-              ) : (
-                options.map((option) => (
-                  <SelectItem key={option.id} value={option.name}>
-                    {option.name || option.label}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
+          <>
+            <Label htmlFor={controlItem.name}>{controlItem.label}</Label>
+            <Select disabled={disabled} onValueChange={handleChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={controlItem.placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {isCitiesLoading || isCategoriesLoading ? (
+                  <SelectItem disabled>Loading...</SelectItem>
+                ) : (
+                  options.map((option) => (
+                    <SelectItem
+                      key={option.id || option}
+                      value={option.name || option}
+                    >
+                      {option.name || option}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </>
         );
         break;
       case "textarea":
@@ -122,6 +151,9 @@ function FormControls({ formControls = [], formData, handleChange }) {
               placeholder={controlItem.placeholder}
               value={currentControlItemValue}
               onChange={handleChange}
+              disabled={disabled}
+              maxlength="200"
+              className="resize-none"
             />
           </>
         );
@@ -137,6 +169,7 @@ function FormControls({ formControls = [], formData, handleChange }) {
               type={controlItem.type}
               value={currentControlItemValue}
               onChange={handleChange}
+              disabled={disabled}
             />
           </>
         );
