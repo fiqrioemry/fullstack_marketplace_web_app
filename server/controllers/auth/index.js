@@ -148,32 +148,19 @@ async function userAuthCheck(req, res) {
   const { userId } = req.user;
 
   try {
-    // get data with redis key
     const cachedUser = await client.get(`user:${userId}`);
 
-    // return res if redis exist
     if (cachedUser) {
       return res.status(200).send({ data: JSON.parse(cachedUser) });
     }
 
-    // fetch user data
     const user = await User.findByPk(userId, {
-      attributes: [
-        "id",
-        "email",
-        "fullname",
-        "avatar",
-        "role",
-        "birthday",
-        "gender",
-        "phone",
-      ],
+      attributes: { exclude: ["password"] },
       include: [
         { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
       ],
     });
 
-    // assign data value
     const payload = {
       userId: user.id,
       email: user.email,
@@ -188,7 +175,6 @@ async function userAuthCheck(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    // set expire in 15 min
     await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(200).send({

@@ -11,7 +11,7 @@ async function getProfile(req, res) {
 
   try {
     const cachedUser = await client.get(`user:${userId}`);
-    console.log(cachedUser);
+
     if (cachedUser) {
       return res.status(200).send({
         data: JSON.parse(cachedUser),
@@ -19,13 +19,30 @@ async function getProfile(req, res) {
     }
 
     const user = await User.findByPk(userId, {
-      attributes: ["id", "fullname", "email", "gender", "birthday", "phone"],
+      attributes: { exclude: ["password"] },
+      include: [
+        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
+      ],
     });
 
-    await client.setEx(`user:${user.id}`, 900, JSON.stringify(user));
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      fullname: user.fullname,
+      avatar: user.avatar,
+      birthday: user.birthday,
+      phone: user.phone,
+      gender: user.gender,
+      role: user.role,
+      storeId: user.store?.id,
+      storeName: user.store?.name,
+      storeAvatar: user.store?.avatar,
+    };
+
+    await client.setEx(`user:${user.id}`, 900, JSON.stringify(payload));
 
     return res.status(200).send({
-      data: user,
+      data: payload,
     });
   } catch (error) {
     return res.status(500).send({
