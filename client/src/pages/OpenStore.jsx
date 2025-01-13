@@ -1,20 +1,17 @@
 import { Card } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useHandleForm } from "@/hooks/useHandleForm";
 import OpenStoreForm from "../components/form/OpenStoreFrom";
 import { ControlOpenStoreForm, initialOpenStoreForm } from "../config";
 
 const OpenStore = () => {
-  const navigate = useNavigate();
   const { userOpenStore, isAuthLoading } = useAuthStore();
   const { formData, handleChange, handleValidate, handleSubmit } =
     useHandleForm(initialOpenStoreForm);
 
   const isValid = handleValidate();
 
-  const handleOpenStore = (e) =>
-    handleSubmit(e, userOpenStore(formData, navigate));
+  const handleOpenStore = (e) => handleSubmit(e, userOpenStore(formData));
 
   return (
     <div className="grid min-h-svh ">

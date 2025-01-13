@@ -11,8 +11,10 @@ import {
 import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
 import { SellerNavLinks } from "../../config";
+import { Home } from "lucide-react";
 
 const ShopMenu = ({ user }) => {
+  console.log(user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,7 +33,6 @@ const ShopMenu = ({ user }) => {
                 className="w-full cursor-pointer"
               >
                 {link.title}
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
           );
@@ -39,7 +40,9 @@ const ShopMenu = ({ user }) => {
         <Link to="/user/settings">
           <DropdownMenuItem className="w-full cursor-pointer">
             My-Dashboard
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            <DropdownMenuShortcut>
+              <Home />
+            </DropdownMenuShortcut>
           </DropdownMenuItem>
         </Link>
       </DropdownMenuContent>

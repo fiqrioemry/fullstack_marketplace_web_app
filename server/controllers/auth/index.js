@@ -91,7 +91,7 @@ async function userSignIn(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(401).send({ message: "All Field required" });
+      return res.status(401).json({ message: "All Field required" });
     }
 
     const user = await User.findOne({
@@ -103,7 +103,7 @@ async function userSignIn(req, res) {
     });
 
     if (!user) {
-      return res.status(404).send({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     const payload = {
@@ -142,7 +142,7 @@ async function userSignIn(req, res) {
       secure: process.env.ENVIRONMENT === "production",
     });
 
-    return res.status(200).send({
+    return res.status(200).json({
       message: "Login is success",
       accessToken,
       payload,
@@ -150,16 +150,20 @@ async function userSignIn(req, res) {
   } catch (error) {
     return res
       .status(500)
-      .send({ message: "An error occurred", error: error.message });
+      .json({ message: "An error occurred", error: error.message });
   }
 }
 
 async function userSignOut(req, res) {
+  const { userId } = req.user;
+
   delete req.headers.authorization;
 
   res.clearCookie("refreshToken");
 
-  return res.status(200).send({ message: "Logout is success" });
+  await client.del(`user:${userId}`);
+
+  return res.status(200).json({ message: "Logout is success" });
 }
 
 async function userAuthCheck(req, res) {
@@ -349,18 +353,13 @@ async function userOpenStore(req, res) {
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
-      include: [
-        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
-      ],
     });
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    await user.update({ role: "seller" });
-
-    await Store.create({
+    const store = await Store.create({
       userId,
       name,
       slug,
@@ -368,6 +367,8 @@ async function userOpenStore(req, res) {
       description,
       avatar: randomAvatar(),
     });
+
+    await user.update({ role: "seller" });
 
     const payload = {
       userId: user.id,
@@ -378,16 +379,16 @@ async function userOpenStore(req, res) {
       phone: user.phone,
       gender: user.gender,
       role: user.role,
-      storeId: user.store?.id,
-      storeName: user.store?.name,
-      storeAvatar: user.store?.avatar,
+      storeId: store.id,
+      storeName: store.name,
+      storeAvatar: store.avatar,
     };
 
     await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(201).json({
       message: "Store is created",
-      data: payload,
+      payload,
     });
   } catch (error) {
     return res

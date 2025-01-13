@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Navigate } from "react-router-dom";
 import { useProvider } from "../context/GlobalProvider";
 
-const authPath = new Set(["user", "shop", "cart", "shipment"]);
+const authPath = new Set(["user", "shop", "cart", "shipment", "open-shop"]);
 const nonAuthPath = new Set(["signin", "signup", "reset-password"]);
 
 // eslint-disable-next-line react/prop-types
@@ -18,6 +18,10 @@ const AuthRoute = ({ children }) => {
 
   if (!userData && isAuthPath) {
     return <Navigate to="/signin" />;
+  }
+
+  if (userData && userData.role === "seller" && pathSegment === "open-shop") {
+    return <Navigate to="/shop" />;
   }
 
   if (userData && userData.role !== "seller" && pathSegment === "shop") {

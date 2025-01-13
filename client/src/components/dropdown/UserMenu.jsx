@@ -12,6 +12,7 @@ import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
 import { CustomerNavLinks } from "../../config";
 import { useAuthStore } from "../../store/useAuthStore";
+import { LogOut } from "lucide-react";
 
 const UserMenu = ({ user }) => {
   const { userSignOut } = useAuthStore();
@@ -31,10 +32,9 @@ const UserMenu = ({ user }) => {
             <Link to={link.href} key={link.href}>
               <DropdownMenuItem
                 value={link.title}
-                className="w-full cursor-pointer"
+                className="w-full cursor-pointer  capitalize"
               >
                 {link.title}
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
           );
@@ -45,7 +45,9 @@ const UserMenu = ({ user }) => {
           className="w-full cursor-pointer"
         >
           Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          <DropdownMenuShortcut>
+            <LogOut />
+          </DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
