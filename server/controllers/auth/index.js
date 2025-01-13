@@ -4,11 +4,11 @@ const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
 const sendOtp = require("../../utils/sendOtp");
 const { client } = require("../../utils/redis");
+const createSlug = require("../../utils/createSlug");
 const { User, Store, Reset } = require("../../models");
 const randomAvatar = require("../../utils/randomAvatar");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
 const createEmailTemplate = require("../../utils/createEmailTemplate");
-const createSlug = require("../../utils/createSlug");
 
 async function sendOtpSignUp(req, res) {
   const { email } = req.body;
@@ -296,9 +296,15 @@ async function forgotPassword(req, res) {
 
 async function userOpenStore(req, res) {
   const { userId } = req.user;
-  const { name, description, city } = req.body;
+  const { name, description, city, type } = req.body;
   try {
     const slug = createSlug(name);
+
+    if (!name || !description || !city || !type)
+      return res
+        .status(400)
+        .send({ success: false, message: "All fields required" });
+
     const existingStore = await Store.findOne({
       where: {
         [Sequelize.Op.or]: [{ userId }, { slug }],
@@ -319,7 +325,9 @@ async function userOpenStore(req, res) {
       }
     }
 
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      attributes: [{ exclude: "password" }],
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -348,13 +356,13 @@ async function userOpenStore(req, res) {
 
 module.exports = {
   userSignIn,
+  userSignUp,
   userSignOut,
-  userAuthRefresh,
   userAuthCheck,
   resetPassword,
-  forgotPassword,
   userOpenStore,
   sendOtpSignUp,
+  forgotPassword,
+  userAuthRefresh,
   verifyOtpSignUp,
-  userSignUp,
 };

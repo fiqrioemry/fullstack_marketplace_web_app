@@ -11,7 +11,7 @@ import { ProductPagination } from "../components/ProductPagination";
 import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 
 const SearchResult = () => {
-  const { getProducts, getCities, getCategories, products } = useProductStore();
+  const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const { formData, setFormData, handleChange } =
     useHandleForm(initialSearchForm);
@@ -29,10 +29,6 @@ const SearchResult = () => {
       category: params.category ? params.category.split(",") : [],
     });
   }, [searchParams, setFormData]);
-
-  useEffect(() => {
-    getProducts(formData);
-  }, [getProducts, formData]);
 
   const handleFilterChange = ({ target: { name, value } }) => {
     const params = Object.fromEntries(searchParams.entries());
@@ -55,6 +51,10 @@ const SearchResult = () => {
 
     setSearchParams(params);
   };
+
+  useEffect(() => {
+    getProducts(formData);
+  }, [getProducts, formData]);
 
   return (
     <section>

@@ -92,13 +92,12 @@ export const initialOpenStoreForm = {
   name: "",
   description: "",
   city: "",
-  category: "",
 };
 
 export const ControlOpenStoreForm = [
   {
     name: "name",
-    label: "name",
+    label: "store name",
     type: "text",
     placeholder: "Enter your store name",
     style: "flex items-center capitalize",
@@ -117,14 +116,6 @@ export const ControlOpenStoreForm = [
     label: "city",
     type: "select",
     placeholder: "Select your city",
-    style: "flex items-center capitalize",
-    componentType: "select",
-  },
-  {
-    name: "category",
-    label: "category",
-    type: "select",
-    placeholder: "Select your category",
     style: "flex items-center capitalize",
     componentType: "select",
   },

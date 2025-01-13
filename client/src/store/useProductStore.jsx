@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
+import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/services";
 import { Navigate } from "react-router-dom";
-import { create } from "zustand";
 
 export const useProductStore = create((set) => ({
   search: null,
@@ -164,6 +164,7 @@ export const useProductStore = create((set) => ({
           ],
         },
       ];
+
       const response = data.filter((item) => item.slug === slug);
       set({ product: response });
     } catch (error) {
@@ -251,6 +252,7 @@ export const useProductStore = create((set) => ({
           ],
         },
       ];
+
       set({ products: data });
     } catch (error) {
       console.error(error);
