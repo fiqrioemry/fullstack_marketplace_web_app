@@ -8,7 +8,6 @@ import ShoppingCart from "../ShoppingCart";
 import NotificationMenu from "../dropdown/NotificationMenu";
 
 const AuthNav = ({ user }) => {
-  console.log(user);
   return (
     <nav className="flex items-center gap-x-6">
       <Heart />

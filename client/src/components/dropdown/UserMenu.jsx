@@ -11,8 +11,11 @@ import {
 import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
 import { CustomerNavLinks } from "../../config";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const UserMenu = ({ user }) => {
+  const { userSignOut } = useAuthStore();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,7 +40,10 @@ const UserMenu = ({ user }) => {
           );
         })}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="w-full cursor-pointer">
+        <DropdownMenuItem
+          onClick={userSignOut}
+          className="w-full cursor-pointer"
+        >
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

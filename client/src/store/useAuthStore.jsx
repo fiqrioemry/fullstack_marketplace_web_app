@@ -19,7 +19,6 @@ export const useAuthStore = create((set) => ({
       toast.success(response.data.message);
     } catch (error) {
       toast.error(error.response.data.message);
-      Promise.reject(error);
     } finally {
       set({ isAuthLoading: false });
     }
@@ -36,7 +35,6 @@ export const useAuthStore = create((set) => ({
       }
     } catch (error) {
       toast.error(error.response.data.message);
-      Promise.reject(error);
     } finally {
       set({ isAuthLoading: false });
     }
@@ -61,7 +59,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  userOpenStore: async (formData, navigate) => {
+  userOpenStore: async (formData) => {
     try {
       set({ isAuthLoading: true });
 
@@ -69,35 +67,34 @@ export const useAuthStore = create((set) => ({
 
       toast.success(response.data.message);
 
-      if (response.data.success) {
-        navigate("/shop");
-      }
+      set({ userData: response.data.data });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
       set({ isAuthLoading: false });
     }
   },
+
   userAuthCheck: async () => {
     try {
       const response = await axiosInstance.get("/auth/me");
       set({ userData: response.data.data });
     } catch (error) {
+      console.log(error);
       set({ userData: null });
-      return Promise.reject(error);
     } finally {
       set({ isCheckAuth: false });
     }
   },
-  userSignIn: async (formData, navigate) => {
+  userSignIn: async (formData) => {
     try {
       set({ isAuthLoading: true });
       const response = await axiosInstance.post("/auth/signin", formData);
-      Cookies.set("accessToken", response.data.data, {
+      Cookies.set("accessToken", response.data.accessToken, {
         expires: 1 / 96,
       });
       toast.success(response.data.message);
-      navigate("/");
+      set({ userData: response.data.payload });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -107,15 +104,12 @@ export const useAuthStore = create((set) => ({
 
   userSignOut: async () => {
     try {
-      set({ isAuthLoading: true });
       const response = await axiosInstance.post("/auth/signout");
       toast.success(response.data.message);
       Cookies.remove("accessToken");
-      set({ userData: [] });
+      set({ userData: null });
     } catch (error) {
       console.log(error);
-    } finally {
-      set({ isAuthLoading: false });
     }
   },
 }));

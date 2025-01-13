@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
           }
         );
 
-        const newAccessToken = response.data.data.accessToken;
+        const newAccessToken = response.accessToken;
 
         Cookies.set("accessToken", newAccessToken, { expires: 1 / 96 });
 

@@ -94,15 +94,31 @@ async function userSignIn(req, res) {
       return res.status(401).send({ message: "All Field required" });
     }
 
-    // Query paralel
     const user = await User.findOne({
       where: { email },
-      attributes: ["id"],
+      attributes: { exclude: ["password"] },
+      include: [
+        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
+      ],
     });
 
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
+
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      fullname: user.fullname,
+      avatar: user.avatar,
+      birthday: user.birthday,
+      phone: user.phone,
+      gender: user.gender,
+      role: user.role,
+      storeId: user.store?.id,
+      storeName: user.store?.name,
+      storeAvatar: user.store?.avatar,
+    };
 
     const accessToken = jwt.sign(
       { userId: user.id },
@@ -128,7 +144,8 @@ async function userSignIn(req, res) {
 
     return res.status(200).send({
       message: "Login is success",
-      data: accessToken,
+      accessToken,
+      payload,
     });
   } catch (error) {
     return res
@@ -149,11 +166,11 @@ async function userAuthCheck(req, res) {
   const { userId } = req.user;
 
   try {
-    // const cachedUser = await client.get(`user:${userId}`);
+    const cachedUser = await client.get(`user:${userId}`);
 
-    // if (cachedUser) {
-    //   return res.status(200).send({ data: JSON.parse(cachedUser) });
-    // }
+    if (cachedUser) {
+      return res.status(200).send({ data: JSON.parse(cachedUser) });
+    }
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
@@ -176,10 +193,10 @@ async function userAuthCheck(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(200).send({
-      data: payload,
+      payload,
     });
   } catch (error) {
     return res.status(500).send({
@@ -195,31 +212,34 @@ async function userAuthRefresh(req, res) {
 
     if (!refreshToken) {
       return res.status(401).send({
-        message: "Session is Expired, Please log in",
+        message: "Unauthorized !!! Please Login",
       });
     }
 
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
 
-    const userId = decoded.userId;
+    if (!decoded) {
+      return res.status(401).send({
+        message: "Unauthorized !!! Session Expired",
+      });
+    }
 
-    const user = await User.findByPk(userId, { attributes: ["id"] });
+    const user = await User.findByPk(decoded.userId, { attributes: ["id"] });
 
     if (!user) {
-      return res.status(403).send({
-        message: "Invalid refresh token, please log in",
+      return res.status(401).send({
+        message: "Unauthorized !!! User not found",
       });
     }
 
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.ACCESS_TOKEN,
-      { expiresIn: "1d" }
+      { expiresIn: "15m" }
     );
 
     res.status(200).send({
-      success: true,
-      data: { accessToken },
+      accessToken,
     });
   } catch (error) {
     return res.status(500).send({
@@ -327,7 +347,12 @@ async function userOpenStore(req, res) {
       }
     }
 
-    const user = await User.findByPk(userId, { attributes: ["id"] });
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ["password"] },
+      include: [
+        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
+      ],
+    });
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -335,7 +360,7 @@ async function userOpenStore(req, res) {
 
     await user.update({ role: "seller" });
 
-    const newStore = await Store.create({
+    await Store.create({
       userId,
       name,
       slug,
@@ -344,16 +369,30 @@ async function userOpenStore(req, res) {
       avatar: randomAvatar(),
     });
 
-    await client.del(`user:${userId}`);
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      fullname: user.fullname,
+      avatar: user.avatar,
+      birthday: user.birthday,
+      phone: user.phone,
+      gender: user.gender,
+      role: user.role,
+      storeId: user.store?.id,
+      storeName: user.store?.name,
+      storeAvatar: user.store?.avatar,
+    };
 
-    res.status(201).send({
+    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+
+    res.status(201).json({
       message: "Store is created",
-      data: newStore,
+      data: payload,
     });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: "Failed to create new store", error: error.message });
+      .json({ message: "Failed to create new store", error: error.message });
   }
 }
 

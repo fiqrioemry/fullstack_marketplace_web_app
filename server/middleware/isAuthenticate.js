@@ -7,16 +7,16 @@ module.exports = async function isAuthenticate(req, res, next) {
 
   try {
     if (!authHeader || !authHeader.startsWith("Bearer "))
-      return res
-        .status(401)
-        .send({ message: "You are not authenticate, please log in" });
+      return res.status(401).send({ message: "Unauthorized !!! Please Login" });
 
     const token = authHeader.split(" ").pop();
 
     jwt.verify(token, process.env.ACCESS_TOKEN, (err, decode) => {
       if (err) {
         if (err.name === "TokenExpiredError") {
-          return res.status(401).json({ error: "Token has expired" });
+          return res
+            .status(401)
+            .json({ error: "Unauthorized !!! Sessions Expired" });
         } else {
           return res.sendStatus(403);
         }
