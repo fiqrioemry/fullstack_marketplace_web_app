@@ -32,8 +32,6 @@ const SearchResult = () => {
 
   useEffect(() => {
     getProducts(formData);
-    getCities();
-    getCategories();
   }, [getProducts, formData]);
 
   const handleFilterChange = ({ target: { name, value } }) => {

@@ -17,14 +17,14 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
 
   useEffect(() => {
     formControls.forEach((control) => {
-      if (control.name === "city" && !cities) {
+      if (control.name === "city") {
         getCities();
       }
-      if (control.name === "category" && !categories) {
+      if (control.name === "category") {
         getCategories();
       }
     });
-  }, [formControls, getCities, getCategories, cities, categories]);
+  }, [getCategories, getCities, formControls]);
 
   function renderComponentByType(control) {
     let element = null;
