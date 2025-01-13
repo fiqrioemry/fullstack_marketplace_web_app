@@ -116,8 +116,11 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
               </SelectTrigger>
               <SelectContent>
                 {options.map((option) => (
-                  <SelectItem key={option.id} value={option.name}>
-                    {option.name}
+                  <SelectItem
+                    key={option.id || option}
+                    value={option.name || option}
+                  >
+                    {option.name || option}
                   </SelectItem>
                 ))}
               </SelectContent>

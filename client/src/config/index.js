@@ -188,6 +188,42 @@ export const initialProfileForm = {
   avatar: "",
 };
 
+export const controlProfileForm = [
+  {
+    name: "fullname",
+    label: "fullname",
+    type: "text",
+    placeholder: "Enter your fullname",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "birthday",
+    label: "birthday",
+    type: "date",
+    placeholder: "Add your birthday",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "gender",
+    label: "gender",
+    type: "select",
+    placeholder: "Add your gender",
+    style: "flex items-center capitalize",
+    componentType: "select",
+    options: ["male", "female"],
+  },
+  {
+    name: "phone",
+    label: "phone",
+    type: "text",
+    placeholder: "Add your phone",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+];
+
 export const initialSearchForm = {
   query: "",
   category: [],

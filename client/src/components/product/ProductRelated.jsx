@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import ProductCard from "../ProductCard";
 
-const ProductRelated = () => {
+const ProductRelated = ({ products }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -16,12 +16,12 @@ const ProductRelated = () => {
       <div>
         <Carousel className="w-full">
           <CarouselContent>
-            {Array.from({ length: 5 }).map((_, index) => (
+            {products.map((product) => (
               <CarouselItem
-                key={index}
+                key={product.id}
                 className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
               >
-                <ProductCard product={index} />
+                <ProductCard product={product} />
               </CarouselItem>
             ))}
           </CarouselContent>

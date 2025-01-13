@@ -5,14 +5,21 @@ import { useProductStore } from "../store/useProductStore";
 import ProductRelated from "../components/product/ProductRelated";
 import ProductDisplay from "../components/product/ProductDisplay";
 import ProductDisplaySkeleton from "../components/loading/ProductDisplaySkeleton";
+import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 
 const ProductDetail = () => {
   const { slug } = useParams();
-  const { product, getProduct } = useProductStore();
+  const { product, products, getProduct, getProducts } = useProductStore();
 
   useEffect(() => {
     getProduct(slug);
   }, [getProduct, slug]);
+
+  useEffect(() => {
+    if (product) {
+      getProducts(product.slug);
+    }
+  }, [getProducts, product]);
 
   return (
     <section>
@@ -26,9 +33,11 @@ const ProductDetail = () => {
           {product && product.length !== 0 && (
             <ProductDisplay product={product[0]} />
           )}
-
           {/* 3. product related */}
-          <ProductRelated />
+          {!products && <ProductsSkeleton />}
+          {products && products.length !== 0 && (
+            <ProductRelated products={products} />
+          )}
         </div>
       </div>
     </section>
