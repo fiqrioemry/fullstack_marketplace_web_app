@@ -137,6 +137,7 @@ export const controlFilterCategory = [
     type: "checkbox",
     style: "flex items-center capitalize",
     componentType: "checkbox",
+    method: "multiple",
   },
 ];
 
@@ -147,6 +148,7 @@ export const controlFilterCity = [
     type: "checkbox",
     style: "flex items-center capitalize",
     componentType: "checkbox",
+    method: "multiple",
   },
 ];
 export const controlSignInForm = [
@@ -354,3 +356,9 @@ export const controlEditAddressForm = [
     maxlength: "13",
   },
 ];
+
+export const initialOrderForm = {
+  productId: [],
+  quantity: [],
+  shipmentCost: [],
+};

@@ -8,13 +8,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "../store/useUserStore";
 import AddressDisplay from "../components/AddressDisplay";
+import { useProductStore } from "../store/useProductStore";
 import ProductCartItem from "../components/cart/ProductCartItem";
 import AddressSkeleton from "../components/loading/AddressSkeleton";
-import { useLocation } from "react-router-dom";
-import { useProductStore } from "../store/useProductStore";
 
 const Checkout = () => {
   const [checkout, setCheckout] = useState({});
@@ -40,6 +40,8 @@ const Checkout = () => {
       });
     }
   }, [product, quantity]);
+
+  // cartItem (productId & quantity)
 
   return (
     <section className="bg-muted ">
