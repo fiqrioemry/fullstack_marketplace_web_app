@@ -8,6 +8,7 @@ const { User, Store, Reset } = require("../../models");
 const randomAvatar = require("../../utils/randomAvatar");
 const resetPasswordToken = require("../../utils/resetPasswordToken");
 const createEmailTemplate = require("../../utils/createEmailTemplate");
+const createSlug = require("../../utils/createSlug");
 
 async function sendOtpSignUp(req, res) {
   const { email } = req.body;
@@ -293,6 +294,58 @@ async function forgotPassword(req, res) {
   }
 }
 
+async function userOpenStore(req, res) {
+  const { userId } = req.user;
+  const { name, description, city } = req.body;
+  try {
+    const slug = createSlug(name);
+    const existingStore = await Store.findOne({
+      where: {
+        [Sequelize.Op.or]: [{ userId }, { slug }],
+      },
+    });
+
+    if (existingStore) {
+      if (existingStore.userId === userId) {
+        return res.status(400).json({
+          message: "You already have a store. Cannot create another.",
+        });
+      }
+
+      if (existingStore.slug === slug) {
+        return res.status(400).json({
+          message: "Store name already exists. Please choose a different name.",
+        });
+      }
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await user.update({ role: "seller" });
+
+    const newStore = await Store.create({
+      name,
+      slug,
+      city,
+      description,
+      avatar: randomAvatar(),
+    });
+
+    res.status(201).send({
+      message: "Store is created",
+      data: newStore,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "Failed to create new store", error: error.message });
+  }
+}
+
 module.exports = {
   userSignIn,
   userSignOut,
@@ -300,8 +353,7 @@ module.exports = {
   userAuthCheck,
   resetPassword,
   forgotPassword,
-
-  // new
+  userOpenStore,
   sendOtpSignUp,
   verifyOtpSignUp,
   userSignUp,
