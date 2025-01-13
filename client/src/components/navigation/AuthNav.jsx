@@ -8,6 +8,7 @@ import ShoppingCart from "../ShoppingCart";
 import NotificationMenu from "../dropdown/NotificationMenu";
 
 const AuthNav = ({ user }) => {
+  console.log(user);
   return (
     <nav className="flex items-center gap-x-6">
       <Heart />
@@ -17,7 +18,7 @@ const AuthNav = ({ user }) => {
         <OpenShop />
       ) : (
         <Link to="/shop">
-          <UserAvatar avatar={user.store?.storeAvatar} />
+          <UserAvatar avatar={user.storeAvatar} />
         </Link>
       )}
       <UserMenu user={user} />

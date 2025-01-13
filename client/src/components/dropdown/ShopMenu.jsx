@@ -5,6 +5,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuShortcut,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
@@ -18,7 +20,9 @@ const ShopMenu = ({ user }) => {
           <UserAvatar avatar={user.storeAvatar} />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-56 capitalize">
+        <DropdownMenuLabel>{user.storeName}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
         {SellerNavLinks.map((link) => {
           return (
             <Link to={link.href} key={link.href}>

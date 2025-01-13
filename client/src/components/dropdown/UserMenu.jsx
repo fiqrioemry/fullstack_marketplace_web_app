@@ -21,7 +21,7 @@ const UserMenu = ({ user }) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Shop</DropdownMenuLabel>
+        <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {CustomerNavLinks.map((link) => {
           return (

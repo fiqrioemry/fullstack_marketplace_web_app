@@ -150,7 +150,7 @@ async function userAuthCheck(req, res) {
 
   try {
     const cachedUser = await client.get(`user:${userId}`);
-
+    console.log("1. userAuthCheck :", cachedUser);
     if (cachedUser) {
       return res.status(200).send({ data: JSON.parse(cachedUser) });
     }
@@ -178,6 +178,7 @@ async function userAuthCheck(req, res) {
 
     await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
+    console.log("2. userAuthCheck :", payload);
     res.status(200).send({
       data: payload,
     });
@@ -191,6 +192,7 @@ async function userAuthCheck(req, res) {
 
 async function userAuthRefresh(req, res) {
   try {
+    console.log("refresh token here");
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -296,38 +298,37 @@ async function forgotPassword(req, res) {
 
 async function userOpenStore(req, res) {
   const { userId } = req.user;
-  const { name, description, city, type } = req.body;
+  const { name, description, city } = req.body;
+
   try {
     const slug = createSlug(name);
 
-    if (!name || !description || !city || !type)
+    if (!name || !description || !city)
       return res
         .status(400)
         .send({ success: false, message: "All fields required" });
 
     const existingStore = await Store.findOne({
       where: {
-        [Sequelize.Op.or]: [{ userId }, { slug }],
+        [Op.or]: [{ userId }, { slug }],
       },
     });
 
     if (existingStore) {
       if (existingStore.userId === userId) {
         return res.status(400).json({
-          message: "You already have a store. Cannot create another.",
+          message: "You already have a store.",
         });
       }
 
       if (existingStore.slug === slug) {
         return res.status(400).json({
-          message: "Store name already exists. Please choose a different name.",
+          message: "Store name already exists.",
         });
       }
     }
 
-    const user = await User.findByPk(userId, {
-      attributes: [{ exclude: "password" }],
-    });
+    const user = await User.findByPk(userId, { attributes: ["id"] });
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -336,12 +337,15 @@ async function userOpenStore(req, res) {
     await user.update({ role: "seller" });
 
     const newStore = await Store.create({
+      userId,
       name,
       slug,
       city,
       description,
       avatar: randomAvatar(),
     });
+
+    await client.del(`user:${userId}`);
 
     res.status(201).send({
       message: "Store is created",
