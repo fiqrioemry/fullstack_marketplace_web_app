@@ -7,6 +7,7 @@ const {
   resetPassword,
   sendOtpSignUp,
   verifyOtpSignUp,
+  userOpenStore,
 } = require("../../controllers/auth");
 const express = require("express");
 const isAuthenticate = require("../../middleware/isAuthenticate");
@@ -17,6 +18,7 @@ router.post("/signout", userSignOut);
 router.get("/refresh", userAuthRefresh);
 router.get("/me", isAuthenticate, userAuthCheck);
 router.put("/reset/:token", resetPassword);
+router.post("/open-store", isAuthenticate, userOpenStore);
 
 router.post("/signup", userSignUp);
 router.post("/send-otp", sendOtpSignUp);

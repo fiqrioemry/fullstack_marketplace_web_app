@@ -8,12 +8,13 @@ import { ControlOpenStoreForm, initialOpenStoreForm } from "../config";
 const OpenStore = () => {
   const navigate = useNavigate();
   const { userOpenStore, isAuthLoading } = useAuthStore();
-  const { formData, handleChange, handleValidate } =
+  const { formData, handleChange, handleValidate, handleSubmit } =
     useHandleForm(initialOpenStoreForm);
 
   const isValid = handleValidate();
 
-  const onSubmit = () => userOpenStore(formData, navigate);
+  const handleOpenStore = (e) =>
+    handleSubmit(e, userOpenStore(formData, navigate));
 
   return (
     <div className="grid min-h-svh ">
@@ -23,7 +24,7 @@ const OpenStore = () => {
             <OpenStoreForm
               isValid={isValid}
               formData={formData}
-              onSubmit={onSubmit}
+              onSubmit={handleOpenStore}
               isLoading={isAuthLoading}
               submitTitle={"Open store"}
               handleChange={handleChange}
