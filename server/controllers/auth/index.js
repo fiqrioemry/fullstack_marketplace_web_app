@@ -122,7 +122,7 @@ async function userSignIn(req, res) {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: process.env.ENVIRONMENT === "production",
     });
 
@@ -149,11 +149,11 @@ async function userAuthCheck(req, res) {
   const { userId } = req.user;
 
   try {
-    const cachedUser = await client.get(`user:${userId}`);
-    console.log("1. userAuthCheck :", cachedUser);
-    if (cachedUser) {
-      return res.status(200).send({ data: JSON.parse(cachedUser) });
-    }
+    // const cachedUser = await client.get(`user:${userId}`);
+
+    // if (cachedUser) {
+    //   return res.status(200).send({ data: JSON.parse(cachedUser) });
+    // }
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
@@ -176,9 +176,8 @@ async function userAuthCheck(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
-    console.log("2. userAuthCheck :", payload);
     res.status(200).send({
       data: payload,
     });
@@ -192,7 +191,6 @@ async function userAuthCheck(req, res) {
 
 async function userAuthRefresh(req, res) {
   try {
-    console.log("refresh token here");
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -298,6 +296,7 @@ async function forgotPassword(req, res) {
 
 async function userOpenStore(req, res) {
   const { userId } = req.user;
+
   const { name, description, city } = req.body;
 
   try {

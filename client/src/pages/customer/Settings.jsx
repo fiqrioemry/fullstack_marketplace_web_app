@@ -14,7 +14,7 @@ const Settings = () => {
 
   useEffect(() => {
     getUserProfile();
-  }, []);
+  }, [getUserProfile]);
 
   useEffect(() => {
     if (profile) {

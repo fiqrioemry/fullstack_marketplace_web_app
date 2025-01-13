@@ -107,12 +107,15 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
             <Label htmlFor={control.name}>{control.label}</Label>
             <Select
               disabled={disabled}
+              defaultValue={currentValue}
               onValueChange={(value) =>
                 handleChange({ target: { name: control.name, value } })
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={control.placeholder} />
+                <SelectValue
+                  placeholder={currentValue || control.placeholder}
+                />
               </SelectTrigger>
               <SelectContent>
                 {options.map((option) => (

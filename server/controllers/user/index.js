@@ -4,7 +4,7 @@ const {
 } = require("../../utils/cloudinary");
 const { Op } = require("sequelize");
 const { client } = require("../../utils/redis");
-const { User, Address } = require("../../models");
+const { User, Store, Address } = require("../../models");
 
 async function getProfile(req, res) {
   const { userId } = req.user;
