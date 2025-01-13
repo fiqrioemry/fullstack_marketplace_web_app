@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
-const ProductCartItem = () => {
+const ProductCartItem = ({ product }) => {
   const [count, setCount] = useState(1);
   const handleIncrease = () => {
     setCount(count + 1);
@@ -16,17 +16,13 @@ const ProductCartItem = () => {
     <div className="flex space-x-4">
       <input type="checkbox" className="w-5 h-5" />
       <div className="h-20 w-20 ">
-        <img
-          className="border border-foreground"
-          src="https://images.tokopedia.net/img/cache/300-square/VqbcmM/2021/9/22/35e40b21-705b-4a72-afff-d70f837a19de.jpg"
-          alt="product"
-        />
+        <img className={product.images[0]} alt="product" />
       </div>
       <div className="flex-grow flex flex-col justify-between">
-        <h4>Smart TV Samsung LCS 40</h4>
+        <h4>{product.name}</h4>
         <div className="flex gap-x-4 items-center justify-between">
           <div>
-            <h5>Rp.1.500.0000</h5>
+            <h5>{product.price}</h5>
           </div>
           <div className="flex items-center gap-x-4 scale-90">
             <Trash2 />

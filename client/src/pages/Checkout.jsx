@@ -7,19 +7,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "../store/useUserStore";
 import AddressDisplay from "../components/AddressDisplay";
 import ProductCartItem from "../components/cart/ProductCartItem";
 import AddressSkeleton from "../components/loading/AddressSkeleton";
+import { useLocation } from "react-router-dom";
+import { useProductStore } from "../store/useProductStore";
 
 const Checkout = () => {
+  const [checkout, setCheckout] = useState({});
+  const { slug, quantity } = useLocation().state.product;
+  const { getProduct, product } = useProductStore();
   const { address, getUserAddress } = useUserStore();
 
   useEffect(() => {
     getUserAddress();
   }, [getUserAddress]);
+
+  useEffect(() => {
+    if (slug) {
+      getProduct(slug);
+    }
+  }, [slug, getProduct]);
+
+  useEffect(() => {
+    if (product && product.length !== 0) {
+      setCheckout({
+        ...product,
+        quantity,
+      });
+    }
+  }, [product, quantity]);
 
   return (
     <section className="bg-muted ">
@@ -41,7 +61,7 @@ const Checkout = () => {
               )}
               <div>
                 <div className="bg-background rounded-md shadow-md space-y-2 p-4">
-                  <ProductCartItem />
+                  <ProductCartItem product={checkout} />
                   <div className="pl-32 space-y-2">
                     <h5>Select Shipment method</h5>
                     <div className="col-start-3 col-end-13">

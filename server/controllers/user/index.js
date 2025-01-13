@@ -100,7 +100,7 @@ async function getAddress(req, res) {
 
   try {
     const cachedAddress = await client.get(`address:${userId}`);
-    console.log(cachedAddress);
+
     if (cachedAddress) {
       return res.status(200).send({ data: JSON.parse(cachedAddress) });
     }

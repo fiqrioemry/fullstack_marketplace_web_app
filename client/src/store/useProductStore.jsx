@@ -94,7 +94,8 @@ export const useProductStore = create((set) => ({
           slug: "samsung_a5",
           price: 125000,
           stock: 10,
-          storeName: "random_store_a",
+          storeSlug: "random_store_a",
+          storeName: "random store A",
           images: [
             "https://placehold.co/400",
             "https://placehold.co/600",
@@ -108,7 +109,8 @@ export const useProductStore = create((set) => ({
           slug: "winter_jacket_radiant",
           price: 725000,
           stock: 15,
-          storeName: "random_store_b",
+          storeSlug: "random_store_b",
+          storeName: "random store B",
           images: [
             "https://placehold.co/400",
             "https://placehold.co/400",
@@ -122,7 +124,8 @@ export const useProductStore = create((set) => ({
           slug: "sharp_smart_tv_40_inch",
           price: 345000,
           stock: 20,
-          storeName: "random_store_c",
+          storeSlug: "random_store_c",
+          storeName: "random store C",
           images: [
             "https://placehold.co/400",
             "https://placehold.co/400",
@@ -134,7 +137,8 @@ export const useProductStore = create((set) => ({
           id: 4,
           name: "Electric Sound System",
           slug: "electric_sound_system",
-          storeName: "random_store_d",
+          storeSlug: "random_store_d",
+          storeName: "random store D",
           price: 617000,
           stock: 32,
           images: [
@@ -148,7 +152,8 @@ export const useProductStore = create((set) => ({
           id: 5,
           name: "T-Shirt New Balance",
           slug: "t_shirt_new_balance",
-          storeName: "random_store_e",
+          storeSlug: "random_store_e",
+          storeName: "random store E",
           price: 1265000,
           stock: 7,
           images: [
@@ -169,39 +174,84 @@ export const useProductStore = create((set) => ({
 
   getProducts: async () => {
     try {
-      const response = [
+      const data = [
         {
           id: 1,
           name: "Samsung A5",
           slug: "samsung_a5",
-          storeName: "random_store_a",
+          price: 125000,
+          stock: 10,
+          storeSlug: "random_store_a",
+          storeName: "random store A",
+          images: [
+            "https://placehold.co/400",
+            "https://placehold.co/600",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+          ],
         },
         {
           id: 2,
           name: "Winter Jacket Radiant",
           slug: "winter_jacket_radiant",
-          storeName: "random_store_b",
+          price: 725000,
+          stock: 15,
+          storeSlug: "random_store_b",
+          storeName: "random store B",
+          images: [
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+          ],
         },
         {
           id: 3,
           name: "Sharp Smart TV 40 Inch",
           slug: "sharp_smart_tv_40_inch",
-          storeName: "random_store_c",
+          price: 345000,
+          stock: 20,
+          storeSlug: "random_store_c",
+          storeName: "random store C",
+          images: [
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+          ],
         },
         {
           id: 4,
           name: "Electric Sound System",
           slug: "electric_sound_system",
-          storeName: "random_store_d",
+          storeSlug: "random_store_d",
+          storeName: "random store D",
+          price: 617000,
+          stock: 32,
+          images: [
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+          ],
         },
         {
           id: 5,
           name: "T-Shirt New Balance",
           slug: "t_shirt_new_balance",
-          storeName: "random_store_e",
+          storeSlug: "random_store_e",
+          storeName: "random store E",
+          price: 1265000,
+          stock: 7,
+          images: [
+            "https://placehold.co/400",
+            "https://placehold.co/600",
+            "https://placehold.co/400",
+            "https://placehold.co/400",
+          ],
         },
       ];
-      set({ products: response });
+      set({ products: data });
     } catch (error) {
       console.error(error);
       set({ products: [] });

@@ -30,9 +30,7 @@ const ProductDisplay = ({ product }) => {
       navigate("/cart/checkout", {
         state: {
           product: {
-            id: product.id,
-            name: product.name,
-            price: product.price,
+            slug: product.slug,
             quantity: total,
           },
         },
