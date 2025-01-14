@@ -398,11 +398,11 @@ export const initialOrderForm = {
 
 export const initialProductState = {
   name: "",
-  categoryId: "",
+  category: "",
   description: "",
   price: "",
   stock: "",
-  images: [],
+  images: "",
 };
 
 export const controlProductForm = [

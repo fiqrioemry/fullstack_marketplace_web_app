@@ -19,12 +19,11 @@ export const useShopStore = create((set) => ({
   createProduct: async (formData) => {
     try {
       set({ isShopLoading: true });
-      const response = await axiosInstance.post("/shop/product", formData, {
+      const response = await axiosInstance.post("/store/product", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      set({ search: response.data.data });
       toast.success(response.data.message);
     } catch (error) {
       toast.error(error.response.data.message);

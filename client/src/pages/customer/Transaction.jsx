@@ -1,15 +1,24 @@
 import { CloudUpload, FilePlus, X } from "lucide-react";
+import { useShopStore } from "../../store/useShopStore";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { useHandleForm } from "../../hooks/useHandleForm";
 import FormControls from "../../components/form/FormControl";
 import { controlProductForm, initialProductState } from "../../config";
+import { Button } from "../../components/ui/button";
 
 const Transaction = () => {
-  const { formData, setFormData, handleChange, handleSubmit } =
+  const { createProduct } = useShopStore();
+  const { formData, setFormData, handleChange, handleSubmit, handleValidate } =
     useHandleForm(initialProductState);
   const { removePreview, preview, multiUpload, handleDrop, handleDragOver } =
     useFileUpload(formData, setFormData);
-  const onSubmit = handleSubmit();
+
+  const handleAddProduct = (e) => {
+    handleSubmit(e, createProduct);
+  };
+
+  const isValid = handleValidate(formData);
+
   return (
     <section className="space-y-6">
       <div>
@@ -44,7 +53,7 @@ const Transaction = () => {
                   required
                   multiple
                   type="file"
-                  name="files"
+                  name="images"
                   accept="image/*"
                   className="hidden"
                   onChange={multiUpload}
@@ -68,7 +77,7 @@ const Transaction = () => {
               required
               multiple
               type="file"
-              name="files"
+              name="images"
               accept="image/*"
               className="hidden"
               onDrop={handleDrop}
@@ -79,12 +88,16 @@ const Transaction = () => {
         )}
       </div>
       <div className="rounded-md border">
-        <form onSubmit={handleAddProduct} className="p-4">
+        <form onSubmit={handleAddProduct} className="p-4 space-y-4">
           <FormControls
             formData={formData}
             handleChange={handleChange}
             formControls={controlProductForm}
           />
+
+          <Button disabled={!isValid} type="submit">
+            Create Product
+          </Button>
         </form>
       </div>
     </section>

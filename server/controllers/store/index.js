@@ -1,136 +1,153 @@
 const { Product, Categories, Galleries, Store } = require("../../models");
 
-async function createProduct(req, res) {
-  const files = req.files;
-  const { storeId } = req.user;
-  const t = await sequelize.transaction();
-  const { name, description, price, stock, category } = req.body;
-
+async function getStoreInfo(req, res) {
+  const slug = req.params;
   try {
-    if (!storeId) {
-      return res.status(400).json({ message: "You don't have a store" });
-    }
-
-    if (req.files.length === 0) {
-      return res.status(400).send({ error: "Must upload atleast 1 image" });
-    }
-
-    const product = await Product.create(
-      {
-        slug,
-        name,
-        price,
-        stock,
-        storeId,
-        category,
-        description,
-      },
-      { transaction: t }
-    );
-
-    const uploadPromises = files.map((fileItem) =>
-      uploadMediaToCloudinary(fileItem.path)
-    );
-
-    const results = await Promise.all(uploadPromises);
-
-    const images = results.map((result) => {
-      return {
-        image: result.secure_url,
-        productId: product.id,
-      };
+    const store = await Store.findOne({
+      where: { slug },
+      attributes: [{ exclude: ["userId"] }],
     });
 
-    await Galleries.bulkCreate(images, { transaction: t });
+    if (!store) return res.status(404).json({ message: "Store not found" });
 
-    await t.commit();
+    const payload = {
+      name: store.name,
+      slug: slug,
+      image: store.image,
+      city: store.city,
+      avatar: store.avatar,
+      description: store.description,
+    };
 
-    return res.status(201).send({
-      message: "Product is created",
-      data: product,
-    });
+    return res.status(200).json({ data: payload });
   } catch (error) {
-    await t.rollback();
-    return res.status(500).send(error.message);
+    res.status(500).send({
+      message: "Failed to retrieve store info",
+      error: error.message,
+    });
   }
 }
 
-async function updateProduct(req, res) {
-  const files = req.files;
-  const { storeId } = req.user;
-  const { productId } = req.params;
-  const t = await sequelize.transaction();
-  const { name, description, price, stock, categoryId } = req.body;
+async function getAllStoreProducts(req, res) {
+  const slug = req.params;
+
   try {
-    if (!name || !price || !categoryId) {
-      return res.status(400).send({ message: "Invalid input data" });
-    }
-
-    const slug = createSlug(name);
-
-    const product = await Product.findOne({
-      where: { id: productId },
+    const store = await Store.findOne({
+      where: { slug },
+      attributes: ["userId", "name"],
     });
 
-    if (!product) {
-      await t.rollback();
-      return res.status(404).send({ message: "Product not found" });
-    }
+    if (!store) return res.status(404).json({ message: "Store not found" });
 
-    if (req.user.userRole !== "admin" && product.storeId !== storeId) {
-      await t.rollback();
-      return res.status(401).send({ message: "Unauthorized Access" });
-    }
-
-    await product.update(
-      {
-        name,
-        slug,
-        price,
-        stock,
-        categoryId,
-        description,
-      },
-      { transaction: t }
-    );
-
-    if (files && files.length > 0) {
-      const oldImages = await Galleries.findAll({
-        where: { productId },
-      });
-
-      const updatedImages = files.map((fileItem) =>
-        uploadMediaToCloudinary(fileItem.path)
-      );
-
-      const results = await Promise.all(updatedImages);
-
-      const newImages = results.map((result) => ({
-        productId,
-        image: result.secure_url,
-      }));
-
-      const oldImagesUrls = oldImages.map((image) => image.image);
-      for (const imageUrl of oldImagesUrls) {
-        await deleteMediaFromCloudinary(imageUrl);
-      }
-
-      await Galleries.destroy({ where: { productId }, transaction: t });
-
-      await Galleries.bulkCreate(newImages, { transaction: t });
-    }
-
-    await t.commit();
-
-    return res.status(200).send({
-      message: "Product is updated",
+    const product = await Product.findAll({
+      where: { storeId: store.id },
+      include: [
+        {
+          model: Product,
+          as: "product",
+          include: { model: Galleries, as: "galleries" },
+        },
+      ],
     });
+
+    if (!product)
+      return res
+        .status(200)
+        .json({ data: [], message: "Store has no product" });
+
+    const payload = {
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      stock: product.stock,
+      description: product.description,
+      images: product.Galleries.map((image) => image.image),
+      storeId: store.id,
+      storeSlug: slug,
+      storeName: store.name,
+    };
+
+    return res.status(200).json({ data: payload });
   } catch (error) {
-    await t.rollback();
-    return res
-      .status(500)
-      .send({ message: "Something went wrong", error: error.message });
+    res.status(500).send({
+      message: "Failed to retrieve store products",
+      error: error.message,
+    });
   }
+}
+
+async function createProduct(req, res) {
+  console.log(req.files);
+  console.log(req.body);
+  try {
+    return res.status(200).json({ message: "New product is added" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to create new product",
+      error: error.message,
+    });
+  }
+}
+
+// async function createProduct(req, res) {
+//   const files = req.files;
+//   const { storeId } = req.user;
+//   const t = await sequelize.transaction();
+//   const { name, description, price, stock, category } = req.body;
+
+//   try {
+//     if (!storeId) {
+//       return res.status(400).json({ message: "You don't have a store" });
+//     }
+
+//     if (req.files.length === 0) {
+//       return res.status(400).send({ error: "Must upload atleast 1 image" });
+//     }
+
+//     const product = await Product.create(
+//       {
+//         slug,
+//         name,
+//         price,
+//         stock,
+//         storeId,
+//         category,
+//         description,
+//       },
+//       { transaction: t }
+//     );
+
+//     const uploadPromises = files.map((fileItem) =>
+//       uploadMediaToCloudinary(fileItem.path)
+//     );
+
+//     const results = await Promise.all(uploadPromises);
+
+//     const images = results.map((result) => {
+//       return {
+//         image: result.secure_url,
+//         productId: product.id,
+//       };
+//     });
+
+//     await Galleries.bulkCreate(images, { transaction: t });
+
+//     await t.commit();
+
+//     return res.status(201).send({
+//       message: "Product is created",
+//       data: product,
+//     });
+//   } catch (error) {
+//     await t.rollback();
+//     return res.status(500).send(error.message);
+//   }
+// }
+
+async function updateProduct(req, res) {
+  try {
+  } catch (error) {}
 }
 
 async function deleteProduct(req, res) {
@@ -144,7 +161,7 @@ async function getAllStores(req, res) {
   } catch (error) {}
 }
 
-async function getStoreDetail(req, res) {
+async function getStoreStatistic(req, res) {
   const slug = req.params;
   try {
     const store = await Store.findOne({
@@ -175,11 +192,6 @@ async function deleteStore(req, res) {
   } catch (error) {}
 }
 
-async function getAllStoreProducts(req, res) {
-  try {
-  } catch (error) {}
-}
-
 async function getMyStoreProduct(req, res) {
   try {
   } catch (error) {}
@@ -189,7 +201,8 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
-  getAllStore,
-  getStoreDetail,
-  getStoreProducts,
+  getAllStores,
+  getStoreInfo,
+  getStoreStatistic,
+  getAllStoreProducts,
 };

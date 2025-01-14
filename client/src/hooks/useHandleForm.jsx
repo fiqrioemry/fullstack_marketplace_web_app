@@ -20,11 +20,11 @@ export const useHandleForm = (initialFormState) => {
   };
 
   const handleValidate = () => {
-    const isFormValid = Object.values(initialFormState).every(
+    const isValidate = Object.values(initialFormState).every(
       (value) => !value.trim()
     );
 
-    if (isFormValid) {
+    if (isValidate) {
       const allFieldsFilled = Object.keys(formData).every((key) => {
         return formData[key]?.trim();
       });
