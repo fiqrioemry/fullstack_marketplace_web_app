@@ -13,15 +13,9 @@ export const useHandleForm = (initialFormState) => {
         [name]: checked,
       }));
     } else if (files && files.length > 0) {
-      const fileArray = Array.from(files);
-
       setFormData((prev) => ({
         ...prev,
-        preview: [
-          ...(prev.preview || []),
-          ...fileArray.map((file) => URL.createObjectURL(file)),
-        ],
-        [name]: [...(prev[name] || []), ...fileArray],
+        [name]: files[0],
       }));
     } else {
       setFormData((prev) => ({
@@ -32,11 +26,11 @@ export const useHandleForm = (initialFormState) => {
   };
 
   const handleValidate = () => {
-    const isSignUpForm = Object.values(initialFormState).every(
+    const isFormValid = Object.values(initialFormState).every(
       (value) => !value.trim()
     );
 
-    if (isSignUpForm) {
+    if (isFormValid) {
       const allFieldsFilled = Object.keys(formData).every((key) => {
         return formData[key]?.trim();
       });

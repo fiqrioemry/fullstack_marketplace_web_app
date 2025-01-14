@@ -76,11 +76,30 @@ export const SellerNavLinks = [
   },
 ];
 
+// signin state and control
 export const initialSignInForm = {
   email: "",
   password: "",
 };
 
+export const controlSignInForm = [
+  {
+    name: "email",
+    type: "email",
+    label: "email",
+    placeholder: "Enter your email",
+    style: "flex items-center capitalize",
+  },
+  {
+    name: "password",
+    label: "password",
+    type: "password",
+    placeholder: "Enter your password",
+    style: "flex items-center capitalize",
+  },
+];
+
+// signup state and control
 export const initialSignUpForm = {
   fullname: "",
   email: "",
@@ -88,6 +107,29 @@ export const initialSignUpForm = {
   otp: "",
 };
 
+export const controlSignUpForm = [
+  {
+    name: "email",
+    label: "email",
+    type: "email",
+    placeholder: "Enter your email",
+  },
+
+  {
+    name: "fullname",
+    label: "fullname",
+    type: "text",
+    placeholder: "Enter your full name",
+  },
+  {
+    name: "password",
+    label: "password",
+    type: "password",
+    placeholder: "Enter your password",
+  },
+];
+
+// open store state and control
 export const initialOpenStoreForm = {
   name: "",
   description: "",
@@ -140,42 +182,6 @@ export const controlFilterCity = [
     style: "flex items-center capitalize",
     componentType: "checkbox",
     method: "multiple",
-  },
-];
-export const controlSignInForm = [
-  {
-    name: "email",
-    type: "email",
-    placeholder: "Enter your email ",
-    style: "flex items-center capitalize",
-  },
-  {
-    name: "password",
-    type: "password",
-    placeholder: "Enter your password ",
-    style: "flex items-center capitalize",
-  },
-];
-
-export const controlSignUpForm = [
-  {
-    name: "email",
-    type: "email",
-    placeholder: "Enter your email",
-    style: "flex items-center",
-  },
-
-  {
-    name: "fullname",
-    type: "text",
-    placeholder: "Enter your full name",
-    style: "flex items-center",
-  },
-  {
-    name: "password",
-    type: "password",
-    placeholder: "Enter your password",
-    style: "flex items-center",
   },
 ];
 

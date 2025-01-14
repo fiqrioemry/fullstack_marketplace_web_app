@@ -26,7 +26,7 @@ const SignUpStepThree = ({ handleSignUp, handleChange, formData, isValid }) => {
               placeholder={
                 set.name === "email" ? formData.email : set.placeholder
               }
-              readOnly={set.name === "email" && formData.email}
+              disabled={set.name === "email" && formData.email}
               required
             />
           </div>

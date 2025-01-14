@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 const useResponsiveCount = (total) => {
-  const [count, setCount] = useState(total || 6); // Default 6
+  const [count, setCount] = useState(total || 6); // Default dibuat 6
 
   useEffect(() => {
     const updateCount = () => {

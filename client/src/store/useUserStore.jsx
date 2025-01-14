@@ -23,8 +23,13 @@ export const useUserStore = create((set) => ({
   updateUserProfile: async (formData) => {
     try {
       set({ isProfileLoading: true });
-      const response = await axiosInstance.post("/user/profile", formData);
+      const response = await axiosInstance.put("/user/profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success(response.data.message);
+      set({ profile: response.data.data });
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
