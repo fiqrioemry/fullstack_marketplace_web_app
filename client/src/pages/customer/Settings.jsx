@@ -9,16 +9,16 @@ import { controlProfileForm, initialProfileForm } from "../../config";
 import UserSettingSkeleton from "../../components/loading/UserSettingSkeleton";
 
 const Settings = () => {
+  const { formData, setFormData, handleChange } =
+    useHandleForm(initialProfileForm);
   const [editProfile, setEditProfile] = useState(false);
   const { profile, updateUserProfile, getUserProfile, isProfileLoading } =
     useUserStore();
-  const { formData, setFormData, handleChange } =
-    useHandleForm(initialProfileForm);
-  const { handleSingleUpload } = useFileUpload(
+
+  const { singleUpload } = useFileUpload(
     formData,
     setFormData,
-    updateUserProfile,
-    1000000
+    updateUserProfile
   );
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const Settings = () => {
                 )}
                 <img
                   src={profile.avatar}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                   alt="avatar"
                 />
               </div>
@@ -64,7 +64,7 @@ const Settings = () => {
                   type="file"
                   className="hidden"
                   accept="image/*"
-                  onChange={handleSingleUpload}
+                  onChange={singleUpload}
                   disabled={isProfileLoading}
                 />
                 <label
