@@ -2,7 +2,6 @@ const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv");
 dotenv.config();
 
-//configure with env data
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
@@ -32,10 +31,12 @@ async function uploadMediaToCloudinary(filePath) {
 }
 const deleteMediaFromCloudinary = async (imageUrl) => {
   try {
-    await cloudinary.uploader.destroy(imageUrl);
+    const publicId = imageUrl.split("/").slice(-2).join("/").split(".")[0];
+
+    await cloudinary.uploader.destroy(publicId);
   } catch (error) {
     console.log(error);
-    throw new Error("failed to delete assest from cloudinary");
+    throw new Error("Failed to delete asset from Cloudinary");
   }
 };
 

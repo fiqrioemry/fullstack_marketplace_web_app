@@ -3,6 +3,7 @@ const {
   deleteMediaFromCloudinary,
 } = require("../../utils/cloudinary");
 const { Op } = require("sequelize");
+const fs = require("fs").promises;
 const { client } = require("../../utils/redis");
 const { User, Store, Address } = require("../../models");
 
@@ -53,9 +54,7 @@ async function getProfile(req, res) {
 }
 
 async function updateProfile(req, res) {
-  console.log("check for file", req.file);
   const file = req.file;
-  console.log("check for file", file);
   const { userId } = req.user;
   const { fullname, gender, birthday, phone } = req.body;
 
@@ -66,14 +65,26 @@ async function updateProfile(req, res) {
         { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
       ],
     });
+
+    if (!user) {
+      if (file) {
+        await fs.unlink(file.path);
+      }
+      return res.status(404).json({ message: "User not found" });
+    }
+
     let avatar = user.avatar;
 
     if (file) {
       const updatedAvatar = await uploadMediaToCloudinary(file.path);
 
-      await deleteMediaFromCloudinary(user.avatar);
+      if (user.avatar) {
+        await deleteMediaFromCloudinary(user.avatar);
+      }
 
       avatar = updatedAvatar.secure_url;
+
+      await fs.unlink(file.path);
     }
 
     const updatedUser = {
@@ -88,13 +99,22 @@ async function updateProfile(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
+    await user.update(updatedUser);
+
     await client.setEx(`user:${userId}`, 900, JSON.stringify(updatedUser));
 
     return res.status(200).json({
       message: "Profile is updated",
-      data: { updatedUser },
+      data: updatedUser,
     });
   } catch (error) {
+    if (file) {
+      await fs
+        .unlink(file.path)
+        .catch((unlinkError) =>
+          console.error("Failed to delete file:", unlinkError)
+        );
+    }
     return res.status(500).send({
       message: "Failed to Update Profile",
       error: error.message,
