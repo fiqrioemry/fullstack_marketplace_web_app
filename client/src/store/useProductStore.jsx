@@ -1,8 +1,6 @@
-import Cookies from "js-cookie";
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/services";
-import { Navigate } from "react-router-dom";
 
 export const useProductStore = create((set) => ({
   search: null,

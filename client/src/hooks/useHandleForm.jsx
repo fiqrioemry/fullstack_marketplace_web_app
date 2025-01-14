@@ -1,21 +1,15 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export const useHandleForm = (initialFormState) => {
-  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState(initialFormState);
 
   const handleChange = (e) => {
-    const { name, type, value, checked, files } = e.target;
+    const { name, type, value, checked } = e.target;
 
     if (type === "checkbox") {
       setFormData((prev) => ({
         ...prev,
         [name]: checked,
-      }));
-    } else if (files && files.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: files[0],
       }));
     } else {
       setFormData((prev) => ({
@@ -59,25 +53,17 @@ export const useHandleForm = (initialFormState) => {
     return hasChanges;
   };
 
-  const handleRemove = () => {
-    setFormData((prev) => ({ ...prev, file: null }));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleSubmit = (e, action) => {
+  const handleSubmit = async (e, process, end) => {
     e.preventDefault();
-    action();
+    const response = await process();
+    end(response);
   };
 
   return {
     formData,
     setFormData,
+    handleSubmit,
     handleChange,
     handleValidate,
-    handleRemove,
-    handleSubmit,
-    fileInputRef,
   };
 };

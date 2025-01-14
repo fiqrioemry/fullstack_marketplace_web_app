@@ -16,27 +16,28 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
     const { name, files } = e.target;
 
     if (files && files.length > 0) {
-      const validFiles = Array.from(files).filter(isValidFile);
+      // Filter files to find any invalid files (those that exceed the size limit)
+      const invalidFile = Array.from(files).find((file) => !isValidFile(file));
 
-      if (!validFiles) {
+      if (invalidFile) {
+        // If any file is invalid, clear the input and show the error
         e.target.value = "";
         return;
       }
 
-      if (validFiles.length > 0) {
-        const updatedForm = { ...form, [name]: validFiles };
+      // If all files are valid, update the form and preview
+      const validFiles = Array.from(files);
 
-        setForm(updatedForm);
+      const updatedForm = { ...form, [name]: validFiles };
+      setForm(updatedForm);
 
-        setPreview(validFiles.map((file) => URL.createObjectURL(file)));
+      setPreview(validFiles.map((file) => URL.createObjectURL(file)));
 
-        upload(updatedForm);
+      upload(updatedForm);
 
-        e.target.value = "";
-      }
+      e.target.value = "";
     }
   };
-
   const singleUpload = (e) => {
     const { name, files } = e.target;
 
@@ -58,6 +59,19 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
 
       e.target.value = "";
     }
+  };
+
+  const removePreview = (index) => {
+    setPreview((prevPreview) => {
+      const newPreview = [...prevPreview];
+      newPreview.splice(index, 1); // Remove the file at the specified index
+      return newPreview;
+    });
+  };
+
+  // Function to remove all previews
+  const removeAllPreviews = () => {
+    setPreview([]);
   };
 
   const handleDragOver = (e) => {
@@ -82,6 +96,8 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
         setPreview(validFiles.map((file) => URL.createObjectURL(file)));
 
         upload(updatedForm);
+
+        e.target.value = "";
       }
     }
   };
@@ -93,5 +109,7 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
     multiUpload,
     singleUpload,
     handleDragOver,
+    removePreview,
+    removeAllPreviews,
   };
 };

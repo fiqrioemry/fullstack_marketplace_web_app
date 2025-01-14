@@ -395,3 +395,55 @@ export const initialOrderForm = {
   quantity: [],
   shipmentCost: [],
 };
+
+export const initialProductState = {
+  name: "",
+  categoryId: "",
+  description: "",
+  price: "",
+  stock: "",
+  images: [],
+};
+
+export const controlProductForm = [
+  {
+    name: "name",
+    label: "product name",
+    type: "text",
+    placeholder: "Enter your product name ...",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "description",
+    label: "description",
+    type: "text",
+    placeholder: "Describe about your product ...",
+    style: "flex items-center capitalize",
+    componentType: "textarea",
+  },
+  {
+    name: "price",
+    label: "price",
+    type: "number",
+    placeholder: "Set the price",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "stock",
+    label: "stock",
+    type: "number",
+    placeholder: "Set the stock",
+    style: "flex items-center capitalize",
+    componentType: "input",
+  },
+  {
+    name: "category",
+    label: "category",
+    type: "text",
+    placeholder: "Choose product category",
+    style: "flex items-center capitalize",
+    componentType: "select",
+  },
+];
