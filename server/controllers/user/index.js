@@ -58,11 +58,12 @@ async function updateProfile(req, res) {
   const { fullname, gender, birthday, phone } = req.body;
 
   try {
-    // Ambil data user berdasarkan userId
     const user = await User.findByPk(userId, {
-      attributes: ["id", "fullname", "avatar", "gender", "birthday", "phone"],
+      attributes: { exclude: ["password"] },
+      include: [
+        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
+      ],
     });
-
     let avatar = user.avatar;
 
     if (file) {
@@ -79,13 +80,17 @@ async function updateProfile(req, res) {
       birthday: birthday || user.birthday,
       phone: phone || user.phone,
       avatar: avatar,
+      role: user.role,
+      storeId: user.store?.id,
+      storeName: user.store?.name,
+      storeAvatar: user.store?.avatar,
     };
 
     await client.setEx(`user:${userId}`, 900, JSON.stringify(updatedUser));
 
-    return res.status(200).send({
+    return res.status(200).json({
       message: "Profile is updated",
-      data: updatedUser,
+      data: { updatedUser },
     });
   } catch (error) {
     return res.status(500).send({
