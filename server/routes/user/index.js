@@ -15,7 +15,7 @@ router.get("/profile", isAuthenticate, getProfile);
 router.put(
   "/profile",
   isAuthenticate,
-  upload("image").single("file"),
+  upload("image", 2000000).single("avatar"),
   updateProfile
 );
 router.get("/profile/address", isAuthenticate, getAddress);

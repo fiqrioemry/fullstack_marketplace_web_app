@@ -53,7 +53,9 @@ async function getProfile(req, res) {
 }
 
 async function updateProfile(req, res) {
+  console.log("check for file", req.file);
   const file = req.file;
+  console.log("check for file", file);
   const { userId } = req.user;
   const { fullname, gender, birthday, phone } = req.body;
 
