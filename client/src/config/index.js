@@ -425,7 +425,7 @@ export const controlProductForm = [
   {
     name: "price",
     label: "price",
-    type: "number",
+    type: "text",
     placeholder: "Set the price",
     style: "flex items-center capitalize",
     componentType: "input",
@@ -433,7 +433,7 @@ export const controlProductForm = [
   {
     name: "stock",
     label: "stock",
-    type: "number",
+    type: "text",
     placeholder: "Set the stock",
     style: "flex items-center capitalize",
     componentType: "input",

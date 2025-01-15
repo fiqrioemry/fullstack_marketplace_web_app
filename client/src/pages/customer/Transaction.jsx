@@ -1,10 +1,10 @@
+import { Button } from "../../components/ui/button";
 import { CloudUpload, FilePlus, X } from "lucide-react";
 import { useShopStore } from "../../store/useShopStore";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import { useHandleForm } from "../../hooks/useHandleForm";
 import FormControls from "../../components/form/FormControl";
 import { controlProductForm, initialProductState } from "../../config";
-import { Button } from "../../components/ui/button";
 
 const Transaction = () => {
   const { createProduct } = useShopStore();
@@ -17,7 +17,6 @@ const Transaction = () => {
     handleSubmit(e, createProduct(formData));
   };
 
-  console.log(formData);
   const isValid = handleValidate(formData);
 
   return (
@@ -46,7 +45,7 @@ const Transaction = () => {
             <div className="h-40 w-full">
               <label
                 htmlFor="file"
-                className="h-full flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
+                className="h-full z-50 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
               >
                 <FilePlus size={20} />
                 <input
@@ -61,12 +60,13 @@ const Transaction = () => {
                 />
               </label>
             </div>
-            ;
           </div>
         ) : (
           <label
             htmlFor="file"
             className="col-span-5 h-72 md:h-96 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
           >
             <div className="flex flex-col justify-center items-center">
               <CloudUpload size={50} />
@@ -81,9 +81,7 @@ const Transaction = () => {
               name="files"
               accept="image/*"
               className="hidden"
-              onDrop={handleDrop}
               onChange={multiUpload}
-              onDragOver={handleDragOver}
             />
           </label>
         )}

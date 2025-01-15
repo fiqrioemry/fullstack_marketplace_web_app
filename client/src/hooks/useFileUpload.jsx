@@ -1,7 +1,13 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
+export const useFileUpload = (
+  form,
+  setForm,
+  upload = null,
+  size = 1000000,
+  maxFiles = 5
+) => {
   const [preview, setPreview] = useState([]);
 
   const isValidFile = (file) => {
@@ -12,50 +18,62 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
     return true;
   };
 
-  const multiUpload = (e) => {
-    const { name, files } = e.target;
+  const processFiles = (files, name) => {
+    const existingFiles = preview.length;
+    const totalFiles = existingFiles + files.length;
 
-    if (files && files.length > 0) {
-      const invalidFile = Array.from(files).find((file) => !isValidFile(file));
+    if (totalFiles > maxFiles) {
+      toast.error(`You can only upload up to ${maxFiles} files.`);
+      return;
+    }
 
-      if (invalidFile) {
-        e.target.value = "";
-        return;
-      }
+    const validFiles = Array.from(files).filter(isValidFile);
 
-      const validFiles = Array.from(files);
-
+    if (validFiles.length > 0) {
       const updatedForm = { ...form, [name]: validFiles };
-      setForm(updatedForm);
 
+      setForm(updatedForm);
       setPreview((prev) => [
         ...prev,
         ...validFiles.map((file) => URL.createObjectURL(file)),
       ]);
-      upload(updatedForm);
 
+      if (upload) upload(updatedForm);
+    }
+  };
+
+  const multiUpload = (e) => {
+    const { name, files } = e.target;
+    if (files && files.length > 0) {
+      processFiles(files, name);
       e.target.value = "";
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      processFiles(files, "files");
     }
   };
 
   const singleUpload = (e) => {
     const { name, files } = e.target;
-
     if (files && files.length > 0) {
       const file = files[0];
-
       if (!isValidFile(file)) {
         e.target.value = "";
         return;
       }
 
       const updatedForm = { ...form, [name]: file };
-
       setForm(updatedForm);
+      setPreview([URL.createObjectURL(file)]);
 
-      setPreview(updatedForm);
-
-      upload(updatedForm);
+      if (upload) upload(updatedForm);
 
       e.target.value = "";
     }
@@ -64,12 +82,10 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
   const removePreview = (index) => {
     setPreview((prevPreview) => {
       const newPreview = [...prevPreview];
-      newPreview.splice(index, 1); // Remove the file at the specified index
-      return newPreview;
+      newPreview.splice(index, 1);
     });
   };
 
-  // Function to remove all previews
   const removeAllPreviews = () => {
     setPreview([]);
   };
@@ -77,29 +93,6 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const files = e.dataTransfer.files;
-
-    if (files && files.length > 0) {
-      const validFiles = Array.from(files).filter(isValidFile);
-
-      if (validFiles.length > 0) {
-        const updatedForm = { ...form, files: validFiles };
-
-        setForm(updatedForm);
-
-        setPreview(validFiles.map((file) => URL.createObjectURL(file)));
-
-        upload(updatedForm);
-
-        e.target.value = "";
-      }
-    }
   };
 
   return {
