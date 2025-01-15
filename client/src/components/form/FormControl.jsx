@@ -63,7 +63,7 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
                     name={control.name}
                     value={option.id}
                     onChange={handleChange}
-                    checked={currentValue.includes(option.id)}
+                    checked={currentValue.includes(String(option.id))}
                   />
                   <Label htmlFor={option.id}>{option.name}</Label>
                 </div>
