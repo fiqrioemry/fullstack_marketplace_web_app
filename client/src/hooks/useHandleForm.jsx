@@ -7,6 +7,8 @@ const numericFields = ["minPrice", "maxPrice", "price", "stock", "quantity"];
 export const useHandleForm = (initialFormState) => {
   const [formData, setFormData] = useState(initialFormState);
 
+  console.log(formData);
+
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
 

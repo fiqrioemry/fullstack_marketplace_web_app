@@ -21,7 +21,7 @@ export const useShopStore = create((set) => ({
     formData.append("name", data.name);
     formData.append("price", data.price);
     formData.append("stock", data.stock);
-    formData.append("category", data.category);
+    formData.append("categoryId", data.categoryId);
     formData.append("description", data.description);
 
     Array.from(data.files).forEach((file) => {
