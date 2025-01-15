@@ -83,6 +83,7 @@ export const useFileUpload = (
     setPreview((prevPreview) => {
       const newPreview = [...prevPreview];
       newPreview.splice(index, 1);
+      return newPreview;
     });
   };
 

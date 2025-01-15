@@ -42,24 +42,26 @@ const Transaction = () => {
                 />
               </div>
             ))}
-            <div className="h-40 w-full">
-              <label
-                htmlFor="file"
-                className="h-full z-50 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
-              >
-                <FilePlus size={20} />
-                <input
-                  id="file"
-                  required
-                  multiple
-                  type="file"
-                  name="files"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={multiUpload}
-                />
-              </label>
-            </div>
+            {preview.length < 5 && (
+              <div className="h-40 w-full">
+                <label
+                  htmlFor="file"
+                  className="h-full z-50 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
+                >
+                  <FilePlus size={20} />
+                  <input
+                    id="file"
+                    required
+                    multiple
+                    type="file"
+                    name="files"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={multiUpload}
+                  />
+                </label>
+              </div>
+            )}
           </div>
         ) : (
           <label
