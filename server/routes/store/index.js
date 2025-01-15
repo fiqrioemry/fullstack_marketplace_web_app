@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  getStoreInfo,
   createProduct,
   getAllStoreProducts,
 } = require("../../controllers/store");
