@@ -27,7 +27,7 @@ const useResponsiveCount = (total) => {
     window.addEventListener("resize", updateCount);
 
     return () => window.removeEventListener("resize", updateCount);
-  }, []);
+  }, [count]);
 
   return count;
 };

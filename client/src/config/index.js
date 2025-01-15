@@ -311,7 +311,7 @@ export const controlAddressForm = [
     placeholder: "Enter receipient zipcode",
     style: "flex items-center capitalize",
     componentType: "input",
-    maxlength: "6",
+    maxLength: "6",
   },
 
   {
@@ -321,7 +321,7 @@ export const controlAddressForm = [
     placeholder: "Enter receipient phone",
     style: "flex items-center capitalize",
     componentType: "input",
-    maxlength: "13",
+    maxLength: "13",
   },
 
   {
@@ -376,7 +376,7 @@ export const controlEditAddressForm = [
     placeholder: "Enter receipient zipcode",
     style: "flex items-center capitalize",
     componentType: "input",
-    maxlength: "6",
+    maxLength: "6",
   },
 
   {
@@ -386,7 +386,7 @@ export const controlEditAddressForm = [
     placeholder: "Enter receipient phone",
     style: "flex items-center capitalize",
     componentType: "input",
-    maxlength: "13",
+    maxLength: "13",
   },
 ];
 
@@ -398,11 +398,11 @@ export const initialOrderForm = {
 
 export const initialProductState = {
   name: "",
-  category: "",
+  categoryId: "",
   description: "",
   price: "",
   stock: "",
-  images: "",
+  files: "",
 };
 
 export const controlProductForm = [
@@ -439,7 +439,7 @@ export const controlProductForm = [
     componentType: "input",
   },
   {
-    name: "category",
+    name: "categoryId",
     label: "category",
     type: "text",
     placeholder: "Choose product category",

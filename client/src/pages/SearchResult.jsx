@@ -30,6 +30,8 @@ const SearchResult = () => {
     });
   }, [searchParams, setFormData]);
 
+  console.log(formData);
+
   const handleFilterChange = ({ target: { name, value } }) => {
     const params = Object.fromEntries(searchParams.entries());
 
@@ -79,8 +81,8 @@ const SearchResult = () => {
                 ) : (
                   <>
                     <div className="grid_display_4">
-                      {[...Array(8)].map((_, index) => (
-                        <ProductCard product={index} key={index} />
+                      {products.map((product, index) => (
+                        <ProductCard product={product} key={index} />
                       ))}
                     </div>
                     <ProductPagination />

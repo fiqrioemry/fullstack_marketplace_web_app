@@ -8,11 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
+import { LogOut } from "lucide-react";
 import UserAvatar from "../UserAvatar";
 import { Link } from "react-router-dom";
 import { CustomerNavLinks } from "../../config";
 import { useAuthStore } from "../../store/useAuthStore";
-import { LogOut } from "lucide-react";
 
 const UserMenu = ({ user }) => {
   const { userSignOut } = useAuthStore();

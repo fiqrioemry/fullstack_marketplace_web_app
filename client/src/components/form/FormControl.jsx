@@ -1,11 +1,4 @@
 /* eslint-disable react/prop-types */
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Fragment, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,10 +10,10 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
 
   useEffect(() => {
     formControls.forEach((control) => {
-      if (control.name === "city") {
+      if (control.label === "city") {
         getCities();
       }
-      if (control.name === "category") {
+      if (control.label === "category") {
         getCategories();
       }
     });
@@ -29,9 +22,9 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
   function renderComponentByType(control) {
     let element = null;
     const options =
-      control.name === "city"
+      control.label === "city"
         ? cities
-        : control.name === "category"
+        : control.label === "category"
         ? categories
         : control.options || [];
     const currentValue = formData[control.name] || "";
@@ -43,13 +36,13 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
             <Label htmlFor={control.name}>{control.label}</Label>
             <Input
               id={control.name}
-              onChange={handleChange}
               name={control.name}
               type={control.type}
-              value={currentValue}
-              maxlength={control.maxlength}
-              placeholder={control.placeholder}
               disabled={disabled}
+              value={currentValue}
+              onChange={handleChange}
+              maxLength={control.maxLength}
+              placeholder={control.placeholder}
               required
             />
           </>
@@ -61,29 +54,24 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
             <Fragment>
               {options.map((option) => (
                 <div
-                  className="flex  items-center space-x-3 py-2 px-3"
+                  className="flex items-center space-x-3 py-2 px-3"
                   key={option.id}
                 >
                   <input
-                    id={`${control.name}-${option.id}`}
+                    id={option.id}
                     type={control.type}
                     name={control.name}
-                    value={option.name}
+                    value={option.id}
                     onChange={handleChange}
-                    checked={currentValue.includes(option.name)}
+                    checked={currentValue.includes(option.id)}
                   />
-                  <Label
-                    htmlFor={`${control.name}-${option.id}`}
-                    className="text-sm font-medium"
-                  >
-                    {option.name}
-                  </Label>
+                  <Label htmlFor={option.id}>{option.name}</Label>
                 </div>
               ))}
             </Fragment>
           ) : (
             <div
-              className="flex items-center  space-x-3 py-2 px-3"
+              className="flex items-center space-x-3 py-2 px-3"
               key={control.name}
             >
               <input
@@ -94,41 +82,33 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
                 onChange={handleChange}
                 className="w-6 h-6"
               />
-              <Label htmlFor={control.name} className="text-sm font-medium">
-                {control.label}
-              </Label>
+              <Label htmlFor={control.name}>{control.label}</Label>
             </div>
           );
         break;
 
       case "select":
         element = (
-          <>
+          <div className="flex flex-col">
             <Label htmlFor={control.name}>{control.label}</Label>
-            <Select
+            <select
+              id={control.label}
+              name={control.name}
+              value={currentValue}
+              onChange={handleChange}
               disabled={disabled}
-              defaultValue={currentValue}
-              onValueChange={(value) =>
-                handleChange({ target: { name: control.name, value } })
-              }
+              className="rounded-md border border-input px-3 py-2"
             >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={currentValue || control.placeholder}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map((option) => (
-                  <SelectItem
-                    key={option.id || option}
-                    value={option.name || option}
-                  >
-                    {option.name || option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </>
+              <option value="" disabled>
+                {control.placeholder}
+              </option>
+              {options.map((option) => (
+                <option value={option?.id || option} key={option?.id || option}>
+                  {option?.name || option}
+                </option>
+              ))}
+            </select>
+          </div>
         );
         break;
       case "textarea":
@@ -142,7 +122,7 @@ function FormControls({ formControls = [], formData, disabled, handleChange }) {
               onChange={handleChange}
               value={currentValue}
               placeholder={control.placeholder}
-              maxlength="200"
+              maxLength="200"
               className="resize-none"
             />
           </Fragment>

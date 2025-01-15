@@ -20,43 +20,16 @@ export const useHandleForm = (initialFormState) => {
   };
 
   const handleValidate = () => {
-    const isValidate = Object.values(initialFormState).every(
-      (value) => !value.trim()
+    const isFormValid = Object.values(formData).every((value) =>
+      typeof value === "string" ? value.trim() !== "" : !!value
     );
 
-    if (isValidate) {
-      const allFieldsFilled = Object.keys(formData).every((key) => {
-        return formData[key]?.trim();
-      });
-      return allFieldsFilled;
-    }
-
-    const allowedEmptyFields = Object.keys(initialFormState).filter(
-      (key) => !initialFormState[key]?.trim()
-    );
-
-    const hasEmptyRequiredField = Object.keys(formData).some((key) => {
-      const currentValue = formData[key]?.trim();
-      return !allowedEmptyFields.includes(key) && !currentValue;
-    });
-
-    if (hasEmptyRequiredField) {
-      return false;
-    }
-
-    const hasChanges = Object.keys(initialFormState).some((key) => {
-      const trimmedInitial = initialFormState[key]?.trim() || "";
-      const trimmedCurrent = formData[key]?.trim() || "";
-      return trimmedInitial !== trimmedCurrent;
-    });
-
-    return hasChanges;
+    return isFormValid;
   };
 
-  const handleSubmit = async (e, process, end) => {
+  const handleSubmit = async (e, process) => {
     e.preventDefault();
-    const response = await process();
-    end(response);
+    process();
   };
 
   return {

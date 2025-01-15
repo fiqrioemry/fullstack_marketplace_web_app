@@ -15,6 +15,7 @@ const Settings = () => {
   const { profile, updateUserProfile, getUserProfile, isProfileLoading } =
     useUserStore();
 
+  console.log(formData);
   const { singleUpload } = useFileUpload(
     formData,
     setFormData,

@@ -16,9 +16,21 @@ export const useShopStore = create((set) => ({
     }
   },
 
-  createProduct: async (formData) => {
+  createProduct: async (data) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("price", data.price);
+    formData.append("stock", data.stock);
+    formData.append("category", data.category);
+    formData.append("description", data.description);
+
+    Array.from(data.files).forEach((file) => {
+      formData.append("files", file);
+    });
+
     try {
       set({ isShopLoading: true });
+
       const response = await axiosInstance.post("/store/product", formData, {
         headers: {
           "Content-Type": "multipart/form-data",

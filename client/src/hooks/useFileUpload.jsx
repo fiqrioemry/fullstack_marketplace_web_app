@@ -16,28 +16,28 @@ export const useFileUpload = (form, setForm, upload = null, size = 1000000) => {
     const { name, files } = e.target;
 
     if (files && files.length > 0) {
-      // Filter files to find any invalid files (those that exceed the size limit)
       const invalidFile = Array.from(files).find((file) => !isValidFile(file));
 
       if (invalidFile) {
-        // If any file is invalid, clear the input and show the error
         e.target.value = "";
         return;
       }
 
-      // If all files are valid, update the form and preview
       const validFiles = Array.from(files);
 
       const updatedForm = { ...form, [name]: validFiles };
       setForm(updatedForm);
 
-      setPreview(validFiles.map((file) => URL.createObjectURL(file)));
-
+      setPreview((prev) => [
+        ...prev,
+        ...validFiles.map((file) => URL.createObjectURL(file)),
+      ]);
       upload(updatedForm);
 
       e.target.value = "";
     }
   };
+
   const singleUpload = (e) => {
     const { name, files } = e.target;
 

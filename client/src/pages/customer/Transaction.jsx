@@ -14,9 +14,10 @@ const Transaction = () => {
     useFileUpload(formData, setFormData);
 
   const handleAddProduct = (e) => {
-    handleSubmit(e, createProduct);
+    handleSubmit(e, createProduct(formData));
   };
 
+  console.log(formData);
   const isValid = handleValidate(formData);
 
   return (
@@ -53,7 +54,7 @@ const Transaction = () => {
                   required
                   multiple
                   type="file"
-                  name="images"
+                  name="files"
                   accept="image/*"
                   className="hidden"
                   onChange={multiUpload}
@@ -77,7 +78,7 @@ const Transaction = () => {
               required
               multiple
               type="file"
-              name="images"
+              name="files"
               accept="image/*"
               className="hidden"
               onDrop={handleDrop}
@@ -92,6 +93,7 @@ const Transaction = () => {
           <FormControls
             formData={formData}
             handleChange={handleChange}
+            setFormData={setFormData}
             formControls={controlProductForm}
           />
 
