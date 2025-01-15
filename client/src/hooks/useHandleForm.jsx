@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+const contactFields = ["phone", "zipcode"];
+
+const numericFields = ["minPrice", "maxPrice", "price", "stock", "quantity"];
+
 export const useHandleForm = (initialFormState) => {
   const [formData, setFormData] = useState(initialFormState);
 
@@ -10,6 +14,21 @@ export const useHandleForm = (initialFormState) => {
       setFormData((prev) => ({
         ...prev,
         [name]: checked,
+      }));
+    } else if (numericFields.includes(name)) {
+      const formatValue = value
+        .replace(/^0+/, "")
+        .replace(/^-/, "")
+        .replace(/[^0-9]/g, "");
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formatValue,
+      }));
+    } else if (contactFields.includes(name)) {
+      const formatValue = value.replace(/[^0-9]/g, "");
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formatValue,
       }));
     } else {
       setFormData((prev) => ({

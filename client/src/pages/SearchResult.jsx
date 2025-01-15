@@ -30,8 +30,6 @@ const SearchResult = () => {
     });
   }, [searchParams, setFormData]);
 
-  console.log(formData);
-
   const handleFilterChange = ({ target: { name, value } }) => {
     const params = Object.fromEntries(searchParams.entries());
 

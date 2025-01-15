@@ -54,6 +54,7 @@ const FilterBox = ({ formData, handleChange, handleFilterChange }) => {
                   </label>
                   <Input
                     id="minPrice"
+                    type="text"
                     name="minPrice"
                     value={formData.minPrice}
                     onBlur={handleFilterChange}
@@ -69,11 +70,13 @@ const FilterBox = ({ formData, handleChange, handleFilterChange }) => {
                   <Input
                     id="maxPrice"
                     name="maxPrice"
+                    type="text"
                     value={formData.maxPrice}
                     onBlur={handleFilterChange}
                     onChange={handleChange}
                     className="h-10 pl-11 rounded-lg"
                     placeholder="Maximum Price"
+                    defaultValue="1"
                   />
                 </div>
               </div>
