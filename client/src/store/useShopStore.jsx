@@ -36,8 +36,11 @@ export const useShopStore = create((set) => ({
           "Content-Type": "multipart/form-data",
         },
       });
+
+      console.log(response);
       toast.success(response.data.message);
     } catch (error) {
+      console.log(error);
       toast.error(error.response.data.message);
     } finally {
       set({ isShopLoading: false });

@@ -80,65 +80,54 @@ async function getAllStoreProducts(req, res) {
 }
 
 async function createProduct(req, res) {
-  const t = await sequelize.transaction();
-
-  try {
-    const storeId = req.user.storeId;
-    const { name, description, price, stock, categoryId } = req.body;
-
-    console.log(req.user);
-    console.log(req.body);
-    if (!name || !description || !price || !stock || !categoryId) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    if (!storeId) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized! You don't have a store." });
-    }
-
-    if (!req.files || req.files.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "You must upload at least 1 image" });
-    }
-
-    const newProduct = await Product.create(
-      {
-        storeId,
-        name,
-        description,
-        price,
-        stock,
-        categoryId,
-      },
-      { transaction: t }
-    );
-
-    const uploadPromises = req.files.map((fileItem) =>
-      uploadMediaToCloudinary(fileItem.path)
-    );
-
-    const uploadedImages = await Promise.all(uploadPromises);
-
-    const images = uploadedImages.map((url) => ({
-      productId: newProduct.id,
-      image: url,
-    }));
-
-    await Galleries.bulkCreate(images, { transaction: t });
-
-    await t.commit();
-
-    return res.status(201).json({ message: "New product is added" });
-  } catch (error) {
-    await t.rollback();
-    return res.status(500).json({
-      message: "Failed to create new product",
-      error: error.message,
-    });
-  }
+  // const t = await sequelize.transaction();
+  // try {
+  //   const storeId = req.user.storeId;
+  //   const { name, description, price, stock, categoryId } = req.body;
+  //   console.log(req.user);
+  //   console.log(req.body);
+  //   if (!name || !description || !price || !stock || !categoryId) {
+  //     return res.status(400).json({ message: "All fields are required" });
+  //   }
+  //   if (!storeId) {
+  //     return res
+  //       .status(401)
+  //       .json({ message: "Unauthorized! You don't have a store." });
+  //   }
+  //   if (!req.files || req.files.length === 0) {
+  //     return res
+  //       .status(400)
+  //       .json({ message: "You must upload at least 1 image" });
+  //   }
+  //   const newProduct = await Product.create(
+  //     {
+  //       storeId,
+  //       name,
+  //       description,
+  //       price,
+  //       stock,
+  //       categoryId,
+  //     },
+  //     { transaction: t }
+  //   );
+  //   const uploadPromises = req.files.map((fileItem) =>
+  //     uploadMediaToCloudinary(fileItem.path)
+  //   );
+  //   const uploadedImages = await Promise.all(uploadPromises);
+  //   const images = uploadedImages.map((url) => ({
+  //     productId: newProduct.id,
+  //     image: url,
+  //   }));
+  //   await Galleries.bulkCreate(images, { transaction: t });
+  //   await t.commit();
+  //   return res.status(201).json({ message: "New product is added" });
+  // } catch (error) {
+  //   await t.rollback();
+  //   return res.status(500).json({
+  //     message: "Failed to create new product",
+  //     error: error.message,
+  //   });
+  // }
 }
 
 async function updateProduct(req, res) {
