@@ -37,7 +37,7 @@ const Transaction = () => {
                 </button>
 
                 <img
-                  src={view}
+                  src={view.url}
                   className="object-cover w-full h-full rounded-md"
                 />
               </div>

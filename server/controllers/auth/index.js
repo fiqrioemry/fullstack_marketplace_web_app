@@ -166,7 +166,7 @@ async function userSignOut(req, res) {
 
 async function userAuthCheck(req, res) {
   const userId = req.user.userId;
-  console.log("userAuthCheck :::", userId);
+
   try {
     // const cachedUser = await client.get(`user:${userId}`);
 
@@ -197,9 +197,7 @@ async function userAuthCheck(req, res) {
 
     // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
-    res.status(200).send({
-      data: payload,
-    });
+    res.status(200).json({ payload });
   } catch (error) {
     return res.status(500).send({
       message: "Failed to get Authorization",

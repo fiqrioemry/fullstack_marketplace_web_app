@@ -1,7 +1,7 @@
+const createSlug = require("../../utils/createSlug");
 const { removeUploadFile } = require("../../utils/removeUploadFile");
 const { uploadMediaToCloudinary } = require("../../utils/cloudinary");
 const { Product, Galleries, Store, sequelize } = require("../../models");
-const createSlug = require("../../utils/createSlug");
 
 async function getStoreInfo(req, res) {
   const slug = req.params;
@@ -119,15 +119,21 @@ async function createProduct(req, res) {
       categoryId,
     });
 
-    const uploadPromises = req.files.map((file) => {
-      return uploadMediaToCloudinary(file.path);
+    const uploadPromises = req.files.map(async (file) => {
+      // Upload media ke Cloudinary
+      const uploadedMedia = await uploadMediaToCloudinary(file.path);
+
+      // Setelah berhasil upload, hapus file lokal
+      await removeUploadFile(file.path);
+
+      return uploadedMedia;
     });
 
     const uploadedImages = await Promise.all(uploadPromises);
-    console.log(uploadedImages);
+
     const images = uploadedImages.map((url) => ({
       productId: newProduct.id,
-      image: url.secure_url,
+      image: url.secure_url, // Misalnya Cloudinary mengembalikan URL di property secure_url
     }));
 
     await Galleries.bulkCreate(images);

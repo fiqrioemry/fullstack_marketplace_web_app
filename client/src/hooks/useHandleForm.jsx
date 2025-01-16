@@ -1,51 +1,42 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 const contactFields = ["phone", "zipcode"];
-
 const numericFields = ["minPrice", "maxPrice", "price", "stock", "quantity"];
 
 export const useHandleForm = (initialFormState) => {
   const [formData, setFormData] = useState(initialFormState);
 
-  console.log(formData);
-
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, type, value, checked } = e.target;
 
-    if (type === "checkbox") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: checked,
-      }));
-    } else if (numericFields.includes(name)) {
-      const formatValue = value
+    let formattedValue = value;
+
+    // Format for numeric fields
+    if (numericFields.includes(name)) {
+      formattedValue = value
         .replace(/^0+/, "")
         .replace(/^-/, "")
         .replace(/[^0-9]/g, "");
-      setFormData((prev) => ({
-        ...prev,
-        [name]: formatValue,
-      }));
-    } else if (contactFields.includes(name)) {
-      const formatValue = value.replace(/[^0-9]/g, "");
-      setFormData((prev) => ({
-        ...prev,
-        [name]: formatValue,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
     }
-  };
+    // Format for contact fields
+    else if (contactFields.includes(name)) {
+      formattedValue = value.replace(/[^0-9]/g, "");
+    }
+    // Checkbox handling
+    else if (type === "checkbox") {
+      formattedValue = checked;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formattedValue,
+    }));
+  }, []);
 
   const handleValidate = () => {
-    const isFormValid = Object.values(formData).every((value) =>
+    return Object.values(formData).every((value) =>
       typeof value === "string" ? value.trim() !== "" : !!value
     );
-
-    return isFormValid;
   };
 
   const handleSubmit = async (e, process) => {

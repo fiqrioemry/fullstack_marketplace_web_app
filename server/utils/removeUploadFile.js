@@ -7,10 +7,10 @@ const fs = require("fs").promises;
  */
 async function removeUploadFile(filePath) {
   try {
-    // await delete process
+    // menunggu process delete
     await fs.unlink(filePath);
   } catch (error) {
-    // return error if failed
+    // mengembalikan error jika gagal delete
     throw new Error("Failed to delete local file");
   }
 }
