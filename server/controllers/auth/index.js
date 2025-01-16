@@ -4,11 +4,9 @@ const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
 const sendOtp = require("../../utils/sendOtp");
 const { client } = require("../../utils/redis");
+const { User, Store } = require("../../models");
 const createSlug = require("../../utils/createSlug");
-const { User, Store, Reset } = require("../../models");
 const randomAvatar = require("../../utils/randomAvatar");
-const resetPasswordToken = require("../../utils/resetPasswordToken");
-const createEmailTemplate = require("../../utils/createEmailTemplate");
 
 async function sendOtpSignUp(req, res) {
   const { email } = req.body;
@@ -161,20 +159,20 @@ async function userSignOut(req, res) {
 
   res.clearCookie("refreshToken");
 
-  await client.del(`user:${userId}`);
+  // await client.del(`user:${userId}`);
 
   return res.status(200).json({ message: "Logout is success" });
 }
 
 async function userAuthCheck(req, res) {
   const userId = req.user.userId;
-
+  console.log("userAuthCheck :::", userId);
   try {
-    const cachedUser = await client.get(`user:${userId}`);
+    // const cachedUser = await client.get(`user:${userId}`);
 
-    if (cachedUser) {
-      return res.status(200).send({ data: JSON.parse(cachedUser) });
-    }
+    // if (cachedUser) {
+    //   return res.status(200).send({ data: JSON.parse(cachedUser) });
+    // }
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
@@ -197,10 +195,10 @@ async function userAuthCheck(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(200).send({
-      payload,
+      data: payload,
     });
   } catch (error) {
     return res.status(500).send({
@@ -213,7 +211,7 @@ async function userAuthCheck(req, res) {
 async function userAuthRefresh(req, res) {
   try {
     const refreshToken = req.cookies.refreshToken;
-
+    console.log("userAuthRefresh :::", refreshToken);
     if (!refreshToken) {
       return res.status(401).send({
         message: "Unauthorized !!! Please Login",
@@ -253,70 +251,9 @@ async function userAuthRefresh(req, res) {
   }
 }
 
-async function resetPassword(req, res) {
-  const token = req.params.token;
-  try {
-    const user = await Reset.findOne({
-      where: { token, ExpiresAt: { [Op.gte]: new Date() } },
-    });
-    if (!user)
-      return res.status(400).send({
-        message: "Token is invalid or has been expired",
-      });
+async function resetPassword(req, res) {}
 
-    const { newPassword, newPasswordConfirm } = req.body;
-
-    if (newPassword !== newPasswordConfirm) {
-      return res.status(400).send({ message: "Password did not match" });
-    }
-
-    const newHashPassword = await bcrypt.hash(newPassword, 10);
-
-    (await User.update(
-      { password: newHashPassword },
-      { where: { id: user.userId } }
-    )) && Reset.destroy({ where: { userId: user.userId } });
-
-    res.status(200).send({
-      message: "Password is updated",
-    });
-  } catch (error) {
-    return res.status(500).send({
-      message: "Failed to reset password",
-      error: error.message,
-    });
-  }
-}
-
-async function forgotPassword(req, res) {
-  const { email } = req.body;
-
-  try {
-    const user = await User.findOne({
-      where: { email },
-      attributes: ["id", "email", "fullname"],
-    });
-
-    if (!user) return res.status(401).send({ message: "Email is invalid" });
-
-    const resetToken = resetPasswordToken(user);
-
-    const passwordResetURL = `${process.env.CLIENT_URL}/reset/${resetToken}`;
-
-    const message = createEmailTemplate({ user, passwordResetURL });
-    await sendEmail({
-      email: user.email,
-      subject: "Password Recovery",
-      message,
-    });
-
-    res.status(201).send({
-      message: `Password Recovery Link has been sent to ${user.email}`,
-    });
-  } catch (error) {
-    return res.status(500).send({ message: error.message });
-  }
-}
+async function forgotPassword(req, res) {}
 
 async function userOpenStore(req, res) {
   const { userId } = req.user;
@@ -384,7 +321,7 @@ async function userOpenStore(req, res) {
       storeAvatar: store.avatar,
     };
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(201).json({
       message: "Store is created",

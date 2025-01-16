@@ -8,14 +8,22 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    // mengecek apakah token ada
     const accessToken = Cookies.get("accessToken") || null;
 
+    // jika ada request diteruskan dengan mengirim token di header
     if (accessToken) {
+      console.log("accessToken ditemukan dan proses dilanjutkan");
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    // jika tidak maka akan dilanjutkan ke proses refresh token
+    console.log("accessToken tidak ditemukan");
     return config;
   },
-  (error) => Promise.reject(error)
+
+  (error) => {
+    Promise.reject(error);
+  }
 );
 
 axiosInstance.interceptors.response.use(
@@ -27,6 +35,7 @@ axiosInstance.interceptors.response.use(
       !error.config.__isRetryRequest
     ) {
       try {
+        console.log("melakukan proses refresh dari access token");
         const response = await axios.get(
           "http://localhost:5000/api/auth/refresh",
           {

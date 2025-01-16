@@ -11,13 +11,13 @@ async function getProfile(req, res) {
   const { userId } = req.user;
 
   try {
-    const cachedUser = await client.get(`user:${userId}`);
+    // const cachedUser = await client.get(`user:${userId}`);
 
-    if (cachedUser) {
-      return res.status(200).send({
-        data: JSON.parse(cachedUser),
-      });
-    }
+    // if (cachedUser) {
+    //   return res.status(200).send({
+    //     data: JSON.parse(cachedUser),
+    //   });
+    // }
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ["password"] },
@@ -40,7 +40,7 @@ async function getProfile(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    await client.setEx(`user:${user.id}`, 900, JSON.stringify(payload));
+    // await client.setEx(`user:${user.id}`, 900, JSON.stringify(payload));
 
     return res.status(200).send({
       data: payload,
@@ -101,7 +101,7 @@ async function updateProfile(req, res) {
 
     await user.update(updatedUser);
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(updatedUser));
+    // await client.setEx(`user:${userId}`, 900, JSON.stringify(updatedUser));
 
     return res.status(200).json({
       message: "Profile is updated",
@@ -119,11 +119,11 @@ async function getAddress(req, res) {
   const { userId } = req.user;
 
   try {
-    const cachedAddress = await client.get(`address:${userId}`);
+    // const cachedAddress = await client.get(`address:${userId}`);
 
-    if (cachedAddress) {
-      return res.status(200).send({ data: JSON.parse(cachedAddress) });
-    }
+    // if (cachedAddress) {
+    //   return res.status(200).send({ data: JSON.parse(cachedAddress) });
+    // }
 
     const address = await Address.findAll({ where: { userId } });
 
@@ -134,7 +134,7 @@ async function getAddress(req, res) {
       });
     }
 
-    await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
+    // await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
 
     return res.status(200).send({
       data: address,
@@ -173,11 +173,11 @@ async function addAddress(req, res) {
 
     const updatedAddresses = await Address.findAll({ where: { userId } });
 
-    await client.setEx(
-      `address:${userId}`,
-      900,
-      JSON.stringify(updatedAddresses)
-    );
+    // await client.setEx(
+    //   `address:${userId}`,
+    //   900,
+    //   JSON.stringify(updatedAddresses)
+    // );
 
     return res.status(201).send({
       message: "New Address is added",
@@ -223,11 +223,11 @@ async function updateAddress(req, res) {
 
     const updatedAddress = await Address.findAll({ where: { userId } });
 
-    await client.setEx(
-      `address:${userId}`,
-      900,
-      JSON.stringify(updatedAddress)
-    );
+    // await client.setEx(
+    //   `address:${userId}`,
+    //   900,
+    //   JSON.stringify(updatedAddress)
+    // );
 
     return res.status(200).send({
       message: "Address is Updated",
@@ -253,20 +253,20 @@ async function deleteAddress(req, res) {
 
     await Address.destroy({ where: { id: addressId } });
 
-    const cachedAddress = await client.get(`address:${userId}`);
-    if (cachedAddress) {
-      let parsedAddress = JSON.parse(cachedAddress);
+    // const cachedAddress = await client.get(`address:${userId}`);
+    // if (cachedAddress) {
+    //   let parsedAddress = JSON.parse(cachedAddress);
 
-      parsedAddress = parsedAddress.filter(
-        (address) => address.id !== addressId
-      );
+    //   parsedAddress = parsedAddress.filter(
+    //     (address) => address.id !== addressId
+    //   );
 
-      await client.setEx(
-        `address:${userId}`,
-        900,
-        JSON.stringify(parsedAddress)
-      );
-    }
+    //   await client.setEx(
+    //     `address:${userId}`,
+    //     900,
+    //     JSON.stringify(parsedAddress)
+    //   );
+    // }
 
     return res.status(200).send({
       message: "Address deleted successfully",
