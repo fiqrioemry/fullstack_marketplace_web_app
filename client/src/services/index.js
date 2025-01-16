@@ -15,9 +15,11 @@ axiosInstance.interceptors.request.use(
     if (accessToken) {
       console.log("accessToken ditemukan dan proses dilanjutkan");
       config.headers.Authorization = `Bearer ${accessToken}`;
+    } else {
+      // jika tidak maka akan dilanjutkan ke proses refresh token
+      console.log("accessToken tidak ditemukan");
     }
-    // jika tidak maka akan dilanjutkan ke proses refresh token
-    console.log("accessToken tidak ditemukan");
+
     return config;
   },
 
@@ -29,6 +31,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log(error);
     if (
       error.response.status === 401 &&
       error.config &&
@@ -44,7 +47,10 @@ axiosInstance.interceptors.response.use(
         );
 
         const newAccessToken = response.data.accessToken;
-
+        console.log("mencetak error config", error.config);
+        console.log(
+          "accesstoken diperbaharui dan mengulang proses pengecekan authentication"
+        );
         Cookies.set("accessToken", newAccessToken, { expires: 1 / 96 });
 
         error.config.headers.Authorization = `Bearer ${newAccessToken}`;

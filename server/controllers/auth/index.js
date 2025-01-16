@@ -226,7 +226,10 @@ async function userAuthRefresh(req, res) {
       });
     }
 
-    const user = await User.findByPk(decoded.userId, { attributes: ["id"] });
+    const user = await User.findByPk(decoded.userId, {
+      attributes: ["id"],
+      include: [{ model: Store, as: "store", attributes: ["id"] }],
+    });
 
     if (!user) {
       return res.status(401).send({

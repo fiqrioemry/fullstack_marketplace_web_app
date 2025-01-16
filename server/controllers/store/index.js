@@ -91,9 +91,7 @@ async function createProduct(req, res) {
       return res.status(400).send({ message: "All fields are required" });
     }
     if (!storeId) {
-      return res
-        .status(401)
-        .send({ message: "Unauthorized! You don't have a store." });
+      return res.status(400).send({ message: "You don't have a store." });
     }
     if (!req.files || req.files.length === 0) {
       return res
@@ -124,6 +122,7 @@ async function createProduct(req, res) {
       productId: newProduct.id,
       image: url,
     }));
+
     await Galleries.bulkCreate(images);
 
     return res.status(201).send({ message: "New product is added" });
