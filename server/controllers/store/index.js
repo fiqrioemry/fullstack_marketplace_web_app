@@ -98,9 +98,9 @@ async function createProduct(req, res) {
         .status(400)
         .send({ message: "You must upload at least 1 image" });
     }
-
     const slug = await createSlug(name);
 
+    console.log("after validation process :::", slug);
     const newProduct = await Product.create({
       storeId,
       name,
@@ -112,9 +112,10 @@ async function createProduct(req, res) {
     });
 
     console.log("newProduct :::", newProduct);
-    const uploadPromises = req.files.map((fileItem) =>
-      uploadMediaToCloudinary(fileItem.path)
-    );
+    const uploadPromises = req.files.map((file) => {
+      console.log("file upload :::", file);
+      uploadMediaToCloudinary(file.path);
+    });
 
     console.log("uploadMedia :::", newProduct);
     const uploadedImages = await Promise.all(uploadPromises);
