@@ -82,25 +82,33 @@ async function getAllStoreProducts(req, res) {
 
 async function createProduct(req, res) {
   try {
-    const storeId = req.user.storeId;
+    const storeId = req.user?.storeId;
+
+    if (!storeId) {
+      return res.status(400).send({ message: "You don't have a store." });
+    }
+
     const { name, description, price, stock, categoryId } = req.body;
-    console.log(req.user);
-    console.log("productData:::", req.body);
 
     if (!name || !description || !price || !stock || !categoryId) {
       return res.status(400).send({ message: "All fields are required" });
     }
-    if (!storeId) {
-      return res.status(400).send({ message: "You don't have a store." });
-    }
+
     if (!req.files || req.files.length === 0) {
       return res
         .status(400)
         .send({ message: "You must upload at least 1 image" });
     }
+
     const slug = await createSlug(name);
 
-    console.log("after validation process :::", slug);
+    const existingProduct = await Product.findOne({ where: { slug } });
+    if (existingProduct) {
+      return res.status(400).send({
+        message: "Product name must be unique, Please choose another",
+      });
+    }
+
     const newProduct = await Product.create({
       storeId,
       name,
@@ -111,17 +119,15 @@ async function createProduct(req, res) {
       categoryId,
     });
 
-    console.log("newProduct :::", newProduct);
     const uploadPromises = req.files.map((file) => {
-      console.log("file upload :::", file);
-      uploadMediaToCloudinary(file.path);
+      return uploadMediaToCloudinary(file.path);
     });
 
-    console.log("uploadMedia :::", newProduct);
     const uploadedImages = await Promise.all(uploadPromises);
+    console.log(uploadedImages);
     const images = uploadedImages.map((url) => ({
       productId: newProduct.id,
-      image: url,
+      image: url.secure_url,
     }));
 
     await Galleries.bulkCreate(images);

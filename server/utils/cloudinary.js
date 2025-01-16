@@ -13,7 +13,7 @@ async function uploadMediaToCloudinary(filePath) {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: "auto",
-      folder: "fullstack_instagram_clone",
+
       transformation: [
         {
           width: 500,
@@ -32,10 +32,11 @@ async function uploadMediaToCloudinary(filePath) {
 const deleteMediaFromCloudinary = async (imageUrl) => {
   try {
     const publicId = imageUrl.split("/").slice(-2).join("/").split(".")[0];
-
+    //
     await cloudinary.uploader.destroy(publicId);
+    //
   } catch (error) {
-    console.log(error);
+    //
     throw new Error("Failed to delete asset from Cloudinary");
   }
 };
