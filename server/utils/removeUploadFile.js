@@ -5,7 +5,7 @@ const fs = require("fs").promises;
  * @param {string} filePath - Path file yang akan dihapus.
  * @returns {Promise<void>}
  */
-async function deleteLocalFile(filePath) {
+async function removeUploadFile(filePath) {
   try {
     await fs.unlink(filePath);
   } catch (error) {
@@ -14,4 +14,4 @@ async function deleteLocalFile(filePath) {
   }
 }
 
-module.exports = { deleteLocalFile };
+module.exports = { removeUploadFile };

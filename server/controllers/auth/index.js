@@ -121,7 +121,7 @@ async function userSignIn(req, res) {
     };
 
     const accessToken = jwt.sign(
-      { userId: user.id },
+      { userId: user.id, storeId: user.store?.id },
       process.env.ACCESS_TOKEN,
       {
         expiresIn: "1d",
@@ -129,7 +129,7 @@ async function userSignIn(req, res) {
     );
 
     const refreshToken = jwt.sign(
-      { userId: user.id },
+      { userId: user.id, storeId: user.store?.id },
       process.env.REFRESH_TOKEN,
       {
         expiresIn: "7d",
@@ -139,7 +139,7 @@ async function userSignIn(req, res) {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: process.env.ENVIRONMENT === "production",
+      secure: process.env.NODE_ENV === "production",
     });
 
     return res.status(200).json({
@@ -167,7 +167,7 @@ async function userSignOut(req, res) {
 }
 
 async function userAuthCheck(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
 
   try {
     const cachedUser = await client.get(`user:${userId}`);
@@ -237,7 +237,7 @@ async function userAuthRefresh(req, res) {
     }
 
     const accessToken = jwt.sign(
-      { userId: user.id },
+      { userId: user.id, storeId: user.store?.id },
       process.env.ACCESS_TOKEN,
       { expiresIn: "15m" }
     );

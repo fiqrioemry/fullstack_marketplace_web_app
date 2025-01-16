@@ -3,9 +3,9 @@ const {
   deleteMediaFromCloudinary,
 } = require("../../utils/cloudinary");
 const { Op } = require("sequelize");
-const fs = require("fs").promises;
 const { client } = require("../../utils/redis");
 const { User, Store, Address } = require("../../models");
+const { removeUploadFile } = require("../../utils/removeUploadFile");
 
 async function getProfile(req, res) {
   const { userId } = req.user;
@@ -84,7 +84,7 @@ async function updateProfile(req, res) {
 
       avatar = updatedAvatar.secure_url;
 
-      await fs.unlink(file.path);
+      await removeUploadFile(file.path);
     }
 
     const updatedUser = {
@@ -108,13 +108,6 @@ async function updateProfile(req, res) {
       data: updatedUser,
     });
   } catch (error) {
-    if (file) {
-      await fs
-        .unlink(file.path)
-        .catch((unlinkError) =>
-          console.error("Failed to delete file:", unlinkError)
-        );
-    }
     return res.status(500).send({
       message: "Failed to Update Profile",
       error: error.message,

@@ -1,4 +1,6 @@
-const { Product, Categories, Galleries, Store } = require("../../models");
+const { removeUploadFile } = require("../../utils/removeUploadFile");
+const { uploadMediaToCloudinary } = require("../../utils/cloudinary");
+const { Product, Galleries, Store, sequelize } = require("../../models");
 
 async function getStoreInfo(req, res) {
   const slug = req.params;
@@ -57,15 +59,15 @@ async function getAllStoreProducts(req, res) {
 
     const payload = {
       id: product.id,
+      storeSlug: slug,
+      storeId: store.id,
       name: product.name,
       slug: product.slug,
       price: product.price,
       stock: product.stock,
+      storeName: store.name,
       description: product.description,
       images: product.Galleries.map((image) => image.image),
-      storeId: store.id,
-      storeSlug: slug,
-      storeName: store.name,
     };
 
     return res.status(200).json({ data: payload });
@@ -78,72 +80,66 @@ async function getAllStoreProducts(req, res) {
 }
 
 async function createProduct(req, res) {
-  console.log(req.files);
-  console.log(req.body);
+  const t = await sequelize.transaction();
+
   try {
-    return res.status(200).json({ message: "New product is added" });
+    const storeId = req.user.storeId;
+    const { name, description, price, stock, categoryId } = req.body;
+
+    console.log(req.user);
+    console.log(req.body);
+    if (!name || !description || !price || !stock || !categoryId) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (!storeId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized! You don't have a store." });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "You must upload at least 1 image" });
+    }
+
+    const newProduct = await Product.create(
+      {
+        storeId,
+        name,
+        description,
+        price,
+        stock,
+        categoryId,
+      },
+      { transaction: t }
+    );
+
+    const uploadPromises = req.files.map((fileItem) =>
+      uploadMediaToCloudinary(fileItem.path)
+    );
+
+    const uploadedImages = await Promise.all(uploadPromises);
+
+    const images = uploadedImages.map((url) => ({
+      productId: newProduct.id,
+      image: url,
+    }));
+
+    await Galleries.bulkCreate(images, { transaction: t });
+
+    await t.commit();
+
+    return res.status(201).json({ message: "New product is added" });
   } catch (error) {
-    res.status(500).json({
+    await t.rollback();
+    return res.status(500).json({
       message: "Failed to create new product",
       error: error.message,
     });
   }
 }
-
-// async function createProduct(req, res) {
-//   const files = req.files;
-//   const { storeId } = req.user;
-//   const t = await sequelize.transaction();
-//   const { name, description, price, stock, category } = req.body;
-
-//   try {
-//     if (!storeId) {
-//       return res.status(400).json({ message: "You don't have a store" });
-//     }
-
-//     if (req.files.length === 0) {
-//       return res.status(400).send({ error: "Must upload atleast 1 image" });
-//     }
-
-//     const product = await Product.create(
-//       {
-//         slug,
-//         name,
-//         price,
-//         stock,
-//         storeId,
-//         category,
-//         description,
-//       },
-//       { transaction: t }
-//     );
-
-//     const uploadPromises = files.map((fileItem) =>
-//       uploadMediaToCloudinary(fileItem.path)
-//     );
-
-//     const results = await Promise.all(uploadPromises);
-
-//     const images = results.map((result) => {
-//       return {
-//         image: result.secure_url,
-//         productId: product.id,
-//       };
-//     });
-
-//     await Galleries.bulkCreate(images, { transaction: t });
-
-//     await t.commit();
-
-//     return res.status(201).send({
-//       message: "Product is created",
-//       data: product,
-//     });
-//   } catch (error) {
-//     await t.rollback();
-//     return res.status(500).send(error.message);
-//   }
-// }
 
 async function updateProduct(req, res) {
   try {
@@ -174,7 +170,7 @@ async function getStoreStatistic(req, res) {
 
     return res.status(200).json({ data: store });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Failed to retrieve store detail",
       error: error.message,
     });
