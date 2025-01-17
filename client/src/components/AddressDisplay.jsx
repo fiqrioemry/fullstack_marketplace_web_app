@@ -61,7 +61,9 @@ const AddressDisplay = ({ address }) => {
           <div className="flex space-x-4">
             <AddressForm
               formData={formData}
+              address={address}
               buttonTitle="Edit Address"
+              setFormData={setFormData}
               formTitle={"Edit Address"}
               handleChange={handleChange}
               handleSubmit={handleUpdateAddress}

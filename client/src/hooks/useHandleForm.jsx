@@ -3,8 +3,8 @@ import { useState, useCallback } from "react";
 const contactFields = ["phone", "zipcode"];
 const numericFields = ["minPrice", "maxPrice", "price", "stock", "quantity"];
 
-export const useHandleForm = (initialFormState) => {
-  const [formData, setFormData] = useState(initialFormState);
+export const useHandleForm = (initialState) => {
+  const [formData, setFormData] = useState(initialState);
 
   const handleChange = useCallback((e) => {
     const { name, type, value, checked } = e.target;

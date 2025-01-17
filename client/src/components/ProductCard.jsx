@@ -5,16 +5,19 @@ import { Card, CardContent } from "@/components/ui/card";
 const ProductCard = ({ product }) => {
   return (
     <Link to={`/${product.storeSlug}/${product.slug}`}>
-      <Card className="h-[300px] overflow-hidden">
+      <Card className="h-[315px] overflow-hidden">
         <CardContent>
           <img
             className="w-full object-contain"
             src={product.images[0]}
             alt="product"
           />
-          <div className="space-y-2 px-2">
-            <h4>{product.name}</h4>
-            <span>Rp. {product.price}</span>
+          <div className="px-2">
+            <span className="text-xs text-muted-foreground font-semibold">
+              {product.category}
+            </span>
+            <h5>{product.name}</h5>
+            <span className="text-sm">Rp. {product.price}</span>
           </div>
         </CardContent>
       </Card>

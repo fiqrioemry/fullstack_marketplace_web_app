@@ -86,6 +86,7 @@ export const useProductStore = create((set) => ({
       const data = [
         {
           id: 1,
+          category: "Electronic",
           name: "Samsung A5",
           slug: "samsung_a5",
           price: 125000,
@@ -101,6 +102,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 2,
+          category: "Electronic",
           name: "Winter Jacket Radiant",
           slug: "winter_jacket_radiant",
           price: 725000,
@@ -116,6 +118,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 3,
+          category: "Electronic",
           name: "Sharp Smart TV 40 Inch",
           slug: "sharp_smart_tv_40_inch",
           price: 345000,
@@ -131,6 +134,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 4,
+          category: "Electronic",
           name: "Electric Sound System",
           slug: "electric_sound_system",
           storeSlug: "random_store_d",
@@ -146,6 +150,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 5,
+          category: "Electronic",
           name: "T-Shirt New Balance",
           slug: "t_shirt_new_balance",
           storeSlug: "random_store_e",
@@ -174,6 +179,7 @@ export const useProductStore = create((set) => ({
       const data = [
         {
           id: 1,
+          category: "Electronic",
           name: "Samsung A5",
           slug: "samsung_a5",
           price: 125000,
@@ -189,6 +195,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 2,
+          category: "Fashion",
           name: "Winter Jacket Radiant",
           slug: "winter_jacket_radiant",
           price: 725000,
@@ -204,6 +211,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 3,
+          category: "Electronic",
           name: "Sharp Smart TV 40 Inch",
           slug: "sharp_smart_tv_40_inch",
           price: 345000,
@@ -219,6 +227,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 4,
+          category: "Electronic",
           name: "Electric Sound System",
           slug: "electric_sound_system",
           storeSlug: "random_store_d",
@@ -234,6 +243,7 @@ export const useProductStore = create((set) => ({
         },
         {
           id: 5,
+          category: "Fashion",
           name: "T-Shirt New Balance",
           slug: "t_shirt_new_balance",
           storeSlug: "random_store_e",

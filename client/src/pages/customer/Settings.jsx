@@ -31,9 +31,13 @@ const Settings = () => {
     }
   }, [profile, setFormData]);
 
+  const handleEditProfile = () => {
+    setEditProfile((prev) => !prev);
+    setFormData(profile);
+  };
   const handleProfileUpdate = (e) => {
     e.preventDefault();
-    setEditProfile(false);
+    handleEditProfile();
     updateUserProfile(formData);
   };
 
@@ -87,21 +91,21 @@ const Settings = () => {
             <form onSubmit={handleProfileUpdate}>
               <FormControls
                 formData={formData}
+                disabled={!editProfile}
                 handleChange={handleChange}
                 formControls={controlProfileForm}
-                disabled={!editProfile}
               />
 
               <div className="flex justify-end space-y-2">
                 {editProfile ? (
                   <div className="flex items-center  gap-2">
-                    <Button type="button" onClick={() => setEditProfile(false)}>
+                    <Button type="button" onClick={handleEditProfile}>
                       Cancel
                     </Button>
                     <Button type="submit">Update</Button>
                   </div>
                 ) : (
-                  <Button type="button" onClick={() => setEditProfile(true)}>
+                  <Button type="button" onClick={handleEditProfile}>
                     Edit
                   </Button>
                 )}

@@ -3,13 +3,14 @@ import { Plus } from "lucide-react";
 import { useUserStore } from "../../store/useUserStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useHandleForm } from "../../hooks/useHandleForm";
+import AddressDisplay from "../../components/AddressDisplay";
 import { AddressForm } from "../../components/modal/AddressForm";
 import { controlAddressForm, initialAddressForm } from "../../config";
 import UserAddressSkeleton from "../../components/loading/UserAddressSkeleton";
-import AddressDisplay from "../../components/AddressDisplay";
 
 const Address = () => {
-  const { formData, handleChange } = useHandleForm(initialAddressForm);
+  const { formData, setFormData, handleChange } =
+    useHandleForm(initialAddressForm);
   const { address, getUserAddress, addUserAddress } = useUserStore();
 
   useEffect(() => {
@@ -18,6 +19,7 @@ const Address = () => {
 
   const handleAddNewAddress = (e) => {
     e.preventDefault();
+    console.log("menambah alamat");
     addUserAddress(formData);
   };
 
@@ -31,6 +33,7 @@ const Address = () => {
             <div>
               <AddressForm
                 formData={formData}
+                setFormData={setFormData}
                 handleChange={handleChange}
                 formTitle={"Create New Address"}
                 formControls={controlAddressForm}

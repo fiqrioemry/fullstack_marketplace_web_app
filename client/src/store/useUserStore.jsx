@@ -67,6 +67,7 @@ export const useUserStore = create((set) => ({
 
   addUserAddress: async (formData) => {
     try {
+      console.log("berhasil masuk");
       set({ isAddressLoading: true });
       const response = await axiosInstance.post(
         `/user/profile/address`,
