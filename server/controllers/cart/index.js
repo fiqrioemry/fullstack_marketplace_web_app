@@ -4,20 +4,31 @@ async function addCart(req, res) {
   const { userId } = req.user;
   const { productId, quantity } = req.body;
 
-  console.log(productId, quantity);
-  console.log(req);
+  if (!Number.isInteger(quantity) || quantity <= 0) {
+    return res.status(400).send({ message: "Invalid quantity" });
+  }
+
   try {
-    let cartItem = await Cart.findOne({
-      where: {
-        productId,
-        userId,
-      },
+    const product = await Product.findByPk(productId, {
+      attributes: ["stock"],
     });
 
+    if (!product) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    let cartItem = await Cart.findOne({
+      where: { productId, userId },
+    });
+
+    const newQuantity = cartItem ? cartItem.quantity + quantity : quantity;
+
+    if (product.stock < newQuantity) {
+      return res.status(400).send({ message: "Product is out of stock" });
+    }
+
     if (cartItem) {
-      await cartItem.update({
-        quantity: cartItem.quantity + quantity,
-      });
+      await cartItem.update({ quantity: newQuantity });
     } else {
       cartItem = await Cart.create({
         productId,
@@ -31,7 +42,8 @@ async function addCart(req, res) {
       data: cartItem,
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    console.error("Error adding to cart:", error);
+    return res.status(500).send({ message: "Internal server error", error });
   }
 }
 
@@ -39,8 +51,19 @@ async function updateCart(req, res) {
   const { id } = req.params;
   const { userId } = req.user;
   const { quantity } = req.body;
+
+  // Validasi input
+  if (!Number.isInteger(quantity) || quantity <= 0) {
+    return res.status(400).send({ message: "Invalid quantity" });
+  }
+
   try {
-    const cart = await Cart.findByPk(id);
+    const cart = await Cart.findByPk(id, {
+      include: {
+        model: Product,
+        attributes: ["stock"],
+      },
+    });
 
     if (!cart) {
       return res.status(404).send({ message: "Cart not found" });
@@ -50,14 +73,18 @@ async function updateCart(req, res) {
       return res.status(401).send({ message: "Unauthorized request" });
     }
 
-    const updatedCart = await Cart.update({ quantity }, { where: { id: id } });
+    if (cart.Product.stock < quantity) {
+      return res.status(400).send({ message: "Product is out of stock" });
+    }
+
+    await cart.update({ quantity });
 
     return res.status(200).send({
       message: "Cart is updated",
-      data: updatedCart,
+      data: cart,
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send({ message: "Internal server error", error });
   }
 }
 
