@@ -47,10 +47,11 @@ async function updateCart(req, res) {
       return res.status(401).send({ message: "Unauthorized request" });
     }
 
-    await Cart.update({ quantity }, { where: { id: id } });
+    const updatedCart = await Cart.update({ quantity }, { where: { id: id } });
 
     return res.status(200).send({
       message: "Cart is updated",
+      data: updatedCart,
     });
   } catch (error) {
     return res.status(500).send(error.message);
@@ -90,7 +91,7 @@ async function getAllCartItem(req, res) {
   const { userId } = req.user;
 
   try {
-    const cartItems = await Cart.findAll({
+    const cart = await Cart.findAll({
       where: { userId },
       attributes: ["id", "quantity"],
       include: [
@@ -114,11 +115,11 @@ async function getAllCartItem(req, res) {
       ],
     });
 
-    if (!cartItems || cartItems.length === 0) {
+    if (!cart || cart.length === 0) {
       return res.status(200).send({ message: "No items in cart", data: [] });
     }
 
-    const groupedCart = cartItems.reduce((result, item) => {
+    const cartItems = cart.reduce((result, item) => {
       const storeId = item.product.storeId;
       const storeName = item.product.store.name;
 
@@ -139,7 +140,8 @@ async function getAllCartItem(req, res) {
         stock: item.product.stock,
         quantity: item.quantity,
         storeId: item.store.id,
-        storeName: item.store.slug,
+        storeName: item.store.name,
+        storeSlug: item.store.slug,
         storeImage: item.store.image,
         images: item.galleries.map((item) => item.image),
       });
@@ -147,11 +149,11 @@ async function getAllCartItem(req, res) {
       return result;
     }, {});
 
-    const groupedCartArray = Object.values(groupedCart);
+    const groupedCart = Object.values(cartItems);
 
     return res.status(200).send({
       message: "Cart items retrieved successfully",
-      data: groupedCartArray,
+      data: groupedCart,
     });
   } catch (error) {
     return res.status(500).send({
