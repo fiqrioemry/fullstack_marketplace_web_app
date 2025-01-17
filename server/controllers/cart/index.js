@@ -3,6 +3,9 @@ const { Product, Cart } = require("../../models");
 async function addCart(req, res) {
   const { userId } = req.user;
   const { productId, quantity } = req.body;
+
+  console.log(productId, quantity);
+  console.log(req);
   try {
     let cartItem = await Cart.findOne({
       where: {

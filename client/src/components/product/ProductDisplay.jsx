@@ -1,27 +1,29 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Loader, Minus, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useProvider } from "../../context/GlobalProvider";
+import { useCartStore } from "../../store/useCartStore";
 
 const ProductDisplay = ({ product }) => {
   const navigate = useNavigate();
   const { userData } = useProvider();
-  const [total, setTotal] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { addCartItem, isCartLoading } = useCartStore();
 
   const handleIncrease = () => {
-    setTotal((prev) => {
-      const newTotal = prev + 1;
-      return Math.min(newTotal, product.stock);
+    setQuantity((prev) => {
+      const newQuantity = prev + 1;
+      return Math.min(newQuantity, product.stock);
     });
   };
 
   const handleDecrease = () => {
-    setTotal((prev) => {
-      const newTotal = prev - 1;
-      return Math.max(newTotal, 1);
+    setQuantity((prev) => {
+      const newQuantity = prev - 1;
+      return Math.max(newQuantity, 1);
     });
   };
 
@@ -31,7 +33,7 @@ const ProductDisplay = ({ product }) => {
         state: {
           product: {
             slug: product.slug,
-            quantity: total,
+            quantity,
           },
         },
       });
@@ -39,8 +41,8 @@ const ProductDisplay = ({ product }) => {
       navigate("/signin");
     }
   };
-  const handleAddToCart = () => {
-    console.log("add to cart");
+  const handleAddToCart = (productId) => {
+    addCartItem(productId, quantity);
   };
 
   const handleSetThumbnail = (index) => {
@@ -95,13 +97,15 @@ const ProductDisplay = ({ product }) => {
         <div className="flex gap-5 items-center mb-4">
           <div className="flex items-center border rounded-md">
             <button
+              disabled={isCartLoading || quantity === 1}
               onClick={handleDecrease}
               className=" p-4 border-r rounded-l-md"
             >
               <Minus />
             </button>
-            <div className="text-center w-[100px]">{total}</div>
+            <div className="text-center w-[100px]">{quantity}</div>
             <button
+              disabled={isCartLoading || quantity === product.stock}
               onClick={handleIncrease}
               className=" p-4 border-r rounded-l-md"
             >
@@ -113,20 +117,29 @@ const ProductDisplay = ({ product }) => {
 
         {/* product price in total */}
         <div className="font-medium h text-xl mb-6">
-          Subtotal : {total * product.price}
+          Subtotal : {quantity * product.price}
         </div>
 
         {/* button */}
         <div className="space-y-4">
           <Button
-            onClick={handleAddToCart}
+            disabled={isCartLoading}
+            onClick={() => handleAddToCart(product.id)}
             variant="secondary"
             className="w-full py-6"
           >
-            Add to Card
+            {!isCartLoading ? (
+              "Add to Card"
+            ) : (
+              <Loader className="animate-spin" />
+            )}
           </Button>
-          <Button onClick={handleCheckout} className="w-full py-6">
-            Checkout
+          <Button
+            disabled={isCartLoading}
+            onClick={handleCheckout}
+            className="w-full py-6"
+          >
+            {!isCartLoading ? "Checkout" : <Loader className="animate-spin" />}
           </Button>
         </div>
       </div>

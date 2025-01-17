@@ -19,11 +19,15 @@ export const useCartStore = create((set) => ({
     }
   },
 
-  addCartItem: async (formData) => {
+  addCartItem: async (productId, quantity) => {
     try {
+      console.log(productId, quantity);
       set({ isCartLoading: true });
 
-      const response = await axiosInstance.post("/cart", formData);
+      const response = await axiosInstance.post("/cart", {
+        productId,
+        quantity,
+      });
 
       toast.success(response.data.message);
 
