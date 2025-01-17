@@ -13,7 +13,6 @@ async function uploadMediaToCloudinary(filePath) {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: "auto",
-
       transformation: [
         {
           width: 500,

@@ -171,7 +171,7 @@ async function addAddress(req, res) {
       isMain,
     });
 
-    const updatedAddresses = await Address.findAll({ where: { userId } });
+    // const updatedAddresses = await Address.findAll({ where: { userId } });
 
     // await client.setEx(
     //   `address:${userId}`,
