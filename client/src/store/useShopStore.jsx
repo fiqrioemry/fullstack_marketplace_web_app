@@ -6,13 +6,14 @@ export const useShopStore = create((set) => ({
   shopProducts: null,
   isShopLoading: null,
 
-  getShopProduct: async (slug) => {
+  getShopProducts: async () => {
     try {
-      const response = axiosInstance.get(`/shop/product/${slug}`);
+      const response = await axiosInstance.get(`/store/product/get`);
+      console.log(response);
       set({ shopProducts: response.data.data });
     } catch (error) {
       console.log(error);
-      set({ product: null });
+      set({ shopProducts: null });
     }
   },
 

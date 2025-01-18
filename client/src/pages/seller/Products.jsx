@@ -1,9 +1,18 @@
+import { useEffect } from "react";
 import { Edit, Plus, Trash } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import { useShopStore } from "../../store/useShopStore";
 import { PaginationBox } from "../../components/PaginationBox";
 
 const Products = () => {
+  const { shopProducts, getShopProducts } = useShopStore();
+
+  useEffect(() => {
+    getShopProducts();
+  }, []);
+
+  console.log(shopProducts);
   return (
     <section>
       <div className="space-y-2">

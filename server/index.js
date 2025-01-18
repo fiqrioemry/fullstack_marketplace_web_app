@@ -21,8 +21,8 @@ app.use(
 connectRedis().then(() => {
   app.use("/api/auth", services.authRoute);
   app.use("/api/user", services.userRoute);
-  app.use("/api/store", services.storeRoute);
   app.use("/api/cart", services.cartRoute);
+  app.use("/api/store", services.storeRoute);
   // app.use("/api/product", services.productRoute);
   // app.use("/api/category", services.categoryRoute);
 

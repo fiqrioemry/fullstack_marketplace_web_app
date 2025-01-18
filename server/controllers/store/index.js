@@ -38,8 +38,9 @@ async function getStoreInfo(req, res) {
 }
 
 async function getAllStoreProducts(req, res) {
+  console.log(req.user.storeId);
   const storeId = req.user?.storeId;
-  const { limit, sortBy, order, page, search } = req.query;
+  const { limit, sortBy, order, page } = req.query;
 
   try {
     if (!storeId) {
@@ -49,24 +50,13 @@ async function getAllStoreProducts(req, res) {
     const currentPage = parseInt(page) || 1;
     const offset = (currentPage - 1) * dataPerPage;
 
-    // Ambil produk berdasarkan storeId
     const products = await Product.findAndCountAll({
       where: {
         storeId: storeId,
-        ...(search && { name: { [Op.like]: `%${search}%` } }),
       },
       limit: dataPerPage,
       offset: offset,
-      include: [
-        { model: Galleries, as: "galleries" },
-        {
-          model: Categories,
-          as: "categories",
-          attributes: ["id", "name", "image", "slug"],
-        },
-      ],
       distinct: true,
-      order: [[sortBy || "createdAt", order || "DESC"]],
     });
 
     if (products.count === 0) {
