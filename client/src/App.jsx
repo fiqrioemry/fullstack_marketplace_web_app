@@ -9,6 +9,7 @@ import Checkout from "./pages/Checkout";
 import Category from "./pages/Category";
 import Order from "./pages/seller/Order";
 import OpenStore from "./pages/OpenStore";
+import Products from "./pages/seller/Products";
 import Address from "./pages/customer/Address";
 import SearchResult from "./pages/SearchResult";
 import ProductDetail from "./pages/ProductDetail";
@@ -60,6 +61,7 @@ function App() {
           {/* seller */}
           <Route path="/shop" element={<SellerLayout />}>
             <Route path="order" element={<Order />} />
+            <Route path="products" element={<Products />} />
             <Route path="notification" element={<Notification />} />
             <Route index path="settings" element={<ShopSettings />} />
             <Route index element={<Navigate to="settings" replace />} />
