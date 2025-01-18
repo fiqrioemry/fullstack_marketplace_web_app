@@ -37,59 +37,6 @@ async function getStoreInfo(req, res) {
   }
 }
 
-async function getAllStoreProducts(req, res) {
-  console.log(req.user.storeId);
-  const storeId = req.user?.storeId;
-  const { limit, sortBy, order, page } = req.query;
-
-  try {
-    if (!storeId) {
-      return res.status(400).send({ message: "You don't have a store." });
-    }
-    const dataPerPage = parseInt(limit) || 10;
-    const currentPage = parseInt(page) || 1;
-    const offset = (currentPage - 1) * dataPerPage;
-
-    const products = await Product.findAndCountAll({
-      where: {
-        storeId: storeId,
-      },
-      limit: dataPerPage,
-      offset: offset,
-      distinct: true,
-    });
-
-    if (products.count === 0) {
-      return res
-        .status(200)
-        .json({ data: [], message: "Your Store has no product" });
-    }
-
-    const payload = products.rows.map((product) => ({
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      price: product.price,
-      stock: product.stock,
-      description: product.description,
-      images: product.galleries.map((image) => image.image),
-      categories: product.categories,
-    }));
-
-    return res.status(200).json({
-      data: payload,
-      total: products.count,
-      currentPage,
-      totalPages: Math.ceil(products.count / dataPerPage),
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to retrieve store products",
-      error: error.message,
-    });
-  }
-}
-
 async function createProduct(req, res) {
   try {
     const storeId = req.user?.storeId;
