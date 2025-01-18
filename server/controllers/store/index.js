@@ -38,87 +38,62 @@ async function getStoreInfo(req, res) {
 }
 
 async function getAllStoreProducts(req, res) {
-  const storeId = req.user.storeId;
-  const { limit, sortBy, order, page, search, category, minPrice, maxPrice } =
-    req.query;
+  const storeId = req.user?.storeId;
+  const { limit, sortBy, order, page, search } = req.query;
 
   try {
-    let query = {};
-    if (search) {
-      query[Op.or] = [
-        { name: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `${search}` } },
-      ];
+    if (!storeId) {
+      return res.status(400).send({ message: "You don't have a store." });
     }
+    const dataPerPage = parseInt(limit) || 10;
+    const currentPage = parseInt(page) || 1;
+    const offset = (currentPage - 1) * dataPerPage;
 
-    if (category) {
-      const findCategory = await Categories.findOne({
-        where: { slug: category },
-      });
-      if (findCategory) {
-        query.categoryId = findCategory.id;
-      } else {
-        return res
-          .status(404)
-          .send({ message: "Product with specified category Not Found" });
-      }
-    }
-
-    if (minPrice && maxPrice) {
-      query.price = {
-        [Op.between]: [minPrice, maxPrice],
-      };
-    } else if (minPrice) {
-      query.price = {
-        [Op.gte]: minPrice,
-      };
-    } else if (maxPrice) {
-      query.price = {
-        [Op.lte]: maxPrice,
-      };
-    }
-
-    const store = await Store.findByPk(storeId, {
-      where: query,
+    // Ambil produk berdasarkan storeId
+    const products = await Product.findAndCountAll({
+      where: {
+        storeId: storeId,
+        ...(search && { name: { [Op.like]: `%${search}%` } }),
+      },
+      limit: dataPerPage,
+      offset: offset,
       include: [
+        { model: Galleries, as: "galleries" },
         {
-          model: Product,
-          as: "product",
-          include: [
-            { model: Galleries, as: "galleries" },
-            {
-              model: Categories,
-              as: "categories",
-              attributes: ["id", "name", "image", "slug"],
-            },
-          ],
+          model: Categories,
+          as: "categories",
+          attributes: ["id", "name", "image", "slug"],
         },
       ],
       distinct: true,
       order: [[sortBy || "createdAt", order || "DESC"]],
     });
 
-    if (!product)
+    if (products.count === 0) {
       return res
         .status(200)
-        .json({ data: [], message: "Store has no product" });
+        .json({ data: [], message: "Your Store has no product" });
+    }
 
-    const payload = {
+    const payload = products.rows.map((product) => ({
       id: product.id,
-      storeSlug: slug,
-      storeId: store.id,
       name: product.name,
       slug: product.slug,
       price: product.price,
       stock: product.stock,
-      storeName: store.name,
       description: product.description,
-      images: product.Galleries.map((image) => image.image),
-    };
+      images: product.galleries.map((image) => image.image),
+      categories: product.categories,
+    }));
 
-    return res.status(200).json({ data: payload });
+    return res.status(200).json({
+      data: payload,
+      total: products.count,
+      currentPage,
+      totalPages: Math.ceil(products.count / dataPerPage),
+    });
   } catch (error) {
-    res.status(500).send({
+    res.status(500).json({
       message: "Failed to retrieve store products",
       error: error.message,
     });

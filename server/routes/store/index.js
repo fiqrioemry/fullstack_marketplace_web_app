@@ -9,7 +9,7 @@ const isAuthenticate = require("../../middleware/isAuthenticate");
 const router = express.Router();
 
 router.get("/:slug", getStoreInfo);
-router.get("/:slug/product", getAllStoreProducts);
+router.get("/product", isAuthenticate, getAllStoreProducts);
 router.post(
   "/product",
   isAuthenticate,
