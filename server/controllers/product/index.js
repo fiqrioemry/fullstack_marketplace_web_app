@@ -56,26 +56,34 @@ async function getProduct(req, res) {
 }
 
 async function getAllProducts(req, res) {
+  const { search, city, category, minPrice, maxPrice, limit } = req.body;
   try {
-    const products = await Product.findAndCountAll({
+    const product = await Product.findAndCountAll({
       include: [
-        { model: Store, as: "store" },
-        { model: Gallery, as: "gallery" },
-        { model: Category, as: "category" },
+        {
+          model: Store,
+          as: "store",
+        },
+        {
+          model: Gallery,
+          as: "gallery",
+        },
+        {
+          model: Category,
+          as: "category",
+        },
       ],
+      distinct: true,
     });
 
-    if (products.count === 0) {
+    if (product.count === 0) {
       return res.status(404).send({ message: "Products not found" });
     }
-
-    console.log(products);
-    const product = products.rows.map((item) => {
+    const data = product.rows.map((item) => {
       return {
         id: item.id,
         name: item.name,
         slug: item.slug,
-        description: item.description,
         price: item.price,
         stock: item.stock,
         city: item.store.city,
@@ -83,94 +91,21 @@ async function getAllProducts(req, res) {
         storeName: item.store.name,
         storeSlug: item.store.slug,
         storeImage: item.store.image,
+        description: item.description,
         categoryId: item.category.id,
         categoryName: item.category.name,
         categorySlug: item.category.slug,
-        images: item.gallery?.map((item) => item.image),
+        images: item.gallery.map((item) => item.image),
       };
     });
 
-    return res.status(200).send({ data: product });
-  } catch (error) {
-    res.status(500).send({
-      error: error.message,
+    return res.status(200).send({
+      data: data,
     });
+  } catch (error) {
+    return res.status(500).send(error.message);
   }
 }
-
-// async function getAllProducts(req, res) {
-//   try {
-//     const {
-//       limit,
-//       sortBy,
-//       order,
-//       page,
-//       search,
-//       category,
-//       minPrice,
-//       maxPrice,
-//       city,
-//     } = req.query;
-//     const product = await Product.findAndCountAll({
-//       where: query,
-//       limit: dataPerPage,
-//       offset: offset,
-
-//       include: [
-//         {
-//           model: Store,
-//           as: "store",
-//         },
-//         {
-//           model: Gallery,
-//           as: "gallery",
-//         },
-//       ],
-//       distinct: true,
-//       order: [[sortBy || "createdAt", order || "DESC"]],
-//     });
-
-//     console.log(product);
-
-//     if (product.count === 0) {
-//       return res.status(404).send({ message: "Products not found" });
-//     }
-
-//     const totalPages = Math.ceil(product.count / dataPerPage);
-//     if (currentPage > totalPages || currentPage < 1) {
-//       return res.status(404).send({ message: "Page not found" });
-//     }
-
-//     const data = product.rows.map((item) => {
-//       return {
-//         id: item.id,
-//         name: item.name,
-//         slug: item.slug,
-//         description: item.description,
-//         price: item.price,
-//         stock: item.stock,
-//         city: item.store.city,
-//         storeId: item.storeId,
-//         storeName: item.store.name,
-//         storeSlug: item.store.slug,
-//         storeImage: item.store.image,
-//         categoryId: item.category.id,
-//         categoryName: item.category.name,
-//         categorySlug: item.category.slug,
-//         images:
-//           item.gallery && item.gallery.length
-//             ? item.gallery.map((g) => g.image)
-//             : [],
-//       };
-//     });
-
-//     return res.status(200).send({
-//       data: data,
-//     });
-//   } catch (error) {
-//     return res.status(500).send(error.message);
-//   }
-// }
 
 module.exports = {
   getProduct,
