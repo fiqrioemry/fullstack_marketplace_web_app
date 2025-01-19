@@ -57,17 +57,45 @@ async function getProduct(req, res) {
 
 async function getAllProducts(req, res) {
   try {
-    const products = await Product.findAll({
-      include: [{ model: Store }],
+    const products = await Product.findAndCountAll({
+      include: [
+        { model: Store, as: "store" },
+        { model: Gallery, as: "gallery" },
+        { model: Category, as: "category" },
+      ],
     });
-    const payload = products.map((product) => {
+
+    if (products.count === 0) {
+      return res.status(404).send({ message: "Products not found" });
+    }
+
+    console.log(products);
+    const product = products.rows.map((item) => {
       return {
-        store: product.Store.name,
+        id: item.id,
+        name: item.name,
+        slug: item.slug,
+        description: item.description,
+        price: item.price,
+        stock: item.stock,
+        city: item.store.city,
+        storeId: item.storeId,
+        storeName: item.store.name,
+        storeSlug: item.store.slug,
+        storeImage: item.store.image,
+        categoryId: item.category.id,
+        categoryName: item.category.name,
+        categorySlug: item.category.slug,
+        images: item.gallery?.map((item) => item.image),
       };
     });
-    console.log(payload);
+
     return res.status(200).send({ data: product });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send({
+      error: error.message,
+    });
+  }
 }
 
 // async function getAllProducts(req, res) {
@@ -87,32 +115,22 @@ async function getAllProducts(req, res) {
 //       where: query,
 //       limit: dataPerPage,
 //       offset: offset,
-//       attributes: [
-//         "id",
-//         "storeId",
-//         "name",
-//         "slug",
-//         "price",
-//         "stock",
-//         "createdAt",
-//         "description",
-//       ],
+
 //       include: [
 //         {
 //           model: Store,
 //           as: "store",
-//           attributes: ["name", "slug", "city"],
 //         },
 //         {
-//           model: Category,
-//           as: "category",
-//           attributes: ["id", "name", "image", "slug"],
+//           model: Gallery,
+//           as: "gallery",
 //         },
 //       ],
 //       distinct: true,
 //       order: [[sortBy || "createdAt", order || "DESC"]],
-//       logging: console.log, // Log SQL query for debugging
 //     });
+
+//     console.log(product);
 
 //     if (product.count === 0) {
 //       return res.status(404).send({ message: "Products not found" });
