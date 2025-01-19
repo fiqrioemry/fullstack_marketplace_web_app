@@ -56,9 +56,70 @@ async function getProduct(req, res) {
 }
 
 async function getAllProducts(req, res) {
-  const { search, city, category, minPrice, maxPrice, limit } = req.body;
+  const {
+    search,
+    city,
+    category,
+    minPrice,
+    maxPrice,
+    page,
+    sortBy,
+    orderBy,
+    limit,
+  } = req.query;
   try {
+    const dataPerPage = parseInt(limit) || 10;
+    const currentPage = parseInt(page) || 1;
+    const offset = (currentPage - 1) * dataPerPage;
+
+    let query = {};
+
+    if (search) {
+      query[Op.or] = [
+        { name: { [Op.like]: `%${search}%` } },
+        { description: { [Op.like]: `${search}` } },
+      ];
+    }
+
+    if (category) {
+      const findCategory = await ProductCategory.findOne({
+        where: { slug: category },
+      });
+      if (findCategory) {
+        query.categoryId = findCategory.id;
+      } else {
+        return res.status(404).send({ message: "product is not found" });
+      }
+    }
+    if (city) {
+      const cities = city.split(",");
+      const findCities = await Store.findAll({
+        where: { city: { [Op.in]: cities } }, //
+      });
+      if (findCities.length > 0) {
+        query.storeId = { [Op.in]: findCities.map((c) => c.id) };
+      } else {
+        return res.status(404).send({
+          message: "product is not found",
+        });
+      }
+    }
+    if (minPrice && maxPrice) {
+      query.price = {
+        [Op.between]: [minPrice, maxPrice],
+      };
+    } else if (minPrice) {
+      query.price = {
+        [Op.gte]: minPrice,
+      };
+    } else if (maxPrice) {
+      query.price = {
+        [Op.lte]: maxPrice,
+      };
+    }
     const product = await Product.findAndCountAll({
+      limit: dataPerPage,
+      offset: offset,
       include: [
         {
           model: Store,
@@ -74,6 +135,7 @@ async function getAllProducts(req, res) {
         },
       ],
       distinct: true,
+      order: [[sortBy || "createdAt", orderBy || "DESC"]],
     });
 
     if (product.count === 0) {
