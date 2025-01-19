@@ -1,13 +1,7 @@
 const createSlug = require("../../utils/createSlug");
 const { removeUploadFile } = require("../../utils/removeUploadFile");
 const { uploadMediaToCloudinary } = require("../../utils/cloudinary");
-const {
-  Product,
-  Galleries,
-  Categories,
-  Store,
-  sequelize,
-} = require("../../models");
+const { Product, Gallery, Store } = require("../../models");
 
 async function getStoreInfo(req, res) {
   const slug = req.params;
@@ -93,7 +87,7 @@ async function createProduct(req, res) {
       image: url.secure_url, // Misalnya Cloudinary mengembalikan URL di property secure_url
     }));
 
-    await Galleries.bulkCreate(images);
+    await Gallery.bulkCreate(images);
 
     return res.status(201).send({ message: "New product is added" });
   } catch (error) {
@@ -102,6 +96,11 @@ async function createProduct(req, res) {
       error: error.message,
     });
   }
+}
+
+async function getAllStoreProducts(req, res) {
+  try {
+  } catch (error) {}
 }
 
 async function updateProduct(req, res) {

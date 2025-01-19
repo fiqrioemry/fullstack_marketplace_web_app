@@ -12,16 +12,17 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "productId",
         as: "cart",
       });
-      this.hasMany(models.Galleries, {
+      this.hasMany(models.Gallery, {
         foreignKey: "productId",
-        as: "galleries",
+        as: "gallery",
       });
+
       this.hasMany(models.OrderDetail, {
         foreignKey: "productId",
         as: "orderDetail",
       });
       this.belongsTo(models.Store);
-      this.belongsTo(models.Categories);
+      this.belongsTo(models.Category);
     }
   }
   Product.init(

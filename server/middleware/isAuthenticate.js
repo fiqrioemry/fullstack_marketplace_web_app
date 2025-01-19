@@ -4,7 +4,6 @@ dotenv.config();
 
 module.exports = async function isAuthenticate(req, res, next) {
   const authHeader = req.headers.authorization;
-  console.log("isAuthenticate :::", authHeader);
 
   try {
     if (!authHeader || !authHeader.startsWith("Bearer "))

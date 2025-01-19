@@ -209,7 +209,7 @@ async function userAuthCheck(req, res) {
 async function userAuthRefresh(req, res) {
   try {
     const refreshToken = req.cookies.refreshToken;
-    console.log("userAuthRefresh :::", refreshToken);
+
     if (!refreshToken) {
       return res.status(401).send({
         message: "Unauthorized !!! Please Login",

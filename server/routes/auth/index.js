@@ -24,3 +24,4 @@ router.post("/signout", isAuthenticate, userSignOut);
 router.post("/open-store", isAuthenticate, userOpenStore);
 
 module.exports = router;
+ 

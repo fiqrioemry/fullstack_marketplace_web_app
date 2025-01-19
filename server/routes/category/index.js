@@ -1,15 +1,15 @@
 const express = require("express");
 const {
-  getAllCategories,
+  getAllCategory,
   updateCategory,
   deleteCategory,
   createCategory,
-} = require("../../controllers/categories");
+} = require("../../controllers/category");
 const isAdmin = require("../../middleware/isAuthenticate");
 const isAuthenticate = require("../../middleware/isAuthenticate");
 const router = express.Router();
 
-router.get("/", getAllCategories);
+router.get("/", getAllCategory);
 router.post("/", isAdmin, isAuthenticate, createCategory);
 router.put("/:id", isAdmin, isAuthenticate, updateCategory);
 router.delete("/:id", isAdmin, isAuthenticate, deleteCategory);

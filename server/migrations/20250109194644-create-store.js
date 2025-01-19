@@ -21,13 +21,13 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
       },
+      city: {
+        type: Sequelize.STRING,
+      },
       avatar: {
         type: Sequelize.STRING,
       },
       image: {
-        type: Sequelize.STRING,
-      },
-      city: {
         type: Sequelize.STRING,
       },
       createdAt: {

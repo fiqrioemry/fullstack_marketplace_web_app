@@ -1,4 +1,4 @@
-const { Categories } = require("../../models");
+const { Category } = require("../../models");
 const { deleteMediaFromCloudinary } = require("../../utils/cloudinary");
 const createSlug = require("../../utils/createSlug");
 
@@ -8,7 +8,7 @@ async function createCategory(req, res) {
   try {
     const slug = createSlug(name);
 
-    const category = await Categories.create({
+    const category = await Category.create({
       name,
       image,
       slug,
@@ -29,7 +29,7 @@ async function updateCategory(req, res) {
   const image = req.file;
 
   try {
-    const category = await Categories.findByPk(id);
+    const category = await Category.findByPk(id);
     if (!category) {
       return res.status(404).send({ message: "Category not found" });
     }
@@ -67,7 +67,7 @@ async function updateCategory(req, res) {
 async function deleteCategory(req, res) {
   try {
     const { id } = req.params;
-    const category = await Categories.findByPk(id);
+    const category = await Category.findByPk(id);
     if (!category) {
       return res.status(404).send({ message: "Category not found" });
     }
@@ -84,9 +84,9 @@ async function deleteCategory(req, res) {
   }
 }
 
-async function getAllCategories(req, res) {
+async function getAllCategory(req, res) {
   try {
-    const category = await Categories.findAll();
+    const category = await Category.findAll();
 
     return res.status(200).send({
       data: category,
@@ -97,7 +97,7 @@ async function getAllCategories(req, res) {
 }
 
 module.exports = {
-  getAllCategories,
+  getAllCategory,
   createCategory,
   updateCategory,
   deleteCategory,

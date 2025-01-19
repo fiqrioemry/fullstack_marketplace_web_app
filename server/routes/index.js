@@ -1,7 +1,7 @@
 const authRoute = require("./auth");
 const userRoute = require("./user");
 const productRoute = require("./product");
-const categoryRoute = require("./categories");
+const categoryRoute = require("./category");
 const storeRoute = require("./store");
 const cartRoute = require("./cart");
 

@@ -17,12 +17,12 @@ module.exports = (sequelize, DataTypes) => {
   Store.init(
     {
       userId: DataTypes.INTEGER,
+      city: DataTypes.STRING,
       name: DataTypes.STRING,
       slug: DataTypes.STRING,
       description: DataTypes.STRING,
       avatar: DataTypes.STRING,
       image: DataTypes.STRING,
-      city: DataTypes.STRING,
     },
     {
       sequelize,
