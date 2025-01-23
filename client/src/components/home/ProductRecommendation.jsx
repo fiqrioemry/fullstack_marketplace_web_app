@@ -6,17 +6,14 @@ import { useProductStore } from "../../store/useProductStore";
 import useResponsiveCount from "../../hooks/useResponsiveCount";
 
 const ProductRecommendation = () => {
-  const count = useResponsiveCount();
-  const [limit, setLimit] = useState(null);
+  const [limit, setLimit] = useState(10);
   const { getProducts, products, isProductLoading } = useProductStore();
-  useEffect(() => {
-    setLimit(count);
-  }, [count]);
 
   const handleShowMore = () => {
-    setLimit((prevLimit) => prevLimit + count);
+    setLimit((prevLimit) => prevLimit + 5);
   };
 
+  console.log(products);
   useEffect(() => {
     if (limit) {
       getProducts(limit);
@@ -39,10 +36,10 @@ const ProductRecommendation = () => {
           </div>
           {isProductLoading && <ProductsSkeleton />}
           <ButtonAnimate
-            title={"Load More Product"}
             action={handleShowMore}
-            style={"w-full py-6 text-md"}
             loading={isProductLoading}
+            title={"Load More Product"}
+            style={"w-full py-6 text-md"}
           />
         </div>
       )}

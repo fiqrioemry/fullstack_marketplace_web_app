@@ -9,14 +9,18 @@ const ProductCard = ({ product }) => {
         <CardContent>
           <img
             className="w-full object-contain"
-            src={product.images[0]}
+            src={product.images}
             alt="product"
           />
           <div className="px-2">
             <span className="text-xs text-muted-foreground font-semibold">
-              {product.category}
+              {product.categoryName}
             </span>
-            <h5>{product.name}</h5>
+            <h5>
+              {product.name.length > 25
+                ? product.name.slice(0, 25) + "..."
+                : product.name}
+            </h5>
             <span className="text-sm">Rp. {product.price}</span>
           </div>
         </CardContent>
