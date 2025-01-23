@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { initialSearchForm } from "../config";
 import SortingBox from "../components/SortingBox";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useHandleForm } from "../hooks/useHandleForm";
 import PageBreadCrumb from "../components/PageBreadCrumb";
@@ -13,10 +13,12 @@ const ProductCategory = () => {
   const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const { formData, setFormData } = useHandleForm(initialSearchForm);
-
+  console.log(formData);
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
+    console.log(params.slug);
     setFormData({
+      category: params.slug || "",
       order: params.order || "asc",
       sortBy: params.sortBy || "",
       minPrice: params.minPrice || "",
@@ -51,6 +53,7 @@ const ProductCategory = () => {
                       <ProductCard product={product} key={product.id} />
                     ))}
                   </div>
+
                   <ProductPagination />
                 </div>
               )}
