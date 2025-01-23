@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ButtonAnimate from "../ButtonAnimate";
 import ProductsSkeleton from "../loading/ProductsSkeleton";
 import { useProductStore } from "../../store/useProductStore";
-import useResponsiveCount from "../../hooks/useResponsiveCount";
+// import useResponsiveCount from "../../hooks/useResponsiveCount";
 
 const ProductRecommendation = () => {
   const [limit, setLimit] = useState(5);

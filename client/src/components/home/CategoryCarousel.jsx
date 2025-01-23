@@ -34,7 +34,7 @@ const CategoryCarousel = () => {
         ) : (
           <Carousel className="w-full ">
             <CarouselContent>
-              {categories.map((category) => (
+              {categories.slice(0, 3).map((category) => (
                 <CarouselItem
                   key={category.id}
                   className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"

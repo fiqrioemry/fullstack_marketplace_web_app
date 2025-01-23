@@ -24,7 +24,7 @@ connectRedis().then(() => {
   app.use("/api/cart", services.cartRoute);
   app.use("/api/store", services.storeRoute);
   app.use("/api/product", services.productRoute);
-  // app.use("/api/category", services.categoryRoute);
+  app.use("/api/category", services.categoryRoute);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

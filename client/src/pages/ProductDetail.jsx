@@ -10,16 +10,16 @@ import ProductsSkeleton from "../components/loading/ProductsSkeleton";
 const ProductDetail = () => {
   const { slug } = useParams();
   const { product, products, getProduct, getProducts } = useProductStore();
+  // console.log(product);
+  // useEffect(() => {
+  //   getProduct(slug);
+  // }, [getProduct, slug]);
 
-  useEffect(() => {
-    getProduct(slug);
-  }, [getProduct, slug]);
-
-  useEffect(() => {
-    if (product) {
-      getProducts(product.slug);
-    }
-  }, [getProducts, product]);
+  // useEffect(() => {
+  //   if (product) {
+  //     getProducts(product.slug);
+  //   }
+  // }, [getProducts, product]);
 
   return (
     <section>
