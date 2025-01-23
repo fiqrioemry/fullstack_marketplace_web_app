@@ -61,9 +61,9 @@ export const useProductStore = create((set) => ({
     }
   },
 
-  getProducts: async () => {
+  getProducts: async (limit) => {
     try {
-      const response = await axiosInstance.get(`/product`);
+      const response = await axiosInstance.get(`/product?limit=${limit}`);
       console.log(response);
       set({ products: response.data.data });
     } catch (error) {

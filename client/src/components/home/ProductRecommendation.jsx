@@ -6,18 +6,15 @@ import { useProductStore } from "../../store/useProductStore";
 import useResponsiveCount from "../../hooks/useResponsiveCount";
 
 const ProductRecommendation = () => {
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const { getProducts, products, isProductLoading } = useProductStore();
 
   const handleShowMore = () => {
     setLimit((prevLimit) => prevLimit + 5);
   };
 
-  console.log(products);
   useEffect(() => {
-    if (limit) {
-      getProducts(limit);
-    }
+    getProducts(limit);
   }, [getProducts, limit]);
 
   return (

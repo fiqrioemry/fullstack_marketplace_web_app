@@ -68,7 +68,7 @@ async function getAllProducts(req, res) {
     limit,
   } = req.query;
   try {
-    const dataPerPage = parseInt(limit) || 10;
+    const dataPerPage = parseInt(limit) || 5;
     const currentPage = parseInt(page) || 1;
     const offset = (currentPage - 1) * dataPerPage;
 
