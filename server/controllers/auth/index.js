@@ -300,6 +300,6 @@ module.exports = {
   verifyOTP,
   refreshToken,
   resetPassword,
-  userOpenStore,
+  createStore,
   forgotPassword,
 };
