@@ -16,7 +16,7 @@ router.put(
   "/profile",
   isAuthenticate,
   upload("image", 2000000).single("avatar"),
-  updateProfile
+  updateProfile,
 );
 router.get("/profile/address", isAuthenticate, getAddress);
 router.post("/profile/address", isAuthenticate, addAddress);

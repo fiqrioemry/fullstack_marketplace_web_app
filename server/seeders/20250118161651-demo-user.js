@@ -17,7 +17,7 @@ module.exports = {
           role: "seller",
           birthday: "1990-01-01",
           gender: "male",
-          avatar: randomAvatar(), 
+          avatar: randomAvatar(),
           phone: "1234567890",
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -71,7 +71,7 @@ module.exports = {
           updatedAt: new Date(),
         },
       ],
-      {}
+      {},
     );
   },
 

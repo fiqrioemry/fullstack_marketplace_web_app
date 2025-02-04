@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "init": "^0.1.2",
+    "prettier-plugin-align": "^0.0.1-alpha.1",
     "sequelize-cli": "^6.6.2"
   }
 }

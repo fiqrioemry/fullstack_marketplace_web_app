@@ -24,7 +24,7 @@ function fileFilter(params) {
     }
 
     const extName = extRegex.test(
-      path.extname(file.originalname).toLowerCase()
+      path.extname(file.originalname).toLowerCase(),
     );
 
     const mimeType = extRegex.test(file.mimetype);

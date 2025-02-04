@@ -9,7 +9,7 @@ module.exports = (user) => {
   // Hashing and adding unique token to database table
   reset.create(
     { userId: user.id, token, ExpiresAt: expires },
-    { where: { email: user.email } }
+    { where: { email: user.email } },
   );
 
   return resetToken;

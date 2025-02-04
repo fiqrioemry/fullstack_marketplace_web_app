@@ -14,7 +14,7 @@ router.post(
   "/product",
   isAuthenticate,
   upload("image").array("files"),
-  createProduct
+  createProduct,
 );
 
 module.exports = router;

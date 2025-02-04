@@ -206,13 +206,13 @@ async function updateAddress(req, res) {
     if (isMain === true) {
       await Address.update(
         { isMain: false },
-        { where: { userId, id: { [Op.ne]: addressId } } }
+        { where: { userId, id: { [Op.ne]: addressId } } },
       );
     }
 
     const [updatedRows] = await Address.update(
       { name, phone, address, province, city, zipcode, isMain },
-      { where: { id: addressId } }
+      { where: { id: addressId } },
     );
 
     if (updatedRows === 0) {

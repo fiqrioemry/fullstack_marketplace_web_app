@@ -930,7 +930,7 @@ module.exports = {
             "https://images.tokopedia.net/img/cache/500-square/VqbcmM/2022/12/27/7c1294ad-9325-4e64-ae43-6f4d490ec38f.jpg.webp?ect=4g",
         },
       ],
-      {}
+      {},
     );
   },
 

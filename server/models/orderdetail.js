@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "OrderDetail",
-    }
+    },
   );
 
   OrderDetail.beforeCreate((orderDetail, options) => {
