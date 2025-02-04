@@ -1,119 +1,109 @@
-import Cookies from "js-cookie";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import toast from "react-hot-toast";
-import { axiosInstance } from "@/services";
+import authService from "../services/authService";
 
-export const useAuthStore = create((set) => ({
-  step: 1,
-  userData: null,
-  isCheckAuth: true,
-  isAuthLoading: false,
+export const useAuthStore = create(
+  persist(
+    (set, get) => ({
+      step: 1,
+      user: null,
+      isAuthenticate: null,
+      loading: false,
 
-  sendOtpSignUp: async (formData) => {
-    try {
-      set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/auth/send-otp", formData);
-      if (response.data.success) {
-        set({ step: 2 });
-      }
-      toast.success(response.data.message);
-    } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isAuthLoading: false });
+      authCheck: async () => {
+        try {
+          const user = await authService.authCheck();
+          set({ user, isAuthenticate: true });
+        } catch {
+          set({ user: null, isAuthenticate: false });
+        }
+      },
+
+      login: async (formData) => {
+        set({ loading: true });
+        try {
+          const data = await authService.login(formData);
+          await get().authCheck(); // Memanggil authCheck langsung dari get()
+          toast.success(data.message);
+        } catch (error) {
+          if (error.message) toast.error(error.message);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      logout: async () => {
+        set({ loading: true });
+        try {
+          const data = await authService.logout();
+          set({ user: null, isAuthenticate: false });
+          toast.success(data.message);
+        } catch (error) {
+          toast.error(error.message);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      register: async (formData, navigate) => {
+        set({ loading: true });
+        try {
+          const step = get().step; // Ambil nilai step yang benar
+
+          if (step === 1) {
+            const data = await authService.sendOTP(formData);
+            toast.success(data.message);
+            set({ step: 2 });
+          } else if (step === 2) {
+            const data = await authService.verifyOTP(formData);
+            toast.success(data.message);
+            set({ step: 3 });
+          } else if (step === 3) {
+            const data = await authService.register(formData);
+            toast.success(data.message);
+            set({ step: 1 });
+            if (navigate) navigate("/login"); // Cegah error jika navigate tidak ada
+          }
+        } catch (error) {
+          if (error.message) toast.error(error.message);
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      refreshToken: async () => {
+        try {
+          const token = await authService.refreshToken();
+          if (token.message) toast.success(token.message);
+          return token;
+        } catch (error) {
+          if (error.message) toast.error(error.message);
+        }
+      },
+
+      resetPassword: async (token, formData, navigate) => {
+        try {
+          const data = await authService.resetPassword(token, formData);
+          if (data.message) toast.success(data.message);
+          if (navigate) navigate("/login");
+        } catch (error) {
+          if (error.message) toast.error(error.message);
+        }
+      },
+
+      createStore: async (formData) => {
+        try {
+          const data = await authService.createStore(formData);
+          if (data.message) toast.success(data.message);
+        } catch (error) {
+          if (error.message) toast.error(error.message);
+        }
+      },
+    }),
+    {
+      name: "auth-store",
+      getStorage: () => localStorage,
     }
-  },
-
-  verifyOtpSignUp: async (formData) => {
-    try {
-      set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/auth/verify-otp", formData);
-
-      toast.success(response.data.message);
-      if (response.data.success) {
-        set({ step: 3 });
-      }
-    } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isAuthLoading: false });
-    }
-  },
-
-  userSignUp: async (formData, navigate) => {
-    try {
-      set({ isAuthLoading: true });
-
-      const response = await axiosInstance.post("/auth/signup", formData);
-
-      toast.success(response.data.message);
-
-      if (response.data.success) {
-        navigate("/signin");
-        set({ step: 1 });
-      }
-    } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isAuthLoading: false });
-    }
-  },
-
-  userOpenStore: async (formData) => {
-    try {
-      set({ isAuthLoading: true });
-
-      const response = await axiosInstance.post("/auth/open-store", formData);
-
-      toast.success(response.data.message);
-
-      set({ userData: response.data.payload });
-    } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isAuthLoading: false });
-    }
-  },
-
-  userAuthCheck: async () => {
-    try {
-      const response = await axiosInstance.get("/auth/me");
-
-      set({
-        userData: response.data.payload,
-        isCheckAuth: false,
-      });
-    } catch {
-      set({
-        userData: null,
-        isCheckAuth: false,
-      });
-    }
-  },
-  userSignIn: async (formData) => {
-    try {
-      set({ isAuthLoading: true });
-      const response = await axiosInstance.post("/auth/signin", formData);
-      Cookies.set("accessToken", response.data.accessToken, {
-        expires: 1 / 96,
-      });
-      toast.success(response.data.message);
-      set({ userData: response.data.payload });
-    } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isAuthLoading: false });
-    }
-  },
-
-  userSignOut: async () => {
-    try {
-      const response = await axiosInstance.post("/auth/signout");
-      toast.success(response.data.message);
-      Cookies.remove("accessToken");
-      set({ userData: null });
-    } catch (error) {
-      console.log(error);
-    }
-  },
-}));
+  )
+);
