@@ -1,26 +1,26 @@
 const {
-  userSignUp,
-  userSignIn,
-  userSignOut,
-  userAuthCheck,
-  userAuthRefresh,
+  login,
+  logout,
+  sendOTP,
+  register,
+  authCheck,
+  verifyOTP,
+  createStore,
+  refreshToken,
   resetPassword,
-  sendOtpSignUp,
-  verifyOtpSignUp,
-  userOpenStore,
-} = require("../../controllers/auth");
-const express = require("express");
-const isAuthenticate = require("../../middleware/isAuthenticate");
+} = require('../../controllers/auth');
+const express = require('express');
+const isAuthenticate = require('../../middleware/isAuthenticate');
 const router = express.Router();
 
-router.post("/signin", userSignIn);
-router.post("/signup", userSignUp);
-router.post("/send-otp", sendOtpSignUp);
-router.get("/refresh", userAuthRefresh);
-router.put("/reset/:token", resetPassword);
-router.post("/verify-otp", verifyOtpSignUp);
-router.get("/me", isAuthenticate, userAuthCheck);
-router.post("/signout", isAuthenticate, userSignOut);
-router.post("/open-store", isAuthenticate, userOpenStore);
+router.post('/login', login);
+router.post('/send-otp', sendOTP);
+router.post('/register', register);
+router.get('/refresh', refreshToken);
+router.post('/verify-otp', verifyOTP);
+router.put('/reset/:token', resetPassword);
+router.get('/me', isAuthenticate, authCheck);
+router.post('/logout', isAuthenticate, logout);
+router.post('/open-store', isAuthenticate, createStore);
 
 module.exports = router;

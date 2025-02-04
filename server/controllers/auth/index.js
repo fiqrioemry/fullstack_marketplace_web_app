@@ -8,14 +8,14 @@ const { User, Store } = require('../../models');
 const createSlug = require('../../utils/createSlug');
 const randomAvatar = require('../../utils/randomAvatar');
 
-async function sendOtpSignUp(req, res) {
+async function sendOTP(req, res) {
   const { email } = req.body;
 
   try {
     const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
+
+    if (existingUser)
       return res.status(400).send({ message: 'Email already registered' });
-    }
 
     const secret = speakeasy.generateSecret({ length: 20 });
     const otp = speakeasy.totp({
@@ -26,9 +26,7 @@ async function sendOtpSignUp(req, res) {
     await client.setEx(`otp:${email}`, 300, otp);
 
     await sendOtp(email, otp);
-    return res
-      .status(200)
-      .send({ success: true, message: 'OTP sent to email' });
+    return res.status(200).send({ message: 'OTP sent to email' });
   } catch (error) {
     return res
       .status(500)
@@ -36,22 +34,18 @@ async function sendOtpSignUp(req, res) {
   }
 }
 
-async function verifyOtpSignUp(req, res) {
+async function verifyOTP(req, res) {
   const { email, otp } = req.body;
 
   try {
     const storedOtp = await client.get(`otp:${email}`);
 
-    if (!storedOtp) {
-      return res.status(400).send({ message: 'OTP is expired' });
-    }
+    if (!storedOtp) return res.status(400).send({ message: 'OTP is expired' });
 
     if (storedOtp !== otp) {
       return res.status(400).send({ message: 'Invalid OTP code' });
     } else {
-      return res
-        .status(200)
-        .send({ success: true, message: 'OTP is verified.' });
+      return res.status(200).send({ message: 'OTP is verified.' });
     }
   } catch (error) {
     return res
@@ -60,7 +54,7 @@ async function verifyOtpSignUp(req, res) {
   }
 }
 
-async function userSignUp(req, res) {
+async function register(req, res) {
   const { fullname, email, password } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -74,7 +68,7 @@ async function userSignUp(req, res) {
     });
 
     res.status(201).send({
-      message: 'Sign up is success',
+      message: 'Registration is success',
       user: newUser,
     });
   } catch (error) {
@@ -84,13 +78,12 @@ async function userSignUp(req, res) {
   }
 }
 
-async function userSignIn(req, res) {
+async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password)
       return res.status(401).json({ message: 'All Field required' });
-    }
 
     const user = await User.findOne({
       where: { email },
@@ -129,7 +122,6 @@ async function userSignIn(req, res) {
     return res.status(200).json({
       message: 'Login is success',
       accessToken,
-      payload,
     });
   } catch (error) {
     return res
@@ -138,7 +130,7 @@ async function userSignIn(req, res) {
   }
 }
 
-async function userSignOut(req, res) {
+async function logout(req, res) {
   const { userId } = req.user;
 
   delete req.headers.authorization;
@@ -150,11 +142,11 @@ async function userSignOut(req, res) {
   return res.status(200).json({ message: 'Logout is success' });
 }
 
-async function userAuthCheck(req, res) {
-  const { id } = req.user;
+async function authCheck(req, res) {
+  const { userId } = req.user;
 
   try {
-    const cachedUser = await client.get(`user:${id}`);
+    const cachedUser = await client.get(`user:${userId}`);
 
     if (cachedUser) {
       return res.status(200).send({ data: JSON.parse(cachedUser) });
@@ -168,7 +160,7 @@ async function userAuthCheck(req, res) {
     });
 
     const payload = {
-      id: user.id,
+      userId: user.id,
       email: user.email,
       fullname: user.fullname,
       role: user.role,
@@ -188,7 +180,7 @@ async function userAuthCheck(req, res) {
   }
 }
 
-async function userAuthRefresh(req, res) {
+async function refreshToken(req, res) {
   try {
     const refreshToken = req.cookies.refreshToken;
 
@@ -220,12 +212,10 @@ async function userAuthRefresh(req, res) {
     const accessToken = jwt.sign(
       { userId: user.id, storeId: user.store?.id },
       process.env.ACCESS_TOKEN,
-      { expiresIn: '15m' },
+      { expiresIn: '1d' },
     );
 
-    res.status(200).send({
-      accessToken,
-    });
+    res.status(200).send({ accessToken });
   } catch (error) {
     return res.status(500).send({
       message: 'Failed to refresh token',
@@ -238,7 +228,7 @@ async function resetPassword(req, res) {}
 
 async function forgotPassword(req, res) {}
 
-async function userOpenStore(req, res) {
+async function createStore(req, res) {
   const { userId } = req.user;
 
   const { name, description, city } = req.body;
@@ -247,9 +237,7 @@ async function userOpenStore(req, res) {
     const slug = createSlug(name);
 
     if (!name || !description || !city)
-      return res
-        .status(400)
-        .send({ success: false, message: 'All fields required' });
+      return res.status(400).send({ message: 'All fields required' });
 
     const existingStore = await Store.findOne({
       where: {
@@ -290,25 +278,11 @@ async function userOpenStore(req, res) {
 
     await user.update({ role: 'seller' });
 
-    const payload = {
-      userId: user.id,
-      email: user.email,
-      fullname: user.fullname,
-      avatar: user.avatar,
-      birthday: user.birthday,
-      phone: user.phone,
-      gender: user.gender,
-      role: user.role,
-      storeId: store.id,
-      storeName: store.name,
-      storeAvatar: store.avatar,
-    };
-
     // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(201).json({
       message: 'Store is created',
-      payload,
+      store,
     });
   } catch (error) {
     return res
@@ -318,14 +292,14 @@ async function userOpenStore(req, res) {
 }
 
 module.exports = {
-  userSignIn,
-  userSignUp,
-  userSignOut,
-  userAuthCheck,
+  login,
+  logout,
+  sendOTP,
+  register,
+  authCheck,
+  verifyOTP,
+  refreshToken,
   resetPassword,
   userOpenStore,
-  sendOtpSignUp,
   forgotPassword,
-  userAuthRefresh,
-  verifyOtpSignUp,
 };
