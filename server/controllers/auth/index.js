@@ -146,11 +146,11 @@ async function authCheck(req, res) {
   const { userId } = req.user;
 
   try {
-    const cachedUser = await client.get(`user:${userId}`);
+    // const cachedUser = await client.get(`user:${userId}`);
 
-    if (cachedUser) {
-      return res.status(200).send({ data: JSON.parse(cachedUser) });
-    }
+    // if (cachedUser) {
+    //   return res.status(200).send({ data: JSON.parse(cachedUser) });
+    // }
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['password'] },

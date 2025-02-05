@@ -1,53 +1,42 @@
 const {
   uploadMediaToCloudinary,
   deleteMediaFromCloudinary,
-} = require("../../utils/cloudinary");
-const { Op } = require("sequelize");
-const { client } = require("../../utils/redis");
-const { User, Store, Address } = require("../../models");
-const { removeUploadFile } = require("../../utils/removeUploadFile");
+} = require('../../utils/cloudinary');
+const { Op } = require('sequelize');
+const { client } = require('../../utils/redis');
+const { User, Store, Address } = require('../../models');
+const { removeUploadFile } = require('../../utils/removeUploadFile');
 
 async function getProfile(req, res) {
   const { userId } = req.user;
 
   try {
-    // const cachedUser = await client.get(`user:${userId}`);
+    const cachedUser = await client.get(`profile:${userId}`);
 
-    // if (cachedUser) {
-    //   return res.status(200).send({
-    //     data: JSON.parse(cachedUser),
-    //   });
-    // }
+    if (cachedUser) {
+      return res.status(200).send({
+        data: JSON.parse(cachedUser),
+      });
+    }
 
-    const user = await User.findByPk(userId, {
-      attributes: { exclude: ["password"] },
-      include: [
-        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
-      ],
-    });
+    const user = await User.findByPk(userId);
 
     const payload = {
-      userId: user.id,
-      email: user.email,
-      fullname: user.fullname,
-      avatar: user.avatar,
-      birthday: user.birthday,
       phone: user.phone,
+      avatar: user.avatar,
       gender: user.gender,
-      role: user.role,
-      storeId: user.store?.id,
-      storeName: user.store?.name,
-      storeAvatar: user.store?.avatar,
+      fullname: user.fullname,
+      birthday: user.birthday,
     };
 
-    // await client.setEx(`user:${user.id}`, 900, JSON.stringify(payload));
+    // await client.setEx(`profile:${user.id}`, 900, JSON.stringify(payload));
 
-    return res.status(200).send({
-      data: payload,
+    return res.status(200).json({
+      payload,
     });
   } catch (error) {
-    return res.status(500).send({
-      message: "Failed to Retrieve Profile",
+    return res.status(500).json({
+      message: 'Failed to Retrieve Profile',
       error: error.message,
     });
   }
@@ -57,20 +46,16 @@ async function updateProfile(req, res) {
   const file = req.file;
   const { userId } = req.user;
   const { fullname, gender, birthday, phone } = req.body;
-
   try {
     const user = await User.findByPk(userId, {
-      attributes: { exclude: ["password"] },
-      include: [
-        { model: Store, as: "store", attributes: ["id", "name", "avatar"] },
-      ],
+      attributes: { exclude: ['password'] },
     });
 
     if (!user) {
       if (file) {
         await fs.unlink(file.path);
       }
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     let avatar = user.avatar;
@@ -88,28 +73,24 @@ async function updateProfile(req, res) {
     }
 
     const updatedUser = {
-      fullname: fullname || user.fullname,
-      gender: gender || user.gender,
-      birthday: birthday || user.birthday,
-      phone: phone || user.phone,
+      fullname: fullname,
       avatar: avatar,
-      role: user.role,
-      storeId: user.store?.id,
-      storeName: user.store?.name,
-      storeAvatar: user.store?.avatar,
+      birthday: birthday,
+      phone: phone,
+      gender: gender,
     };
 
     await user.update(updatedUser);
 
-    // await client.setEx(`user:${userId}`, 900, JSON.stringify(updatedUser));
+    // await client.setEx(`profile:${userId}`, 900, JSON.stringify(updatedUser));
 
     return res.status(200).json({
-      message: "Profile is updated",
-      data: updatedUser,
+      message: 'Profile is updated',
+      payload: updatedUser,
     });
   } catch (error) {
-    return res.status(500).send({
-      message: "Failed to Update Profile",
+    return res.status(500).json({
+      message: 'Failed to Update Profile',
       error: error.message,
     });
   }
@@ -129,7 +110,7 @@ async function getAddress(req, res) {
 
     if (address.length === 0) {
       return res.status(200).send({
-        message: "No Address is found, Try to add one",
+        message: 'No Address is found, Try to add one',
         data: [],
       });
     }
@@ -141,7 +122,7 @@ async function getAddress(req, res) {
     });
   } catch (error) {
     return res.status(500).send({
-      message: "Failed to Retrieve address",
+      message: 'Failed to Retrieve address',
       error: error.message,
     });
   }
@@ -153,7 +134,7 @@ async function addAddress(req, res) {
 
   try {
     if (!name || !phone || !address || !province || !city || !zipcode) {
-      return res.status(400).send({ message: "All fields are required" });
+      return res.status(400).send({ message: 'All fields are required' });
     }
 
     if (isMain === true) {
@@ -180,12 +161,12 @@ async function addAddress(req, res) {
     // );
 
     return res.status(201).send({
-      message: "New Address is added",
+      message: 'New Address is added',
       data: newAddress,
     });
   } catch (error) {
     return res.status(500).send({
-      message: "Failed to Add New Address",
+      message: 'Failed to Add New Address',
       error: error.message,
     });
   }
@@ -200,7 +181,7 @@ async function updateAddress(req, res) {
     const currentAddress = await Address.findByPk(addressId);
 
     if (!currentAddress || currentAddress.userId !== userId) {
-      return res.status(404).send({ message: "Address not found" });
+      return res.status(404).send({ message: 'Address not found' });
     }
 
     if (isMain === true) {
@@ -218,7 +199,7 @@ async function updateAddress(req, res) {
     if (updatedRows === 0) {
       return res
         .status(404)
-        .send({ message: "Address not found or no changes made" });
+        .send({ message: 'Address not found or no changes made' });
     }
 
     const updatedAddress = await Address.findAll({ where: { userId } });
@@ -230,13 +211,13 @@ async function updateAddress(req, res) {
     // );
 
     return res.status(200).send({
-      message: "Address is Updated",
+      message: 'Address is Updated',
       data: updatedAddress,
     });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: "Failed to Update Address", error: error.message });
+      .send({ message: 'Failed to Update Address', error: error.message });
   }
 }
 
@@ -248,7 +229,7 @@ async function deleteAddress(req, res) {
     const currentAddress = await Address.findByPk(addressId);
 
     if (!currentAddress || currentAddress.userId !== userId) {
-      return res.status(404).send({ message: "Address not found" });
+      return res.status(404).send({ message: 'Address not found' });
     }
 
     await Address.destroy({ where: { id: addressId } });
@@ -269,11 +250,11 @@ async function deleteAddress(req, res) {
     // }
 
     return res.status(200).send({
-      message: "Address deleted successfully",
+      message: 'Address deleted successfully',
     });
   } catch (error) {
     return res.status(500).send({
-      message: "Failed to Delete Address",
+      message: 'Failed to Delete Address',
       error: error.message,
     });
   }
