@@ -1,53 +1,47 @@
-const { Store, Product, Category, Gallery } = require("../../models");
-const { Op } = require("sequelize");
+const slugify = require('slugify');
+const { Op } = require('sequelize');
+const { Store, Product, Category, Gallery } = require('../../models');
 
 async function getProduct(req, res) {
   try {
-    const { id } = req.params;
+    const { slug } = req.params;
 
     const product = await Product.findOne({
-      where: { id: id },
-      attributes: ["id", "slug", "name", "description", "price", "stock"],
+      where: { slug: slug },
       include: [
         {
           model: Store,
-          as: "store",
-          attributes: ["id", "name", "slug", "image", "city"],
+          as: 'store',
         },
         {
           model: Category,
-          as: "category",
-          attributes: ["id", "name", "slug", "image"],
+          as: 'category',
         },
         {
           model: Gallery,
-          as: "gallery",
-          attributes: ["image"],
+          as: 'gallery',
+          attributes: ['image'],
         },
       ],
     });
 
-    if (product) {
-      return res.status(200).send({ data: [], message: "Product not found" });
-    }
-
     return res.status(200).send({
       data: {
-        id: item.id,
-        name: item.name,
-        slug: item.slug,
-        description: item.description,
-        price: item.price,
-        stock: item.stock,
-        city: item.store.city,
-        storeId: item.storeId,
-        storeName: item.store.name,
-        storeSlug: item.store.slug,
-        storeImage: item.store.image,
-        categoryId: item.Category.id,
-        categoryName: item.Category.name,
-        categorySlug: item.Category.slug,
-        images: item.gallery.map((item) => item.image),
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        city: product.store.city,
+        storeId: product.storeId,
+        storeName: product.store.name,
+        storeSlug: product.store.slug,
+        storeImage: product.store.image,
+        categoryId: product.category.id,
+        categoryName: product.category.name,
+        categorySlug: product.category.slug,
+        images: product.gallery.map((p) => p.image),
       },
     });
   } catch (error) {
@@ -56,119 +50,128 @@ async function getProduct(req, res) {
 }
 
 async function getAllProducts(req, res) {
-  const {
-    search,
-    city,
-    category,
-    minPrice,
-    maxPrice,
-    page,
-    sortBy,
-    orderBy,
-    limit,
-  } = req.query;
   try {
-    const dataPerPage = parseInt(limit) || 5;
-    const currentPage = parseInt(page) || 1;
+    let {
+      search,
+      city,
+      category,
+      minPrice,
+      maxPrice,
+      page,
+      sortBy,
+      orderBy,
+      limit,
+    } = req.query;
+
+    const dataPerPage = Number(limit) > 0 ? parseInt(limit) : 5;
+    const currentPage = Number(page) > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
 
     let query = {};
 
-    if (search) {
+    // **Filter by Search**
+    if (search && search.trim()) {
       query[Op.or] = [
-        { name: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `${search}` } },
+        { name: { [Op.like]: `%${search.trim()}%` } },
+        { description: { [Op.like]: `%${search.trim()}%` } },
       ];
     }
 
+    // **Filter by Category**
     if (category) {
-      const findCategory = await ProductCategory.findOne({
-        where: { slug: category },
+      const categoryArray = category
+        .split(',')
+        .map((c) => slugify(c.trim(), { lower: true }));
+
+      const findCategories = await Category.findAll({
+        where: { slug: { [Op.in]: categoryArray } },
+        attributes: ['id'],
       });
-      if (findCategory) {
-        query.categoryId = findCategory.id;
+
+      if (findCategories.length > 0) {
+        query.categoryId = { [Op.in]: findCategories.map((c) => c.id) };
       } else {
-        return res.status(404).send({ message: "product is not found" });
+        return res.status(200).json({ data: [] });
       }
     }
+
+    // **Filter by City**
     if (city) {
-      const cities = city.split(",");
+      const cities = city.split(',');
+
       const findCities = await Store.findAll({
-        where: { city: { [Op.in]: cities } }, //
+        where: { city: { [Op.in]: cities } },
+        attributes: ['id'],
       });
       if (findCities.length > 0) {
         query.storeId = { [Op.in]: findCities.map((c) => c.id) };
       } else {
-        return res.status(404).send({
-          message: "product is not found",
-        });
+        return res.status(200).json({ data: [] });
       }
     }
-    if (minPrice && maxPrice) {
-      query.price = {
-        [Op.between]: [minPrice, maxPrice],
-      };
-    } else if (minPrice) {
-      query.price = {
-        [Op.gte]: minPrice,
-      };
-    } else if (maxPrice) {
-      query.price = {
-        [Op.lte]: maxPrice,
-      };
+
+    // **Filter by Price Range**
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price[Op.gte] = Number(minPrice) || 0;
+      if (maxPrice) query.price[Op.lte] = Number(maxPrice) || 0;
     }
+
+    // **Fetch Products**
     const product = await Product.findAndCountAll({
+      where: query,
       limit: dataPerPage,
       offset: offset,
       include: [
         {
           model: Store,
-          as: "store",
+          as: 'store',
+          attributes: ['id', 'name', 'slug', 'city', 'image'],
         },
-        {
-          model: Gallery,
-          as: "gallery",
-        },
-        {
-          model: Category,
-          as: "category",
-        },
+        { model: Gallery, as: 'gallery', attributes: ['image'] },
+        { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
       ],
       distinct: true,
-      order: [[sortBy || "createdAt", orderBy || "DESC"]],
+      order: [[sortBy || 'createdAt', orderBy?.toUpperCase() || 'DESC']],
     });
 
+    // **Jika tidak ada produk, kembalikan array kosong**
     if (product.count === 0) {
-      return res.status(404).send({ message: "Products not found" });
+      return res.status(200).json({ data: [] });
     }
-    const data = product.rows.map((item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        slug: item.slug,
-        price: item.price,
-        stock: item.stock,
-        city: item.store.city,
-        storeId: item.storeId,
-        storeName: item.store.name,
-        storeSlug: item.store.slug,
-        storeImage: item.store.image,
-        description: item.description,
-        categoryId: item.category.id,
-        categoryName: item.category.name,
-        categorySlug: item.category.slug,
-        images: item.gallery.map((item) => item.image),
-      };
-    });
 
-    return res.status(200).send({
-      data: data,
+    // **Format Response**
+    const data = product.rows.map((item) => ({
+      id: item.id,
+      name: item.name,
+      slug: item.slug,
+      price: item.price,
+      stock: item.stock,
+      city: item.store?.city,
+      storeId: item.storeId,
+      storeName: item.store?.name,
+      storeSlug: item.store?.slug,
+      storeImage: item.store?.image,
+      description: item.description,
+      categoryId: item.category?.id,
+      categoryName: item.category?.name,
+      categorySlug: item.category?.slug,
+      images: item.gallery.map((img) => img.image),
+    }));
+
+    const totalPage = Math.floor(product.count / dataPerPage);
+
+    return res.status(200).json({
+      products: data,
+      currentPage: parseInt(page),
+      totalPage: totalPage,
+      totalData: product.count,
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    console.error('Error in getAllProducts:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
 module.exports = {
   getProduct,
   getAllProducts,

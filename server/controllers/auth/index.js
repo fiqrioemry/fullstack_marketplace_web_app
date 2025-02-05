@@ -164,6 +164,7 @@ async function authCheck(req, res) {
       email: user.email,
       fullname: user.fullname,
       role: user.role,
+      avatar: user.avatar,
       storeId: user.store?.id,
       storeName: user.store?.name,
       storeAvatar: user.store?.avatar,
