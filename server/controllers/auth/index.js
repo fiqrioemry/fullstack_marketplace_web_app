@@ -137,7 +137,7 @@ async function logout(req, res) {
 
   res.clearCookie('refreshToken');
 
-  // await client.del(`user:${userId}`);
+  await client.del(`user:${userId}`);
 
   return res.status(200).json({ message: 'Logout is success' });
 }
@@ -146,11 +146,11 @@ async function authCheck(req, res) {
   const { userId } = req.user;
 
   try {
-    // const cachedUser = await client.get(`user:${userId}`);
+    const cachedUser = await client.get(`user:${userId}`);
 
-    // if (cachedUser) {
-    //   return res.status(200).send({ data: JSON.parse(cachedUser) });
-    // }
+    if (cachedUser) {
+      return res.status(200).json({ payload: JSON.parse(cachedUser) });
+    }
 
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['password'] },
@@ -170,7 +170,7 @@ async function authCheck(req, res) {
       storeAvatar: user.store?.avatar,
     };
 
-    // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(200).json({ payload });
   } catch (error) {
