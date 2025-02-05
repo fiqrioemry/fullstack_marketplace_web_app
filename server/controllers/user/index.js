@@ -14,7 +14,7 @@ async function getProfile(req, res) {
     const cachedUser = await client.get(`profile:${userId}`);
 
     if (cachedUser) {
-      return res.status(200).send({
+      return res.status(200).json({
         data: JSON.parse(cachedUser),
       });
     }
@@ -134,7 +134,7 @@ async function addAddress(req, res) {
 
   try {
     if (!name || !phone || !address || !province || !city || !zipcode) {
-      return res.status(400).send({ message: 'All fields are required' });
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
     if (isMain === true) {
@@ -152,11 +152,11 @@ async function addAddress(req, res) {
       isMain,
     });
 
-    return res.status(201).send({
+    return res.status(201).json({
       message: 'New Address is added',
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message: 'Failed to Add New Address',
       error: error.message,
     });
@@ -172,7 +172,7 @@ async function updateAddress(req, res) {
     const currentAddress = await Address.findByPk(addressId);
 
     if (!currentAddress || currentAddress.userId !== userId) {
-      return res.status(404).send({ message: 'Address not found' });
+      return res.status(404).json({ message: 'Address not found' });
     }
 
     if (isMain === true) {
@@ -190,61 +190,39 @@ async function updateAddress(req, res) {
     if (updatedRows === 0) {
       return res
         .status(404)
-        .send({ message: 'Address not found or no changes made' });
+        .json({ message: 'Address not found or no changes made' });
     }
 
     const updatedAddress = await Address.findAll({ where: { userId } });
 
-    // await client.setEx(
-    //   `address:${userId}`,
-    //   900,
-    //   JSON.stringify(updatedAddress)
-    // );
-
-    return res.status(200).send({
+    return res.status(200).json({
       message: 'Address is Updated',
       data: updatedAddress,
     });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: 'Failed to Update Address', error: error.message });
+      .json({ message: 'Failed to Update Address', error: error.message });
   }
 }
 
 async function deleteAddress(req, res) {
-  const { addressId } = req.params;
   const { userId } = req.user;
-
+  const { addressId } = req.params;
   try {
     const currentAddress = await Address.findByPk(addressId);
 
     if (!currentAddress || currentAddress.userId !== userId) {
-      return res.status(404).send({ message: 'Address not found' });
+      return res.status(404).json({ message: 'Address not found' });
     }
 
     await Address.destroy({ where: { id: addressId } });
 
-    // const cachedAddress = await client.get(`address:${userId}`);
-    // if (cachedAddress) {
-    //   let parsedAddress = JSON.parse(cachedAddress);
-
-    //   parsedAddress = parsedAddress.filter(
-    //     (address) => address.id !== addressId
-    //   );
-
-    //   await client.setEx(
-    //     `address:${userId}`,
-    //     900,
-    //     JSON.stringify(parsedAddress)
-    //   );
-    // }
-
-    return res.status(200).send({
-      message: 'Address deleted successfully',
+    return res.status(200).json({
+      message: 'Address is deleted',
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message: 'Failed to Delete Address',
       error: error.message,
     });
