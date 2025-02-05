@@ -100,28 +100,28 @@ async function getAddress(req, res) {
   const { userId } = req.user;
 
   try {
-    // const cachedAddress = await client.get(`address:${userId}`);
+    const cachedAddress = await client.get(`address:${userId}`);
 
-    // if (cachedAddress) {
-    //   return res.status(200).send({ data: JSON.parse(cachedAddress) });
-    // }
+    if (cachedAddress) {
+      return res.status(200).json({ payload: JSON.parse(cachedAddress) });
+    }
 
     const address = await Address.findAll({ where: { userId } });
 
     if (address.length === 0) {
-      return res.status(200).send({
+      return res.status(200).json({
         message: 'No Address is found, Try to add one',
-        data: [],
+        payload: [],
       });
     }
 
-    // await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
+    await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
 
-    return res.status(200).send({
-      data: address,
+    return res.status(200).json({
+      payload: address,
     });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message: 'Failed to Retrieve address',
       error: error.message,
     });
@@ -141,7 +141,7 @@ async function addAddress(req, res) {
       await Address.update({ isMain: false }, { where: { userId } });
     }
 
-    const newAddress = await Address.create({
+    await Address.create({
       userId,
       name,
       phone,
@@ -152,17 +152,8 @@ async function addAddress(req, res) {
       isMain,
     });
 
-    // const updatedAddresses = await Address.findAll({ where: { userId } });
-
-    // await client.setEx(
-    //   `address:${userId}`,
-    //   900,
-    //   JSON.stringify(updatedAddresses)
-    // );
-
     return res.status(201).send({
       message: 'New Address is added',
-      data: newAddress,
     });
   } catch (error) {
     return res.status(500).send({
