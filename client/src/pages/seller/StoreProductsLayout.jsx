@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useShopStore } from "@/store/useShopStore";
 import StoreProducts from "../../components/dashboard/seller/StoreProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "../../components/ui/input";
 
 const StoreProductsLayout = () => {
   const { getStoreProduct } = useShopStore();
@@ -12,6 +13,10 @@ const StoreProductsLayout = () => {
 
   return (
     <section className="space-y-6">
+      <div className="w-96 px-10">
+        <Input placeholder="fullname" />
+      </div>
+
       <Tabs defaultValue="account" className="w-[400px]">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
