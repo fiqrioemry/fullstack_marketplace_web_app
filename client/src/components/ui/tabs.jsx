@@ -11,23 +11,22 @@ const Tabs = TabsPrimitive.Root;
 
 // Variants dan Sizes untuk TabsList
 const tabsListVariants = cva(
-  "inline-flex items-center justify-center text-muted-foreground transition-all",
+  "inline-flex items-center text-muted-foreground transition-all",
   {
     variants: {
       variant: {
-        default: "bg-muted p-1",
-        outline: "border border-input bg-background p-1",
-        ghost: "p-1 bg-transparent",
+        default: "bg-muted px-2 py-10",
+        underline: "w-full border-b border-b-2",
       },
       size: {
-        sm: "h-8 px-2",
-        md: "h-20 px-2",
-        lg: "h-12 px-4",
+        sm: "rounded-none h-10",
+        md: "rounded-md h-10",
+        lg: "rounded-lg h-12",
       },
     },
     defaultVariants: {
-      variant: "ghost",
-      size: "md",
+      variant: "underline",
+      size: "sm",
     },
   }
 );
@@ -51,20 +50,21 @@ const tabsTriggerVariants = cva(
       variant: {
         default:
           "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",
-        outline: "border border-input data-[state=active]:border-primary",
+        underline:
+          "data-[state=active]:border-b-2 data-[state=active]:border-primary",
         none: "data-[state=active]:text-primary data-[state=active]:border-primary",
         ghost:
           "hover:bg-accent hover:text-accent-foreground border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary",
       },
       size: {
-        sm: "px-4 py-1 text-xs",
-        md: "px-8 py-1 text-sm",
-        lg: "px-12 py-1 text-base",
+        sm: "px-9 py-1 h-10 text-sm rounded-none",
+        md: "px-9 py-1 h-10 text-sm rounded-md",
+        lg: "px-12 py-1 h-12 text-base rounded-lg",
       },
     },
     defaultVariants: {
-      variant: "outline",
-      size: "lg",
+      variant: "underline",
+      size: "sm",
     },
   }
 );

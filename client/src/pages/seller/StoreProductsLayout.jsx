@@ -13,21 +13,17 @@ const StoreProductsLayout = () => {
 
   return (
     <section className="space-y-6">
-      <div className="w-96 px-10">
-        <Input placeholder="fullname" />
-      </div>
-
-      <Tabs defaultValue="account" className="w-[400px]">
+      <Tabs defaultValue="products" className="w-full px-4">
         <TabsList>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="products">List Product</TabsTrigger>
+          <TabsTrigger value="add">Add Product</TabsTrigger>
         </TabsList>
+
         <TabsContent value="account">
-          Make changes to your account here.
+          <StoreProducts />
         </TabsContent>
         <TabsContent value="password">Change your password here.</TabsContent>
       </Tabs>
-      <StoreProducts />
     </section>
   );
 };
