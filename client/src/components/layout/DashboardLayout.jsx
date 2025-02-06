@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { SidebarNav } from "./SidebarNav";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-const CustomerLayout = () => {
+const DashboardLayout = () => {
   return (
     <SidebarProvider>
       <SidebarNav />
@@ -16,4 +16,4 @@ const CustomerLayout = () => {
   );
 };
 
-export default CustomerLayout;
+export default DashboardLayout;

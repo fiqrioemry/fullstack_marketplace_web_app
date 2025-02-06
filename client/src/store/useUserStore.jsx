@@ -12,6 +12,7 @@ export const useUserStore = create((set) => ({
     set({ loading: true });
     try {
       const profile = await callApi.getProfile();
+
       set({ profile });
     } catch {
       set({ user: [] });
@@ -80,7 +81,6 @@ export const useUserStore = create((set) => ({
       set({ updating: true });
       const res = await callApi.deleteAddress(addressId);
       toast.success(res.message);
-      // Memuat ulang data alamat setelah dihapus
       const address = await callApi.getAddress();
       set({ address });
     } catch (err) {

@@ -148,6 +148,38 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  getStoreInfo: async (slug) => {
+    return authInstance
+      .get(`/store/${slug}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getStoreProfile: async () => {
+    return authInstance
+      .get(`/store`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getStoreProduct: async ({
+    search = '',
+    category = [],
+    minPrice = '',
+    maxPrice = '',
+    page = 1,
+    sortBy = 'price',
+    orderBy = 'asc',
+    limit,
+  }) => {
+    return authInstance
+      .get(
+        `/store/product?search=${search}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&sortBy=${sortBy}&orderBy=${orderBy}&limit=${limit}`,
+      )
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
   createProduct: async (formData) => {
     return authInstance
       .post('/store/product', formData, {
@@ -161,11 +193,18 @@ const callApi = {
 
   updateProduct: async (formData, productId) => {
     return authInstance
-      .put(`/store/product, ${productId}`, formData, {
+      .put(`/store/product/${productId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  deleteProduct: async (productId) => {
+    return authInstance
+      .delete(`/store/product/${productId}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },

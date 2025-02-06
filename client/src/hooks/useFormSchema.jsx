@@ -16,6 +16,7 @@ export const useFormSchema = (state, control, action, params) => {
     formik.validateForm();
 
     formik.setTouched({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [control]);
 
   return formik;

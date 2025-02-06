@@ -9,10 +9,10 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
-import UserAvatar from "../ui/Avatar";
 import { Link } from "react-router-dom";
-import { CustomerNavLinks } from "../../config";
-import { useAuthStore } from "../../store/useAuthStore";
+import { CustomerNavLinks } from "@/config";
+import UserAvatar from "@/components/ui/Avatar";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const UserMenu = ({ user }) => {
   const { userSignOut } = useAuthStore();

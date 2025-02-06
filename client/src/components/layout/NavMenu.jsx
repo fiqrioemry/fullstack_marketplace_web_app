@@ -9,7 +9,7 @@ const NavMenu = () => {
   return (
     <>
       {!isAuthenticate && <NonAuthNav />}
-      {isAuthenticate && <AuthNav user={user} />}
+      {isAuthenticate && !location.includes("store") && <AuthNav user={user} />}
       {isAuthenticate && location.includes("store") && <ShopNav user={user} />}
     </>
   );

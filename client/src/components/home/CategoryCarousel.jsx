@@ -17,7 +17,7 @@ const CategoryCarousel = () => {
 
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [getCategories]);
 
   return (
     <div className="space-y-6">

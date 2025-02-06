@@ -7,24 +7,25 @@ import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import Category from "./pages/Category";
-import Order from "./pages/seller/Order";
 import OpenStore from "./pages/OpenStore";
-import Products from "./pages/seller/Products";
 import SearchResult from "./pages/SearchResult";
 import ProductDetail from "./pages/ProductDetail";
 import ProductCategory from "./pages/ProductCategory";
-import Notification from "./pages/seller/Notification";
-import StoreSettings from "./pages/seller/StoreSettings";
 import AddressLayout from "./pages/customer/AddressLayout";
 import ProfileLayout from "./pages/customer/ProfileLayout";
+import StoreOrderLayout from "./pages/seller/StoreOrderLayout";
+import StoreProfileLayout from "./pages/seller/StoreProfileLayout";
 import TransactionLayout from "./pages/customer/TransactionLayout";
+import StoreProductsLayout from "./pages/seller/StoreProductsLayout";
 import NotificationLayout from "./pages/customer/NotificationLayout";
+import StoreDashboardLayout from "./pages/seller/StoreDashboardLayout";
+import StoreNotificationLayout from "./pages/seller/StoreNotificationLayout";
+
 // support
 import MainLayout from "./components/layout/MainLayout";
 import { Navigate, Route, Routes } from "react-router-dom";
-import SellerLayout from "./components/layout/SellerLayout";
-import CustomerLayout from "./components/layout/CustomerLayout";
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
+import DashboardLayout from "./components/layout/DashboardLayout";
 
 function App() {
   return (
@@ -63,14 +64,7 @@ function App() {
               </AuthRoute>
             }
           />
-          {/* <Route
-            path="open-store"
-            element={
-              <AuthRoute>
-                <OpenStore />
-              </AuthRoute>
-            }
-          /> */}
+
           <Route path="open-store" element={<OpenStore />} />
 
           <Route
@@ -90,7 +84,7 @@ function App() {
           path="user"
           element={
             <AuthRoute>
-              <CustomerLayout />
+              <DashboardLayout />
             </AuthRoute>
           }
         >
@@ -107,15 +101,15 @@ function App() {
           path="/store"
           element={
             <SellerRoute>
-              <SellerLayout />
+              <DashboardLayout />
             </SellerRoute>
           }
         >
-          <Route path="order" element={<Order />} />
-          <Route path="products" element={<Products />} />
-          <Route path="notification" element={<Notification />} />
-          <Route index path="settings" element={<StoreSettings />} />
-          <Route index element={<Navigate to="settings" replace />} />
+          <Route index element={<StoreDashboardLayout />} />
+          <Route path="order" element={<StoreOrderLayout />} />
+          <Route path="products" element={<StoreProductsLayout />} />
+          <Route index path="profile" element={<StoreProfileLayout />} />
+          <Route path="notification" element={<StoreNotificationLayout />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

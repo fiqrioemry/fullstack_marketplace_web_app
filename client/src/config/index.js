@@ -10,8 +10,8 @@ const city = ['Medan', 'Jakarta', 'Bandung', 'Semarang', 'Jawa Timur'];
 
 export const CustomerNavLinks = [
   {
-    title: 'settings',
-    href: '/user/settings',
+    title: 'profile',
+    href: '/user/profile',
   },
   {
     title: 'address',
@@ -25,16 +25,25 @@ export const CustomerNavLinks = [
 
 export const SellerNavLinks = [
   {
-    title: 'settings',
-    href: '/shop/settings',
+    title: 'dashboard',
+    href: '/store',
+  },
+
+  {
+    title: 'profile',
+    href: '/store/profile',
   },
   {
-    title: 'notification',
-    href: '/shop/notification',
+    title: 'products',
+    href: '/store/products',
   },
   {
     title: 'order',
-    href: '/shop/order',
+    href: '/store/order',
+  },
+  {
+    title: 'notification',
+    href: '/store/notifications',
   },
 ];
 

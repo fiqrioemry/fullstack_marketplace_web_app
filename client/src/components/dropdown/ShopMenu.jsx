@@ -8,13 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import UserAvatar from "../ui/Avatar";
-import { Link } from "react-router-dom";
-import { SellerNavLinks } from "../../config";
 import { Home } from "lucide-react";
+import { Link } from "react-router-dom";
+import { SellerNavLinks } from "@/config";
+import UserAvatar from "@/components/ui/Avatar";
 
 const ShopMenu = ({ user }) => {
-  console.log(user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,9 +36,9 @@ const ShopMenu = ({ user }) => {
             </Link>
           );
         })}
-        <Link to="/user/settings">
+        <Link to="/user/profile">
           <DropdownMenuItem className="w-full cursor-pointer">
-            My-Dashboard
+            Customer Dashboard
             <DropdownMenuShortcut>
               <Home />
             </DropdownMenuShortcut>

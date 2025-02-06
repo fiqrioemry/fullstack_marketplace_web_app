@@ -12,7 +12,7 @@ import WebLogo from "@/components/ui/WebLogo";
 import { useLocation } from "react-router-dom";
 import { Calendar, Inbox, Settings } from "lucide-react";
 
-const items = [
+const customerNav = [
   {
     title: "Profile",
     url: "/user/profile",
@@ -35,8 +35,38 @@ const items = [
   },
 ];
 
+const sellerNav = [
+  {
+    title: "dashboard",
+    url: "/store",
+    icon: Settings,
+  },
+  {
+    title: "Profile",
+    url: "/store/profile",
+    icon: Settings,
+  },
+  {
+    title: "Products",
+    url: "/store/products",
+    icon: Inbox,
+  },
+  {
+    title: "Orders",
+    url: "/store/order",
+    icon: Calendar,
+  },
+  {
+    title: "Notifications",
+    url: "/store/Notification",
+    icon: Calendar,
+  },
+];
+
 export function SidebarNav() {
-  const location = useLocation();
+  const location = useLocation().pathname;
+
+  const navigationMenu = location.includes("store") ? sellerNav : customerNav;
 
   return (
     <Sidebar>
@@ -47,8 +77,8 @@ export function SidebarNav() {
 
         <SidebarGroup>
           <SidebarMenu>
-            {items.map((item) => {
-              const active = location.pathname.includes(item.url);
+            {navigationMenu.map((item) => {
+              const active = location.includes(item.url);
               return (
                 <SidebarMenuItem
                   key={item.title}

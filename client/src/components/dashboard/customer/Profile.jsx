@@ -19,6 +19,8 @@ const Profile = () => {
     updateProfile
   );
 
+  console.log(profile);
+
   const handleCancel = () => {
     profileForm.resetForm();
     setEditProfile(false);
@@ -36,7 +38,7 @@ const Profile = () => {
           <div className="flex justify-center w-full">
             <div className="space-y-4 max-w-60">
               <div className="overflow-hidden">
-                <img src={profile.avatar} alt="avatar" />
+                <img src={profile?.avatar} alt="avatar" />
               </div>
               <SingleUploadForm
                 loading={updating}

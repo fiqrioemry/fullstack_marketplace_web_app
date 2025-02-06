@@ -13,7 +13,7 @@ const ProductRecommendation = () => {
   };
 
   useEffect(() => {
-    getProducts({ limit });
+    getProducts({ limit: limit });
   }, [getProducts, limit]);
 
   return (
@@ -30,7 +30,7 @@ const ProductRecommendation = () => {
               <ProductCard product={product} key={product.id} />
             ))}
           </div>
-          {loading && <ProductsSkeleton />}
+          {/* {loading && <ProductsSkeleton />} */}
           {limit <= totalData && (
             <ProcessButton
               onClick={handleShowMore}
