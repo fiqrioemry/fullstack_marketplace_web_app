@@ -4,7 +4,7 @@ const {
 } = require('../../utils/cloudinary');
 const { Op } = require('sequelize');
 const { client } = require('../../utils/redis');
-const { User, Store, Address } = require('../../models');
+const { User, Address } = require('../../models');
 const { removeUploadFile } = require('../../utils/removeUploadFile');
 
 async function getProfile(req, res) {
@@ -152,6 +152,9 @@ async function addAddress(req, res) {
       isMain,
     });
 
+    // Hapus cache Redis untuk alamat pengguna
+    await client.del(`address:${userId}`);
+
     return res.status(201).json({
       message: 'New Address is added',
     });
@@ -193,6 +196,9 @@ async function updateAddress(req, res) {
         .json({ message: 'Address not found or no changes made' });
     }
 
+    // Hapus cache Redis untuk alamat pengguna
+    await client.del(`address:${userId}`);
+
     const updatedAddress = await Address.findAll({ where: { userId } });
 
     return res.status(200).json({
@@ -218,6 +224,9 @@ async function deleteAddress(req, res) {
 
     await Address.destroy({ where: { id: addressId } });
 
+    // Hapus cache Redis untuk alamat pengguna
+    await client.del(`address:${userId}`);
+
     return res.status(200).json({
       message: 'Address is deleted',
     });
@@ -228,7 +237,6 @@ async function deleteAddress(req, res) {
     });
   }
 }
-
 module.exports = {
   getProfile,
   updateProfile,
