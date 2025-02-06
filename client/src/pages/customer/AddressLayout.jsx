@@ -5,7 +5,7 @@ import AddressLoading from "@/components/loading/AddressLoading";
 
 const AddressLayout = () => {
   const { address, getAddress, loading } = useUserStore();
-  console.log(address);
+
   useEffect(() => {
     getAddress();
   }, [getAddress]);

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Edit, Plus, Trash } from "lucide-react";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
-import { useShopStore } from "../../store/useShopStore";
-import { PaginationBox } from "../../components/PaginationBox";
+import { useShopStore } from "@/store/useShopStore";
+import { PaginationBox } from "@/components/layout/PaginationBox";
 
 const Products = () => {
   const { shopProducts, getShopProducts } = useShopStore();

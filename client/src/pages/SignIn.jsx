@@ -1,39 +1,34 @@
+import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import AuthForm from "@/components/form/AuthForm";
+import WebLogo from "@/components/ui/WebLogo";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useHandleForm } from "@/hooks/useHandleForm";
-import { SignInHelp } from "../components/modal/SignInHelp";
-import { controlSignInForm, initialSignInForm } from "@/config";
+import { loginControl, loginState } from "@/config";
+import InputForm from "@/components/form/InputForm";
+import { useFormSchema } from "@/hooks/useFormSchema";
+import InputButton from "@/components/form/InputButton";
 
 const SignIn = () => {
-  const { userSignIn, isAuthLoading } = useAuthStore();
-  const { formData, handleChange, handleSubmit, handleValidate } =
-    useHandleForm(initialSignInForm);
-
-  const isValid = handleValidate();
-
-  const onSubmit = () => userSignIn(formData);
+  const { login, loading } = useAuthStore();
+  const loginForm = useFormSchema(loginState, loginControl, login);
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <Card className="w-full max-w-xs p-4">
-        <AuthForm
-          path="/signup"
-          isValid={isValid}
-          formData={formData}
-          submitTitle={"Sign-In"}
-          footerLink={"Sign up "}
-          isLoading={isAuthLoading}
-          handleChange={handleChange}
-          controlForm={controlSignInForm}
-          buttonTitle={"Sign In with Google"}
-          footerTitle={"Dont have an account ? "}
-          onSubmit={(e) => handleSubmit(e, onSubmit)}
-        >
-          <div className="flex justify-end text-xs">
-            <SignInHelp button="need a help ?" />
+      <Card className="max-w-xs">
+        <div className="w-full p-4 space-y-6">
+          <div className="text-center">
+            <WebLogo />
           </div>
-        </AuthForm>
+
+          <InputForm formik={loginForm} formControl={loginControl}>
+            <InputButton title={"login"} formik={loginForm} loading={loading} />
+          </InputForm>
+          <div className="text-center text-sm">
+            Dont have an account ? register{" "}
+            <Link to="/signup" className="text_button">
+              here
+            </Link>
+          </div>
+        </div>
       </Card>
     </div>
   );

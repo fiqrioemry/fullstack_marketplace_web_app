@@ -1,17 +1,13 @@
-import { Button } from "../../components/ui/button";
-import { CloudUpload, FilePlus, X } from "lucide-react";
-import { useShopStore } from "../../store/useShopStore";
-import { useFileUpload } from "../../hooks/useFileUpload";
-import { useHandleForm } from "../../hooks/useHandleForm";
-import FormControls from "../../components/form/FormControl";
-import { controlProductForm, initialProductState } from "../../config";
+// import { Button } from "../../components/ui/button";
+// import { CloudUpload, FilePlus, X } from "lucide-react";
+// import { useShopStore } from "../../store/useShopStore";
+// import { useFileUpload } from "../../hooks/useFileUpload";
+// import { useHandleForm } from "../../hooks/useHandleForm";
+// import FormControls from "../../components/form/FormControl";
+// import { addProductControll, addProductState } from "@/config";
 
 const Transaction = () => {
   const { createProduct } = useShopStore();
-  const { formData, setFormData, handleChange, handleSubmit, handleValidate } =
-    useHandleForm(initialProductState);
-  const { removePreview, preview, multiUpload, handleDrop, handleDragOver } =
-    useFileUpload(formData, setFormData);
 
   const handleAddProduct = (e) => {
     handleSubmit(e, createProduct(formData));
@@ -21,7 +17,7 @@ const Transaction = () => {
 
   return (
     <section className="space-y-6">
-      <div>
+      {/* <div>
         {preview && preview.length !== 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {preview.map((view, index) => (
@@ -101,7 +97,7 @@ const Transaction = () => {
             Create Product
           </Button>
         </form>
-      </div>
+      </div> */}
     </section>
   );
 };

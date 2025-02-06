@@ -1,8 +1,8 @@
 import { Fragment, useEffect } from "react";
-import CategoryCard from "../components/CategoryCard";
-import PageBreadCrumb from "../components/PageBreadCrumb";
-import { useProductStore } from "../store/useProductStore";
-import CategoriesSkeleton from "../components/loading/CategoriesSkeleton";
+import CategoryCard from "@/components/card/CategoryCard";
+import { useProductStore } from "@/store/useProductStore";
+import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
+import CategoriesSkeleton from "@/components/loading/CategoriesCarouselLoading";
 
 const Category = () => {
   const { getCategories, categories } = useProductStore();

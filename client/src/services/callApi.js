@@ -108,6 +108,13 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  deleteAddress: async (addressId) => {
+    return authInstance
+      .delete(`/user/profile/address/${addressId}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
   getProduct: async (slug) => {
     return authInstance
       .get(`/product/${slug}`)
@@ -138,6 +145,28 @@ const callApi = {
     return authInstance
       .get('/category')
       .then((res) => res.data.data)
+      .catch(errorHandle);
+  },
+
+  createProduct: async (formData) => {
+    return authInstance
+      .post('/store/product', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  updateProduct: async (formData, productId) => {
+    return authInstance
+      .put(`/store/product, ${productId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 

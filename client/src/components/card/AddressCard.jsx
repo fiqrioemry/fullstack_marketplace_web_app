@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import { addressControl } from "@/config";
+import { DialogForm } from "../form/DialogForm";
+import { DeleteBox } from "../modal/DeleteBox";
 import { useUserStore } from "@/store/useUserStore";
 import { Card, CardContent } from "@/components/ui/card";
-import { DialogUpdateForm } from "./form/DialogUpdateForm";
 
 const AddressCard = ({ address }) => {
-  const { updateAddress, updating } = useUserStore();
+  const { updateAddress, deleteAddress } = useUserStore();
 
   return (
     <Card>
@@ -23,14 +24,25 @@ const AddressCard = ({ address }) => {
         <div className="text-sm">
           {address.address} {address.province} {address.city} {address.zipcode}
         </div>
-        <div>
-          <DialogUpdateForm
-            title={"Edit"}
-            data={address}
-            loading={updating}
+        <div className="flex gap-2">
+          <DialogForm
+            variant="edit"
+            button="Edit"
+            state={address}
+            title="Edit Address"
+            param={address.id}
             action={updateAddress}
-            formControl={addressControl}
+            control={addressControl}
           />
+
+          {!address.isMain && (
+            <DeleteBox
+              data={address.id}
+              action={deleteAddress}
+              title="Address deletion"
+              description="Are you sure want to delete this address ?"
+            />
+          )}
         </div>
       </CardContent>
     </Card>

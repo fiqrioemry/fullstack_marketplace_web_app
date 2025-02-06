@@ -8,18 +8,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function ConfirmationBox({
-  title,
-  description,
-  buttonConfirm,
-  buttonVariant,
-  buttonTitle,
-  handleSubmit,
-}) {
+export function DeleteBox({ title, description, action, data }) {
+  const handleSubmit = () => {
+    action(data);
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={buttonVariant}>{buttonTitle}</Button>
+        <Button variant="delete">delete</Button>
       </DialogTrigger>
       <DialogTitle>
         <DialogContent variant="options" className=" sm:max-w-[525px]">
@@ -29,16 +25,12 @@ export function ConfirmationBox({
             <div className="flex justify-end items-center space-x-4">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
-                  Cancel
+                  cancel
                 </Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button
-                  variant={buttonVariant}
-                  onClick={handleSubmit}
-                  type="button"
-                >
-                  {buttonConfirm}
+                <Button variant="delete" onClick={handleSubmit}>
+                  delete
                 </Button>
               </DialogClose>
             </div>

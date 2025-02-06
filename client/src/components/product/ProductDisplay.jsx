@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import { Loader, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useProvider } from "../../context/GlobalProvider";
-import { useCartStore } from "../../store/useCartStore";
+import { useCartStore } from "@/store/useCartStore";
+import { useProvider } from "@/context/GlobalProvider";
+import ProcessButton from "@/components/form/processButton";
 
 const ProductDisplay = ({ product }) => {
   const navigate = useNavigate();
-  const { userData } = useProvider();
+  const { isAuthenticate } = useProvider();
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
   const { addCartItem, isCartLoading } = useCartStore();
@@ -28,7 +28,7 @@ const ProductDisplay = ({ product }) => {
   };
 
   const handleCheckout = () => {
-    if (userData.length !== 0) {
+    if (isAuthenticate) {
       navigate("/cart/checkout", {
         state: {
           product: {
@@ -41,21 +41,25 @@ const ProductDisplay = ({ product }) => {
       navigate("/signin");
     }
   };
+
   const handleAddToCart = (productId) => {
-    addCartItem(productId, quantity);
+    if (isAuthenticate) {
+      addCartItem(productId, quantity);
+    } else {
+      navigate("/signin");
+    }
   };
 
   const handleSetThumbnail = (index) => {
     setActiveIndex(index);
   };
 
-  const images = product?.images || [];
   return (
     <div className="grid grid-cols-12 gap-4">
       <div className=" col-start-1 col-end-13 md:col-start-1 md:col-end-7">
         <div className="grid grid-cols-10 gap-2 ">
           <div className="col-span-10 md:col-span-2 flex md:grid grid-rows-4 gap-2">
-            {images.map((image, index) => (
+            {product?.images.map((image, index) => (
               <div key={index}>
                 <img
                   className="object-cover w-full h-full  "
@@ -71,7 +75,7 @@ const ProductDisplay = ({ product }) => {
             <div className="flex justify-center items-center rounded-md ">
               <img
                 className="object-cover w-full h-full"
-                src={images[activeIndex]}
+                src={product.images[activeIndex]}
                 alt="product_image"
               />
             </div>
@@ -87,11 +91,7 @@ const ProductDisplay = ({ product }) => {
         <div className="text-xl font-medium">Rp. {product.price}</div>
 
         {/* product description */}
-        <div className="py-4 mb-4 border-b-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-          veritatis sed, eos provident quidem dicta dolore sequi dolorum magni
-          qui neque quos quia quae eveniet.
-        </div>
+        <div className="py-4 mb-4 border-b-2">{product.description}</div>
 
         {/* product quantity and add box */}
         <div className="flex gap-5 items-center mb-4">
@@ -122,25 +122,17 @@ const ProductDisplay = ({ product }) => {
 
         {/* button */}
         <div className="space-y-4">
-          <Button
-            disabled={isCartLoading}
+          <ProcessButton
+            title={"Add to Cart"}
+            variant={"secondary"}
+            loading={isCartLoading}
             onClick={() => handleAddToCart(product.id)}
-            variant="secondary"
-            className="w-full py-6"
-          >
-            {!isCartLoading ? (
-              "Add to Card"
-            ) : (
-              <Loader className="animate-spin" />
-            )}
-          </Button>
-          <Button
-            disabled={isCartLoading}
+          />
+          <ProcessButton
+            title={"Checkout"}
+            loading={isCartLoading}
             onClick={handleCheckout}
-            className="w-full py-6"
-          >
-            {!isCartLoading ? "Checkout" : <Loader className="animate-spin" />}
-          </Button>
+          />
         </div>
       </div>
     </div>

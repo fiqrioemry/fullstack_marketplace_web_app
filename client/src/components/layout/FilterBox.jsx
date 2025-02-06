@@ -5,20 +5,38 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import FormControls from "./form/FormControl";
+import { filterControl } from "@/config";
+import InputForm from "@/components/form/InputForm";
 import { Card, CardContent } from "@/components/ui/card";
-import { controlFilterCategory, controlFilterCity } from "../config";
 
-const FilterBox = ({ formData, handleChange, handleFilterChange }) => {
+const FilterBox = ({ searchForm }) => {
   return (
     <Card className="h-full py-4 px-3">
       <CardContent>
         <div className="text-center mb-2 md:mb-4">
-          <h5 className="text-md md:text-lg">Filter Product</h5>
+          <h5 className="text-md md:text-lg font-semibold">Filter Product</h5>
         </div>
-        <Accordion collapsible className="w-full">
-          <AccordionItem value="category">
+        <Accordion type="multiple" className="w-full">
+          {filterControl.map((item) => (
+            <AccordionItem value={item.name} key={item.name}>
+              <AccordionTrigger className="text-sm md:text-lg font-medium">
+                {item.label}
+              </AccordionTrigger>
+              <AccordionContent>
+                <InputForm formik={searchForm} formControl={[item]} />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default FilterBox;
+
+{
+  /* <AccordionItem value="category">
             <AccordionTrigger className="text-sm md:text-lg">
               Category
             </AccordionTrigger>
@@ -81,11 +99,5 @@ const FilterBox = ({ formData, handleChange, handleFilterChange }) => {
                 </div>
               </div>
             </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardContent>
-    </Card>
-  );
-};
-
-export default FilterBox;
+          </AccordionItem> */
+}

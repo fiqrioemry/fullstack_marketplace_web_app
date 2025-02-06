@@ -1,32 +1,26 @@
 import { Card } from "@/components/ui/card";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useHandleForm } from "@/hooks/useHandleForm";
-import OpenStoreForm from "../components/form/OpenStoreFrom";
-import { ControlOpenStoreForm, initialOpenStoreForm } from "../config";
+import InputForm from "@/components/form/InputForm";
+import { useFormSchema } from "@/hooks/useFormSchema";
+import InputButton from "@/components/form/InputButton";
+import { openStoreControl as control, openStoreState as state } from "@/config";
 
 const OpenStore = () => {
-  const { userOpenStore, isAuthLoading } = useAuthStore();
-  const { formData, handleChange, handleValidate, handleSubmit } =
-    useHandleForm(initialOpenStoreForm);
-
-  const isValid = handleValidate();
-
-  const handleOpenStore = (e) => handleSubmit(e, userOpenStore(formData));
+  const { createStore, loading } = useAuthStore();
+  const openStoreForm = useFormSchema(state, control, createStore);
 
   return (
     <div className="grid min-h-svh ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
           <Card className="w-full max-w-xs p-4">
-            <OpenStoreForm
-              isValid={isValid}
-              formData={formData}
-              onSubmit={handleOpenStore}
-              isLoading={isAuthLoading}
-              submitTitle={"Open store"}
-              handleChange={handleChange}
-              controlForm={ControlOpenStoreForm}
-            />
+            <InputForm formik={openStoreForm} formControl={control}>
+              <InputButton
+                loading={loading}
+                title={"Create Store"}
+                formik={openStoreForm}
+              />
+            </InputForm>
           </Card>
         </div>
       </div>

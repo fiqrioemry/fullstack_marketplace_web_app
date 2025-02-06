@@ -1,20 +1,19 @@
-import ProductCard from "../ProductCard";
 import { useEffect, useState } from "react";
-import ButtonAnimate from "../ButtonAnimate";
-import ProductsSkeleton from "../loading/ProductsSkeleton";
-import { useProductStore } from "../../store/useProductStore";
-// import useResponsiveCount from "../../hooks/useResponsiveCount";
+import ProductCard from "@/components/card/ProductCard";
+import { useProductStore } from "@/store/useProductStore";
+import ProcessButton from "@/components/form/processButton";
+import ProductsSkeleton from "@/components/loading/ProductsSkeleton";
 
 const ProductRecommendation = () => {
-  const [limit, setLimit] = useState(5);
-  const { getProducts, products, isProductLoading } = useProductStore();
+  const [limit, setLimit] = useState(10);
+  const { getProducts, products, loading, totalData } = useProductStore();
 
   const handleShowMore = () => {
     setLimit((prevLimit) => prevLimit + 5);
   };
 
   useEffect(() => {
-    getProducts(limit);
+    getProducts({ limit });
   }, [getProducts, limit]);
 
   return (
@@ -31,13 +30,14 @@ const ProductRecommendation = () => {
               <ProductCard product={product} key={product.id} />
             ))}
           </div>
-          {isProductLoading && <ProductsSkeleton />}
-          <ButtonAnimate
-            action={handleShowMore}
-            loading={isProductLoading}
-            title={"Load More Product"}
-            style={"w-full py-6 text-md"}
-          />
+          {loading && <ProductsSkeleton />}
+          {limit <= totalData && (
+            <ProcessButton
+              onClick={handleShowMore}
+              loading={loading}
+              title={"Load More Product"}
+            />
+          )}
         </div>
       )}
     </div>

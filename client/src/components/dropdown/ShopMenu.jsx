@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import UserAvatar from "../UserAvatar";
+import UserAvatar from "../ui/Avatar";
 import { Link } from "react-router-dom";
 import { SellerNavLinks } from "../../config";
 import { Home } from "lucide-react";

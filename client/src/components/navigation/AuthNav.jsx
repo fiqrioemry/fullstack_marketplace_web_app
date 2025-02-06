@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
-import UserAvatar from "../UserAvatar";
+import UserAvatar from "../ui/Avatar";
 import { Link } from "react-router-dom";
 import UserMenu from "../dropdown/UserMenu";
 import OpenShop from "../dropdown/OpenShop";
 import { Heart } from "lucide-react";
-import ShoppingCart from "../ShoppingCart";
+import ShoppingCart from "@/components/cart/ShoppingCart";
 import NotificationMenu from "../dropdown/NotificationMenu";
 
 const AuthNav = ({ user }) => {

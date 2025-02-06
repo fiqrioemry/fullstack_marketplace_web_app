@@ -1,449 +1,355 @@
-const provinceData = [
-  {
-    id: 1,
-    name: "Sumatera Utara",
-  },
-  {
-    id: 2,
-    name: "DKI Jakarta",
-  },
-  {
-    id: 3,
-    name: "Jawa Barat",
-  },
-  {
-    id: 4,
-    name: "Jawa Tengah",
-  },
-  {
-    id: 5,
-    name: "Jawa Timur",
-  },
+const province = [
+  'Sumatera Utara',
+  'DKI Jakarta',
+  'Jawa Barat',
+  'Jawa Tengah',
+  'Jawa Timur',
 ];
 
-export const nonAuthPath = [
-  "/signin",
-  "/signup",
-  "/",
-  "/:storename",
-  "/search",
-  "/:storename/:slug",
-  "/category",
-  "/category/:slug",
-];
-
-export const customerAuthPath = [
-  "/user",
-  "/user/settings",
-  "/user/address",
-  "/user/transaction",
-];
-
-export const ShopAuthPath = [
-  "/shop",
-  "/shop/settings",
-  "/shop/notification",
-  "/shop/order",
-];
+const city = ['Medan', 'Jakarta', 'Bandung', 'Semarang', 'Jawa Timur'];
 
 export const CustomerNavLinks = [
   {
-    title: "settings",
-    href: "/user/settings",
+    title: 'settings',
+    href: '/user/settings',
   },
   {
-    title: "address",
-    href: "/user/address",
+    title: 'address',
+    href: '/user/address',
   },
   {
-    title: "transaction",
-    href: "/user/transaction",
+    title: 'transaction',
+    href: '/user/transaction',
   },
 ];
 
 export const SellerNavLinks = [
   {
-    title: "settings",
-    href: "/shop/settings",
+    title: 'settings',
+    href: '/shop/settings',
   },
   {
-    title: "notification",
-    href: "/shop/notification",
+    title: 'notification',
+    href: '/shop/notification',
   },
   {
-    title: "order",
-    href: "/shop/order",
-  },
-];
-
-// signin state and control
-export const initialSignInForm = {
-  email: "",
-  password: "",
-};
-
-export const controlSignInForm = [
-  {
-    name: "email",
-    type: "email",
-    label: "email",
-    placeholder: "Enter your email",
-    style: "flex items-center capitalize",
-  },
-  {
-    name: "password",
-    label: "password",
-    type: "password",
-    placeholder: "Enter your password",
-    style: "flex items-center capitalize",
+    title: 'order',
+    href: '/shop/order',
   },
 ];
 
-// signup state and control
-export const initialSignUpForm = {
-  fullname: "",
-  email: "",
-  password: "",
-  otp: "",
+export const loginState = {
+  email: '',
+  password: '',
 };
 
-export const controlSignUpForm = [
+export const loginControl = [
   {
-    name: "email",
-    label: "email",
-    type: "email",
-    placeholder: "Enter your email",
+    name: 'email',
+    type: 'email',
+    label: 'email',
+    placeholder: 'Enter your email',
+    style: 'flex items-center capitalize',
+  },
+  {
+    name: 'password',
+    label: 'password',
+    type: 'password',
+    placeholder: 'Enter your password',
+    style: 'flex items-center capitalize',
+  },
+];
+
+export const registerState = {
+  fullname: '',
+  email: '',
+  password: '',
+  otp: '',
+};
+
+export const sendOTPControl = [
+  {
+    name: 'email',
+    type: 'email',
+    placeholder: 'Enter your email',
+    component: 'input',
+  },
+];
+
+export const verifyOTPControl = [
+  {
+    name: 'otp',
+    label: 'OTP Code',
+    type: 'text',
+    component: 'input',
+  },
+];
+
+export const registerControl = [
+  {
+    name: 'email',
+    label: 'email',
+    type: 'email',
+    placeholder: 'Enter your email',
+    component: 'input',
+    disabled: true,
   },
 
   {
-    name: "fullname",
-    label: "fullname",
-    type: "text",
-    placeholder: "Enter your full name",
+    name: 'name',
+    label: 'fullname',
+    type: 'text',
+    placeholder: 'Enter your full name',
+    component: 'input',
   },
+
   {
-    name: "password",
-    label: "password",
-    type: "password",
-    placeholder: "Enter your password",
+    name: 'password',
+    label: 'password',
+    type: 'password',
+    placeholder: 'Enter your password',
+    component: 'input',
   },
 ];
 
 // open store state and control
-export const initialOpenStoreForm = {
-  name: "",
-  description: "",
-  city: "",
+export const openStoreState = {
+  name: '',
+  description: '',
+  city: '',
 };
 
-export const ControlOpenStoreForm = [
+export const openStoreControl = [
   {
-    name: "name",
-    label: "store name",
-    type: "text",
-    placeholder: "Enter your store name",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'name',
+    label: 'store name',
+    type: 'text',
+    placeholder: 'Enter your store name',
+    component: 'input',
   },
   {
-    name: "description",
-    label: "description",
-    type: "text",
-    placeholder: "Write a short description of your store",
-    style: "flex items-center capitalize",
-    componentType: "textarea",
+    name: 'description',
+    label: 'description',
+    type: 'text',
+    placeholder: 'Write a short description of your store',
+    component: 'textarea',
   },
   {
-    name: "city",
-    label: "city",
-    type: "select",
-    placeholder: "Select your city",
-    style: "flex items-center capitalize",
-    componentType: "select",
+    name: 'city',
+    label: 'city',
+    type: 'select',
+    placeholder: 'Select your city',
+    component: 'select',
+    options: city,
   },
 ];
 
-export const controlFilterCategory = [
+export const filterControl = [
   {
-    name: "category",
-    label: "category",
-    type: "checkbox",
-    style: "flex items-center capitalize",
-    componentType: "checkbox",
-    method: "multiple",
+    name: 'category',
+    label: 'category',
+    type: 'checkbox',
+    component: 'checkbox-multiple',
+  },
+  {
+    name: 'city',
+    label: 'city',
+    type: 'checkbox',
+    component: 'checkbox-multiple',
   },
 ];
 
-export const controlFilterCity = [
-  {
-    name: "city",
-    label: "city",
-    type: "checkbox",
-    style: "flex items-center capitalize",
-    componentType: "checkbox",
-    method: "multiple",
-  },
-];
-
-export const initialProfileForm = {
-  fullname: "",
-  birthday: "",
-  gender: "",
-  phone: "",
-  email: "",
-  avatar: "",
+export const profileState = {
+  fullname: '',
+  birthday: '',
+  gender: '',
+  phone: '',
+  email: '',
+  avatar: '',
 };
 
-export const controlProfileForm = [
+export const profileControl = [
   {
-    name: "fullname",
-    label: "fullname",
-    type: "text",
-    placeholder: "Enter your fullname",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'fullname',
+    label: 'fullname',
+    type: 'text',
+    placeholder: 'Enter your fullname',
+    component: 'input',
   },
   {
-    name: "birthday",
-    label: "birthday",
-    type: "date",
-    placeholder: "Add your birthday",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'birthday',
+    label: 'birthday',
+    type: 'date',
+    placeholder: 'Add your birthday',
+    component: 'input',
   },
   {
-    name: "gender",
-    label: "gender",
-    type: "select",
-    placeholder: "Add your gender",
-    style: "flex items-center capitalize",
-    componentType: "select",
-    options: ["male", "female"],
+    name: 'gender',
+    label: 'gender',
+    type: 'select',
+    placeholder: 'Select your gender',
+    component: 'select',
+    options: ['male', 'female'],
   },
   {
-    name: "phone",
-    label: "phone",
-    type: "text",
-    placeholder: "Add your phone",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'phone',
+    label: 'phone',
+    type: 'text',
+    placeholder: 'Add your phone',
+    component: 'input',
   },
 ];
 
-export const initialSearchForm = {
-  query: "",
+export const searchState = {
+  search: '',
   category: [],
   city: [],
-  minPrice: "",
-  maxPrice: "",
-  sortBy: "",
-  page: "",
-  order: "",
+  minPrice: '',
+  maxPrice: '',
+  sortBy: '',
+  page: '',
+  orderBy: '',
 };
 
 export const shipmentMethods = [
   {
-    method: "nextday",
-    time: "Estimated Time Today or Tomorrow",
+    method: 'nextday',
+    time: 'Estimated Time Today or Tomorrow',
     price: 5.99,
   },
   {
-    method: "regular",
-    time: "Estimated Time 4 - 7 Days",
+    method: 'regular',
+    time: 'Estimated Time 4 - 7 Days',
     price: 3.99,
   },
   {
-    method: "cargo",
-    time: "Estimated Time 1 - 2 Weeks",
+    method: 'cargo',
+    time: 'Estimated Time 1 - 2 Weeks',
     price: 1.99,
   },
 ];
 
 // address
-export const initialAddressForm = {
-  name: "",
+export const addressState = {
+  name: '',
   isMain: false,
-  address: "",
-  province: "",
-  city: "",
-  zipcode: "",
-  phone: "",
+  address: '',
+  province: '',
+  city: '',
+  zipcode: '',
+  phone: '',
 };
 
-export const controlAddressForm = [
+export const addressControl = [
   {
-    name: "name",
-    label: "name",
-    type: "text",
-    placeholder: "Enter receipient name",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'name',
+    label: 'name',
+    type: 'text',
+    placeholder: 'Enter receipient name',
+    component: 'input',
   },
   {
-    name: "address",
-    label: "address",
-    type: "text",
-    placeholder: "Enter receipient address",
-    style: "flex items-center capitalize",
-    componentType: "textarea",
+    name: 'address',
+    label: 'address',
+    type: 'text',
+    placeholder: 'Enter receipient address',
+    component: 'textarea',
   },
   {
-    name: "province",
-    label: "province",
-    type: "select",
-    placeholder: "Enter receipient province",
-    style: "flex items-center capitalize",
-    componentType: "select",
-    options: provinceData,
+    name: 'province',
+    label: 'province',
+    type: 'select',
+    placeholder: 'Enter receipient province',
+    component: 'select',
+    options: province,
   },
   {
-    name: "city",
-    label: "city",
-    type: "select",
-    placeholder: "Enter receipient city",
-    style: "flex items-center capitalize",
-    componentType: "select",
+    name: 'city',
+    label: 'city',
+    type: 'select',
+    placeholder: 'Enter receipient city',
+    component: 'select',
+    options: city,
   },
   {
-    name: "zipcode",
-    label: "zipcode",
-    type: "text",
-    placeholder: "Enter receipient zipcode",
-    style: "flex items-center capitalize",
-    componentType: "input",
-    maxLength: "6",
+    name: 'zipcode',
+    label: 'zipcode',
+    type: 'text',
+    placeholder: 'Enter receipient zipcode',
+    component: 'input',
+    maxLength: '6',
   },
 
   {
-    name: "phone",
-    label: "phone number",
-    type: "tel",
-    placeholder: "Enter receipient phone",
-    style: "flex items-center capitalize",
-    componentType: "input",
-    maxLength: "13",
+    name: 'phone',
+    label: 'phone number',
+    type: 'tel',
+    placeholder: 'Enter receipient phone',
+    component: 'input',
+    maxLength: '13',
   },
-
   {
-    name: "isMain",
-    value: true,
-    type: "checkbox",
-    method: "single",
-    label: "Set as main address",
-    style: "flex items-center capitalize",
-    componentType: "checkbox",
+    name: 'isMain',
+    label: 'set as main address',
+    type: 'checkbox',
+    component: 'checkbox-single',
   },
 ];
 
-export const controlEditAddressForm = [
-  {
-    name: "name",
-    label: "name",
-    type: "text",
-    placeholder: "Enter receipient name",
-    style: "flex items-center capitalize",
-    componentType: "input",
-  },
-  {
-    name: "address",
-    label: "address",
-    type: "text",
-    placeholder: "Enter receipient address",
-    style: "flex items-center capitalize",
-    componentType: "textarea",
-  },
-  {
-    name: "province",
-    label: "province",
-    type: "select",
-    placeholder: "Enter receipient province",
-    style: "flex items-center capitalize",
-    componentType: "select",
-    options: provinceData,
-  },
-  {
-    name: "city",
-    label: "city",
-    type: "select",
-    placeholder: "Enter receipient city",
-    style: "flex items-center capitalize",
-    componentType: "select",
-  },
-  {
-    name: "zipcode",
-    label: "zipcode",
-    type: "text",
-    placeholder: "Enter receipient zipcode",
-    style: "flex items-center capitalize",
-    componentType: "input",
-    maxLength: "6",
-  },
-
-  {
-    name: "phone",
-    label: "phone number",
-    type: "tel",
-    placeholder: "Enter receipient phone",
-    style: "flex items-center capitalize",
-    componentType: "input",
-    maxLength: "13",
-  },
-];
-
-export const initialOrderForm = {
+export const orderState = {
   productId: [],
   quantity: [],
   shipmentCost: [],
 };
 
-export const initialProductState = {
-  name: "",
-  categoryId: "",
-  description: "",
-  price: "",
-  stock: "",
-  files: "",
+export const addProductState = {
+  name: '',
+  categoryId: '',
+  description: '',
+  price: '',
+  stock: '',
+  files: '',
 };
 
-export const controlProductForm = [
+export const addProductControll = [
   {
-    name: "name",
-    label: "product name",
-    type: "text",
-    placeholder: "Enter your product name ...",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'name',
+    label: 'product name',
+    type: 'text',
+    placeholder: 'Enter your product name ...',
+    style: 'flex items-center capitalize',
+    component: 'input',
   },
   {
-    name: "description",
-    label: "description",
-    type: "text",
-    placeholder: "Describe about your product ...",
-    style: "flex items-center capitalize",
-    componentType: "textarea",
+    name: 'description',
+    label: 'description',
+    type: 'text',
+    placeholder: 'Describe about your product ...',
+    style: 'flex items-center capitalize',
+    component: 'textarea',
   },
   {
-    name: "price",
-    label: "price",
-    type: "text",
-    placeholder: "Set the price",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'price',
+    label: 'price',
+    type: 'text',
+    placeholder: 'Set the price',
+    style: 'flex items-center capitalize',
+    component: 'input',
   },
   {
-    name: "stock",
-    label: "stock",
-    type: "text",
-    placeholder: "Set the stock",
-    style: "flex items-center capitalize",
-    componentType: "input",
+    name: 'stock',
+    label: 'stock',
+    type: 'text',
+    placeholder: 'Set the stock',
+    style: 'flex items-center capitalize',
+    component: 'input',
   },
   {
-    name: "categoryId",
-    label: "category",
-    type: "text",
-    placeholder: "Choose product category",
-    style: "flex items-center capitalize",
-    componentType: "select",
+    name: 'categoryId',
+    label: 'category',
+    type: 'text',
+    placeholder: 'Choose product category',
+    style: 'flex items-center capitalize',
+    component: 'select',
   },
 ];

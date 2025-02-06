@@ -9,7 +9,7 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
-import UserAvatar from "../UserAvatar";
+import UserAvatar from "../ui/Avatar";
 import { Link } from "react-router-dom";
 import { CustomerNavLinks } from "../../config";
 import { useAuthStore } from "../../store/useAuthStore";

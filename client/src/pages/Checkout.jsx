@@ -11,10 +11,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "../store/useUserStore";
-import AddressDisplay from "../components/AddressDisplay";
 import { useProductStore } from "../store/useProductStore";
 import ProductCartItem from "../components/cart/ProductCartItem";
-import AddressSkeleton from "../components/loading/AddressSkeleton";
 
 const Checkout = () => {
   const [checkout, setCheckout] = useState({});
@@ -50,17 +48,6 @@ const Checkout = () => {
           <h4 className="text-2xl">Checkout</h4>
           <div className="grid grid-cols-12 gap-4 ">
             <div className="col-span-12 md:col-span-9 space-y-4">
-              {!address && <AddressSkeleton />}
-
-              {address && (
-                <>
-                  {address
-                    .filter((item) => item.isMain === true)
-                    .map((data) => (
-                      <AddressDisplay address={data} key={data.id} />
-                    ))}
-                </>
-              )}
               <div>
                 <div className="bg-background rounded-md shadow-md space-y-2 p-4">
                   <ProductCartItem product={checkout} />

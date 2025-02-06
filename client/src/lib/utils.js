@@ -1,6 +1,62 @@
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge"
+import { clsx } from 'clsx';
+import * as Yup from 'yup';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
+
+export function formatDateToISO(date) {
+  if (date && !isNaN(new Date(date))) {
+    return new Date(date).toISOString().split('T')[0];
+  }
+  return '';
+}
+
+export function formatFormDataDates(data, dateFields = []) {
+  const formattedDates = {};
+
+  dateFields.forEach((field) => {
+    if (data[field]) {
+      formattedDates[field] = formatDateToISO(data[field]);
+    }
+  });
+
+  return formattedDates;
+}
+const baseValidations = {
+  city: Yup.string().required('Required'),
+  gender: Yup.string().required('Required'),
+  province: Yup.string().required('Required'),
+  location: Yup.string().required('Required'),
+  otp: Yup.string().min(6, 'Min. 6 digits').required('Required'),
+  email: Yup.string().email('Invalid email').required('Required'),
+  zipcode: Yup.string().min(6, 'Min. 6 digits').required('Required'),
+  name: Yup.string().min(6, 'Min. 6 characters').required('Required'),
+  bio: Yup.string().min(20, 'Min. 20 characters').required('Required'),
+  title: Yup.string().min(3, 'Min. 3 characters').required('Required'),
+  start_date: Yup.date().required('Required').typeError('Invalid date'),
+  company: Yup.string().min(3, 'Min. 3 characters').required('Required'),
+  password: Yup.string().min(6, 'Min. 6 characters').required('Required'),
+  address: Yup.string().min(12, 'Min. 12 characters').required('Required'),
+  description: Yup.string().min(20, 'Min. 20 characters').required('Required'),
+  birthday: Yup.date()
+    .max(new Date(), 'Cannot be in the future')
+    .required('Required')
+    .typeError('Invalid date'),
+  end_date: Yup.date()
+    .nullable()
+    .typeError('Invalid date')
+    .min(Yup.ref('start_date'), 'Must be after start date'),
+};
+
+export const newValidationSchema = (fields = []) => {
+  const schemaFields = {};
+  fields.forEach((field) => {
+    if (baseValidations[field.name]) {
+      schemaFields[field.name] = baseValidations[field.name];
+    }
+  });
+
+  return Yup.object().shape(schemaFields);
+};

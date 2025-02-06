@@ -1,72 +1,70 @@
 import { Loader } from "lucide-react";
-import { initialSignUpForm } from "@/config";
-import { useNavigate } from "react-router-dom";
+import WebLogo from "@/components/ui/WebLogo";
+import StepOne from "@/components/auth/StepOne";
+import StepTwo from "@/components/auth/StepTwo";
+import StepThree from "@/components/auth/StepThree";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useHandleForm } from "@/hooks/useHandleForm";
+import { useFormSchema } from "@/hooks/useFormSchema";
 import { Card, CardContent } from "@/components/ui/card";
-import SignUpStepOne from "../components/auth/SignUpStepOne";
-import SignUpStepTwo from "../components/auth/SignUpStepTwo";
-import SignUpStepThree from "../components/auth/SignUpStepThree";
+import {
+  registerState,
+  registerControl,
+  sendOTPControl,
+  verifyOTPControl,
+} from "@/config";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { step, userSignUp, sendOtpSignUp, verifyOtpSignUp, isAuthLoading } =
-    useAuthStore();
+  const { step, loading, register } = useAuthStore();
 
-  const { formData, setFormData, handleChange, handleValidate } =
-    useHandleForm(initialSignUpForm);
-
-  const isValid = handleValidate();
-
-  const handleSendOtp = (e) => {
-    e.preventDefault();
-    sendOtpSignUp(formData);
+  const getFormControl = () => {
+    switch (step) {
+      case 1:
+        return sendOTPControl;
+      case 2:
+        return verifyOTPControl;
+      case 3:
+        return registerControl;
+      default:
+        return [];
+    }
   };
-
-  const handleVerifyOtp = (formData) => {
-    verifyOtpSignUp(formData);
-  };
-
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    userSignUp(formData);
-    navigate("/signin");
-  };
+  const registerForm = useFormSchema(
+    registerState,
+    getFormControl(),
+    register,
+    navigate
+  );
 
   return (
     <div className="grid lg:grid-cols-2 h-screen">
-      <div className="relative hidden lg:block bg-primary" />
+      <div className="relative hidden lg:block bg-primary">
+        <div className="h-screen w-full">
+          <img className="h-full w-full" src="/public/register.webp" />
+        </div>
+      </div>
       <div className="flex items-center justify-center">
-        <Card className="min-w-80 min-h-96">
-          <CardContent className="flex min-h-96 items-center justify-center p-4">
-            {isAuthLoading && <Loader size={50} className="animate-spin" />}
+        <Card className="min-w-80 h-96">
+          <CardContent className="p-4">
+            <div className="text-center">
+              <WebLogo />
+            </div>
+            <div className="h-72 pt-8">
+              {loading ? (
+                <div className="flex h-full items-center justify-center">
+                  <Loader size={50} className="animate-spin" />
+                </div>
+              ) : (
+                <div>
+                  {step === 1 && <StepOne registerForm={registerForm} />}
 
-            {step === 1 && !isAuthLoading && (
-              <SignUpStepOne
-                formData={formData}
-                handleChange={handleChange}
-                handleSendOtp={handleSendOtp}
-              />
-            )}
+                  {step === 2 && <StepTwo registerForm={registerForm} />}
 
-            {step === 2 && !isAuthLoading && (
-              <SignUpStepTwo
-                formData={formData}
-                setFormData={setFormData}
-                handleChange={handleChange}
-                handleSendOtp={handleSendOtp}
-                handleVerifyOtp={handleVerifyOtp}
-              />
-            )}
-
-            {step === 3 && !isAuthLoading && (
-              <SignUpStepThree
-                isValid={isValid}
-                formData={formData}
-                handleChange={handleChange}
-                handleSignUp={handleSignUp}
-              />
-            )}
+                  {step === 3 && <StepThree registerForm={registerForm} />}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>

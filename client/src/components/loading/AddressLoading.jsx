@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-const UserAddressSkeleton = () => {
+const AddressLoading = () => {
   return (
     <>
       <div>
@@ -14,4 +14,4 @@ const UserAddressSkeleton = () => {
   );
 };
 
-export default UserAddressSkeleton;
+export default AddressLoading;

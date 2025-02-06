@@ -1,18 +1,17 @@
 import { useEffect } from "react";
-import { initialSearchForm } from "../config";
-import SortingBox from "../components/SortingBox";
-import { useParams, useSearchParams } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
-import { useHandleForm } from "../hooks/useHandleForm";
-import PageBreadCrumb from "../components/PageBreadCrumb";
-import { useProductStore } from "../store/useProductStore";
-import { ProductPagination } from "../components/ProductPagination";
-import ProductsSkeleton from "../components/loading/ProductsSkeleton";
+import { searchState } from "@/config";
+import { useSearchParams } from "react-router-dom";
+import ProductCard from "@/components/card/ProductCard";
+import { useHandleForm } from "@/hooks/useHandleForm";
+import SortingBox from "@/components/layout/SortingBox";
+import { useProductStore } from "@/store/useProductStore";
+import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
+import ProductsSkeleton from "@/components/loading/ProductsSkeleton";
 
 const ProductCategory = () => {
   const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { formData, setFormData } = useHandleForm(initialSearchForm);
+  const { formData, setFormData } = useHandleForm(searchState);
   console.log(formData);
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
@@ -53,8 +52,6 @@ const ProductCategory = () => {
                       <ProductCard product={product} key={product.id} />
                     ))}
                   </div>
-
-                  <ProductPagination />
                 </div>
               )}
             </div>

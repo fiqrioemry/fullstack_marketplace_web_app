@@ -1,26 +1,26 @@
 import { useEffect } from "react";
-import { initialSearchForm } from "../config";
-import FilterBox from "../components/FilterBox";
-import SortingBox from "../components/SortingBox";
+import { searchState } from "@/config";
 import { useSearchParams } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
-import { useHandleForm } from "../hooks/useHandleForm";
-import PageBreadCrumb from "../components/PageBreadCrumb";
-import { useProductStore } from "../store/useProductStore";
-import { ProductPagination } from "../components/ProductPagination";
-import ProductsSkeleton from "../components/loading/ProductsSkeleton";
+import ProductCard from "@/components/card/ProductCard";
+import { useFormSchema } from "@/hooks/useFormSchema";
+import FilterBox from "@/components/layout/FilterBox";
+import SortingBox from "@/components/layout/SortingBox";
+import { useProductStore } from "@/store/useProductStore";
+import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
+import { PaginationBox } from "@/components/layout/PaginationBox";
+import ProductsSkeleton from "@/components/loading/ProductsSkeleton";
 
 const SearchResult = () => {
-  const { getProducts, products } = useProductStore();
+  const searchForm = useFormSchema(searchState);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { formData, setFormData, handleChange } =
-    useHandleForm(initialSearchForm);
+  const { getProducts, products, totalPage, currentPage, loading } =
+    useProductStore();
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
-    setFormData({
-      query: params.query || "",
-      order: params.order || "asc",
+    searchForm.setValues({
+      search: params.search || "",
+      orderBy: params.orderBy || "asc",
       sortBy: params.sortBy || "",
       minPrice: params.minPrice || "",
       maxPrice: params.maxPrice || "",
@@ -28,33 +28,27 @@ const SearchResult = () => {
       city: params.city ? params.city.split(",") : [],
       category: params.category ? params.category.split(",") : [],
     });
-  }, [searchParams, setFormData]);
+  }, [searchParams]);
 
-  const handleFilterChange = ({ target: { name, value } }) => {
-    const params = Object.fromEntries(searchParams.entries());
-
-    if (["city", "category"].includes(name)) {
-      const currentValues = params[name] ? params[name].split(",") : [];
-
-      if (currentValues.includes(value)) {
-        params[name] = currentValues.filter((item) => item !== value).join(",");
-      } else {
-        params[name] = [...currentValues, value].join(",");
-      }
-    } else {
-      params[name] = value;
-    }
-
-    if (!params[name]) {
-      delete params[name];
-    }
-
-    setSearchParams(params);
-  };
-
+  // Sinkronisasi formik.values ke searchParams
   useEffect(() => {
-    getProducts(formData);
-  }, [getProducts, formData]);
+    const params = new URLSearchParams();
+    Object.entries(searchForm.values).forEach(([key, value]) => {
+      if (value) {
+        if (Array.isArray(value)) {
+          if (value.length > 0) params.set(key, value.join(","));
+        } else {
+          params.set(key, value);
+        }
+      }
+    });
+    setSearchParams(params);
+  }, [setSearchParams, searchForm.values]);
+
+  // Fetch produk ketika searchParams berubah
+  useEffect(() => {
+    getProducts(Object.fromEntries(searchParams.entries()));
+  }, [getProducts, searchParams]);
 
   return (
     <section>
@@ -64,29 +58,33 @@ const SearchResult = () => {
 
           <div className="grid grid-cols-12 gap-4 ">
             <div className="col-span-12 md:col-span-3">
-              <FilterBox
-                formData={formData}
-                handleChange={handleChange}
-                handleFilterChange={handleFilterChange}
-              />
+              <FilterBox searchForm={searchForm} />
             </div>
 
             <div className="col-span-12 md:col-span-9 space-y-6">
-              <SortingBox setSearchParams={setSearchParams} />
-              <div className="space-y-6">
-                {!products ? (
-                  <ProductsSkeleton style="grid_display_4" value={9} />
-                ) : (
-                  <>
-                    <div className="grid_display_4">
-                      {products.map((product, index) => (
-                        <ProductCard product={product} key={index} />
-                      ))}
-                    </div>
-                    <ProductPagination />
-                  </>
-                )}
+              <div className="flex justify-end">
+                <SortingBox searchForm={searchForm} />
               </div>
+
+              {products.length === 0 ? (
+                <ProductsSkeleton style="grid_display_4" value={9} />
+              ) : loading ? (
+                <ProductsSkeleton style="grid_display_4" value={9} />
+              ) : (
+                <>
+                  <div className="grid_display_4">
+                    {products.map((product, index) => (
+                      <ProductCard product={product} key={index} />
+                    ))}
+                  </div>
+                </>
+              )}
+
+              <PaginationBox
+                paginate={searchForm}
+                totalPage={totalPage}
+                currentPage={currentPage}
+              />
             </div>
           </div>
         </div>

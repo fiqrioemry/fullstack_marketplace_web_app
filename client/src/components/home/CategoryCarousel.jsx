@@ -7,10 +7,10 @@ import {
 } from "@/components/ui/carousel";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import CategoryCard from "../CategoryCard";
 import { Card } from "@/components/ui/card";
-import { useProductStore } from "../../store/useProductStore";
-import CategoriesSkeleton from "../loading/CategoriesSkeleton";
+import CategoryCard from "@/components/card/CategoryCard";
+import { useProductStore } from "@/store/useProductStore";
+import CategoriesCarouselLoading from "@/components/loading/CategoriesCarouselLoading";
 
 const CategoryCarousel = () => {
   const { getCategories, categories } = useProductStore();
@@ -30,7 +30,7 @@ const CategoryCarousel = () => {
       </div>
       <div>
         {!categories ? (
-          <CategoriesSkeleton />
+          <CategoriesCarouselLoading />
         ) : (
           <Carousel className="w-full ">
             <CarouselContent>

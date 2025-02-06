@@ -1,100 +1,92 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { axiosInstance } from "@/services";
+import callApi from "../services/callApi";
 
 export const useUserStore = create((set) => ({
-  profile: null,
-  address: null,
-  isProfileLoading: false,
-  isAddressLoading: false,
+  profile: [],
+  address: [],
+  loading: false,
+  updating: false,
 
-  getUserProfile: async () => {
+  getProfile: async () => {
+    set({ loading: true });
     try {
-      set({ isProfileLoading: true });
-      const response = await axiosInstance.get("/user/profile");
-      set({ profile: response.data.data });
-    } catch (error) {
-      toast.error(error.response.data.message);
+      const profile = await callApi.getProfile();
+      set({ profile });
+    } catch {
+      set({ user: [] });
     } finally {
-      set({ isProfileLoading: false });
+      set({ loading: false });
     }
   },
 
-  updateUserProfile: async (formData) => {
+  updateProfile: async (formData) => {
+    set({ updating: true });
     try {
-      set({ isProfileLoading: true });
-      const response = await axiosInstance.put("/user/profile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success(response.data.message);
-      set({ profile: response.data.data });
-    } catch (error) {
-      toast.error(error.response.data.message);
+      const res = await callApi.updateProfile(formData);
+      toast.success(res.message);
+      const profile = await callApi.getProfile();
+      set({ profile });
+    } catch (err) {
+      toast.error(err.message);
     } finally {
-      set({ isProfileLoading: false });
+      set({ updating: false });
     }
   },
 
-  getUserAddress: async () => {
+  getAddress: async () => {
+    set({ loading: true });
     try {
-      set({ isAddressLoading: true });
-      const response = await axiosInstance.get("/user/profile/address");
-      set({ address: response.data.data });
-    } catch (error) {
-      toast.error(error.response.data.message);
+      const address = await callApi.getAddress();
+      set({ address });
+    } catch (err) {
+      toast.error(err.message);
+      set({ address: [] });
     } finally {
-      set({ isAddressLoading: false });
+      set({ loading: false });
     }
   },
 
-  updateUserAddress: async (formData, addressId) => {
+  updateAddress: async (formData, addressId) => {
     try {
-      set({ isAddressLoading: true });
-      const response = await axiosInstance.put(
-        `/user/profile/address/${addressId}`,
-        formData
-      );
-      toast.success(response.data.message);
-      set({ address: response.data.data });
-    } catch (error) {
-      toast.error(error.response.data.message);
+      set({ updating: true });
+      const res = await callApi.updateAddress(formData, addressId);
+      toast.success(res.message);
+      const address = await callApi.getAddress();
+      set({ address });
+    } catch (err) {
+      toast.error(err.message);
     } finally {
-      set({ isAddressLoading: false });
+      set({ updating: false });
     }
   },
 
-  addUserAddress: async (formData) => {
+  addAddress: async (formData) => {
     try {
-      console.log("berhasil masuk");
-      set({ isAddressLoading: true });
-      const response = await axiosInstance.post(
-        `/user/profile/address`,
-        formData
-      );
-      toast.success(response.data.message);
-      set({ address: response.data.data });
-    } catch (error) {
-      toast.error(error.response.data.message);
+      set({ updating: true });
+      const res = await callApi.addAddress(formData);
+      toast.success(res.message);
+      const address = await callApi.getAddress();
+      set({ address });
+    } catch (err) {
+      toast.error(err.message);
     } finally {
-      set({ isAddressLoading: false });
+      set({ updating: false });
     }
   },
 
-  deleteUserAddress: async (formData, addressId) => {
+  deleteAddress: async (addressId) => {
     try {
-      set({ isAddressLoading: true });
-      const response = await axiosInstance.delete(
-        `/user/profile/address/${addressId}`,
-        formData
-      );
-
-      toast.success(response.data.message);
-    } catch (error) {
-      toast.error(error.response.data.message);
+      set({ updating: true });
+      const res = await callApi.deleteAddress(addressId);
+      toast.success(res.message);
+      // Memuat ulang data alamat setelah dihapus
+      const address = await callApi.getAddress();
+      set({ address });
+    } catch (err) {
+      toast.error(err.message);
     } finally {
-      set({ isAddressLoading: false });
+      set({ updating: false });
     }
   },
 }));

@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import toast from "react-hot-toast";
-import authService from "../services/authService";
+import callApi from "../services/callApi";
+import { persist } from "zustand/middleware";
 
 export const useAuthStore = create(
   persist(
@@ -13,31 +13,26 @@ export const useAuthStore = create(
 
       authCheck: async () => {
         try {
-          const user = await authService.authCheck();
+          const user = await callApi.authCheck();
           set({ user, isAuthenticate: true });
         } catch {
           set({ user: null, isAuthenticate: false });
+        }
+      },
+      resendOTP: async (email) => {
+        try {
+          const data = await callApi.sendOTP(email);
+          toast.success(data.message);
+        } catch (error) {
+          toast.error(error.message);
         }
       },
 
       login: async (formData) => {
         set({ loading: true });
         try {
-          const data = await authService.login(formData);
-          await get().authCheck(); // Memanggil authCheck langsung dari get()
-          toast.success(data.message);
-        } catch (error) {
-          if (error.message) toast.error(error.message);
-        } finally {
-          set({ loading: false });
-        }
-      },
-
-      logout: async () => {
-        set({ loading: true });
-        try {
-          const data = await authService.logout();
-          set({ user: null, isAuthenticate: false });
+          const data = await callApi.login(formData);
+          await get().authCheck();
           toast.success(data.message);
         } catch (error) {
           toast.error(error.message);
@@ -46,27 +41,37 @@ export const useAuthStore = create(
         }
       },
 
+      logout: async () => {
+        try {
+          const data = await callApi.logout();
+          set({ user: [], isAuthenticate: false });
+          toast.success(data.message);
+        } catch (error) {
+          console.log(error.message);
+        }
+      },
+
       register: async (formData, navigate) => {
         set({ loading: true });
         try {
-          const step = get().step; // Ambil nilai step yang benar
+          const step = get().step;
 
           if (step === 1) {
-            const data = await authService.sendOTP(formData);
+            const data = await callApi.sendOTP(formData);
             toast.success(data.message);
             set({ step: 2 });
           } else if (step === 2) {
-            const data = await authService.verifyOTP(formData);
+            const data = await callApi.verifyOTP(formData);
             toast.success(data.message);
             set({ step: 3 });
           } else if (step === 3) {
-            const data = await authService.register(formData);
+            const data = await callApi.register(formData);
             toast.success(data.message);
             set({ step: 1 });
-            if (navigate) navigate("/login"); // Cegah error jika navigate tidak ada
+            navigate("/signin");
           }
         } catch (error) {
-          if (error.message) toast.error(error.message);
+          toast.error(error.message);
         } finally {
           set({ loading: false });
         }
@@ -74,36 +79,41 @@ export const useAuthStore = create(
 
       refreshToken: async () => {
         try {
-          const token = await authService.refreshToken();
-          if (token.message) toast.success(token.message);
+          const token = await callApi.refreshToken();
+          toast.success(token.message);
           return token;
         } catch (error) {
-          if (error.message) toast.error(error.message);
+          console.log(error.message);
         }
       },
 
       resetPassword: async (token, formData, navigate) => {
         try {
-          const data = await authService.resetPassword(token, formData);
-          if (data.message) toast.success(data.message);
-          if (navigate) navigate("/login");
+          const data = await callApi.resetPassword(token, formData);
+          toast.success(data.message);
+          navigate("/login");
         } catch (error) {
-          if (error.message) toast.error(error.message);
+          console.log(error.message);
         }
       },
 
       createStore: async (formData) => {
         try {
-          const data = await authService.createStore(formData);
-          if (data.message) toast.success(data.message);
+          const data = await callApi.createStore(formData);
+          toast.success(data.message);
         } catch (error) {
-          if (error.message) toast.error(error.message);
+          toast.error(error.message);
         }
       },
     }),
     {
       name: "auth-store",
       getStorage: () => localStorage,
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticate: state.isAuthenticate,
+        loading: state.loading,
+      }),
     }
   )
 );

@@ -1,76 +1,64 @@
 import { create } from "zustand";
-import { axiosInstance } from "@/services";
+import callApi from "../services/callApi";
 
 export const useProductStore = create((set) => ({
-  search: null,
-  product: null,
-  products: null,
-  recommend: null,
+  product: [],
+  products: [],
+  currentPage: 0,
+  totalPage: 0,
+  totalData: 0,
   categories: [],
   cities: [],
-  isSearchLoading: false,
-  isProductLoading: false,
+  loading: false,
 
-  getCities: async () => {
-    try {
-      const response = [
+  getCities: () => {
+    set({
+      cities: [
         { id: 1, name: "Medan" },
         { id: 2, name: "Jakarta" },
         { id: 3, name: "Bandung" },
-        { id: 4, name: "Semarang" },
+        { id: 4, name: "Yogyakarta" },
         { id: 5, name: "Surabaya" },
-      ];
-      set({ cities: response });
-    } catch (error) {
-      console.error(error);
-      set({ cities: [] });
-    }
+      ],
+    });
   },
 
   getCategories: async () => {
     try {
-      const response = await axiosInstance.get("/category");
-      set({ categories: response.data.data });
-    } catch (error) {
-      console.error(error);
+      const categories = await callApi.getCategories();
+      set({ categories });
+    } catch (err) {
+      console.err(err.message);
       set({ categories: [] });
-    }
-  },
-
-  searchProducts: async () => {
-    try {
-      set({ isSearchLoading: true });
-      const response = ["products"];
-      set({ search: response });
-    } catch (error) {
-      console.log(error);
-      set({ search: [] });
-    } finally {
-      set({ isSearchLoading: false });
     }
   },
 
   getProduct: async (slug) => {
     try {
-      const response = await axiosInstance.get(`/product/${slug}`);
-      console.log(response);
-      set({ product: response.data.data });
-    } catch (error) {
-      console.log(error);
-      set({ product: null });
+      const product = await callApi.getProduct(slug);
+      set({ product });
+    } catch (err) {
+      console.err(err.message);
+      set({ product: [] });
     }
   },
 
-  getProducts: async (limit) => {
+  getProducts: async (searchQuery) => {
     try {
-      const response = await axiosInstance.get(`/product?limit=${limit}`);
-      console.log(response);
-      set({ products: response.data.data });
-    } catch (error) {
-      console.error(error);
+      set({ loading: true });
+      const { products, totalPage, totalData, currentPage } =
+        await callApi.getProducts(searchQuery);
+      set({
+        products,
+        totalPage,
+        totalData,
+        currentPage,
+      });
+    } catch (err) {
+      console.error(err.message);
       set({ products: [] });
     } finally {
-      set({ isProductLoading: false });
+      set({ loading: false });
     }
   },
 }));

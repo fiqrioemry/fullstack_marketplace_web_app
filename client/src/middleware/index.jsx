@@ -1,34 +1,34 @@
+/* eslint-disable react/prop-types */
 import { Fragment } from "react";
 import { Navigate } from "react-router-dom";
-import { useProvider } from "../context/GlobalProvider";
+import { useProvider } from "@/context/GlobalProvider";
 
-const authPath = new Set(["user", "shop", "cart", "shipment", "open-shop"]);
-const nonAuthPath = new Set(["signin", "signup", "reset-password"]);
+export const AuthRoute = ({ children }) => {
+  const { isAuthenticate } = useProvider();
 
-// eslint-disable-next-line react/prop-types
-const AuthRoute = ({ children }) => {
-  const { currentPath, userData } = useProvider();
-  const pathSegment = currentPath.split("/")[1];
-  const isAuthPath = authPath.has(pathSegment);
-  const isNonAuthPath = nonAuthPath.has(pathSegment);
-
-  if (userData && isNonAuthPath) {
-    return <Navigate to="/" />;
-  }
-
-  if (!userData && isAuthPath) {
-    return <Navigate to="/signin" />;
-  }
-
-  if (userData && userData.role === "seller" && pathSegment === "open-shop") {
-    return <Navigate to="/shop" />;
-  }
-
-  if (userData && userData.role !== "seller" && pathSegment === "shop") {
+  if (!isAuthenticate) {
     return <Navigate to="/" />;
   }
 
   return <Fragment>{children}</Fragment>;
 };
 
-export default AuthRoute;
+export const SellerRoute = ({ children }) => {
+  const { isAuthenticate, user } = useProvider();
+
+  if (!isAuthenticate || user?.role !== "seller") {
+    return <Navigate to="/" />;
+  }
+
+  return <Fragment>{children}</Fragment>;
+};
+
+export const NonAuthRoute = ({ children }) => {
+  const { isAuthenticate } = useProvider();
+
+  if (isAuthenticate === true) {
+    return <Navigate to="/" />;
+  }
+
+  return <Fragment>{children}</Fragment>;
+};

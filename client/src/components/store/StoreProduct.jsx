@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectContent,
 } from "@/components/ui/select";
-import ProductCard from "../ProductCard";
+import ProductCard from "@/components/card/ProductCard";
 
 const StoreProduct = () => {
   return (

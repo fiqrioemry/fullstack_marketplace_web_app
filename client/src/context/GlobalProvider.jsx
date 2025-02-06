@@ -1,30 +1,31 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import { useLocation } from "react-router-dom";
 import { createContext, useContext } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import PageLoading from "../components/loading/PageLoading";
+import { useLocation } from "react-router-dom";
 
 const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
-  const location = useLocation();
-  const currentPath = location.pathname;
-  const { isCheckAuth, userData, userAuthCheck } = useAuthStore();
+  const location = useLocation().pathname;
+  const { isAuthenticate, authCheck, user } = useAuthStore();
 
   useEffect(() => {
-    userAuthCheck();
-  }, [userAuthCheck]);
+    authCheck();
+  }, [authCheck]);
 
   return (
     <GlobalContext.Provider
       value={{
-        currentPath,
-        userData,
+        user,
+        location,
+        isAuthenticate,
       }}
     >
       <Toaster />
-      {isCheckAuth ? null : children}
+      {isAuthenticate === null ? <PageLoading /> : children}
     </GlobalContext.Provider>
   );
 };

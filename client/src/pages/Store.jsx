@@ -1,10 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Share2, StoreIcon } from "lucide-react";
-import StoreInfo from "../components/modal/StoreInfo";
-import StoreAbout from "../components/store/StoreAbout";
-import StoreProduct from "../components/store/StoreProduct";
-import { ModalContainer } from "../components/modal/ModalContainer";
+import StoreAbout from "@/components/store/StoreAbout";
+import StoreProduct from "@/components/store/StoreProduct";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Store = () => {
@@ -24,7 +21,7 @@ const Store = () => {
               <div className="flex items-center space-x-2  ">
                 <Button>Chat Penjual</Button>
 
-                <ModalContainer
+                {/* <ModalContainer
                   title={
                     <Button variant="outline">
                       <StoreIcon />
@@ -42,7 +39,7 @@ const Store = () => {
                   }
                 >
                   <StoreInfo />
-                </ModalContainer>
+                </ModalContainer> */}
               </div>
             </div>
           </div>
