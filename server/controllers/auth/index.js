@@ -98,7 +98,7 @@ async function login(req, res) {
     }
 
     const accessToken = jwt.sign(
-      { userId: user.id, storeId: user.store?.id },
+      { userId: user.id, storeId: user.store?.id, role: user.role },
       process.env.ACCESS_TOKEN,
       {
         expiresIn: '1d',
@@ -106,7 +106,7 @@ async function login(req, res) {
     );
 
     const refreshToken = jwt.sign(
-      { userId: user.id, storeId: user.store?.id },
+      { userId: user.id, storeId: user.store?.id, role: user.role },
       process.env.REFRESH_TOKEN,
       {
         expiresIn: '7d',
@@ -211,7 +211,7 @@ async function refreshToken(req, res) {
     }
 
     const accessToken = jwt.sign(
-      { userId: user.id, storeId: user.store?.id },
+      { userId: user.id, storeId: user.store?.id, role: user.role },
       process.env.ACCESS_TOKEN,
       { expiresIn: '1d' },
     );

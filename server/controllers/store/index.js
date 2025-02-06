@@ -15,10 +15,6 @@ async function getStoreInfo(req, res) {
           as: 'product',
           include: [
             {
-              model: Category,
-              as: 'category',
-            },
-            {
               model: Gallery,
               as: 'gallery',
               attributes: ['image'],
@@ -61,12 +57,15 @@ async function getStoreInfo(req, res) {
 }
 
 async function getMyStoreProfile(req, res) {
-  const { storeId } = req.user;
+  const { userId, storeId, role } = req.user;
   try {
+    if (role !== 'seller')
+      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
+
     const store = await Store.findByPk(storeId);
 
-    if (!store)
-      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
+    if (!store || store.userId !== userId)
+      return res.status(404).json({ message: 'UnAuthorized Access !!!' });
 
     const payload = {
       name: store.name,
@@ -85,17 +84,86 @@ async function getMyStoreProfile(req, res) {
   }
 }
 
+const updateMyStoreProfile = async function (req, res) {
+  const { userId, storeId, role } = req.user;
+  const { name, city, description, updateType } = req.body;
+  const avatarFile = req.files?.avatar?.[0];
+  const imageFile = req.files?.image?.[0];
+
+  try {
+    if (role !== 'seller') {
+      return res.status(401).send({ message: 'Unauthorized Access' });
+    }
+
+    const store = await Store.findByPk(storeId);
+
+    if (!store || store.userId !== userId) {
+      if (avatarFile) await fs.unlink(avatarFile.path);
+      if (imageFile) await fs.unlink(imageFile.path);
+      return res.status(404).json({ message: 'Unauthorized Access' });
+    }
+
+    let avatar = store.avatar;
+    let image = store.image;
+
+    if (avatarFile && (!updateType || updateType.includes('avatar'))) {
+      const updatedAvatar = await uploadMediaToCloudinary(avatarFile.path);
+
+      if (store.avatar) {
+        await deleteMediaFromCloudinary(store.avatar);
+      }
+
+      avatar = updatedAvatar.secure_url;
+      await fs.unlink(avatarFile.path);
+    }
+
+    if (imageFile && (!updateType || updateType.includes('image'))) {
+      const updatedImage = await uploadMediaToCloudinary(imageFile.path);
+
+      if (store.image) {
+        await deleteMediaFromCloudinary(store.image);
+      }
+
+      image = updatedImage.secure_url;
+      await fs.unlink(imageFile.path);
+    }
+
+    const updatedStore = {
+      name: name || store.name,
+      avatar: avatar,
+      image: image,
+      city: city || store.city,
+      description: description || store.description,
+    };
+
+    await store.update(updatedStore);
+
+    return res.status(200).json({
+      message: 'Store Profile is updated',
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Failed to Update Profile',
+      error: error.message,
+    });
+  }
+};
 async function getMyStoreProducts(req, res) {
   try {
     let { search, category, minPrice, maxPrice, page, sortBy, orderBy, limit } =
       req.query;
-    const { storeId } = req.user;
+    const { storeId, role } = req.user;
 
     const dataPerPage = Number(limit) > 0 ? parseInt(limit) : 5;
     const currentPage = Number(page) > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
 
-    let query = {};
+    let query = {
+      storeId: storeId,
+    };
+
+    if (role !== 'seller')
+      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
 
     // **Filter by Search**
     if (search && search.trim()) {
@@ -155,19 +223,13 @@ async function getMyStoreProducts(req, res) {
       slug: item.slug,
       price: item.price,
       stock: item.stock,
-      city: item.store?.city,
-      storeId: item.storeId,
-      storeName: item.store?.name,
-      storeSlug: item.store?.slug,
-      storeImage: item.store?.image,
       description: item.description,
       categoryId: item.category?.id,
       categoryName: item.category?.name,
-      categorySlug: item.category?.slug,
       images: item.gallery.map((img) => img.image),
     }));
 
-    const totalPage = Math.floor(product.count / dataPerPage);
+    const totalPage = Math.ceil(product.count / dataPerPage);
 
     return res.status(200).json({
       products: data,
@@ -176,17 +238,17 @@ async function getMyStoreProducts(req, res) {
       totalData: product.count,
     });
   } catch (error) {
-    console.error('Error in getAllProducts:', error);
+    console.error('Error in getMyStoreProducts:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
 async function createProduct(req, res) {
   try {
-    const storeId = req.user?.storeId;
+    const { storeId, role } = req.user;
 
-    if (!storeId) {
-      return res.status(400).send({ message: "You don't have a store." });
-    }
+    if (role !== 'seller')
+      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
 
     const { name, description, price, stock, categoryId } = req.body;
 
@@ -220,11 +282,9 @@ async function createProduct(req, res) {
     });
 
     const uploadPromises = req.files.map(async (file) => {
-      // Upload media ke Cloudinary
       const uploadedMedia = await uploadMediaToCloudinary(file.path);
 
-      // Setelah berhasil upload, hapus file lokal
-      await removeUploadFile(file.path);
+      await fs.unlink(file.path);
 
       return uploadedMedia;
     });
@@ -233,7 +293,7 @@ async function createProduct(req, res) {
 
     const images = uploadedImages.map((url) => ({
       productId: newProduct.id,
-      image: url.secure_url, // Misalnya Cloudinary mengembalikan URL di property secure_url
+      image: url.secure_url,
     }));
 
     await Gallery.bulkCreate(images);
@@ -247,11 +307,6 @@ async function createProduct(req, res) {
   }
 }
 
-async function getAllStoreProducts(req, res) {
-  try {
-  } catch (error) {}
-}
-
 async function updateProduct(req, res) {
   try {
   } catch (error) {}
@@ -262,54 +317,12 @@ async function deleteProduct(req, res) {
   } catch (error) {}
 }
 
-// admin only
-async function getAllStores(req, res) {
-  try {
-  } catch (error) {}
-}
-
-async function getStoreStatistic(req, res) {
-  const slug = req.params;
-  try {
-    const store = await Store.findOne({
-      where: { slug },
-      attributes: [{ exclude: ['userId'] }],
-      include: [{ model: Product, as: 'product' }],
-    });
-
-    if (!store) return res.status(404).json({ message: 'Store not found' });
-
-    return res.status(200).json({ data: store });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Failed to retrieve store detail',
-      error: error.message,
-    });
-  }
-}
-
-async function updateStore(req, res) {
-  try {
-  } catch (error) {}
-}
-
-// admin only
-async function deleteStore(req, res) {
-  try {
-  } catch (error) {}
-}
-
-async function getMyStoreProduct(req, res) {
-  try {
-  } catch (error) {}
-}
-
 module.exports = {
   createProduct,
   updateProduct,
-  deleteProduct,
-  getAllStores,
   getStoreInfo,
-  getStoreStatistic,
-  getAllStoreProducts,
+  getMyStoreProfile,
+  updateMyStoreProfile,
+  getMyStoreProducts,
+  deleteProduct,
 };

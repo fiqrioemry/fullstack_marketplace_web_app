@@ -3,9 +3,9 @@ const {
   deleteMediaFromCloudinary,
 } = require('../../utils/cloudinary');
 const { Op } = require('sequelize');
+const fs = require('fs').promises;
 const { client } = require('../../utils/redis');
 const { User, Address } = require('../../models');
-const { removeUploadFile } = require('../../utils/removeUploadFile');
 
 async function getProfile(req, res) {
   const { userId } = req.user;
@@ -15,11 +15,17 @@ async function getProfile(req, res) {
 
     if (cachedUser) {
       return res.status(200).json({
-        data: JSON.parse(cachedUser),
+        payload: JSON.parse(cachedUser),
       });
     }
 
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     const payload = {
       phone: user.phone,
@@ -29,7 +35,7 @@ async function getProfile(req, res) {
       birthday: user.birthday,
     };
 
-    // await client.setEx(`profile:${user.id}`, 900, JSON.stringify(payload));
+    await client.setEx(`profile:${userId}`, 900, JSON.stringify(payload));
 
     return res.status(200).json({
       payload,
@@ -46,6 +52,7 @@ async function updateProfile(req, res) {
   const file = req.file;
   const { userId } = req.user;
   const { fullname, gender, birthday, phone } = req.body;
+
   try {
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['password'] },
@@ -69,24 +76,25 @@ async function updateProfile(req, res) {
 
       avatar = updatedAvatar.secure_url;
 
-      await removeUploadFile(file.path);
+      await fs.unlink(file.path);
     }
 
+    // Update data pengguna
     const updatedUser = {
-      fullname: fullname,
+      fullname: fullname || user.fullname,
       avatar: avatar,
-      birthday: birthday,
-      phone: phone,
-      gender: gender,
+      birthday: birthday || user.birthday,
+      phone: phone || user.phone,
+      gender: gender || user.gender,
     };
 
     await user.update(updatedUser);
 
-    // await client.setEx(`profile:${userId}`, 900, JSON.stringify(updatedUser));
+    // Update data di Redis dengan TTL 15 menit (900 detik)
+    await client.setEx(`profile:${userId}`, 900, JSON.stringify(updatedUser));
 
     return res.status(200).json({
       message: 'Profile is updated',
-      payload: updatedUser,
     });
   } catch (error) {
     return res.status(500).json({

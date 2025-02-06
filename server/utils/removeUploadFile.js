@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require('fs').promises;
 
 /**
  * Menghapus file lokal berdasarkan path yang diberikan.
@@ -11,7 +11,7 @@ async function removeUploadFile(filePath) {
     await fs.unlink(filePath);
   } catch (error) {
     // mengembalikan error jika gagal delete
-    throw new Error("Failed to delete local file");
+    throw new Error('Failed to delete local file');
   }
 }
 
