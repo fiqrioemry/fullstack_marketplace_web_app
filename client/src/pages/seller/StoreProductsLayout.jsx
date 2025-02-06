@@ -1,18 +1,28 @@
 import { useEffect } from "react";
 import { useShopStore } from "@/store/useShopStore";
-import ProfileLoading from "@/components/loading/ProfileLoading";
-import StoreProducts from "@/components/dashboard/seller/StoreProducts";
+import StoreProducts from "../../components/dashboard/seller/StoreProducts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const StoreProductsLayout = () => {
-  const { getStoreProduct, products, loading } = useShopStore();
+  const { getStoreProduct } = useShopStore();
 
   useEffect(() => {
-    getStoreProduct({ limit: 10 });
+    getStoreProduct();
   }, [getStoreProduct]);
 
   return (
     <section className="space-y-6">
-      {loading ? <ProfileLoading /> : <StoreProducts products={products} />}
+      <Tabs defaultValue="account" className="w-[400px]">
+        <TabsList>
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
+        </TabsList>
+        <TabsContent value="account">
+          Make changes to your account here.
+        </TabsContent>
+        <TabsContent value="password">Change your password here.</TabsContent>
+      </Tabs>
+      <StoreProducts />
     </section>
   );
 };

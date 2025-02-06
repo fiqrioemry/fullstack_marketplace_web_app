@@ -8,14 +8,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function DeleteBox({ title, description, action, data }) {
+export function DeleteBox({
+  title,
+  description,
+  action,
+  data,
+  size,
+  button = "delete",
+}) {
   const handleSubmit = () => {
     action(data);
   };
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="delete">delete</Button>
+        <Button variant="delete" size={size}>
+          {button}
+        </Button>
       </DialogTrigger>
       <DialogTitle>
         <DialogContent variant="options" className=" sm:max-w-[525px]">

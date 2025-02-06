@@ -12,6 +12,23 @@ export const useShopStore = create((set) => ({
   updating: false,
   loading: false,
 
+  getStoreProduct: async (formData) => {
+    set({ loading: true });
+    try {
+      const { products, totalPage, totalData, currentPage } =
+        await callApi.getStoreProduct(formData);
+      set({
+        products,
+        totalPage,
+        totalData,
+        currentPage,
+      });
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
   getStoreInfo: async () => {
     set({ loading: true });
     try {
@@ -29,24 +46,6 @@ export const useShopStore = create((set) => ({
     try {
       const profile = await callApi.getStoreProfile();
       set({ profile });
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  getStoreProduct: async (formData) => {
-    set({ loading: true });
-    try {
-      const { products, totalPage, totalData, currentPage } =
-        await callApi.getStoreProduct(formData);
-      set({
-        products,
-        totalPage,
-        totalData,
-        currentPage,
-      });
     } catch (err) {
       console.log(err.message);
     } finally {

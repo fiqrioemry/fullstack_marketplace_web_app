@@ -14,6 +14,7 @@ export function DialogForm({
   action,
   button,
   variant,
+  size,
   param = null,
 }) {
   const formik = useFormSchema(state, control, action, param);
@@ -55,7 +56,7 @@ export function DialogForm({
         open={isOpen}
         onOpenChange={(open) => (!open ? handleCloseDialog() : setIsOpen(open))}
       >
-        <Button variant={variant} onClick={() => setIsOpen(true)}>
+        <Button variant={variant} size={size} onClick={() => setIsOpen(true)}>
           {button}
         </Button>
         <DialogContent className="sm:max-w-[425px] p-0">

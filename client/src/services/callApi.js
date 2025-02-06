@@ -163,18 +163,17 @@ const callApi = {
   },
 
   getStoreProduct: async ({
-    search = '',
-    category = [],
-    minPrice = '',
-    maxPrice = '',
+    sortBy = 'createdAt',
+    orderBy = 'desc',
     page = 1,
-    sortBy = 'price',
-    orderBy = 'asc',
-    limit,
+    limit = 10,
+    search = '',
   }) => {
     return authInstance
       .get(
-        `/store/product?search=${search}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&sortBy=${sortBy}&orderBy=${orderBy}&limit=${limit}`,
+        `/store/product?search=${encodeURIComponent(
+          search,
+        )}&sortBy=${sortBy}&orderBy=${orderBy}&page=${page}&limit=${limit}}`,
       )
       .then((res) => res.data)
       .catch(errorHandle);

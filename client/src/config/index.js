@@ -153,6 +153,13 @@ export const openStoreControl = [
   },
 ];
 
+export const productFilterState = {
+  search: '',
+  page: '',
+  orderBy: 'desc',
+  sortBy: 'createdAt',
+};
+
 export const filterControl = [
   {
     name: 'category',
@@ -311,7 +318,7 @@ export const orderState = {
   shipmentCost: [],
 };
 
-export const addProductState = {
+export const productState = {
   name: '',
   categoryId: '',
   description: '',
@@ -320,7 +327,7 @@ export const addProductState = {
   files: '',
 };
 
-export const addProductControll = [
+export const productControl = [
   {
     name: 'name',
     label: 'product name',
