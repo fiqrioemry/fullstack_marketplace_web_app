@@ -34,7 +34,7 @@ const StoreProducts = () => {
   }, [searchForm.values.search]);
 
   return (
-    <div className="overflow-x-auto p-4">
+    <div className="overflow-x-auto">
       <div className="mb-4">
         <input
           type="text"

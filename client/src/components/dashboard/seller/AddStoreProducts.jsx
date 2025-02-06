@@ -1,23 +1,19 @@
-// import { Button } from "../../components/ui/button";
-// import { CloudUpload, FilePlus, X } from "lucide-react";
-// import { useShopStore } from "../../store/useShopStore";
-// import { useFileUpload } from "../../hooks/useFileUpload";
-// import { useHandleForm } from "../../hooks/useHandleForm";
-// import FormControls from "../../components/form/FormControl";
-// import { addProductControll, addProductState } from "@/config";
 
-const Transaction = () => {
+import InputForm from "@/form/InputForm";
+import InputButton from "@/form/InputButton";
+import { useFormSchema } from "@/hooks/useFormSchema";
+import { productControl, productState } from "@/config";
+import { useFileUpload } from "../../../hooks/useFileUpload";
+
+const AddStoreProducts = () => {
   const { createProduct } = useShopStore();
+const productForm = useFormSchema(productState, productControl, createProduct)
 
-  const handleAddProduct = (e) => {
-    handleSubmit(e, createProduct(formData));
-  };
-
-  const isValid = handleValidate(formData);
+const {multiUpload} = useFileUpload()
 
   return (
     <section className="space-y-6">
-      {/* <div>
+      <div>
         {preview && preview.length !== 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {preview.map((view, index) => (
@@ -85,21 +81,12 @@ const Transaction = () => {
         )}
       </div>
       <div className="rounded-md border">
-        <form onSubmit={handleAddProduct} className="p-4 space-y-4">
-          <FormControls
-            formData={formData}
-            handleChange={handleChange}
-            setFormData={setFormData}
-            formControls={controlProductForm}
-          />
-
-          <Button disabled={!isValid} type="submit">
-            Create Product
-          </Button>
-        </form>
-      </div> */}
+        <InputForm formik={} formControl={}>
+          <InputButton title="Submit" formik={} loading={loading} />
+        </InputForm>
+      </div>
     </section>
   );
 };
 
-export default Transaction;
+export default AddStoreProducts;
