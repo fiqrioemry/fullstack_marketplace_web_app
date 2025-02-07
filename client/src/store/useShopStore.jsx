@@ -2,7 +2,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import callApi from "../services/callApi";
 
-export const useShopStore = create((set) => ({
+export const useShopStore = create((set, get) => ({
   store: [],
   profile: [],
   products: [],
@@ -24,11 +24,25 @@ export const useShopStore = create((set) => ({
         currentPage,
       });
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
     } finally {
       set({ loading: false });
     }
   },
+
+  deleteProduct: async (productId) => {
+    set({ loading: true });
+    try {
+      const res = await callApi.deleteProduct(productId);
+      await get().getStoreProduct();
+      toast.success(res.message);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   getStoreInfo: async () => {
     set({ loading: true });
     try {
@@ -66,26 +80,11 @@ export const useShopStore = create((set) => ({
   },
 
   updateProduct: async (formData, productId) => {
-    set({ loading: false });
+    set({ loading: true });
     try {
       const res = await callApi.updateProduct(formData, productId);
+      await get().getStoreProduct();
       toast.success(res.message);
-      const products = await callApi.getStoreProduct();
-      set({ products });
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  deleteProduct: async (productId) => {
-    set({ loading: false });
-    try {
-      const res = await callApi.deleteProduct(productId);
-      toast.success(res.message);
-      const products = await callApi.getStoreProducts();
-      set({ products });
     } catch (err) {
       toast.error(err.message);
     } finally {

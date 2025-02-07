@@ -2,7 +2,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import callApi from "../services/callApi";
 
-export const useUserStore = create((set) => ({
+export const useUserStore = create((set, get) => ({
   profile: [],
   address: [],
   loading: false,
@@ -12,7 +12,6 @@ export const useUserStore = create((set) => ({
     set({ loading: true });
     try {
       const profile = await callApi.getProfile();
-
       set({ profile });
     } catch {
       set({ user: [] });
@@ -26,9 +25,8 @@ export const useUserStore = create((set) => ({
     try {
       console.log(formData);
       const res = await callApi.updateProfile(formData);
+      await get().getProfile();
       toast.success(res.message);
-      const profile = await callApi.getProfile();
-      set({ profile });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -53,9 +51,8 @@ export const useUserStore = create((set) => ({
     try {
       set({ updating: true });
       const res = await callApi.updateAddress(formData, addressId);
+      await get().getAddress();
       toast.success(res.message);
-      const address = await callApi.getAddress();
-      set({ address });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -67,9 +64,8 @@ export const useUserStore = create((set) => ({
     try {
       set({ updating: true });
       const res = await callApi.addAddress(formData);
+      await get().getAddress();
       toast.success(res.message);
-      const address = await callApi.getAddress();
-      set({ address });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -81,9 +77,8 @@ export const useUserStore = create((set) => ({
     try {
       set({ updating: true });
       const res = await callApi.deleteAddress(addressId);
+      await get().getAddress();
       toast.success(res.message);
-      const address = await callApi.getAddress();
-      set({ address });
     } catch (err) {
       toast.error(err.message);
     } finally {

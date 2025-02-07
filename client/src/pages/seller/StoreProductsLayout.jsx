@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { useShopStore } from "@/store/useShopStore";
-import StoreProducts from "../../components/dashboard/seller/StoreProducts";
+import { storeProductFilterState as filterParams } from "@/config";
+import StoreProducts from "@/components/dashboard/seller/StoreProducts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AddStoreProducts from "../../components/dashboard/seller/AddStoreProducts";
+import AddStoreProducts from "@/components/dashboard/seller/AddStoreProducts";
 
 const StoreProductsLayout = () => {
   const { getStoreProduct } = useShopStore();
 
   useEffect(() => {
-    getStoreProduct();
+    getStoreProduct(filterParams);
   }, [getStoreProduct]);
 
   return (

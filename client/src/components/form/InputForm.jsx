@@ -72,7 +72,11 @@ function InputForm({
                           }}
                         />
                       ) : (
-                        <img src={image} className="object-cover" />
+                        <img
+                          src={image}
+                          alt={`image-${index}`}
+                          className="object-cover"
+                        />
                       )}
                     </div>
                   </div>

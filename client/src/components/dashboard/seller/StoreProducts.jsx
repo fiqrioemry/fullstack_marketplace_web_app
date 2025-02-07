@@ -8,7 +8,8 @@ import { productControl, productFilterState } from "@/config";
 import ProductListLoading from "@/components/loading/ProductListLoading";
 
 const StoreProducts = () => {
-  const { products, getStoreProduct, updateProduct, loading } = useShopStore();
+  const { products, getStoreProduct, updateProduct, deleteProduct, loading } =
+    useShopStore();
   const searchForm = useFormSchema(
     productFilterState,
     undefined,
@@ -104,6 +105,7 @@ const StoreProducts = () => {
                   <DeleteBox
                     size="icon"
                     data={product.id}
+                    action={deleteProduct}
                     button={<Trash />}
                     title="Delete Product"
                     description="Are you sure want to delete this product ?"

@@ -329,7 +329,7 @@ export const productState = {
 
 export const productControl = [
   {
-    name: 'files',
+    name: 'images',
     label: 'file',
     placeholder: 'Maksimum 5 Images and less than 1mb each',
     component: 'upload',
@@ -370,3 +370,10 @@ export const productControl = [
     component: 'select',
   },
 ];
+export const storeProductFilterState = {
+  sortBy: 'createdAt',
+  orderBy: 'desc',
+  page: 1,
+  limit: 5,
+  search: '',
+};
