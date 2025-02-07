@@ -1,5 +1,5 @@
+const { Op } = require('sequelize');
 const createSlug = require('../../utils/createSlug');
-const { removeUploadFile } = require('../../utils/removeUploadFile');
 const { uploadMediaToCloudinary } = require('../../utils/cloudinary');
 const { Store, Product, Category, Gallery } = require('../../models');
 
@@ -148,57 +148,40 @@ const updateMyStoreProfile = async function (req, res) {
     });
   }
 };
+
 async function getMyStoreProducts(req, res) {
   try {
-    let { search, category, minPrice, maxPrice, page, sortBy, orderBy, limit } =
-      req.query;
-    const { storeId, role } = req.user;
+    let {
+      sortBy = 'createdAt',
+      orderBy = 'desc',
+      page = 1,
+      limit = 5,
+      search = '',
+    } = req.query;
+    const { storeId } = req.user;
 
     const dataPerPage = Number(limit) > 0 ? parseInt(limit) : 5;
     const currentPage = Number(page) > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
 
-    let query = {
-      storeId: storeId,
-    };
+    let query = { storeId };
 
-    if (role !== 'seller')
-      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
-
-    // **Filter by Search**
-    if (search && search.trim()) {
-      query[Op.or] = [
-        { name: { [Op.like]: `%${search.trim()}%` } },
-        { description: { [Op.like]: `%${search.trim()}%` } },
-      ];
+    const validSortFields = ['price', 'stock', 'category', 'name', 'createdAt'];
+    if (!validSortFields.includes(sortBy)) {
+      sortBy = 'createdAt';
     }
 
-    // **Filter by Category**
-    if (category) {
-      const categoryArray = category
-        .split(',')
-        .map((c) => slugify(c.trim(), { lower: true }));
+    orderBy = orderBy.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
-      const findCategories = await Category.findAll({
-        where: { slug: { [Op.in]: categoryArray } },
-        attributes: ['id'],
-      });
-
-      if (findCategories.length > 0) {
-        query.categoryId = { [Op.in]: findCategories.map((c) => c.id) };
-      } else {
-        return res.status(200).json({ data: [] });
-      }
+    // **Filter berdasarkan search jika ada**
+    if (search) {
+      query = {
+        ...query,
+        [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
+      };
     }
 
-    // **Filter by Price Range**
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price[Op.gte] = Number(minPrice) || 0;
-      if (maxPrice) query.price[Op.lte] = Number(maxPrice) || 0;
-    }
-
-    // **Fetch Products**
+    // Fetch Products
     const product = await Product.findAndCountAll({
       where: query,
       limit: dataPerPage,
@@ -208,15 +191,13 @@ async function getMyStoreProducts(req, res) {
         { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
       ],
       distinct: true,
-      order: [[sortBy || 'createdAt', orderBy?.toUpperCase() || 'DESC']],
+      order: [[sortBy, orderBy]],
     });
 
-    // **Jika tidak ada produk, kembalikan array kosong**
     if (product.count === 0) {
-      return res.status(200).json({ data: [] });
+      return res.status(200).json({ products: [] });
     }
 
-    // **Format Response**
     const data = product.rows.map((item) => ({
       id: item.id,
       name: item.name,
