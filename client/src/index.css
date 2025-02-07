@@ -102,6 +102,9 @@
   h5 {
     @apply text-sm font-medium;
   }
+  h6 {
+    @apply text-xs text-red-500;
+  }
 
   .link_animate {
     @apply text-primary md:text-sm text-xs hover:text-primary/60 font-medium duration-300 transition-all;

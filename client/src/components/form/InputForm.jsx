@@ -5,14 +5,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useProductStore } from "@/store/useProductStore";
-import { useFileUpload } from "../../hooks/useFileUpload";
+import { useFileUpload } from "@/hooks/useFileUpload";
 import { CloudUpload, FilePlus, X } from "lucide-react";
+import InputLabel from "../ui/InputLabel";
 
 function InputForm({
-  formControl,
   formik,
   formStyle,
   inputStyle,
+  formControl,
   disabled = false,
   children,
 }) {
@@ -46,16 +47,7 @@ function InputForm({
       case "input":
         element = (
           <div>
-            <div className="flex items-center space-x-2 mb-2">
-              <Label htmlFor={control.label} className="label_input">
-                {control.label}
-              </Label>
-              {formik.touched[control.name] && formik.errors[control.name] && (
-                <p className="text-red-500 text-xs">
-                  {formik.errors[control.name]}
-                </p>
-              )}
-            </div>
+            <InputLabel formik={formik} control={control} />
             <Input
               id={control.label}
               name={control.name}
@@ -80,8 +72,8 @@ function InputForm({
                 {formik.values[control.name].map((image, index) => (
                   <div className="relative" key={index}>
                     <button
-                      name={control.name}
                       type="button"
+                      name={control.name}
                       className="remove_preview_btn"
                       onClick={() => removePreview(control.name, index)}
                     >
@@ -91,7 +83,7 @@ function InputForm({
                       {image instanceof File ? (
                         <img
                           src={URL.createObjectURL(image)}
-                          className="object-cover"
+                          className="w-full h-full object-cover"
                           onLoad={(e) => URL.revokeObjectURL(e.target.src)}
                         />
                       ) : (
@@ -100,8 +92,9 @@ function InputForm({
                     </div>
                   </div>
                 ))}
+                {/* kalau file tidak melebihi maksimum, kolom tambah ditampilkan */}
                 {formik.values[control.name].length < 5 && (
-                  <div className="h-40 w-full">
+                  <div>
                     <label htmlFor={control.label} className="upload_btn">
                       <FilePlus size={20} />
                       <input

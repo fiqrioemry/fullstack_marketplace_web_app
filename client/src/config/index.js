@@ -58,14 +58,14 @@ export const loginControl = [
     type: 'email',
     label: 'email',
     placeholder: 'Enter your email',
-    style: 'flex items-center capitalize',
+    component: 'input',
   },
   {
     name: 'password',
     label: 'password',
     type: 'password',
     placeholder: 'Enter your password',
-    style: 'flex items-center capitalize',
+    component: 'input',
   },
 ];
 
