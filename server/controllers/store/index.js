@@ -235,6 +235,7 @@ async function getMyStoreProducts(req, res) {
 }
 
 async function createProduct(req, res) {
+  console.log('CREATING PRODUCT CREATING PRODUCT CREATING PRODUCT');
   const t = await sequelize.transaction();
   try {
     const { storeId, role } = req.user;
@@ -302,28 +303,38 @@ async function createProduct(req, res) {
 }
 
 const updateProduct = async function (req, res) {
+  console.log('UPDATING PRODUCT UPDATING PRODUCT UPDATING PRODUCT');
   const t = await sequelize.transaction();
   try {
     const { productId } = req.params;
-    const { name, description, price, stock, categoryId, deleteImages } =
-      req.body;
+    const { name, images, description, price, stock, categoryId } = req.body;
 
     const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).send({ message: 'Product not found' });
     }
 
-    if (deleteImages && deleteImages.length > 0) {
-      for (const imageUrl of deleteImages) {
-        await deleteMediaFromCloudinary(imageUrl);
-        await Gallery.destroy({
-          where: { productId, image: imageUrl },
-          transaction: t,
-        });
-      }
+    // Hapus semua gallery dengan productId kecuali yang ada dalam images
+    const imagesToDelete = await Gallery.findAll({
+      where: {
+        productId,
+        image: { [Op.notIn]: images },
+      },
+    });
+
+    for (const img of imagesToDelete) {
+      await deleteMediaFromCloudinary(img.image);
     }
 
-    let images = [];
+    await Gallery.destroy({
+      where: {
+        productId,
+        image: { [Op.notIn]: images },
+      },
+      transaction: t,
+    });
+
+    let newImages = [];
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map(async (file) => {
         const uploadedMedia = await uploadMediaToCloudinary(file.path);
@@ -332,12 +343,12 @@ const updateProduct = async function (req, res) {
       });
 
       const uploadedImages = await Promise.all(uploadPromises);
-      images = uploadedImages.map((url) => ({
+      newImages = uploadedImages.map((url) => ({
         productId: product.id,
         image: url.secure_url,
       }));
 
-      await Gallery.bulkCreate(images, { transaction: t });
+      await Gallery.bulkCreate(newImages, { transaction: t });
     }
 
     await product.update(

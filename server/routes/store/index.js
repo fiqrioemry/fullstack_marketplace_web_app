@@ -17,13 +17,13 @@ router.get('/:slug', getStoreInfo);
 router.post(
   '/product',
   isAuthenticate,
-  upload('image').array('files'),
+  upload('image').array('images'),
   createProduct,
 );
 router.put(
-  '/product',
+  '/product/:productId',
   isAuthenticate,
-  upload('image').array('files'),
+  upload('image').array('images'),
   updateProduct,
 );
 
