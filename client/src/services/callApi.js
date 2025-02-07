@@ -2,6 +2,7 @@ import Cookies from 'js-cookie';
 import { authInstance, publicInstance } from './instance';
 
 const errorHandle = (error) => {
+  console.log(error);
   const errorMessage = error.response?.data?.message || 'Something went wrong';
   return Promise.reject(new Error(errorMessage));
 };
@@ -180,7 +181,6 @@ const callApi = {
   },
 
   createProduct: async (formData) => {
-    console.log(formData);
     return authInstance
       .post('/store/product', formData, {
         headers: {
