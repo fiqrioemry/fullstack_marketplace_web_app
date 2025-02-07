@@ -81,9 +81,9 @@ function InputForm({
                   <div className="relative" key={index}>
                     <button
                       name={control.name}
-                      onClick={() => removePreview(control.name, index)}
                       type="button"
-                      className="remove_preview_button"
+                      className="remove_preview_btn"
+                      onClick={() => removePreview(control.name, index)}
                     >
                       <X size={14} />
                     </button>
@@ -120,10 +120,10 @@ function InputForm({
               </div>
             ) : (
               <label
-                onDrop={(e) => handleDrop(e, control.name)}
-                className="upload_btn bg-red-500"
+                className="upload_btn"
                 htmlFor={control.label}
                 onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, control.name)}
               >
                 <div className="flex_center">
                   <CloudUpload size={24} />

@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 
 const UploadButton = ({ title, inputName, icon, action, loading, variant }) => {
   return (
-    <Button variant={variant} className="w-full" disabled={loading}>
+    <Button
+      variant={variant}
+      className="relative w-full overflow-hidden"
+      disabled={loading}
+    >
       {loading ? (
         <Loader className="animate-spin" />
       ) : (
@@ -13,7 +17,10 @@ const UploadButton = ({ title, inputName, icon, action, loading, variant }) => {
           <span>{title}</span>
         </>
       )}
-      <label htmlFor="file" className="absolute w-full h-full cursor-pointer">
+      <label
+        htmlFor="file"
+        className="absolute z-10 h-full w-full bg-transparent"
+      >
         <input
           id="file"
           name={inputName}
