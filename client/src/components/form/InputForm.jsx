@@ -77,7 +77,7 @@ function InputForm({
             {formik.values[control.name] &&
             formik.values[control.name].length !== 0 ? (
               <div className="grid_display_5">
-                {formik.values[control.name].map((url, index) => (
+                {formik.values[control.name].map((image, index) => (
                   <div className="relative" key={index}>
                     <button
                       name={control.name}
@@ -88,7 +88,15 @@ function InputForm({
                       <X size={14} />
                     </button>
                     <div className="h-40 rounded-md overflow-hidden">
-                      <img src={url} className="object-cover" />
+                      {image instanceof File ? (
+                        <img
+                          src={URL.createObjectURL(image)}
+                          className="object-cover"
+                          onLoad={(e) => URL.revokeObjectURL(e.target.src)}
+                        />
+                      ) : (
+                        <img src={image} className="object-cover" />
+                      )}
                     </div>
                   </div>
                 ))}

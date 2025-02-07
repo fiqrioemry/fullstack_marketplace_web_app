@@ -1,4 +1,3 @@
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 export const useFileUpload = (
@@ -8,8 +7,6 @@ export const useFileUpload = (
   size = 1000000,
   amount = 5
 ) => {
-  const [preview, setPreview] = useState([]);
-
   // Validasi ukuran file
   const isSizeValid = (file) => {
     if (file.size > size) {
@@ -30,51 +27,68 @@ export const useFileUpload = (
     return true;
   };
 
-  // Fungsi untuk single file upload
+  // Untuk upload single file
   const singleFile = (e) => {
     const { name, files } = e.target;
     if (files && files.length > 0) {
-      console.log(files);
       const file = files[0];
-      if (isSizeValid(file)) {
-        setFieldValue(name, [URL.createObjectURL(file)]);
 
-        if (upload) {
-          const updatedFormData = { ...formValues, [name]: file };
-          upload(updatedFormData);
-        }
-      }
+      // Cek size
+      if (!isSizeValid(file)) return;
+
+      // Set value ke form
+      setFieldValue(name, file);
+
+      // Jika harus langsung upload
+      if (upload) upload({ ...formValues, [name]: file });
     }
     e.target.value = "";
   };
 
+  // Untuk upload multiple file
   const multiFile = (e) => {
     const { name, files } = e.target;
     if (files && files.length > 0) {
-      const validFiles = Array.from(files).filter(isSizeValid);
-      const validAmount = isAmountValid(preview, files);
-      if (validFiles && validAmount) {
-        const urlFiles = validFiles.map((file) => URL.createObjectURL(file));
-        setFieldValue(name, { ...formValues, [name]: urlFiles });
-      }
+      const newFiles = Array.from(files);
+
+      // Validasi semua file
+      const validFiles = newFiles.filter(isSizeValid);
+
+      if (validFiles.length === 0) return;
+
+      // Pastikan formValues[name] sudah berupa array
+      const existingFiles = formValues[name] || [];
+
+      // Validasi jumlah file
+      if (!isAmountValid(existingFiles, validFiles)) return;
+
+      // Set value ke form (menambahkan file baru ke yang sudah ada)
+      const updatedFiles = [...existingFiles, ...validFiles];
+      setFieldValue(name, updatedFiles);
+
+      // Jika harus langsung upload
+      if (upload) upload({ ...formValues, [name]: updatedFiles });
     }
     e.target.value = "";
   };
 
+  // Untuk menghapus file preview
   const removePreview = (name, index) => {
-    setFieldValue(name, formValues[name]?.filter((_, i) => i !== index) || []);
+    const updatedImages = formValues[name].filter((_, i) => i !== index);
+    setFieldValue(name, updatedImages);
   };
 
-  const handleDrop = (e) => {
+  // Untuk drag & drop file
+  const handleDrop = (e, fieldName) => {
     e.preventDefault();
-    e.stopPropagation(); // Mencegah event bubbling ke elemen lain
+    e.stopPropagation();
 
     if (!e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
 
     const fakeEvent = {
-      target: { name: "files", files: e.dataTransfer.files },
+      target: { name: fieldName, files: e.dataTransfer.files },
     };
-    multiFile(fakeEvent, true);
+    multiFile(fakeEvent);
   };
 
   const handleDragOver = (e) => {
@@ -84,7 +98,6 @@ export const useFileUpload = (
   };
 
   return {
-    preview,
     handleDrop,
     singleFile,
     multiFile,
