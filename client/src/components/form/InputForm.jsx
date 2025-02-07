@@ -109,9 +109,9 @@ function InputForm({
                         required
                         multiple
                         type="file"
-                        name={control.name}
                         accept="image/*"
                         className="hidden"
+                        name={control.name}
                         onChange={multiFile}
                       />
                     </label>
@@ -120,8 +120,8 @@ function InputForm({
               </div>
             ) : (
               <label
-                onDrop={handleDrop}
-                className="upload_btn"
+                onDrop={(e) => handleDrop(e, control.name)}
+                className="upload_btn bg-red-500"
                 htmlFor={control.label}
                 onDragOver={handleDragOver}
               >

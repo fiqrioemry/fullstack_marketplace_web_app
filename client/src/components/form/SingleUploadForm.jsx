@@ -30,7 +30,7 @@ const SingleUploadForm = ({
         {loading ? (
           "Uploading..."
         ) : (
-          <div className="flex items-center text-xs md:text-sm justify-center gap-4">
+          <div className="flex items-center text-xs md:dtext-base justify-center gap-4">
             <Camera className="hidden md:block" />
             {buttonTitle}
           </div>

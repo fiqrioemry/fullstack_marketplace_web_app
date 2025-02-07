@@ -8,87 +8,80 @@ export const useFileUpload = (
   amount = 5
 ) => {
   // Validasi ukuran file
-  const isSizeValid = (file) => {
-    if (file.size > size) {
-      toast.error(
-        `File size exceeds the maximum limit of ${size / 1000000} MB`
-      );
-      return false;
-    }
-    return true;
+  const isSizeValid = (files) => {
+    return files.every((file) => {
+      if (file.size > size) {
+        toast.error(
+          `File size exceeds the maximum limit of ${size / 1000000} MB`
+        );
+        return false;
+      }
+      return true;
+    });
   };
 
   // Validasi jumlah file
-  const isAmountValid = (currentPreview, newFiles) => {
-    if (currentPreview.length + newFiles.length > amount) {
+  const isAmountValid = (newFiles) => {
+    const existingFiles = formValues[name] || [];
+    if (existingFiles.length + newFiles.length > amount) {
       toast.error(`You can only upload up to ${amount} files.`);
       return false;
     }
     return true;
   };
 
-  // Untuk upload single file
+  // Single File Upload
   const singleFile = (e) => {
     const { name, files } = e.target;
     if (files && files.length > 0) {
       const file = files[0];
 
-      // Cek size
-      if (!isSizeValid(file)) return;
+      // validasi ukuran file
+      if (!isSizeValid([file])) return;
 
-      // Set value ke form
       setFieldValue(name, file);
 
-      // Jika harus langsung upload
+      // langsung upload jika variable fungsi ada
       if (upload) upload({ ...formValues, [name]: file });
     }
     e.target.value = "";
   };
 
-  // Untuk upload multiple file
+  // Multiple File Upload
   const multiFile = (e) => {
     const { name, files } = e.target;
     if (files && files.length > 0) {
       const newFiles = Array.from(files);
 
-      // Validasi semua file
-      const validFiles = newFiles.filter(isSizeValid);
+      // validasi ukuran dan jumlah file
+      if (!isSizeValid(newFiles) || !isAmountValid(newFiles)) return;
 
-      if (validFiles.length === 0) return;
-
-      // Pastikan formValues[name] sudah berupa array
-      const existingFiles = formValues[name] || [];
-
-      // Validasi jumlah file
-      if (!isAmountValid(existingFiles, validFiles)) return;
-
-      // Set value ke form (menambahkan file baru ke yang sudah ada)
-      const updatedFiles = [...existingFiles, ...validFiles];
+      const updatedFiles = [...(formValues[name] || []), ...newFiles];
       setFieldValue(name, updatedFiles);
 
-      // Jika harus langsung upload
+      // langsung upload jika variable fungsi ada
       if (upload) upload({ ...formValues, [name]: updatedFiles });
     }
     e.target.value = "";
   };
 
-  // Untuk menghapus file preview
+  // Remove File Preview
   const removePreview = (name, index) => {
     const updatedImages = formValues[name].filter((_, i) => i !== index);
     setFieldValue(name, updatedImages);
   };
 
-  // Untuk drag & drop file
-  const handleDrop = (e, fieldName) => {
+  // Drag & Drop Handling
+  const handleDrop = (e, name) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
 
-    const fakeEvent = {
-      target: { name: fieldName, files: e.dataTransfer.files },
+    const newEvent = {
+      target: { name: name, files: e.dataTransfer.files },
     };
-    multiFile(fakeEvent);
+    multiFile(newEvent);
   };
 
   const handleDragOver = (e) => {
@@ -98,10 +91,10 @@ export const useFileUpload = (
   };
 
   return {
-    handleDrop,
     singleFile,
     multiFile,
     removePreview,
+    handleDrop,
     handleDragOver,
   };
 };

@@ -5,7 +5,7 @@ import InputForm from "@/components/form/InputForm";
 import { useUserStore } from "@/store/useUserStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useFileUpload } from "@/hooks/useFileUpload";
-import SingleUploadForm from "@/components/form/SingleUploadForm";
+import UploadButton from "@/components/form/UploadButton";
 
 const Profile = () => {
   const [editProfile, setEditProfile] = useState(false);
@@ -38,12 +38,12 @@ const Profile = () => {
               <div className="overflow-hidden">
                 <img src={profile?.avatar} alt="avatar" />
               </div>
-              <SingleUploadForm
+              <UploadButton
+                title="Change photo"
                 loading={updating}
                 inputName="avatar"
                 action={singleFile}
                 disabled={editProfile}
-                buttonTitle="Change photo"
               />
             </div>
           </div>
