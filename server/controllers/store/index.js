@@ -1,7 +1,14 @@
+const fs = require('fs').promises;
 const { Op } = require('sequelize');
 const createSlug = require('../../utils/createSlug');
 const { uploadMediaToCloudinary } = require('../../utils/cloudinary');
-const { Store, Product, Category, Gallery } = require('../../models');
+const {
+  Store,
+  Product,
+  Category,
+  Gallery,
+  sequelize,
+} = require('../../models');
 
 async function getStoreInfo(req, res) {
   const slug = req.params;
@@ -225,14 +232,15 @@ async function getMyStoreProducts(req, res) {
 }
 
 async function createProduct(req, res) {
+  const t = await sequelize.transaction();
   try {
     const { storeId, role } = req.user;
 
-    if (role !== 'seller')
+    if (role !== 'seller') {
       return res.status(401).json({ message: 'UnAuthorized Access !!!' });
+    }
 
     const { name, description, price, stock, categoryId } = req.body;
-
     if (!name || !description || !price || !stock || !categoryId) {
       return res.status(400).send({ message: 'All fields are required' });
     }
@@ -244,7 +252,6 @@ async function createProduct(req, res) {
     }
 
     const slug = await createSlug(name);
-
     const existingProduct = await Product.findOne({ where: { slug } });
     if (existingProduct) {
       return res.status(400).send({
@@ -252,35 +259,38 @@ async function createProduct(req, res) {
       });
     }
 
-    const newProduct = await Product.create({
-      storeId,
-      name,
-      slug,
-      description,
-      price,
-      stock,
-      categoryId,
-    });
+    const newProduct = await Product.create(
+      {
+        storeId,
+        name,
+        slug,
+        description,
+        price,
+        stock,
+        categoryId,
+      },
+      { transaction: t },
+    );
 
     const uploadPromises = req.files.map(async (file) => {
       const uploadedMedia = await uploadMediaToCloudinary(file.path);
-
       await fs.unlink(file.path);
-
       return uploadedMedia;
     });
 
     const uploadedImages = await Promise.all(uploadPromises);
-
     const images = uploadedImages.map((url) => ({
       productId: newProduct.id,
       image: url.secure_url,
     }));
 
-    await Gallery.bulkCreate(images);
+    await Gallery.bulkCreate(images, { transaction: t });
+
+    await t.commit();
 
     return res.status(201).send({ message: 'New product is added' });
   } catch (error) {
+    await t.rollback();
     return res.status(500).send({
       message: 'Failed to create new product',
       error: error.message,
