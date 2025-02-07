@@ -40,6 +40,22 @@ const baseValidations = {
   password: Yup.string().min(5, 'Min. 5 characters').required('Required'),
   address: Yup.string().min(12, 'Min. 12 characters').required('Required'),
   description: Yup.string().min(20, 'Min. 20 characters').required('Required'),
+  categoryId: Yup.mixed().required('Required'),
+  files: Yup.mixed().test(
+    'fileRequired',
+    'At least one file is required',
+    (value) => value && value.length > 0,
+  ),
+  price: Yup.number()
+    .typeError('Price must be a number')
+    .positive('Price must be greater than zero')
+    .required('Required'),
+  stock: Yup.number()
+    .typeError('Stock must be a number')
+    .integer('Stock must be a whole number')
+    .min(0, 'Stock cannot be negative')
+    .required('Required'),
+
   birthday: Yup.date()
     .max(new Date(), 'Cannot be in the future')
     .required('Required')

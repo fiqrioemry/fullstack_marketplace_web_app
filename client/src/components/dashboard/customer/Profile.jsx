@@ -13,13 +13,11 @@ const Profile = () => {
 
   const profileForm = useFormSchema(profile, profileControl, updateProfile);
 
-  const { singleUpload } = useFileUpload(
+  const { singleFile } = useFileUpload(
     profileForm.setFieldValue,
     profileForm.values,
     updateProfile
   );
-
-  console.log(profile);
 
   const handleCancel = () => {
     profileForm.resetForm();
@@ -43,7 +41,7 @@ const Profile = () => {
               <SingleUploadForm
                 loading={updating}
                 inputName="avatar"
-                action={singleUpload}
+                action={singleFile}
                 disabled={editProfile}
                 buttonTitle="Change photo"
               />

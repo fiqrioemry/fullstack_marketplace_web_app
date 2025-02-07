@@ -2,9 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useProductStore } from "@/store/useProductStore";
 import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
-import ProductRelated from "@/components/product/ProductRelated";
 import ProductDisplay from "@/components/product/ProductDisplay";
-import ProductsSkeleton from "@/components/loading/ProductsSkeleton";
 import ProductDisplayLoading from "@/components/loading/ProductDisplayLoading";
 
 const ProductDetail = () => {
@@ -26,11 +24,6 @@ const ProductDetail = () => {
           {product && product.length !== 0 && (
             <ProductDisplay product={product} />
           )}
-          {/* 3. product related
-          {product.length === 0 && <ProductsSkeleton />}
-          {products && products.length !== 0 && (
-            <ProductRelated products={products} />
-          )} */}
         </div>
       </div>
     </section>

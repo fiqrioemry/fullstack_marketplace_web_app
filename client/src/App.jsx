@@ -26,6 +26,7 @@ import MainLayout from "./components/layout/MainLayout";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
 import DashboardLayout from "./components/layout/DashboardLayout";
+import TestingUI from "./pages/TestingUI";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
           <Route path="search" element={<SearchResult />} />
           <Route path=":storename/:slug" element={<ProductDetail />} />
           <Route path="category/:slug" element={<ProductCategory />} />
+          <Route path="testing" element={<TestingUI />} />
 
           <Route
             path="cart"

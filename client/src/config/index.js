@@ -329,11 +329,16 @@ export const productState = {
 
 export const productControl = [
   {
+    name: 'files',
+    label: 'file',
+    placeholder: 'Maksimum 5 Images and less than 1mb each',
+    component: 'upload',
+  },
+  {
     name: 'name',
     label: 'product name',
     type: 'text',
     placeholder: 'Enter your product name ...',
-    style: 'flex items-center capitalize',
     component: 'input',
   },
   {
@@ -341,7 +346,6 @@ export const productControl = [
     label: 'description',
     type: 'text',
     placeholder: 'Describe about your product ...',
-    style: 'flex items-center capitalize',
     component: 'textarea',
   },
   {
@@ -349,7 +353,6 @@ export const productControl = [
     label: 'price',
     type: 'text',
     placeholder: 'Set the price',
-    style: 'flex items-center capitalize',
     component: 'input',
   },
   {
@@ -357,7 +360,6 @@ export const productControl = [
     label: 'stock',
     type: 'text',
     placeholder: 'Set the stock',
-    style: 'flex items-center capitalize',
     component: 'input',
   },
   {
@@ -365,7 +367,6 @@ export const productControl = [
     label: 'category',
     type: 'text',
     placeholder: 'Choose product category',
-    style: 'flex items-center capitalize',
     component: 'select',
   },
 ];

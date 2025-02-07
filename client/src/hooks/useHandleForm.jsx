@@ -35,7 +35,7 @@ export const useHandleForm = (initialState) => {
 
   const handleValidate = () => {
     return Object.values(formData).every((value) =>
-      typeof value === "string" ? value.trim() !== "" : !!value,
+      typeof value === "string" ? value.trim() !== "" : !!value
     );
   };
 

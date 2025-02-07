@@ -180,6 +180,7 @@ const callApi = {
   },
 
   createProduct: async (formData) => {
+    console.log(formData);
     return authInstance
       .post('/store/product', formData, {
         headers: {

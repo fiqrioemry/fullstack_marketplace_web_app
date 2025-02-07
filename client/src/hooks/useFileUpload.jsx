@@ -6,12 +6,12 @@ export const useFileUpload = (
   formValues,
   upload = null,
   size = 1000000,
-  maxFiles = 5
+  amount = 5
 ) => {
   const [preview, setPreview] = useState([]);
 
   // Validasi ukuran file
-  const isValidFile = (file) => {
+  const isSizeValid = (file) => {
     if (file.size > size) {
       toast.error(
         `File size exceeds the maximum limit of ${size / 1000000} MB`
@@ -21,97 +21,74 @@ export const useFileUpload = (
     return true;
   };
 
-  // Update nilai form dan panggil callback upload jika ada
-  const updateForm = (name, files) => {
-    setFieldValue(name, files);
-    const updatedFormData = {
-      ...formValues,
-      [name]: files,
-    };
-
-    if (upload) upload(updatedFormData);
+  // Validasi jumlah file
+  const isAmountValid = (currentPreview, newFiles) => {
+    if (currentPreview.length + newFiles.length > amount) {
+      toast.error(`You can only upload up to ${amount} files.`);
+      return false;
+    }
+    return true;
   };
 
-  // Fungsi utama yang menangani perubahan file
-  const handleFileChange = (e, isSingle = false) => {
+  // Fungsi untuk single file upload
+  const singleFile = (e) => {
     const { name, files } = e.target;
     if (files && files.length > 0) {
-      if (isSingle) {
-        // Upload tunggal: ambil file pertama saja
-        const file = files[0];
-        if (isValidFile(file)) {
-          setFieldValue(name, file);
-          setPreview([{ file, url: URL.createObjectURL(file) }]);
-          const updatedFormData = { ...formValues, [name]: file };
+      console.log(files);
+      const file = files[0];
+      if (isSizeValid(file)) {
+        setFieldValue(name, [URL.createObjectURL(file)]);
 
-          console.log(name);
-          console.log(file);
-          console.log(updatedFormData);
-          if (upload) upload(updatedFormData);
-        }
-      } else {
-        // Upload berganda: cek jumlah file yang sudah ada
-        if (preview.length + files.length > maxFiles) {
-          toast.error(`You can only upload up to ${maxFiles} files.`);
-          return;
-        }
-        const validFiles = Array.from(files).filter(isValidFile);
-        if (validFiles.length > 0) {
-          updateForm(name, validFiles);
-          setPreview((prev) => [
-            ...prev,
-            ...validFiles.map((file) => ({
-              file,
-              url: URL.createObjectURL(file),
-            })),
-          ]);
+        if (upload) {
+          const updatedFormData = { ...formValues, [name]: file };
+          upload(updatedFormData);
         }
       }
-      // Reset nilai input agar file yang sama bisa diupload kembali jika diperlukan
-      e.target.value = "";
     }
+    e.target.value = "";
   };
 
-  // Fungsi yang akan dipanggil untuk singleUpload (gambar atau PDF)
-  const singleUpload = (e) => handleFileChange(e, true);
-  // Fungsi yang akan dipanggil untuk multiUpload (gambar atau PDF)
-  const multiUpload = (e) => handleFileChange(e, false);
-
-  // Fungsi untuk menghapus preview (misalnya jika user ingin menghapus file yang telah dipilih)
-  const removePreview = () => {
-    setPreview((prevPreview) => {
-      const newPreview = [...prevPreview];
-      const updatedFiles = newPreview.map((item) => item.file);
-      setFieldValue("files", updatedFiles);
-      const updatedFormData = { ...formValues, files: updatedFiles };
-      if (upload) upload(updatedFormData);
-      return newPreview;
-    });
+  const multiFile = (e) => {
+    const { name, files } = e.target;
+    if (files && files.length > 0) {
+      const validFiles = Array.from(files).filter(isSizeValid);
+      const validAmount = isAmountValid(preview, files);
+      if (validFiles && validAmount) {
+        const urlFiles = validFiles.map((file) => URL.createObjectURL(file));
+        setFieldValue(name, { ...formValues, [name]: urlFiles });
+      }
+    }
+    e.target.value = "";
   };
 
-  // Handle drag and drop (menggunakan fungsi multiUpload)
+  const removePreview = (name, index) => {
+    setFieldValue(name, formValues[name]?.filter((_, i) => i !== index) || []);
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    // Jika menggunakan drag-drop, langsung proses file-nya sebagai multi upload
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      // Membuat objek mirip event agar bisa digunakan handleFileChange
-      const fakeEvent = {
-        target: { name: "files", files: e.dataTransfer.files, value: "" },
-      };
-      handleFileChange(fakeEvent, false);
-    }
+    e.stopPropagation(); // Mencegah event bubbling ke elemen lain
+
+    if (!e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
+
+    const fakeEvent = {
+      target: { name: "files", files: e.dataTransfer.files },
+    };
+    multiFile(fakeEvent, true);
   };
 
-  const handleDragOver = (e) => e.preventDefault();
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "copy";
+  };
 
   return {
     preview,
-    setPreview,
     handleDrop,
-    multiUpload,
-    singleUpload,
-    handleDragOver,
+    singleFile,
+    multiFile,
     removePreview,
+    handleDragOver,
   };
 };

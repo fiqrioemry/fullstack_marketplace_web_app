@@ -18,7 +18,7 @@ function InputForm({
 }) {
   const { getCities, getCategories, cities, categories } = useProductStore();
 
-  const { multiFile, removePreview, handleDrop, handleDragOver } =
+  const { multiUpload, preview, removePreview, handleDragOver, handleDrop } =
     useFileUpload(formik.setFieldValue, formik.values);
 
   useEffect(() => {
@@ -73,28 +73,33 @@ function InputForm({
 
       case "upload":
         element = (
-          <div className="h-96">
-            {formik.values[control.name] &&
-            formik.values[control.name].length !== 0 ? (
-              <div className="grid_display_5">
-                {formik.values[control.name].map((url, index) => (
-                  <div className="relative" key={index}>
+          <div>
+            {preview && preview.length !== 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {preview.map((view, index) => (
+                  <div
+                    className="relative h-40 border rounded-md w-full"
+                    key={index}
+                  >
                     <button
-                      name={control.name}
-                      onClick={() => removePreview(control.name, index)}
-                      type="button"
-                      className="remove_preview_button"
+                      onClick={() => removePreview(index)}
+                      className="bg-primary text-background rounded-full p-2 absolute -top-2 -right-2"
                     >
                       <X size={14} />
                     </button>
-                    <div className="h-40 rounded-md overflow-hidden">
-                      <img src={url} className="object-cover" />
-                    </div>
+
+                    <img
+                      src={view.url}
+                      className="object-cover w-full h-full rounded-md"
+                    />
                   </div>
                 ))}
-                {formik.values[control.name].length < 5 && (
+                {preview.length < 5 && (
                   <div className="h-40 w-full">
-                    <label htmlFor={control.label} className="upload_btn">
+                    <label
+                      htmlFor={control.label}
+                      className="h-full z-50 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
+                    >
                       <FilePlus size={20} />
                       <input
                         id={control.label}
@@ -104,33 +109,38 @@ function InputForm({
                         name={control.name}
                         accept="image/*"
                         className="hidden"
-                        onChange={multiFile}
+                        onChange={multiUpload}
                       />
                     </label>
                   </div>
                 )}
               </div>
             ) : (
-              <label
-                onDrop={handleDrop}
-                className="upload_btn"
-                htmlFor={control.label}
-                onDragOver={handleDragOver}
-              >
-                <div className="flex_center">
-                  <CloudUpload size={24} />
-                </div>
-                <input
-                  id={control.label}
-                  required
-                  multiple
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  name={control.name}
-                  onChange={multiFile}
-                />
-              </label>
+              <div className="relative">
+                <label
+                  htmlFor={control.label}
+                  className="col-span-5 h-72 md:h-96 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted duration-300"
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                >
+                  <div className="flex flex-col justify-center items-center">
+                    <CloudUpload size={24} />
+                    <div className="text-center text-sm">
+                      <span>{control.placeholder}</span>
+                    </div>
+                  </div>
+                  <input
+                    id={control.label}
+                    required
+                    multiple
+                    type="file"
+                    name={control.name}
+                    accept="image/*"
+                    className="hidden"
+                    onChange={multiUpload}
+                  />
+                </label>
+              </div>
             )}
           </div>
         );

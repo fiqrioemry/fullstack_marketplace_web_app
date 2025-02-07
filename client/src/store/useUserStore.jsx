@@ -24,6 +24,7 @@ export const useUserStore = create((set) => ({
   updateProfile: async (formData) => {
     set({ updating: true });
     try {
+      console.log(formData);
       const res = await callApi.updateProfile(formData);
       toast.success(res.message);
       const profile = await callApi.getProfile();

@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import toast from "react-hot-toast";
 
-export const useCartStore = create((set) => ({
+
+export const useCartStore = create(() => ({
   cart: null,
   message: null,
   isCartLoading: false,

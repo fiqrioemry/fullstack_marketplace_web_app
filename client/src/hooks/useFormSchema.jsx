@@ -13,11 +13,11 @@ export const useFormSchema = (state, control, action, params) => {
   });
 
   useEffect(() => {
-    formik.validateForm();
-
-    formik.setTouched({});
+    if (Object.keys(state).length) {
+      formik.validateForm();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [control]);
+  }, []);
 
   return formik;
 };
