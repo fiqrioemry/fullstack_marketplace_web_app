@@ -1,7 +1,10 @@
 const fs = require('fs').promises;
 const { Op } = require('sequelize');
 const createSlug = require('../../utils/createSlug');
-const { uploadMediaToCloudinary } = require('../../utils/cloudinary');
+const {
+  uploadMediaToCloudinary,
+  deleteMediaFromCloudinary,
+} = require('../../utils/cloudinary');
 const {
   Store,
   Product,
@@ -91,7 +94,7 @@ async function getMyStoreProfile(req, res) {
   }
 }
 
-const updateMyStoreProfile = async function (req, res) {
+async function updateMyStoreProfile(req, res) {
   const { userId, storeId, role } = req.user;
   const { name, city, description, updateType } = req.body;
   const avatarFile = req.files?.avatar?.[0];
@@ -154,7 +157,7 @@ const updateMyStoreProfile = async function (req, res) {
       error: error.message,
     });
   }
-};
+}
 
 async function getMyStoreProducts(req, res) {
   try {
@@ -298,15 +301,94 @@ async function createProduct(req, res) {
   }
 }
 
-async function updateProduct(req, res) {
+const updateProduct = async function (req, res) {
+  const t = await sequelize.transaction();
   try {
-  } catch (error) {}
-}
+    const { productId } = req.params;
+    const { name, description, price, stock, categoryId, deleteImages } =
+      req.body;
 
-async function deleteProduct(req, res) {
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).send({ message: 'Product not found' });
+    }
+
+    if (deleteImages && deleteImages.length > 0) {
+      for (const imageUrl of deleteImages) {
+        await deleteMediaFromCloudinary(imageUrl);
+        await Gallery.destroy({
+          where: { productId, image: imageUrl },
+          transaction: t,
+        });
+      }
+    }
+
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map(async (file) => {
+        const uploadedMedia = await uploadMediaToCloudinary(file.path);
+        await fs.unlink(file.path);
+        return uploadedMedia;
+      });
+
+      const uploadedImages = await Promise.all(uploadPromises);
+      images = uploadedImages.map((url) => ({
+        productId: product.id,
+        image: url.secure_url,
+      }));
+
+      await Gallery.bulkCreate(images, { transaction: t });
+    }
+
+    await product.update(
+      {
+        name,
+        description,
+        price,
+        stock,
+        categoryId,
+      },
+      { transaction: t },
+    );
+
+    await t.commit();
+    return res.status(200).send({ message: 'Product updated successfully' });
+  } catch (error) {
+    await t.rollback();
+    return res.status(500).send({
+      message: 'Failed to update product',
+      error: error.message,
+    });
+  }
+};
+
+const deleteProduct = async function (req, res) {
+  const t = await sequelize.transaction();
   try {
-  } catch (error) {}
-}
+    const { productId } = req.params;
+
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).send({ message: 'Product not found' });
+    }
+
+    const images = await Gallery.findAll({ where: { productId } });
+    for (const img of images) {
+      await deleteMediaFromCloudinary(img.image);
+    }
+    await Gallery.destroy({ where: { productId }, transaction: t });
+    await product.destroy({ transaction: t });
+
+    await t.commit();
+    return res.status(200).send({ message: 'Product deleted successfully' });
+  } catch (error) {
+    await t.rollback();
+    return res.status(500).send({
+      message: 'Failed to delete product',
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   createProduct,

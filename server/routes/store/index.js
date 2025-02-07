@@ -27,5 +27,5 @@ router.put(
   updateProduct,
 );
 
-router.delete('/product', isAuthenticate, deleteProduct);
+router.delete('/product/:productId', isAuthenticate, deleteProduct);
 module.exports = router;
