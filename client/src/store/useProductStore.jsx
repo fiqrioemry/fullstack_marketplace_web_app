@@ -44,6 +44,7 @@ export const useProductStore = create((set) => ({
   },
 
   getProducts: async (searchQuery) => {
+    console.log("MASYUUIUUK");
     try {
       set({ loading: true });
       const { products, totalPage, totalData, currentPage } =
@@ -54,6 +55,8 @@ export const useProductStore = create((set) => ({
         totalData,
         currentPage,
       });
+
+      console.log(products);
     } catch (err) {
       console.error(err.message);
       set({ products: [] });

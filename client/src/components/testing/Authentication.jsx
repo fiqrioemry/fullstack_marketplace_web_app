@@ -4,14 +4,14 @@ import {
   registerState,
   registerControl,
 } from "@/config";
-import { useFormSchema } from "@/hooks/useFormSchema";
-import { useAuthStore } from "@/store/useAuthStore";
-import InputButton from "../form/InputButton";
 import InputForm from "../form/InputForm";
+import InputButton from "../form/InputButton";
 import ProcessButton from "../form/processButton";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useFormSchema } from "@/hooks/useFormSchema";
 
 const Authentication = () => {
-  const { login, register, logout, authCheck, loading } = useAuthStore();
+  const { login, register, logout, loading } = useAuthStore();
   const loginForm = useFormSchema(loginState, loginControl, login);
   const registerForm = useFormSchema(registerState, registerControl, register);
   return (

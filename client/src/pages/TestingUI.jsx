@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Authentication from "../components/testing/Authentication";
+import ProductManagement from "../components/testing/ProductManagement";
 
 const TestingUI = () => {
   return (
@@ -12,7 +13,7 @@ const TestingUI = () => {
         <Authentication />
       </TabsContent>
       <TabsContent value="product management">
-        Change your password here.
+        <ProductManagement />
       </TabsContent>
     </Tabs>
   );
