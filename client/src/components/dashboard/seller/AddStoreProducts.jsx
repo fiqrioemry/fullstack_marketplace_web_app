@@ -1,11 +1,11 @@
 import InputForm from "@/components/form/InputForm";
-import InputButton from "@/components/form/InputButton";
-import { useFormSchema } from "@/hooks/useFormSchema";
-import { productControl, productState } from "@/config";
 import { useShopStore } from "@/store/useShopStore";
+import { useFormSchema } from "@/hooks/useFormSchema";
+import InputButton from "@/components/form/InputButton";
+import { productControl, productState } from "@/config";
 
 const AddStoreProducts = () => {
-  const { createProduct, loading } = useShopStore;
+  const { createProduct, loading } = useShopStore();
   const productForm = useFormSchema(
     productState,
     productControl,
@@ -14,7 +14,7 @@ const AddStoreProducts = () => {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-md border">
+      <div className="rounded-md border p-4">
         <InputForm formik={productForm} formControl={productControl}>
           <InputButton title="Submit" formik={productForm} loading={loading} />
         </InputForm>

@@ -44,29 +44,10 @@ function InputForm({
         : control.options || [];
 
     switch (control.component) {
-      case "input":
-        element = (
-          <div>
-            <InputLabel formik={formik} control={control} />
-            <Input
-              id={control.label}
-              name={control.name}
-              type={control.type}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder={control.placeholder}
-              value={formik.values[control.name]}
-              disabled={control.disabled || disabled}
-              className="mt-1 block w-full"
-            />
-          </div>
-        );
-        break;
-
       case "upload":
         element = (
           <div className="h-96">
-            {formik.values[control.name] &&
+            {Array.isArray(formik.values[control.name]) &&
             formik.values[control.name].length !== 0 ? (
               <div className="grid_display_5">
                 {formik.values[control.name].map((image, index) => (
@@ -80,11 +61,15 @@ function InputForm({
                       <X size={14} />
                     </button>
                     <div className="h-40 rounded-md overflow-hidden">
-                      {image instanceof File ? (
+                      {image instanceof File || image instanceof Blob ? (
                         <img
                           src={URL.createObjectURL(image)}
                           className="w-full h-full object-cover"
-                          onLoad={(e) => URL.revokeObjectURL(e.target.src)}
+                          onLoad={(e) => {
+                            if (e.target.src.startsWith("blob:")) {
+                              URL.revokeObjectURL(e.target.src);
+                            }
+                          }}
                         />
                       ) : (
                         <img src={image} className="object-cover" />
@@ -99,7 +84,6 @@ function InputForm({
                       <FilePlus size={20} />
                       <input
                         id={control.label}
-                        required
                         multiple
                         type="file"
                         accept="image/*"
@@ -123,7 +107,6 @@ function InputForm({
                 </div>
                 <input
                   id={control.label}
-                  required
                   multiple
                   type="file"
                   accept="image/*"
@@ -133,6 +116,25 @@ function InputForm({
                 />
               </label>
             )}
+          </div>
+        );
+        break;
+
+      case "input":
+        element = (
+          <div>
+            <InputLabel formik={formik} control={control} />
+            <Input
+              id={control.label}
+              name={control.name}
+              type={control.type}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              placeholder={control.placeholder}
+              value={formik.values[control.name]}
+              disabled={control.disabled || disabled}
+              className="mt-1 block w-full"
+            />
           </div>
         );
         break;

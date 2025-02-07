@@ -43,9 +43,9 @@ export const useAuthStore = create(
 
       logout: async () => {
         try {
-          const data = await callApi.logout();
+          const message = await callApi.logout();
           set({ user: [], isAuthenticate: false });
-          toast.success(data.message);
+          toast.success(message);
         } catch (error) {
           console.log(error.message);
         }

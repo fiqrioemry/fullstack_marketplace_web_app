@@ -15,7 +15,7 @@ import UserAvatar from "@/components/ui/Avatar";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const UserMenu = ({ user }) => {
-  const { userSignOut } = useAuthStore();
+  const { logout } = useAuthStore();
 
   return (
     <DropdownMenu>
@@ -40,10 +40,7 @@ const UserMenu = ({ user }) => {
           );
         })}
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={userSignOut}
-          className="w-full cursor-pointer"
-        >
+        <DropdownMenuItem onClick={logout}>
           Log out
           <DropdownMenuShortcut>
             <LogOut />

@@ -322,9 +322,9 @@ export const productState = {
   name: '',
   categoryId: '',
   description: '',
-  price: '',
-  stock: '',
-  files: '',
+  price: 0,
+  stock: 0,
+  files: [],
 };
 
 export const productControl = [

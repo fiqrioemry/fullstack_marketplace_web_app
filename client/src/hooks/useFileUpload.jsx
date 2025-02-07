@@ -67,7 +67,9 @@ export const useFileUpload = (
 
   // Remove File Preview
   const removePreview = (name, index) => {
-    const updatedImages = formValues[name].filter((_, i) => i !== index);
+    const updatedImages = (formValues[name] || []).filter(
+      (_, i) => i !== index
+    );
     setFieldValue(name, updatedImages);
   };
 

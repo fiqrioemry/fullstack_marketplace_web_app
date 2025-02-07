@@ -56,7 +56,6 @@ export const useShopStore = create((set) => ({
   createProduct: async (formData) => {
     set({ loading: false });
     try {
-      console.log(formData);
       const res = await callApi.createProduct(formData);
       toast.success(res.message);
     } catch (err) {

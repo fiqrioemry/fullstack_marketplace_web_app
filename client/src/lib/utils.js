@@ -41,11 +41,9 @@ const baseValidations = {
   address: Yup.string().min(12, 'Min. 12 characters').required('Required'),
   description: Yup.string().min(20, 'Min. 20 characters').required('Required'),
   categoryId: Yup.mixed().required('Required'),
-  files: Yup.mixed().test(
-    'fileRequired',
-    'At least one file is required',
-    (value) => value && value.length > 0,
-  ),
+  files: Yup.array()
+    .min(1, 'Please upload at least one file')
+    .required('Files are required'),
   price: Yup.number()
     .typeError('Price must be a number')
     .positive('Price must be greater than zero')
