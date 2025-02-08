@@ -46,7 +46,7 @@ function InputForm({
     switch (control.component) {
       case "upload":
         element = (
-          <div className="h-96">
+          <div className={`min-${inputStyle}`}>
             {Array.isArray(formik.values[control.name]) &&
             formik.values[control.name].length !== 0 ? (
               <div className="grid_display_5">
@@ -60,7 +60,9 @@ function InputForm({
                     >
                       <X size={14} />
                     </button>
-                    <div className="h-40 rounded-md overflow-hidden">
+                    <div
+                      className={`rounded-md overflow-hidden  ${inputStyle}`}
+                    >
                       {image instanceof File || image instanceof Blob ? (
                         <img
                           src={URL.createObjectURL(image)}
@@ -83,7 +85,7 @@ function InputForm({
                 ))}
                 {/* kalau file tidak melebihi maksimum, kolom tambah ditampilkan */}
                 {formik.values[control.name].length < 5 && (
-                  <div>
+                  <div className={inputStyle}>
                     <label htmlFor={control.label} className="upload_btn">
                       <FilePlus size={20} />
                       <input
@@ -101,7 +103,7 @@ function InputForm({
               </div>
             ) : (
               <label
-                className="upload_btn"
+                className={`upload_btn ${inputStyle}`}
                 htmlFor={control.label}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, control.name)}
@@ -351,9 +353,7 @@ function InputForm({
   return (
     <form onSubmit={formik.handleSubmit} className={`space-y-4 ${formStyle}`}>
       {formControl.map((control) => (
-        <div key={control.name} className={inputStyle}>
-          {renderComponentByType(control)}
-        </div>
+        <div key={control.name}>{renderComponentByType(control)}</div>
       ))}
       <div>{children}</div>
     </form>

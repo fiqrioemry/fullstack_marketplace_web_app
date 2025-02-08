@@ -68,7 +68,11 @@ export function DialogForm({
           </div>
           <ScrollArea className="h-72 border">
             <div className="p-4">
-              <InputForm formik={formik} formControl={control}>
+              <InputForm
+                formik={formik}
+                formControl={control}
+                inputStyle={"h-40 md:h-[4rem]"}
+              >
                 <div className="flex justify-end gap-2 p-2">
                   <Button
                     type="button"
@@ -91,7 +95,7 @@ export function DialogForm({
       </Dialog>
 
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:w-[425px]">
           <div className="text-center mt-4">
             <h4>Unsaved Changes</h4>
             <p className="text-gray-600">

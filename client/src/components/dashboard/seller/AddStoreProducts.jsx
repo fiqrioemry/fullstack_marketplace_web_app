@@ -15,7 +15,11 @@ const AddStoreProducts = () => {
   return (
     <section className="space-y-6">
       <div className="rounded-md border p-4">
-        <InputForm formik={productForm} formControl={productControl}>
+        <InputForm
+          formik={productForm}
+          formControl={productControl}
+          inputStyle={"h-40"}
+        >
           <InputButton title="Submit" formik={productForm} loading={loading} />
         </InputForm>
       </div>

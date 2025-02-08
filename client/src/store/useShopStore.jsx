@@ -6,14 +6,21 @@ export const useShopStore = create((set, get) => ({
   store: [],
   profile: [],
   products: [],
-  currentPage: 0,
+  currentPage: 1,
   totalPage: 0,
   totalData: 0,
   updating: false,
   loading: false,
 
-  getStoreProduct: async (formData) => {
-    set({ loading: true });
+  getStoreProduct: async (
+    formData = {
+      sortBy: "createdAt",
+      orderBy: "desc",
+      page: 1,
+      limit: 5,
+      search: "",
+    }
+  ) => {
     try {
       const { products, totalPage, totalData, currentPage } =
         await callApi.getStoreProduct(formData);
@@ -25,8 +32,6 @@ export const useShopStore = create((set, get) => ({
       });
     } catch (err) {
       console.log(err);
-    } finally {
-      set({ loading: false });
     }
   },
 

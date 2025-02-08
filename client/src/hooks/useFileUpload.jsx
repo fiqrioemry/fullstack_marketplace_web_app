@@ -21,8 +21,8 @@ export const useFileUpload = (
   };
 
   // Validasi jumlah file
-  const isAmountValid = (newFiles) => {
-    const existingFiles = formValues[name] || [];
+  const isAmountValid = (newFiles, currentValues) => {
+    const existingFiles = currentValues || [];
     if (existingFiles.length + newFiles.length > amount) {
       toast.error(`You can only upload up to ${amount} files.`);
       return false;
@@ -54,7 +54,8 @@ export const useFileUpload = (
       const newFiles = Array.from(files);
 
       // validasi ukuran dan jumlah file
-      if (!isSizeValid(newFiles) || !isAmountValid(newFiles)) return;
+      if (!isSizeValid(newFiles) || !isAmountValid(newFiles, formValues[name]))
+        return;
 
       const updatedFiles = [...(formValues[name] || []), ...newFiles];
       setFieldValue(name, updatedFiles);

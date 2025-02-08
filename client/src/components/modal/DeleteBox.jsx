@@ -14,6 +14,7 @@ export function DeleteBox({
   action,
   data,
   size,
+  variant = "delete",
   button = "delete",
 }) {
   const handleSubmit = () => {
@@ -22,7 +23,7 @@ export function DeleteBox({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="delete" size={size}>
+        <Button variant={variant} size={size}>
           {button}
         </Button>
       </DialogTrigger>
