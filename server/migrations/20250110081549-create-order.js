@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Orders", {
+    await queryInterface.createTable('Orders', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      addressId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       totalAmount: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
@@ -27,22 +31,19 @@ module.exports = {
       },
       orderStatus: {
         type: Sequelize.ENUM,
-        values: ["pending", "challange", "failure", "success"],
-        defaultValue: "pending",
+        values: ['pending', 'paid', 'canceled', 'expired'],
+        defaultValue: 'pending',
         allowNull: false,
       },
-      shippingAddress: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
+
       shippingCost: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
       },
       shippingStatus: {
         type: Sequelize.ENUM,
-        values: ["pending", "packaging", "shipped", "delivered"],
-        defaultValue: "pending",
+        values: ['pending', 'process', 'shipped', 'delivered'],
+        defaultValue: 'pending',
         allowNull: false,
       },
       shippingNumber: {
@@ -60,6 +61,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Orders");
+    await queryInterface.dropTable('Orders');
   },
 };

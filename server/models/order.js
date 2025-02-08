@@ -1,5 +1,5 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
     /**
@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.hasMany(models.OrderDetail, {
-        foreignKey: "orderId",
-        as: "orderDetail",
+        foreignKey: 'orderId',
+        as: 'orderDetail',
       });
-      this.belongsTo(models.Store, { foreignKey: "storeId", as: "store" });
-      this.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+      this.belongsTo(models.Store, { foreignKey: 'storeId', as: 'store' });
+      this.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
     }
   }
   Order.init(
@@ -26,9 +26,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+
+      addressId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       totalAmount: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
         validate: {
           min: 0,
         },
@@ -36,18 +41,15 @@ module.exports = (sequelize, DataTypes) => {
       amountToPay: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
+        defaultValue: 0,
         validate: {
           min: 0,
         },
       },
       orderStatus: {
         type: DataTypes.ENUM,
-        values: ["pending", "challange", "failure", "success"],
-        defaultValue: "pending",
-        allowNull: false,
-      },
-      shippingAddress: {
-        type: DataTypes.STRING,
+        values: ['pending', 'paid', 'expired', 'cancelled'],
+        defaultValue: 'pending',
         allowNull: false,
       },
       shippingCost: {
@@ -59,15 +61,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       shippingStatus: {
         type: DataTypes.ENUM,
-        values: ["pending", "packaging", "shipped", "delivered"],
-        defaultValue: "pending",
+        values: ['pending', 'process', 'shipped', 'delivered'],
+        defaultValue: 'pending',
         allowNull: false,
       },
       shippingNumber: DataTypes.STRING,
     },
     {
       sequelize,
-      modelName: "Order",
+      modelName: 'Order',
     },
   );
   return Order;

@@ -57,6 +57,9 @@ async function verifyOTP(req, res) {
 async function register(req, res) {
   const { fullname, email, password } = req.body;
 
+  if (!fullname || !email || !password)
+    return res.status(400).send({ message: 'All fields required' });
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
