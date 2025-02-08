@@ -52,7 +52,6 @@ async function updateCart(req, res) {
   const { userId } = req.user;
   const { quantity } = req.body;
 
-  // Validasi input
   if (!Number.isInteger(quantity) || quantity <= 0) {
     return res.status(400).json({ message: 'Invalid quantity' });
   }
@@ -62,6 +61,7 @@ async function updateCart(req, res) {
       include: {
         model: Product,
         attributes: ['stock'],
+        as: 'product',
       },
     });
 
@@ -118,17 +118,21 @@ async function deleteCart(req, res) {
 }
 
 async function getAllCartItem(req, res) {
+  if (!req.user || !req.user.userId) {
+    return res.status(401).json({ message: 'Unauthorized: User not found' });
+  }
+
   const { userId } = req.user;
 
   try {
     const cart = await Cart.findAll({
       where: { userId },
-      attributes: ['id', 'quantity'],
+      attributes: ['id', 'productId', 'quantity'], // ✅ Tambah 'id' agar tidak error
       include: [
         {
           model: Product,
           as: 'product',
-          attributes: ['id', 'storeId', 'name', 'price', 'stock'],
+          attributes: ['id', 'storeId', 'name', 'slug', 'price', 'stock'],
           include: [
             {
               model: Store,
@@ -150,8 +154,13 @@ async function getAllCartItem(req, res) {
     }
 
     const cartItems = cart.reduce((result, item) => {
-      const storeId = item.product.storeId;
-      const storeName = item.product.store.name;
+      const product = item.product;
+      const store = product.store || {}; // ✅ Gunakan object default agar tidak error
+
+      if (!product) return result;
+
+      const storeId = product.storeId;
+      const storeName = store.name || 'Unknown Store'; // ✅ Jika store tidak ada, beri default
 
       if (!result[storeId]) {
         result[storeId] = {
@@ -163,17 +172,17 @@ async function getAllCartItem(req, res) {
 
       result[storeId].items.push({
         cartId: item.id,
-        productId: item.product.id,
-        name: item.product.name,
-        slug: item.product.slug,
-        price: item.product.price,
-        stock: item.product.stock,
+        productId: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: product.price,
+        stock: product.stock,
         quantity: item.quantity,
-        storeId: item.store.id,
-        storeName: item.store.name,
-        storeSlug: item.store.slug,
-        storeImage: item.store.image,
-        images: item.galleries.map((item) => item.image),
+        storeId: store.id || null, // ✅ Tambah fallback agar tidak error
+        storeName: store.name || null,
+        storeSlug: store.slug || null,
+        storeImage: store.image || null,
+        images: product.gallery ? product.gallery.map((img) => img.image) : [], // ✅ Perbaikan di images
       });
 
       return result;
