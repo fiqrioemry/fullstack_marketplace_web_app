@@ -37,7 +37,7 @@ async function addCart(req, res) {
       });
     }
 
-    return res.status(200).json({
+    return res.status(201).json({
       message: 'Product added to cart',
       data: cartItem,
     });
@@ -60,11 +60,9 @@ async function updateCart(req, res) {
     const cart = await Cart.findByPk(id, {
       include: {
         model: Product,
-        attributes: ['stock'],
         as: 'product',
       },
     });
-
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
     }
@@ -73,7 +71,7 @@ async function updateCart(req, res) {
       return res.status(401).json({ message: 'Unauthorized request' });
     }
 
-    if (cart.Product.stock < quantity) {
+    if (cart.product.stock < quantity) {
       return res.status(400).json({ message: 'Product is out of stock' });
     }
 
@@ -84,7 +82,9 @@ async function updateCart(req, res) {
       data: cart,
     });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error });
+    return res
+      .status(500)
+      .json({ message: 'Internal server error', error: error.message });
   }
 }
 
@@ -127,7 +127,7 @@ async function getAllCartItem(req, res) {
   try {
     const cart = await Cart.findAll({
       where: { userId },
-      attributes: ['id', 'productId', 'quantity'], // ✅ Tambah 'id' agar tidak error
+      attributes: ['id', 'productId', 'quantity'],
       include: [
         {
           model: Product,
@@ -155,17 +155,21 @@ async function getAllCartItem(req, res) {
 
     const cartItems = cart.reduce((result, item) => {
       const product = item.product;
-      const store = product.store || {}; // ✅ Gunakan object default agar tidak error
+      const store = product.store || {};
 
       if (!product) return result;
 
-      const storeId = product.storeId;
-      const storeName = store.name || 'Unknown Store'; // ✅ Jika store tidak ada, beri default
+      const storeId = store.id;
+      const storeName = store.name;
+      const storeSlug = store.slug;
+      const storeImage = store.image;
 
       if (!result[storeId]) {
         result[storeId] = {
           storeId,
           storeName,
+          storeSlug,
+          storeImage,
           items: [],
         };
       }
@@ -178,11 +182,7 @@ async function getAllCartItem(req, res) {
         price: product.price,
         stock: product.stock,
         quantity: item.quantity,
-        storeId: store.id || null, // ✅ Tambah fallback agar tidak error
-        storeName: store.name || null,
-        storeSlug: store.slug || null,
-        storeImage: store.image || null,
-        images: product.gallery ? product.gallery.map((img) => img.image) : [], // ✅ Perbaikan di images
+        images: product.gallery ? product.gallery.map((img) => img.image) : [],
       });
 
       return result;
