@@ -18,7 +18,7 @@ let snap = new midtransClient.Snap({
 const createNewOrder = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const userId = req.user.id; // Anggap userId didapat dari middleware autentikasi
+    const { userId } = req.user;
     const { shippingAddressId, orders } = req.body;
 
     // Ambil alamat pengiriman
