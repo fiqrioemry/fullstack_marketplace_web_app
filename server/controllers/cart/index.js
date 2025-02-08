@@ -1,20 +1,20 @@
-const { Product, Cart } = require("../../models");
+const { Product, Cart, Store, Gallery } = require('../../models');
 
 async function addCart(req, res) {
   const { userId } = req.user;
   const { productId, quantity } = req.body;
 
   if (!Number.isInteger(quantity) || quantity <= 0) {
-    return res.status(400).send({ message: "Invalid quantity" });
+    return res.status(400).json({ message: 'Invalid quantity' });
   }
 
   try {
     const product = await Product.findByPk(productId, {
-      attributes: ["stock"],
+      attributes: ['stock'],
     });
 
     if (!product) {
-      return res.status(404).send({ message: "Product not found" });
+      return res.status(404).json({ message: 'Product not found' });
     }
 
     let cartItem = await Cart.findOne({
@@ -24,7 +24,7 @@ async function addCart(req, res) {
     const newQuantity = cartItem ? cartItem.quantity + quantity : quantity;
 
     if (product.stock < newQuantity) {
-      return res.status(400).send({ message: "Product is out of stock" });
+      return res.status(400).json({ message: 'Product is out of stock' });
     }
 
     if (cartItem) {
@@ -37,13 +37,13 @@ async function addCart(req, res) {
       });
     }
 
-    return res.status(200).send({
-      message: "Product added to cart",
+    return res.status(200).json({
+      message: 'Product added to cart',
       data: cartItem,
     });
   } catch (error) {
-    console.error("Error adding to cart:", error);
-    return res.status(500).send({ message: "Internal server error", error });
+    console.error('Error adding to cart:', error);
+    return res.status(500).json({ message: 'Internal server error', error });
   }
 }
 
@@ -54,37 +54,37 @@ async function updateCart(req, res) {
 
   // Validasi input
   if (!Number.isInteger(quantity) || quantity <= 0) {
-    return res.status(400).send({ message: "Invalid quantity" });
+    return res.status(400).json({ message: 'Invalid quantity' });
   }
 
   try {
     const cart = await Cart.findByPk(id, {
       include: {
         model: Product,
-        attributes: ["stock"],
+        attributes: ['stock'],
       },
     });
 
     if (!cart) {
-      return res.status(404).send({ message: "Cart not found" });
+      return res.status(404).json({ message: 'Cart not found' });
     }
 
     if (cart.userId !== userId) {
-      return res.status(401).send({ message: "Unauthorized request" });
+      return res.status(401).json({ message: 'Unauthorized request' });
     }
 
     if (cart.Product.stock < quantity) {
-      return res.status(400).send({ message: "Product is out of stock" });
+      return res.status(400).json({ message: 'Product is out of stock' });
     }
 
     await cart.update({ quantity });
 
-    return res.status(200).send({
-      message: "Cart is updated",
+    return res.status(200).json({
+      message: 'Cart is updated',
       data: cart,
     });
   } catch (error) {
-    return res.status(500).send({ message: "Internal server error", error });
+    return res.status(500).json({ message: 'Internal server error', error });
   }
 }
 
@@ -97,23 +97,23 @@ async function deleteCart(req, res) {
 
     if (!cart) {
       return res.status(404).json({
-        error: "Cart not found",
+        error: 'Cart not found',
       });
     }
 
     if (cart.userId !== userId) {
       return res.status(401).json({
-        error: "Unauthorized access",
+        error: 'Unauthorized access',
       });
     }
 
     await cart.destroy();
 
-    return res.status(200).send({
-      message: "Cart is deleted",
+    return res.status(200).json({
+      message: 'Cart is deleted',
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).json(error.message);
   }
 }
 
@@ -123,22 +123,22 @@ async function getAllCartItem(req, res) {
   try {
     const cart = await Cart.findAll({
       where: { userId },
-      attributes: ["id", "quantity"],
+      attributes: ['id', 'quantity'],
       include: [
         {
           model: Product,
-          as: "product",
-          attributes: ["id", "storeId", "name", "price", "stock"],
+          as: 'product',
+          attributes: ['id', 'storeId', 'name', 'price', 'stock'],
           include: [
             {
               model: Store,
-              as: "store",
-              attributes: ["id", "name", "slug", "image", "city"],
+              as: 'store',
+              attributes: ['id', 'name', 'slug', 'image'],
             },
             {
-              model: Galleries,
-              as: "galleries",
-              attributes: ["image"],
+              model: Gallery,
+              as: 'gallery',
+              attributes: ['image'],
             },
           ],
         },
@@ -146,7 +146,7 @@ async function getAllCartItem(req, res) {
     });
 
     if (!cart || cart.length === 0) {
-      return res.status(200).send({ message: "No items in cart", data: [] });
+      return res.status(200).json({ message: 'No items in cart', data: [] });
     }
 
     const cartItems = cart.reduce((result, item) => {
@@ -181,13 +181,13 @@ async function getAllCartItem(req, res) {
 
     const groupedCart = Object.values(cartItems);
 
-    return res.status(200).send({
-      message: "Cart items retrieved successfully",
+    return res.status(200).json({
+      message: 'Cart items retrieved successfully',
       data: groupedCart,
     });
   } catch (error) {
-    return res.status(500).send({
-      message: "An error occurred while fetching cart items",
+    return res.status(500).json({
+      message: 'An error occurred while fetching cart items',
       error: error.message,
     });
   }

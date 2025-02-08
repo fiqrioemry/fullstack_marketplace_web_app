@@ -14,11 +14,10 @@ const {
 } = require('../../models');
 
 async function getStoreInfo(req, res) {
-  const slug = req.params;
   try {
     const store = await Store.findOne({
-      where: { slug },
-      attributes: [{ exclude: ['userId'] }],
+      where: { slug: req.params.slug },
+      attributes: { exclude: ['userId'] },
       include: [
         {
           model: Product,
