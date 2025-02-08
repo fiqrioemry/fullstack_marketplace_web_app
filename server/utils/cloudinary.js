@@ -30,8 +30,10 @@ async function uploadMediaToCloudinary(filePath) {
 }
 const deleteMediaFromCloudinary = async (imageUrl) => {
   try {
-    const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0];
+    const publicId = imageUrl.split('/').slice(-1).join('/').split('.').shift();
     //
+
+    console.log('PUBLIC ID:', publicId);
     await cloudinary.uploader.destroy(publicId);
     //
   } catch (error) {

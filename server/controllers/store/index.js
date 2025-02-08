@@ -303,15 +303,17 @@ async function createProduct(req, res) {
 }
 
 const updateProduct = async function (req, res) {
-  console.log('UPDATING PRODUCT UPDATING PRODUCT UPDATING PRODUCT');
   const t = await sequelize.transaction();
   try {
     const { productId } = req.params;
-    const { name, images, description, price, stock, categoryId } = req.body;
-
+    let { name, images, description, price, stock, categoryId } = req.body;
     const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).send({ message: 'Product not found' });
+    }
+
+    if (!Array.isArray(images)) {
+      images = images ? [images] : [];
     }
 
     // Hapus semua gallery dengan productId kecuali yang ada dalam images
@@ -365,6 +367,7 @@ const updateProduct = async function (req, res) {
     await t.commit();
     return res.status(200).send({ message: 'Product updated successfully' });
   } catch (error) {
+    console.log(error);
     await t.rollback();
     return res.status(500).send({
       message: 'Failed to update product',
