@@ -90,7 +90,6 @@ async function updateProfile(req, res) {
 
     await user.update(updatedUser);
 
-    // Update data di Redis dengan TTL 15 menit (900 detik)
     await client.setEx(`profile:${userId}`, 900, JSON.stringify(updatedUser));
 
     return res.status(200).json({
@@ -160,7 +159,6 @@ async function addAddress(req, res) {
       isMain,
     });
 
-    // Hapus cache Redis untuk alamat pengguna
     await client.del(`address:${userId}`);
 
     return res.status(201).json({
@@ -207,11 +205,8 @@ async function updateAddress(req, res) {
     // Hapus cache Redis untuk alamat pengguna
     await client.del(`address:${userId}`);
 
-    const updatedAddress = await Address.findAll({ where: { userId } });
-
     return res.status(200).json({
       message: 'Address is Updated',
-      data: updatedAddress,
     });
   } catch (error) {
     return res
