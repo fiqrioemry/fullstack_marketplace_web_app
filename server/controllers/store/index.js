@@ -170,6 +170,8 @@ async function getMyStoreProducts(req, res) {
     } = req.query;
     const { storeId } = req.user;
 
+    console.log(req.query);
+
     const dataPerPage = Number(limit) > 0 ? parseInt(limit) : 5;
     const currentPage = Number(page) > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
