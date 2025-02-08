@@ -159,6 +159,7 @@ async function updateMyStoreProfile(req, res) {
   }
 }
 
+// tested - completed
 async function getMyStoreProducts(req, res) {
   try {
     let {
@@ -169,8 +170,6 @@ async function getMyStoreProducts(req, res) {
       search = '',
     } = req.query;
     const { storeId } = req.user;
-
-    console.log(req.query);
 
     const dataPerPage = Number(limit) > 0 ? parseInt(limit) : 5;
     const currentPage = Number(page) > 0 ? parseInt(page) : 1;
@@ -226,8 +225,8 @@ async function getMyStoreProducts(req, res) {
 
     return res.status(200).json({
       products: data,
-      currentPage: parseInt(page),
-      totalPage: totalPage,
+      currentPage,
+      totalPage,
       totalData: product.count,
     });
   } catch (error) {
@@ -235,9 +234,8 @@ async function getMyStoreProducts(req, res) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
+// tested - completed
 async function createProduct(req, res) {
-  console.log('CREATING PRODUCT CREATING PRODUCT CREATING PRODUCT');
   const t = await sequelize.transaction();
   try {
     const { storeId, role } = req.user;
@@ -303,7 +301,7 @@ async function createProduct(req, res) {
     });
   }
 }
-
+// tested - completed
 const updateProduct = async function (req, res) {
   const t = await sequelize.transaction();
   try {
@@ -377,7 +375,7 @@ const updateProduct = async function (req, res) {
     });
   }
 };
-
+// tested - completed
 const deleteProduct = async function (req, res) {
   const t = await sequelize.transaction();
   try {
