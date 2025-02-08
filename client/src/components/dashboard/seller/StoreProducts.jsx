@@ -12,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatToRupiah } from "../../../lib/utils";
 
 const StoreProducts = () => {
   const {
@@ -62,39 +63,42 @@ const StoreProducts = () => {
         />
       </div>
       <div className="min-h-[22.5rem]">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-xs md:text-base ">
+        <table className="min-w-full bg-white text-xs md:text-base ">
           <thead>
             <tr className="bg-gray-100 border-b border-gray-200">
-              <th className="px-4 py-3 text-left">No</th>
+              <th className="px-1 md:px-3 py-3 text-left">No</th>
               <th
-                className="px-4 py-3 text-left cursor-pointer"
+                className="px-1 md:px-3 py-3 text-left cursor-pointer "
                 onClick={() => handleSort("name")}
               >
-                Name{" "}
+                Name
                 <ArrowUpDown className="inline ml-1 w-3 h-3 sm:w-4 sm:h-4 " />
               </th>
               <th
-                className="px-4 py-3 text-left cursor-pointer"
+                className=" px-1 md:px-3 py-3 text-left cursor-pointer"
                 onClick={() => handleSort("stock")}
               >
-                Stock{" "}
+                Stock
                 <ArrowUpDown className="inline ml-1 w-3 h-3 sm:w-4 sm:h-4 " />
               </th>
               <th
-                className="px-4 py-3 text-left cursor-pointer"
+                className="px-1 md:px-3 py-3 text-left cursor-pointer"
                 onClick={() => handleSort("price")}
               >
-                Price{" "}
-                <ArrowUpDown className="inline ml-1 w-3 h-3 sm:w-4 sm:h-4 " />
+                Price
+                <ArrowUpDown
+                  size={8}
+                  className="inline ml-1 w-3 h-3 sm:w-4 sm:h-4"
+                />
               </th>
               <th
-                className="px-4 py-3 text-left cursor-pointer"
+                className="px-1 md:px-3 py-3 text-left cursor-pointer "
                 onClick={() => handleSort("categoryName")}
               >
                 Category{" "}
                 <ArrowUpDown className="inline ml-1 w-3 h-3 sm:w-4 sm:h-4 " />
               </th>
-              <th className="px-4 py-3 text-center">Action</th>
+              <th className="px-1 md:px-3 py-3 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -106,14 +110,19 @@ const StoreProducts = () => {
                   key={product.id}
                   className="border-b border-gray-200 hover:bg-gray-50"
                 >
-                  <td className="px-4 py-3 ">{index + 1}</td>
-                  <td className="px-4 py-3 lowercase ">
+                  <td className="px-1 md:px-3 py-3 ">
+                    {index + 1 + 5 * (currentPage - 1)}
+                  </td>
+                  <td className="px-1 md:px-3 py-3">
                     {product.name.slice(0, 20)}
                   </td>
-                  <td className="px-4 py-3">{product.stock}</td>
-                  <td className="px-4 py-3">${product.price}</td>
-                  <td className="px-4 py-3">{product.categoryName}</td>
-                  <td className="block md:hidden px-4 py-3 text-center space-x-2">
+                  <td className="px-1 md:px-3 py-3 ">{product.stock}</td>
+
+                  <td className="px-1 md:px-3 py-3">
+                    {formatToRupiah(product.price)}
+                  </td>
+                  <td className="px-1 md:px-3 py-3">{product.categoryName}</td>
+                  <td className="block md:hidden px-1 md:px-3 py-3 text-center space-x-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger>
                         <EllipsisVertical />
@@ -144,7 +153,7 @@ const StoreProducts = () => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
-                  <td className="hidden md:block px-4 py-3 text-center space-x-2">
+                  <td className="hidden md:block px-1 md:px-3 py-3 text-center space-x-2">
                     <DialogForm
                       variant="edit"
                       size="icon"
