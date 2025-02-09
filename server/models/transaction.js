@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       this.hasMany(models.Order, {
         foreignKey: 'transactionId',
-        as: 'orders',
+        as: 'order',
       });
     }
   }
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      totalPrice: {
+      totalAmount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,

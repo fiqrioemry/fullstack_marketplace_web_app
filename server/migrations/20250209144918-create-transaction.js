@@ -12,14 +12,8 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
-      totalPrice: {
+      totalAmount: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,

@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       storeId: {
         type: DataTypes.INTEGER,
-        allowNull: true, // Bisa null jika notifikasi untuk customer
+        allowNull: true,
       },
       type: {
         type: DataTypes.ENUM('order', 'system', 'promo', 'message'),

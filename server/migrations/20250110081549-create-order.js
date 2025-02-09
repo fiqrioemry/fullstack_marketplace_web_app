@@ -12,42 +12,18 @@ module.exports = {
       transactionId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'Transactions',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       storeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'Stores',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       addressId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'Addresses',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       orderNumber: {
         type: Sequelize.STRING,
