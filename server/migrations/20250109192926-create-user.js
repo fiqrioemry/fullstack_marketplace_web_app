@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -20,8 +20,8 @@ module.exports = {
       },
       role: {
         type: Sequelize.ENUM,
-        values: ["customer", "seller", "admin"],
-        defaultValue: "customer",
+        values: ['customer', 'seller', 'admin'],
+        defaultValue: 'customer',
         allowNull: false,
       },
       birthday: {
@@ -29,11 +29,16 @@ module.exports = {
       },
       gender: {
         type: Sequelize.ENUM,
-        values: ["male", "female"],
+        values: ['male', 'female'],
         allowNull: true,
       },
       avatar: {
         type: Sequelize.STRING,
+      },
+      balance: {
+        type: Sequelize.DECIMAL(10, 2),
+        defaultValue: 0,
+        allowNull: false,
       },
       phone: {
         type: Sequelize.STRING,
@@ -49,6 +54,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable('Users');
   },
 };

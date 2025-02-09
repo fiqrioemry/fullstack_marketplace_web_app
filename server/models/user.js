@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       avatar: DataTypes.STRING,
       phone: DataTypes.STRING,
+      balance: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,

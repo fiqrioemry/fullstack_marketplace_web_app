@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       image: DataTypes.STRING,
       avatar: DataTypes.STRING,
       description: DataTypes.STRING,
+      balance: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,
