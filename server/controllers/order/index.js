@@ -12,7 +12,11 @@ const {
 require('dotenv').config();
 const { Op } = require('sequelize');
 const midtransClient = require('midtrans-client');
+const { v4: uuidv4 } = require('uuid'); // Import UUID
 
+const generateOrderNumber = (transactionId) => {
+  return `INV-${transactionId}-${uuidv4().split('-')[0]}`; // Menggunakan bagian awal UUID sebagai suffix unik
+};
 // Midtrans Configuration
 let snap = new midtransClient.Snap({
   isProduction: process.env.NODE_ENV === 'production',
@@ -50,15 +54,14 @@ const PaymentNotifications = async (req, res) => {
       await userTransaction.update({ paymentStatus: 'paid' }, { transaction });
       message = 'Your payment is successful, order will be processed';
 
-      await shipment.create({
-        orderId,
-      });
-
       let productStockUpdates = [];
 
       for (const order of userTransaction.order) {
         await order.update({ orderStatus: 'pending' }, { transaction });
-        await Shipment.create({ orderId: order.orderId });
+        await Shipment.create({
+          orderId: order.orderId,
+          shipmentStatus: 'pending',
+        });
         // 2️⃣ Ambil productId dan kurangi stok
         for (const orderDetail of order.orderDetail) {
           productStockUpdates.push({
@@ -78,7 +81,6 @@ const PaymentNotifications = async (req, res) => {
         );
       }
 
-      // 3️⃣ Update stok produk dengan metode lebih aman
       if (productStockUpdates.length > 0) {
         await Promise.all(
           productStockUpdates.map(async (item) => {
@@ -213,7 +215,7 @@ const createNewOrder = async (req, res) => {
           transactionId: newTransaction.id,
           storeId,
           addressId,
-          orderNumber: `INV/${newTransaction.id}/${Date.now()}`,
+          orderNumber: generateOrderNumber(newTransaction.id),
           totalPrice: 0, // Akan diperbarui nanti
           shipmentCost,
           totalOrderAmount: 0, // Akan diperbarui nanti
