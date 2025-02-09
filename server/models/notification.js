@@ -3,13 +3,15 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Notification extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      this.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+      this.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user',
+      });
+      this.belongsTo(models.Store, {
+        foreignKey: 'storeId',
+        as: 'store',
+      });
     }
   }
 
@@ -17,10 +19,14 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true, // Bisa null jika notifikasi untuk seller
+      },
+      storeId: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // Bisa null jika notifikasi untuk customer
       },
       type: {
-        type: DataTypes.ENUM('order', 'message', 'promo', 'system'),
+        type: DataTypes.ENUM('order', 'system', 'promo', 'message'),
         allowNull: false,
       },
       message: {
@@ -39,7 +45,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'Notification',
-      timestamps: true, // Ensures createdAt and updatedAt are handled
     },
   );
 

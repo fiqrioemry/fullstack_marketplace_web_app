@@ -110,6 +110,7 @@ const createNewOrder = async (req, res) => {
         .json({ message: 'Order information not complete or wrong' });
     }
 
+    // Cek apakah alamat ada
     const address = await Address.findOne({
       where: { id: addressId, userId },
       transaction,
@@ -123,23 +124,25 @@ const createNewOrder = async (req, res) => {
     let totalGrossAmount = 0;
     let midtransItems = [];
 
+    // Buat transaksi utama
     const newTransaction = await Transaction.create(
       {
         userId,
-        totalPrice: 0, // will be updated later
-        amountToPay: 0, // will be updated later
-        totalShipmentCost: 0,
+        totalPrice: 0, // akan diperbarui nanti
+        totalShipmentCost: 0, // akan diperbarui nanti
+        amountToPay: 0, // akan diperbarui nanti
         paymentStatus: 'pending',
       },
       { transaction },
     );
 
     for (const order of orders) {
-      const { storeId, shipmentCost, products } = order;
+      const { storeId, shippingCost, products } = order;
+      let totalPrice = 0; // total harga barang di order ini
 
       if (
         !storeId ||
-        shipmentCost == null ||
+        shippingCost == null ||
         !Array.isArray(products) ||
         products.length === 0
       ) {
@@ -148,17 +151,17 @@ const createNewOrder = async (req, res) => {
           .json({ message: 'Invalid Store ID, Shipping Cost, or Products' });
       }
 
-      // masing2 seller/store memiliki order berbeda
+      // Buat pesanan untuk setiap seller
       const newOrder = await Order.create(
         {
           userId,
           transactionId: newTransaction.id,
           storeId,
           addressId,
-          orderNumer: `INV/${transaction.id}/${Date.now}`,
+          orderNumber: `INV/${newTransaction.id}/${Date.now()}`,
           totalPrice: 0,
-          shipmentCost,
-          totalAmount: 0, // totalPrice + shipmentCost
+          shipmentCost: shippingCost,
+          totalOrderAmount: 0, // totalPrice + shipmentCost (akan diperbarui nanti)
           orderStatus: 'waiting payment',
         },
         { transaction },
@@ -177,33 +180,54 @@ const createNewOrder = async (req, res) => {
 
         if (!product || product.stock < item.quantity) {
           await transaction.rollback();
-          return res
-            .status(400)
-            .json({ message: `Insufficient product stock` });
+          return res.status(400).json({
+            message: `Insufficient stock for product ${product.name}`,
+          });
         }
 
+        // Buat order detail
         await OrderDetail.create(
           {
             orderId: newOrder.id,
             productId: item.productId,
             quantity: item.quantity,
             price: product.price,
-            // total price function is defined already in model
           },
           { transaction },
         );
 
-        // NOTE : product stock will be updated later after payment status is paid
+        // Hitung total harga order ini
+        const itemTotal = product.price * item.quantity;
+        totalPrice += itemTotal;
+
+        // Tambahkan produk ke daftar item Midtrans
+        midtransItems.push({
+          id: `PRODUCT-${product.id}`,
+          price: product.price,
+          quantity: item.quantity,
+          name: product.name.substring(0, 50),
+        });
 
         cartIdsToRemove.push(item.cartId);
       }
 
-      const amountToPay = totalAmount + shippingCost;
-      totalGrossAmount += amountToPay;
+      // Tambahkan biaya pengiriman ke daftar Midtrans
+      midtransItems.push({
+        id: `SHIPPING-${newOrder.orderNumber}`,
+        price: shippingCost,
+        quantity: 1,
+        name: `Shipping Cost - Store ${storeId}`,
+      });
 
-      await newOrder.update({ totalAmount }, { transaction });
+      // Hitung total amount yang harus dibayar untuk pesanan ini
+      const totalOrderAmount = totalPrice + shippingCost;
+      totalGrossAmount += totalOrderAmount;
+
+      // Update order dengan total harga
+      await newOrder.update({ totalPrice, totalOrderAmount }, { transaction });
     }
 
+    // Hapus item dari cart jika sudah berhasil dipesan
     if (cartIdsToRemove.length > 0) {
       await Cart.destroy({
         where: { id: { [Op.in]: cartIdsToRemove } },
@@ -211,6 +235,16 @@ const createNewOrder = async (req, res) => {
       });
     }
 
+    // Update transaksi dengan total harga yang benar
+    await newTransaction.update(
+      {
+        totalPrice: totalGrossAmount,
+        amountToPay: totalGrossAmount,
+      },
+      { transaction },
+    );
+
+    // Kirim permintaan ke Midtrans untuk membuat pembayaran
     let parameter = {
       transaction_details: {
         order_id: newTransaction.id,
@@ -234,6 +268,7 @@ const createNewOrder = async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
+    console.error('Error creating order:', error);
     return res
       .status(500)
       .json({ message: 'Internal Server Error', error: error.message });

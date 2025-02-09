@@ -64,7 +64,7 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
-      totalAmount: {
+      totalOrderAmount: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,

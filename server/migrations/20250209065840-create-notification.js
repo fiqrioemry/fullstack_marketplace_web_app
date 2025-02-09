@@ -10,7 +10,11 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
+      },
+      storeId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       type: {
         type: Sequelize.ENUM('order', 'message', 'promo', 'system'),
