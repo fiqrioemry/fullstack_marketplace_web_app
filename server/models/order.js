@@ -1,27 +1,42 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      this.hasMany(models.OrderDetail, {
-        foreignKey: 'orderId',
-        as: 'orderDetail',
+      this.belongsTo(models.Transaction, {
+        foreignKey: 'transactionId',
+        as: 'transaction',
       });
-      this.belongsTo(models.Store, { foreignKey: 'storeId', as: 'store' });
+      this.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user',
+      });
+      this.belongsTo(models.Store, {
+        foreignKey: 'storeId',
+        as: 'store',
+      });
       this.belongsTo(models.Address, {
         foreignKey: 'addressId',
         as: 'address',
       });
-      this.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+      this.hasMany(models.OrderDetail, {
+        foreignKey: 'orderId',
+        as: 'orderDetails',
+      });
+      this.hasOne(models.Shipment, {
+        foreignKey: 'orderId',
+        as: 'shipment',
+      });
     }
   }
+
   Order.init(
     {
+      transactionId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -39,53 +54,37 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
-      totalAmount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: true,
-        validate: {
-          min: 0,
-        },
-      },
-      amountToPay: {
+      totalPrice: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,
-        validate: {
-          min: 0,
-        },
       },
-      orderStatus: {
-        type: DataTypes.ENUM,
-        values: ['pending', 'paid', 'expired', 'cancelled'],
-        defaultValue: 'pending',
-        allowNull: false,
-      },
-      shippingCost: {
+      shipmentCost: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
-        validate: {
-          min: 0,
-        },
+        defaultValue: 0,
       },
-      shippingStatus: {
-        type: DataTypes.ENUM,
-        values: [
+      totalAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0,
+      },
+      orderStatus: {
+        type: DataTypes.ENUM(
           'waiting payment',
           'pending',
           'process',
-          'shipped',
-          'delivered',
           'canceled',
-        ],
-        defaultValue: 'waiting payment',
+        ),
         allowNull: false,
+        defaultValue: 'waiting payment',
       },
-      shippingNumber: DataTypes.STRING,
     },
     {
       sequelize,
       modelName: 'Order',
     },
   );
+
   return Order;
 };

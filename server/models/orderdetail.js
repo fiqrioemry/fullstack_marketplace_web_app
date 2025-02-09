@@ -1,33 +1,38 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class OrderDetail extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      this.belongsTo(models.Order, { foreignKey: "orderId", as: "order" });
+      this.belongsTo(models.Order, {
+        foreignKey: 'orderId',
+        as: 'order',
+      });
       this.belongsTo(models.Product, {
-        foreignKey: "productId",
-        as: "product",
+        foreignKey: 'productId',
+        as: 'product',
       });
     }
   }
+
   OrderDetail.init(
     {
-      orderId: DataTypes.UUID,
-      productId: DataTypes.INTEGER,
+      orderId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      productId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-          min: 1,
-        },
+        defaultValue: 1,
       },
       price: {
         type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
       },
       totalPrice: {
         type: DataTypes.DECIMAL(10, 2),
@@ -36,13 +41,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "OrderDetail",
+      modelName: 'OrderDetail',
+      hooks: {
+        beforeCreate: (orderDetail, options) => {
+          orderDetail.totalPrice = orderDetail.price * orderDetail.quantity;
+        },
+        beforeUpdate: (orderDetail, options) => {
+          orderDetail.totalPrice = orderDetail.price * orderDetail.quantity;
+        },
+      },
     },
   );
-
-  OrderDetail.beforeCreate((orderDetail, options) => {
-    orderDetail.totalPrice = orderDetail.price * orderDetail.quantity;
-  });
 
   return OrderDetail;
 };

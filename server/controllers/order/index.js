@@ -5,6 +5,7 @@ const {
   Product,
   sequelize,
   Notification,
+  Transaction,
   OrderDetail,
 } = require('../../models');
 require('dotenv').config();
@@ -122,29 +123,23 @@ const createNewOrder = async (req, res) => {
     let totalGrossAmount = 0;
     let midtransItems = [];
 
-    // 1️⃣ Buat Master Order (Satu orderNumber untuk transaksi Midtrans)
-    const masterOrder = await Order.create(
+    const newTransaction = await Transaction.create(
       {
         userId,
-        orderNumber: `ORDER-${userId}-${Date.now()}`,
-        addressId,
-        totalAmount: 0,
-        shippingCost: 0,
-        amountToPay: 0,
-        shippingNumber: null,
+        totalPrice: 0, // will be updated later
+        amountToPay: 0, // will be updated later
+        totalShipmentCost: 0,
+        paymentStatus: 'pending',
       },
       { transaction },
     );
 
-    let orderStores = []; // Menyimpan order untuk setiap seller
-
-    for (const orderData of orders) {
-      const { storeId, shippingCost, products } = orderData;
-      let totalAmount = 0;
+    for (const order of orders) {
+      const { storeId, shipmentCost, products } = order;
 
       if (
         !storeId ||
-        shippingCost == null ||
+        shipmentCost == null ||
         !Array.isArray(products) ||
         products.length === 0
       ) {
@@ -153,20 +148,21 @@ const createNewOrder = async (req, res) => {
           .json({ message: 'Invalid Store ID, Shipping Cost, or Products' });
       }
 
-      // 2️⃣ Buat Order Store (Satu order untuk tiap seller)
-      const orderStore = await StoreOrder.create(
+      // masing2 seller/store memiliki order berbeda
+      const newOrder = await Order.create(
         {
-          orderId: masterOrder.id, // Hubungkan ke Master Order
+          userId,
+          transactionId: newTransaction.id,
           storeId,
-          totalAmount: 0,
-          shippingCost,
-          amountToPay: 0,
-          shippingStatus: 'waiting payment',
+          addressId,
+          orderNumer: `INV/${transaction.id}/${Date.now}`,
+          totalPrice: 0,
+          shipmentCost,
+          totalAmount: 0, // totalPrice + shipmentCost
+          orderStatus: 'waiting payment',
         },
         { transaction },
       );
-
-      orderStores.push(orderStore);
 
       for (const item of products) {
         if (!item.productId || !item.quantity) {
@@ -186,47 +182,26 @@ const createNewOrder = async (req, res) => {
             .json({ message: `Insufficient product stock` });
         }
 
-        const totalPrice = item.quantity * product.price;
-        totalAmount += totalPrice;
-
-        // 3️⃣ Buat Order Detail (Detail pesanan dalam tiap OrderStore)
         await OrderDetail.create(
           {
-            orderStoreId: orderStore.id, // Hubungkan ke OrderStore
+            orderId: newOrder.id,
             productId: item.productId,
             quantity: item.quantity,
             price: product.price,
-            totalPrice,
+            // total price function is defined already in model
           },
           { transaction },
         );
 
-        await Product.update(
-          { stock: product.stock - item.quantity },
-          { where: { id: item.productId }, transaction },
-        );
+        // NOTE : product stock will be updated later after payment status is paid
 
         cartIdsToRemove.push(item.cartId);
-
-        midtransItems.push({
-          id: `PRODUCT-${product.id}`,
-          price: product.price,
-          quantity: item.quantity,
-          name: product.name.substring(0, 50),
-        });
       }
-
-      midtransItems.push({
-        id: `SHIPPING-${orderStore.id}`,
-        price: shippingCost,
-        quantity: 1,
-        name: `Shipping Cost for Store ${storeId}`,
-      });
 
       const amountToPay = totalAmount + shippingCost;
       totalGrossAmount += amountToPay;
 
-      await orderStore.update({ totalAmount, amountToPay }, { transaction });
+      await newOrder.update({ totalAmount }, { transaction });
     }
 
     if (cartIdsToRemove.length > 0) {
@@ -236,10 +211,9 @@ const createNewOrder = async (req, res) => {
       });
     }
 
-    // 4️⃣ Midtrans hanya menggunakan Master Order
     let parameter = {
       transaction_details: {
-        order_id: masterOrder.orderNumber, // Menggunakan Master Order
+        order_id: newTransaction.id,
         gross_amount: totalGrossAmount,
       },
       item_details: midtransItems,
@@ -254,8 +228,7 @@ const createNewOrder = async (req, res) => {
     await transaction.commit();
 
     return res.status(201).json({
-      message: 'Order is created',
-      orders: orderStores,
+      message: 'New Order is created',
       transactionToken: transactionMidtrans.token,
       transactionUrl: transactionMidtrans.redirect_url,
     });
@@ -270,39 +243,6 @@ const createNewOrder = async (req, res) => {
 // get all orders for store / seller
 const getStoreOrders = async (req, res) => {
   const { storeId } = req.user;
-  try {
-    const orders = await Order.findAll({
-      where: { storeId },
-      include: [
-        {
-          model: OrderDetail,
-          as: 'orderDetail',
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['name', 'price', 'stock'],
-            },
-          ],
-        },
-        {
-          model: Address,
-          as: 'address',
-          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    return res.status(200).json({
-      data: orders,
-    });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
-  }
 };
 
 // get all order for user

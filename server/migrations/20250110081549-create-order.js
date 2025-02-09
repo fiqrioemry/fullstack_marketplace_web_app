@@ -1,5 +1,5 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Orders', {
@@ -9,58 +9,75 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      transactionId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Transactions',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      storeId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Stores',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      addressId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Addresses',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       orderNumber: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },
-      userId: {
-        type: Sequelize.INTEGER,
+      totalPrice: {
+        type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
+        defaultValue: 0,
       },
-      storeId: {
-        type: Sequelize.INTEGER,
+      shipmentCost: {
+        type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
-      },
-      addressId: {
-        // set as shipping address relation to model address
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        defaultValue: 0,
       },
       totalAmount: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
-      },
-      amountToPay: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
+        defaultValue: 0,
       },
       orderStatus: {
-        type: Sequelize.ENUM,
-        values: ['pending', 'paid', 'canceled', 'expired'],
-        defaultValue: 'pending',
-        allowNull: false,
-      },
-      shippingCost: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      shippingStatus: {
-        type: Sequelize.ENUM,
-        values: [
+        type: Sequelize.ENUM(
           'waiting payment',
           'pending',
           'process',
-          'shipped',
-          'delivered',
           'canceled',
-        ],
-        defaultValue: 'waiting payment',
+        ),
         allowNull: false,
-      },
-      shippingNumber: {
-        type: Sequelize.STRING(50),
-        allowNull: true,
+        defaultValue: 'waiting payment',
       },
       createdAt: {
         allowNull: false,
@@ -72,6 +89,7 @@ module.exports = {
       },
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Orders');
   },
