@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         as: 'orderDetail',
       });
       this.belongsTo(models.Store, { foreignKey: 'storeId', as: 'store' });
+      this.belongsTo(models.Address, {
+        foreignKey: 'addressId',
+        as: 'address',
+      });
       this.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
     }
   }

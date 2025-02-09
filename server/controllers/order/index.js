@@ -9,38 +9,39 @@ const {
 const { Op } = require('sequelize');
 const midtransClient = require('midtrans-client');
 
+// Midtrans Configuration
+let snap = new midtransClient.Snap({
+  isProduction: process.env.NODE_ENV === 'production',
+  clientKey: process.env.MIDTRANS_CLIENT_KEY,
+  serverKey: process.env.MIDTRANS_SERVER_KEY,
+});
+
 const createNewOrder = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const userId = req.user.id;
-    const { shippingAddressId, orders } = req.body;
+    const { addressId, orders } = req.body;
 
     // Validasi input
-    if (!shippingAddressId || !Array.isArray(orders) || orders.length === 0) {
+    if (!addressId || !Array.isArray(orders) || orders.length === 0) {
       return res
         .status(400)
-        .json({ message: 'Data order tidak lengkap atau salah format' });
+        .json({ message: 'Order information not complete or wrong' });
     }
 
     // Ambil alamat pengiriman
     const address = await Address.findOne({
-      where: { id: shippingAddressId, userId },
+      where: { id: addressId, userId },
       transaction,
     });
     if (!address) {
-      return res.status(400).json({ message: 'Alamat tidak ditemukan' });
+      return res.status(400).json({ message: 'Address not found' });
     }
 
     let createdOrders = [];
     let cartIdsToRemove = [];
     let totalGrossAmount = 0;
     let midtransItems = [];
-
-    // Midtrans Configuration
-    let snap = new midtransClient.Snap({
-      isProduction: false,
-      serverKey: 'YOUR_MIDTRANS_SERVER_KEY',
-    });
 
     // Proses setiap order per storeId dari request
     for (const orderData of orders) {
@@ -55,7 +56,7 @@ const createNewOrder = async (req, res) => {
         products.length === 0
       ) {
         return res.status(400).json({
-          message: 'Store ID, Shipping Cost, atau Produk tidak valid',
+          message: 'Store ID, Shipping Cost, or Produk are not valid',
         });
       }
 
@@ -64,10 +65,10 @@ const createNewOrder = async (req, res) => {
         {
           userId,
           storeId,
+          addressId,
           totalAmount: 0, // Akan diupdate nanti
           shippingCost,
           AmountToPay: 0, // Akan diupdate nanti
-          shippingAddress: shippingAddressId,
           orderStatus: 'pending',
           shippingStatus: 'pending',
           shippingNumber: null,
@@ -79,7 +80,7 @@ const createNewOrder = async (req, res) => {
       for (const item of products) {
         if (!item.productId || !item.quantity) {
           await transaction.rollback();
-          return res.status(400).json({ message: 'Data produk tidak lengkap' });
+          return res.status(400).json({ message: 'Product data is not valid' });
         }
 
         const product = await Product.findOne({
@@ -89,7 +90,7 @@ const createNewOrder = async (req, res) => {
         if (!product || product.stock < item.quantity) {
           await transaction.rollback();
           return res.status(400).json({
-            message: `Stok tidak cukup untuk produk ID ${item.productId}`,
+            message: `Insufficient product stock`,
           });
         }
 
@@ -155,7 +156,7 @@ const createNewOrder = async (req, res) => {
     // Buat satu transaksi Midtrans untuk semua order
     let parameter = {
       transaction_details: {
-        order_id: `ORDER-GROUP-${userId}-${Date.now()}`,
+        orderId: `ORDER-GROUP-${userId}-${Date.now()}`,
         gross_amount: totalGrossAmount,
       },
       item_details: midtransItems,
@@ -170,62 +171,61 @@ const createNewOrder = async (req, res) => {
     await transaction.commit();
 
     return res.status(201).json({
-      message: 'Order berhasil dibuat dalam satu transaksi',
+      message: 'Order is created',
       orders: createdOrders,
       transactionToken: transactionMidtrans.token,
       transactionUrl: transactionMidtrans.redirect_url,
     });
   } catch (error) {
     await transaction.rollback();
-    console.error(error);
     return res
       .status(500)
       .json({ message: 'Terjadi kesalahan', error: error.message });
   }
 };
 
-const handleMidtransNotification = async (req, res) => {
+const PaymentNotifications = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const { order_id, transaction_status } = req.body;
+    const statusResponse = await snap.transaction.notification(req.body);
 
-    // Cari order berdasarkan order_id
-    const order = await Order.findOne({ where: { id: order_id }, transaction });
+    let orderId = statusResponse.order_id;
+
+    let transactionStatus = statusResponse.transaction_status;
+
+    const order = await Order.findOne({ where: { id: orderId }, transaction });
+
     if (!order) {
       return res.status(404).json({ message: 'Order tidak ditemukan' });
     }
 
-    // Cek status transaksi Midtrans
-    if (
-      transaction_status === 'settlement' ||
-      transaction_status === 'capture'
-    ) {
-      // Pembayaran berhasil
+    if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
+      // 1. payment success
       await order.update({ orderStatus: 'paid' }, { transaction });
-    } else if (transaction_status === 'expire') {
-      // Pembayaran kadaluarsa, ubah status order
+    } else if (transactionStatus === 'expire') {
+      // 2. payment expired
       await order.update({ orderStatus: 'expired' }, { transaction });
 
-      // Kembalikan stok barang
       const orderDetails = await OrderDetail.findAll({
         where: { orderId: order.id },
         transaction,
       });
+
       for (const item of orderDetails) {
         await Product.increment('stock', {
           by: item.quantity,
           where: { id: item.productId },
         });
       }
-    } else if (transaction_status === 'cancel') {
-      // Pembayaran dibatalkan, ubah status order
+    } else if (transactionStatus === 'cancel') {
+      // 3. payment cancelled
       await order.update({ orderStatus: 'canceled' }, { transaction });
 
-      // Kembalikan stok barang
       const orderDetails = await OrderDetail.findAll({
         where: { orderId: order.id },
         transaction,
       });
+
       for (const item of orderDetails) {
         await Product.increment('stock', {
           by: item.quantity,
@@ -235,15 +235,15 @@ const handleMidtransNotification = async (req, res) => {
     }
 
     await transaction.commit();
+
     return res.status(200).json({
-      message: 'Status order diperbarui sesuai dengan pembayaran Midtrans',
+      message: 'Order is updated',
     });
   } catch (error) {
     await transaction.rollback();
-    console.error(error);
     return res
       .status(500)
-      .json({ message: 'Terjadi kesalahan', error: error.message });
+      .json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
@@ -264,25 +264,24 @@ const getAllOrders = async (req, res) => {
             },
           ],
         },
-        // {
-        //   model: Address,
-        //   as: 'address',
-        //   attributes: ['address', 'city', 'province', 'zipcode'],
-        // },
+        {
+          model: Address,
+          as: 'address',
+          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
+        },
       ],
       order: [['createdAt', 'DESC']],
     });
 
     return res.status(200).json({
-      message: 'Data order berhasil diambil',
-      orders,
+      data: orders,
     });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .json({ message: 'Terjadi kesalahan', error: error.message });
+      .json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
-module.exports = { createNewOrder, getAllOrders };
+module.exports = { createNewOrder, getAllOrders, PaymentNotifications };

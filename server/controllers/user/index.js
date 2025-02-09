@@ -137,10 +137,19 @@ async function getAddress(req, res) {
 
 async function addAddress(req, res) {
   const { userId } = req.user;
-  const { name, phone, address, district province, city, zipcode, isMain } = req.body;
+  const { name, phone, address, district, province, city, zipcode, isMain } =
+    req.body;
 
   try {
-    if (!name || !phone || !address || !province || !city || !zipcode || !district) {
+    if (
+      !name ||
+      !phone ||
+      !address ||
+      !province ||
+      !city ||
+      !zipcode ||
+      !district
+    ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -155,6 +164,7 @@ async function addAddress(req, res) {
       address,
       province,
       city,
+      district,
       zipcode,
       isMain,
     });
