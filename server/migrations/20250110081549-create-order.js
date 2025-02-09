@@ -9,6 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      order_number: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true, // Pastikan order_number unik
+      },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -35,7 +40,6 @@ module.exports = {
         defaultValue: 'pending',
         allowNull: false,
       },
-
       shippingCost: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,

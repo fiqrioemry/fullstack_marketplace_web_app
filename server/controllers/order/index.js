@@ -1,11 +1,12 @@
 const {
-  Order,
-  OrderDetail,
-  Product,
-  Address,
   Cart,
+  Order,
+  Address,
+  Product,
   sequelize,
+  OrderDetail,
 } = require('../../models');
+require('dotenv').config();
 const { Op } = require('sequelize');
 const midtransClient = require('midtrans-client');
 
@@ -16,10 +17,116 @@ let snap = new midtransClient.Snap({
   serverKey: process.env.MIDTRANS_SERVER_KEY,
 });
 
-const createNewOrder = async (req, res) => {
+const PaymentNotifications = async (req, res) => {
+  console.log(
+    'REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!!',
+  );
+  console.log('Midtrans Webhook Received:', req.body); // Tambahkan log ini
+
   const transaction = await sequelize.transaction();
   try {
-    const userId = req.user.id;
+    const statusResponse = await snap.transaction.notification(req.body);
+    console.log('Status Response from Midtrans:', statusResponse); // Debugging tambahan
+
+    let orderId = statusResponse.order_id;
+    let transactionStatus = statusResponse.transaction_status;
+
+    const order = await Order.findOne({ where: { id: orderId }, transaction });
+
+    if (!order) {
+      console.log('Order tidak ditemukan:', orderId);
+      return res.status(404).json({ message: 'Order tidak ditemukan' });
+    }
+
+    if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
+      await order.update({ orderStatus: 'paid' }, { transaction });
+    } else if (transactionStatus === 'expire') {
+      await order.update({ orderStatus: 'expired' }, { transaction });
+
+      const orderDetails = await OrderDetail.findAll({
+        where: { orderId: order.id },
+        transaction,
+      });
+
+      for (const item of orderDetails) {
+        await Product.increment('stock', {
+          by: item.quantity,
+          where: { id: item.productId },
+        });
+      }
+    } else if (transactionStatus === 'cancel') {
+      await order.update({ orderStatus: 'canceled' }, { transaction });
+
+      const orderDetails = await OrderDetail.findAll({
+        where: { orderId: order.id },
+        transaction,
+      });
+
+      for (const item of orderDetails) {
+        await Product.increment('stock', {
+          by: item.quantity,
+          where: { id: item.productId },
+        });
+      }
+    }
+
+    await transaction.commit();
+
+    console.log('Order berhasil diperbarui:', orderId);
+    return res.status(200).json({ message: 'Order is updated' });
+  } catch (error) {
+    console.error('Error processing webhook:', error.message);
+    await transaction.rollback();
+    return res
+      .status(500)
+      .json({ message: 'Internal Server Error', error: error.message });
+  }
+};
+
+const getAllOrders = async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const orders = await Order.findAll({
+      where: { userId },
+      include: [
+        {
+          model: OrderDetail,
+          as: 'orderDetail',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['name', 'price', 'stock'],
+            },
+          ],
+        },
+        {
+          model: Address,
+          as: 'address',
+          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    return res.status(200).json({
+      data: orders,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal Server Error', error: error.message });
+  }
+};
+
+const createNewOrder = async (req, res) => {
+  console.log(
+    'REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!!',
+  ); //
+  const transaction = await sequelize.transaction();
+  try {
+    const { userId } = req.user;
     const { addressId, orders } = req.body;
 
     // Validasi input
@@ -156,7 +263,7 @@ const createNewOrder = async (req, res) => {
     // Buat satu transaksi Midtrans untuk semua order
     let parameter = {
       transaction_details: {
-        orderId: `ORDER-GROUP-${userId}-${Date.now()}`,
+        order_id: `ORDER-GROUP-${userId}-${Date.now()}`,
         gross_amount: totalGrossAmount,
       },
       item_details: midtransItems,
@@ -181,106 +288,6 @@ const createNewOrder = async (req, res) => {
     return res
       .status(500)
       .json({ message: 'Terjadi kesalahan', error: error.message });
-  }
-};
-
-const PaymentNotifications = async (req, res) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const statusResponse = await snap.transaction.notification(req.body);
-
-    let orderId = statusResponse.order_id;
-
-    let transactionStatus = statusResponse.transaction_status;
-
-    const order = await Order.findOne({ where: { id: orderId }, transaction });
-
-    if (!order) {
-      return res.status(404).json({ message: 'Order tidak ditemukan' });
-    }
-
-    if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
-      // 1. payment success
-      await order.update({ orderStatus: 'paid' }, { transaction });
-    } else if (transactionStatus === 'expire') {
-      // 2. payment expired
-      await order.update({ orderStatus: 'expired' }, { transaction });
-
-      const orderDetails = await OrderDetail.findAll({
-        where: { orderId: order.id },
-        transaction,
-      });
-
-      for (const item of orderDetails) {
-        await Product.increment('stock', {
-          by: item.quantity,
-          where: { id: item.productId },
-        });
-      }
-    } else if (transactionStatus === 'cancel') {
-      // 3. payment cancelled
-      await order.update({ orderStatus: 'canceled' }, { transaction });
-
-      const orderDetails = await OrderDetail.findAll({
-        where: { orderId: order.id },
-        transaction,
-      });
-
-      for (const item of orderDetails) {
-        await Product.increment('stock', {
-          by: item.quantity,
-          where: { id: item.productId },
-        });
-      }
-    }
-
-    await transaction.commit();
-
-    return res.status(200).json({
-      message: 'Order is updated',
-    });
-  } catch (error) {
-    await transaction.rollback();
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
-  }
-};
-
-const getAllOrders = async (req, res) => {
-  const { userId } = req.user;
-  try {
-    const orders = await Order.findAll({
-      where: { userId },
-      include: [
-        {
-          model: OrderDetail,
-          as: 'orderDetail',
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['name', 'price', 'stock'],
-            },
-          ],
-        },
-        {
-          model: Address,
-          as: 'address',
-          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    return res.status(200).json({
-      data: orders,
-    });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
