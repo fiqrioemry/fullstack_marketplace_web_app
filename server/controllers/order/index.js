@@ -313,6 +313,8 @@ const getStoreOrders = async (req, res) => {
   }
 };
 
+// get all order for user
+
 const getUserOrders = async (req, res) => {
   const { userId } = req.user;
   try {
@@ -349,8 +351,6 @@ const getUserOrders = async (req, res) => {
       .json({ message: 'Internal Server Error', error: error.message });
   }
 };
-
-// get all order for user
 
 module.exports = {
   createNewOrder,

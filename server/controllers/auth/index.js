@@ -84,14 +84,12 @@ async function register(req, res) {
 async function login(req, res) {
   try {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password)
-      return res.status(401).json({ message: 'All Field required' });
+      return res.status(401).json({ message: 'All fields are required' });
 
     const user = await User.findOne({
       where: { email },
-      attributes: { exclude: ['password'] },
       include: [
         { model: Store, as: 'store', attributes: ['id', 'name', 'avatar'] },
       ],
@@ -99,6 +97,11 @@ async function login(req, res) {
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
     }
 
     const accessToken = jwt.sign(
@@ -124,7 +127,7 @@ async function login(req, res) {
     });
 
     return res.status(200).json({
-      message: 'Login is success',
+      message: 'Login is successful',
       accessToken,
     });
   } catch (error) {
