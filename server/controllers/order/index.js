@@ -5,6 +5,7 @@ const {
   Product,
   sequelize,
   Notification,
+  Shipment,
   Transaction,
   OrderDetail,
 } = require('../../models');
@@ -49,16 +50,20 @@ const PaymentNotifications = async (req, res) => {
       await userTransaction.update({ paymentStatus: 'paid' }, { transaction });
       message = 'Your payment is successful, order will be processed';
 
+      await shipment.create({
+        orderId,
+      });
+
       let productStockUpdates = [];
 
       for (const order of userTransaction.order) {
         await order.update({ orderStatus: 'pending' }, { transaction });
-
+        await Shipment.create({ orderId: order.orderId });
         // 2️⃣ Ambil productId dan kurangi stok
         for (const orderDetail of order.orderDetail) {
           productStockUpdates.push({
             id: orderDetail.productId,
-            stock: orderDetail.quantity, // Simpan quantity untuk update nanti
+            stock: orderDetail.quantity,
           });
         }
 
@@ -209,9 +214,9 @@ const createNewOrder = async (req, res) => {
           storeId,
           addressId,
           orderNumber: `INV/${newTransaction.id}/${Date.now()}`,
-          totalPrice: 0,
+          totalPrice: 0, // Akan diperbarui nanti
           shipmentCost,
-          totalOrderAmount: 0,
+          totalOrderAmount: 0, // Akan diperbarui nanti
           orderStatus: 'waiting payment',
         },
         { transaction },
@@ -238,6 +243,10 @@ const createNewOrder = async (req, res) => {
           throw new Error(`Insufficient stock for product ${product.name}`);
         }
 
+        // **Hitung total harga order ini**
+        const itemTotalPrice = cart.quantity * product.price;
+        totalPrice += itemTotalPrice; // Menambah harga ke total order
+
         // Buat detail order
         await OrderDetail.create(
           {
@@ -245,12 +254,12 @@ const createNewOrder = async (req, res) => {
             productId: product.id,
             quantity: cart.quantity,
             price: product.price,
-            totalPrice: cart.quantity * product.price,
+            totalPrice: itemTotalPrice, // Menyimpan harga total produk dalam detail order
           },
           { transaction },
         );
 
-        totalAmount += product.price * cart.quantity;
+        totalAmount += itemTotalPrice; // Tambahkan ke total transaksi
 
         // Tambahkan ke daftar pembayaran Midtrans
         midtransItems.push({
@@ -263,7 +272,7 @@ const createNewOrder = async (req, res) => {
         cartIdsToRemove.push(cart.id);
       });
 
-      await Promise.all(orderDetails);
+      await Promise.all(orderDetails); // **Tunggu semua OrderDetail selesai**
 
       // Tambahkan biaya pengiriman ke daftar Midtrans
       midtransItems.push({
@@ -273,11 +282,11 @@ const createNewOrder = async (req, res) => {
         name: `Shipping Cost - Store ${storeId}`,
       });
 
-      const totalOrderAmount = totalPrice + shipmentCost;
+      const totalOrderAmount = totalPrice + shipmentCost; // Sekarang `totalPrice` sudah dihitung dengan benar
       totalShipmentCost += shipmentCost;
       totalAmount += totalPrice;
 
-      // Update order dengan total harga
+      // **Perbaikan: Update order dengan total harga setelah semua OrderDetail selesai**
       await newOrder.update({ totalPrice, totalOrderAmount }, { transaction });
     });
 
