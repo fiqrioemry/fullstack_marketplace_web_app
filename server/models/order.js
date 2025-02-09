@@ -30,10 +30,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-
       addressId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      orderNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
       },
       totalAmount: {
         type: DataTypes.DECIMAL(10, 2),
@@ -52,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       orderStatus: {
         type: DataTypes.ENUM,
-        values: ['pending', 'paid', 'expired', 'cancelled'],
+        values: ['pending', 'paid', 'expired', 'canceled'],
         defaultValue: 'pending',
         allowNull: false,
       },
@@ -65,8 +69,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       shippingStatus: {
         type: DataTypes.ENUM,
-        values: ['pending', 'process', 'shipped', 'delivered'],
-        defaultValue: 'pending',
+        values: [
+          'waiting payment',
+          'pending',
+          'process',
+          'shipped',
+          'delivered',
+          'canceled',
+        ],
+        defaultValue: 'waiting payment',
         allowNull: false,
       },
       shippingNumber: DataTypes.STRING,

@@ -9,10 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      order_number: {
+      orderNumber: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true, // Pastikan order_number unik
+        unique: true,
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -23,6 +23,7 @@ module.exports = {
         allowNull: false,
       },
       addressId: {
+        // set as shipping address relation to model address
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -46,8 +47,15 @@ module.exports = {
       },
       shippingStatus: {
         type: Sequelize.ENUM,
-        values: ['pending', 'process', 'shipped', 'delivered'],
-        defaultValue: 'pending',
+        values: [
+          'waiting payment',
+          'pending',
+          'process',
+          'shipped',
+          'delivered',
+          'canceled',
+        ],
+        defaultValue: 'waiting payment',
         allowNull: false,
       },
       shippingNumber: {

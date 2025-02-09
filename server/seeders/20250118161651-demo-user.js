@@ -71,7 +71,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          fullname: 'admin marketplace',
+          fullname: 'michael jackson',
           email: 'customer@example.com',
           password: hashedPassword,
           role: 'customer',

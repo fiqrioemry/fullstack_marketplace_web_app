@@ -18,30 +18,46 @@ let snap = new midtransClient.Snap({
 });
 
 const PaymentNotifications = async (req, res) => {
-  console.log(
-    'REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!!',
-  );
-  console.log('Midtrans Webhook Received:', req.body); // Tambahkan log ini
-
   const transaction = await sequelize.transaction();
   try {
     const statusResponse = await snap.transaction.notification(req.body);
-    console.log('Status Response from Midtrans:', statusResponse); // Debugging tambahan
-
     let orderId = statusResponse.order_id;
     let transactionStatus = statusResponse.transaction_status;
 
-    const order = await Order.findOne({ where: { id: orderId }, transaction });
+    const order = await Order.findOne({
+      where: { orderNumber: orderId },
+      transaction,
+    });
 
     if (!order) {
-      console.log('Order tidak ditemukan:', orderId);
-      return res.status(404).json({ message: 'Order tidak ditemukan' });
+      return res.status(404).json({ message: 'Order Not Found' });
     }
 
+    let message = '';
+
     if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
-      await order.update({ orderStatus: 'paid' }, { transaction });
+      await order.update(
+        { orderStatus: 'paid', shippingStatus: 'pending' },
+        { transaction },
+      );
+      message = 'Your Payment is Successful';
+
+      // Notifikasi untuk Seller
+      await Notification.create(
+        {
+          userId: order.storeId, // Notifikasi untuk seller berdasarkan storeId
+          type: 'order',
+          message: 'You have a new order to process.',
+          metadata: { orderNumber: order.orderNumber },
+        },
+        { transaction },
+      );
     } else if (transactionStatus === 'expire') {
-      await order.update({ orderStatus: 'expired' }, { transaction });
+      await order.update(
+        { orderStatus: 'expired', shippingStatus: 'canceled' },
+        { transaction },
+      );
+      message = 'Your Payment has Expired';
 
       const orderDetails = await OrderDetail.findAll({
         where: { orderId: order.id },
@@ -52,11 +68,15 @@ const PaymentNotifications = async (req, res) => {
         await Product.increment('stock', {
           by: item.quantity,
           where: { id: item.productId },
+          transaction,
         });
       }
     } else if (transactionStatus === 'cancel') {
-      await order.update({ orderStatus: 'canceled' }, { transaction });
-
+      await order.update(
+        { orderStatus: 'canceled', shippingStatus: 'canceled' },
+        { transaction },
+      );
+      message = 'Your Order has been Canceled';
       const orderDetails = await OrderDetail.findAll({
         where: { orderId: order.id },
         transaction,
@@ -66,14 +86,24 @@ const PaymentNotifications = async (req, res) => {
         await Product.increment('stock', {
           by: item.quantity,
           where: { id: item.productId },
+          transaction,
         });
       }
     }
 
-    await transaction.commit();
+    // Notifikasi untuk Buyer
+    await Notification.create(
+      {
+        userId: order.userId,
+        type: 'order',
+        message,
+        metadata: { orderNumber: order.orderNumber },
+      },
+      { transaction },
+    );
 
-    console.log('Order berhasil diperbarui:', orderId);
-    return res.status(200).json({ message: 'Order is updated' });
+    await transaction.commit();
+    return res.status(200).json({ message: 'Order status updated' });
   } catch (error) {
     console.error('Error processing webhook:', error.message);
     await transaction.rollback();
@@ -83,47 +113,7 @@ const PaymentNotifications = async (req, res) => {
   }
 };
 
-const getAllOrders = async (req, res) => {
-  const { userId } = req.user;
-  try {
-    const orders = await Order.findAll({
-      where: { userId },
-      include: [
-        {
-          model: OrderDetail,
-          as: 'orderDetail',
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['name', 'price', 'stock'],
-            },
-          ],
-        },
-        {
-          model: Address,
-          as: 'address',
-          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    return res.status(200).json({
-      data: orders,
-    });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
-  }
-};
-
 const createNewOrder = async (req, res) => {
-  console.log(
-    'REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!! REQUEST BERHASIL MASYUK !!!',
-  ); //
   const transaction = await sequelize.transaction();
   try {
     const { userId } = req.user;
@@ -172,12 +162,11 @@ const createNewOrder = async (req, res) => {
         {
           userId,
           storeId,
+          orderNumber: `order-${userId}-${Date.now()}`,
           addressId,
-          totalAmount: 0, // Akan diupdate nanti
+          totalAmount: 0,
           shippingCost,
-          AmountToPay: 0, // Akan diupdate nanti
-          orderStatus: 'pending',
-          shippingStatus: 'pending',
+          amountToPay: 0,
           shippingNumber: null,
         },
         { transaction },
@@ -228,26 +217,22 @@ const createNewOrder = async (req, res) => {
           id: `PRODUCT-${product.id}`,
           price: product.price,
           quantity: item.quantity,
-          name: product.name.substring(0, 50), // Batas maksimal nama di Midtrans
+          name: product.name.substring(0, 50),
         });
       }
 
-      // Tambahkan shipping cost sebagai item Midtrans
       midtransItems.push({
-        id: `SHIPPING-${newOrder.id}`,
+        id: `SHIPPING-${newOrder.orderNumber}`,
         price: shippingCost,
         quantity: 1,
-        name: `Ongkos Kirim - Store ${storeId}`,
+        name: `Shipping Cost Order Number: ${newOrder.orderNumber}`,
       });
 
       // Update totalAmount dan AmountToPay di Order
       const amountToPay = totalAmount + shippingCost;
       totalGrossAmount += amountToPay; // Tambahkan ke total transaksi Midtrans
 
-      await newOrder.update(
-        { totalAmount, AmountToPay: amountToPay },
-        { transaction },
-      );
+      await newOrder.update({ totalAmount, amountToPay }, { transaction });
 
       createdOrders.push(newOrder);
     }
@@ -260,10 +245,9 @@ const createNewOrder = async (req, res) => {
       });
     }
 
-    // Buat satu transaksi Midtrans untuk semua order
     let parameter = {
       transaction_details: {
-        order_id: `ORDER-GROUP-${userId}-${Date.now()}`,
+        order_id: newOrder.orderNumber,
         gross_amount: totalGrossAmount,
       },
       item_details: midtransItems,
@@ -287,8 +271,90 @@ const createNewOrder = async (req, res) => {
     await transaction.rollback();
     return res
       .status(500)
-      .json({ message: 'Terjadi kesalahan', error: error.message });
+      .json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
-module.exports = { createNewOrder, getAllOrders, PaymentNotifications };
+// get all orders for store / seller
+const getStoreOrders = async (req, res) => {
+  const { userId, storeId } = req.user;
+  try {
+    const orders = await Order.findAll({
+      where: { storeId },
+      include: [
+        {
+          model: OrderDetail,
+          as: 'orderDetail',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['name', 'price', 'stock'],
+            },
+          ],
+        },
+        {
+          model: Address,
+          as: 'address',
+          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    return res.status(200).json({
+      data: orders,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal Server Error', error: error.message });
+  }
+};
+
+const getUserOrders = async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const orders = await Order.findAll({
+      where: { userId },
+      include: [
+        {
+          model: OrderDetail,
+          as: 'orderDetail',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['name', 'price', 'stock'],
+            },
+          ],
+        },
+        {
+          model: Address,
+          as: 'address',
+          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    return res.status(200).json({
+      data: orders,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: 'Internal Server Error', error: error.message });
+  }
+};
+
+// get all order for user
+
+module.exports = {
+  createNewOrder,
+  PaymentNotifications,
+  getStoreOrders,
+  getUserOrders,
+};
