@@ -4,6 +4,7 @@ const {
   Address,
   Product,
   sequelize,
+  Notification,
   OrderDetail,
 } = require('../../models');
 require('dotenv').config();
@@ -21,6 +22,10 @@ const PaymentNotifications = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const statusResponse = await snap.transaction.notification(req.body);
+    console.log(
+      'ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ',
+    );
+    console.log(statusResponse);
     let orderId = statusResponse.order_id;
     let transactionStatus = statusResponse.transaction_status;
 
@@ -45,7 +50,7 @@ const PaymentNotifications = async (req, res) => {
       // Notifikasi untuk Seller
       await Notification.create(
         {
-          userId: order.storeId, // Notifikasi untuk seller berdasarkan storeId
+          userId: order.storeId,
           type: 'order',
           message: 'You have a new order to process.',
           metadata: { orderNumber: order.orderNumber },
@@ -119,60 +124,71 @@ const createNewOrder = async (req, res) => {
     const { userId } = req.user;
     const { addressId, orders } = req.body;
 
-    // Validasi input
     if (!addressId || !Array.isArray(orders) || orders.length === 0) {
       return res
         .status(400)
         .json({ message: 'Order information not complete or wrong' });
     }
 
-    // Ambil alamat pengiriman
     const address = await Address.findOne({
       where: { id: addressId, userId },
       transaction,
     });
+
     if (!address) {
       return res.status(400).json({ message: 'Address not found' });
     }
 
-    let createdOrders = [];
     let cartIdsToRemove = [];
     let totalGrossAmount = 0;
     let midtransItems = [];
 
-    // Proses setiap order per storeId dari request
+    // 1️⃣ Buat Master Order (Satu orderNumber untuk transaksi Midtrans)
+    const masterOrder = await Order.create(
+      {
+        userId,
+        orderNumber: `ORDER-${userId}-${Date.now()}`,
+        addressId,
+        totalAmount: 0,
+        shippingCost: 0,
+        amountToPay: 0,
+        shippingNumber: null,
+      },
+      { transaction },
+    );
+
+    let orderStores = []; // Menyimpan order untuk setiap seller
+
     for (const orderData of orders) {
       const { storeId, shippingCost, products } = orderData;
       let totalAmount = 0;
 
-      // Validasi storeId dan shippingCost
       if (
         !storeId ||
         shippingCost == null ||
         !Array.isArray(products) ||
         products.length === 0
       ) {
-        return res.status(400).json({
-          message: 'Store ID, Shipping Cost, or Produk are not valid',
-        });
+        return res
+          .status(400)
+          .json({ message: 'Invalid Store ID, Shipping Cost, or Products' });
       }
 
-      // Buat Order
-      const newOrder = await Order.create(
+      // 2️⃣ Buat Order Store (Satu order untuk tiap seller)
+      const orderStore = await OrderStore.create(
         {
-          userId,
+          orderId: masterOrder.id, // Hubungkan ke Master Order
           storeId,
-          orderNumber: `order-${userId}-${Date.now()}`,
-          addressId,
           totalAmount: 0,
           shippingCost,
           amountToPay: 0,
-          shippingNumber: null,
+          shippingStatus: 'waiting payment',
         },
         { transaction },
       );
 
-      // Proses setiap produk dalam order
+      orderStores.push(orderStore);
+
       for (const item of products) {
         if (!item.productId || !item.quantity) {
           await transaction.rollback();
@@ -183,19 +199,21 @@ const createNewOrder = async (req, res) => {
           where: { id: item.productId },
           transaction,
         });
+
         if (!product || product.stock < item.quantity) {
           await transaction.rollback();
-          return res.status(400).json({
-            message: `Insufficient product stock`,
-          });
+          return res
+            .status(400)
+            .json({ message: `Insufficient product stock` });
         }
 
         const totalPrice = item.quantity * product.price;
         totalAmount += totalPrice;
 
+        // 3️⃣ Buat Order Detail (Detail pesanan dalam tiap OrderStore)
         await OrderDetail.create(
           {
-            orderId: newOrder.id,
+            orderStoreId: orderStore.id, // Hubungkan ke OrderStore
             productId: item.productId,
             quantity: item.quantity,
             price: product.price,
@@ -204,7 +222,6 @@ const createNewOrder = async (req, res) => {
           { transaction },
         );
 
-        // Kurangi stok produk
         await Product.update(
           { stock: product.stock - item.quantity },
           { where: { id: item.productId }, transaction },
@@ -212,7 +229,6 @@ const createNewOrder = async (req, res) => {
 
         cartIdsToRemove.push(item.cartId);
 
-        // Tambahkan produk ke daftar item Midtrans
         midtransItems.push({
           id: `PRODUCT-${product.id}`,
           price: product.price,
@@ -222,22 +238,18 @@ const createNewOrder = async (req, res) => {
       }
 
       midtransItems.push({
-        id: `SHIPPING-${newOrder.orderNumber}`,
+        id: `SHIPPING-${orderStore.id}`,
         price: shippingCost,
         quantity: 1,
-        name: `Shipping Cost Order Number: ${newOrder.orderNumber}`,
+        name: `Shipping Cost for Store ${storeId}`,
       });
 
-      // Update totalAmount dan AmountToPay di Order
       const amountToPay = totalAmount + shippingCost;
-      totalGrossAmount += amountToPay; // Tambahkan ke total transaksi Midtrans
+      totalGrossAmount += amountToPay;
 
-      await newOrder.update({ totalAmount, amountToPay }, { transaction });
-
-      createdOrders.push(newOrder);
+      await orderStore.update({ totalAmount, amountToPay }, { transaction });
     }
 
-    // Hapus item yang telah diorder dari cart
     if (cartIdsToRemove.length > 0) {
       await Cart.destroy({
         where: { id: { [Op.in]: cartIdsToRemove } },
@@ -245,9 +257,10 @@ const createNewOrder = async (req, res) => {
       });
     }
 
+    // 4️⃣ Midtrans hanya menggunakan Master Order
     let parameter = {
       transaction_details: {
-        order_id: newOrder.orderNumber,
+        order_id: masterOrder.orderNumber, // Menggunakan Master Order
         gross_amount: totalGrossAmount,
       },
       item_details: midtransItems,
@@ -263,7 +276,7 @@ const createNewOrder = async (req, res) => {
 
     return res.status(201).json({
       message: 'Order is created',
-      orders: createdOrders,
+      orders: orderStores,
       transactionToken: transactionMidtrans.token,
       transactionUrl: transactionMidtrans.redirect_url,
     });
@@ -277,7 +290,7 @@ const createNewOrder = async (req, res) => {
 
 // get all orders for store / seller
 const getStoreOrders = async (req, res) => {
-  const { userId, storeId } = req.user;
+  const { storeId } = req.user;
   try {
     const orders = await Order.findAll({
       where: { storeId },
