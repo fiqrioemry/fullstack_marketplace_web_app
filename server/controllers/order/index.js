@@ -22,87 +22,67 @@ const PaymentNotifications = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const statusResponse = await snap.transaction.notification(req.body);
-    console.log(
-      'ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ORDER MASUK ',
-    );
-    console.log(statusResponse);
     let orderId = statusResponse.order_id;
     let transactionStatus = statusResponse.transaction_status;
 
-    const order = await Order.findOne({
+    const masterOrder = await Order.findOne({
       where: { orderNumber: orderId },
+      include: [{ model: OrderStore, as: 'orderStores' }],
       transaction,
     });
 
-    if (!order) {
+    if (!masterOrder) {
       return res.status(404).json({ message: 'Order Not Found' });
     }
 
     let message = '';
 
     if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
-      await order.update(
-        { orderStatus: 'paid', shippingStatus: 'pending' },
-        { transaction },
-      );
+      await masterOrder.update({ orderStatus: 'paid' }, { transaction });
       message = 'Your Payment is Successful';
 
-      // Notifikasi untuk Seller
-      await Notification.create(
-        {
-          userId: order.storeId,
-          type: 'order',
-          message: 'You have a new order to process.',
-          metadata: { orderNumber: order.orderNumber },
-        },
-        { transaction },
-      );
+      for (const orderStore of masterOrder.orderStores) {
+        await orderStore.update({ shippingStatus: 'pending' }, { transaction });
+
+        await Notification.create(
+          {
+            userId: orderStore.storeId,
+            type: 'order',
+            message: `You have a new paid order: Rp${orderStore.amountToPay}`,
+            metadata: { orderNumber: masterOrder.orderNumber },
+          },
+          { transaction },
+        );
+      }
     } else if (transactionStatus === 'expire') {
-      await order.update(
-        { orderStatus: 'expired', shippingStatus: 'canceled' },
-        { transaction },
-      );
+      await masterOrder.update({ orderStatus: 'expired' }, { transaction });
       message = 'Your Payment has Expired';
 
-      const orderDetails = await OrderDetail.findAll({
-        where: { orderId: order.id },
-        transaction,
-      });
-
-      for (const item of orderDetails) {
-        await Product.increment('stock', {
-          by: item.quantity,
-          where: { id: item.productId },
-          transaction,
-        });
+      for (const orderStore of masterOrder.orderStores) {
+        await orderStore.update(
+          { shippingStatus: 'canceled' },
+          { transaction },
+        );
       }
     } else if (transactionStatus === 'cancel') {
-      await order.update(
-        { orderStatus: 'canceled', shippingStatus: 'canceled' },
-        { transaction },
-      );
+      await masterOrder.update({ orderStatus: 'canceled' }, { transaction });
       message = 'Your Order has been Canceled';
-      const orderDetails = await OrderDetail.findAll({
-        where: { orderId: order.id },
-        transaction,
-      });
 
-      for (const item of orderDetails) {
-        await Product.increment('stock', {
-          by: item.quantity,
-          where: { id: item.productId },
-          transaction,
-        });
+      for (const orderStore of masterOrder.orderStores) {
+        await orderStore.update(
+          { shippingStatus: 'canceled' },
+          { transaction },
+        );
       }
     }
 
-    // Notifikasi untuk Buyer
+    // 🔹 Gunakan `message` dalam Notifikasi Buyer
     await Notification.create(
       {
-        userId: order.userId,
+        userId: masterOrder.userId,
         type: 'order',
-        message,
-        metadata: { orderNumber: order.orderNumber },
+        message: message, // ✅ Sekarang digunakan!
+        metadata: { orderNumber: masterOrder.orderNumber },
       },
       { transaction },
     );
@@ -110,7 +90,6 @@ const PaymentNotifications = async (req, res) => {
     await transaction.commit();
     return res.status(200).json({ message: 'Order status updated' });
   } catch (error) {
-    console.error('Error processing webhook:', error.message);
     await transaction.rollback();
     return res
       .status(500)
@@ -175,7 +154,7 @@ const createNewOrder = async (req, res) => {
       }
 
       // 2️⃣ Buat Order Store (Satu order untuk tiap seller)
-      const orderStore = await OrderStore.create(
+      const orderStore = await StoreOrder.create(
         {
           orderId: masterOrder.id, // Hubungkan ke Master Order
           storeId,
