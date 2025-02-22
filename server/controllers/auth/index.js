@@ -2,11 +2,12 @@ const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
-const sendOtp = require('../../utils/sendOtp');
+const sendOtp = require('../../utils/sendOTP');
 const { client } = require('../../utils/redis');
 const { User, Store } = require('../../models');
 const createSlug = require('../../utils/createSlug');
 const randomAvatar = require('../../utils/randomAvatar');
+const generateOtp = require('../../utils/generateOtp');
 
 async function sendOTP(req, res) {
   const email = req.body.email;
@@ -17,11 +18,7 @@ async function sendOTP(req, res) {
     if (existingUser)
       return res.status(400).json({ message: 'Email already registered' });
 
-    const secret = speakeasy.generateSecret({ length: 20 });
-    const otp = speakeasy.totp({
-      secret: secret.base32,
-      encoding: 'base32',
-    });
+    const otp = await generateOtp();
 
     await client.setEx(`otp:${email}`, 600, otp);
 
