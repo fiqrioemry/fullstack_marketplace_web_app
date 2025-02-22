@@ -9,7 +9,7 @@ const createSlug = require('../../utils/createSlug');
 const randomAvatar = require('../../utils/randomAvatar');
 
 async function sendOTP(req, res) {
-  const { email } = req.body;
+  const email = req.body.email;
 
   try {
     const existingUser = await User.findOne({ where: { email } });
@@ -23,14 +23,12 @@ async function sendOTP(req, res) {
       encoding: 'base32',
     });
 
-    await client.setEx(`otp:${email}`, 300, otp);
+    await client.setEx(`otp:${email}`, 600, otp);
 
     await sendOtp(email, otp);
     return res.status(200).json({ message: 'OTP sent to email' });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'Failed to send OTP', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
