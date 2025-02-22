@@ -133,52 +133,50 @@ async function logout(req, res) {
 
   await client.del(`user:${userId}`);
 
-  return res.status(200).json({ message: 'Logout is success' });
+  return res.status(200).json({ message: 'Logout successfully' });
 }
 
 async function authCheck(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
 
   try {
     const cachedUser = await client.get(`user:${userId}`);
 
     if (cachedUser) {
-      return res.status(200).json({ payload: JSON.parse(cachedUser) });
+      return res.status(200).json({ user: JSON.parse(cachedUser) });
     }
 
-    const user = await User.findByPk(userId, {
+    const userData = await User.findByPk(userId, {
       attributes: { exclude: ['password'] },
       include: [
         { model: Store, as: 'store', attributes: ['id', 'name', 'avatar'] },
       ],
     });
 
-    const payload = {
-      userId: user.id,
-      email: user.email,
-      fullname: user.fullname,
-      role: user.role,
-      avatar: user.avatar,
-      storeId: user.store?.id,
-      storeName: user.store?.name,
-      storeAvatar: user.store?.avatar,
+    const user = {
+      userId: userData.id,
+      email: userData.email,
+      fullname: userData.fullname,
+      role: userData.role,
+      avatar: userData.avatar,
+      storeId: userData.store?.id,
+      storeName: userData.store?.name,
+      storeAvatar: userData.store?.avatar,
     };
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    await client.setEx(`user:${userId}`, 900, JSON.stringify(user));
 
-    res.status(200).json({ payload });
+    res.status(200).json(user);
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to get Authorization',
-      error: error.message,
+      message: error.message,
     });
   }
 }
 
 async function refreshToken(req, res) {
+  const refreshToken = req.cookies.refreshToken;
   try {
-    const refreshToken = req.cookies.refreshToken;
-
     if (!refreshToken) {
       return res.status(401).json({
         message: 'Unauthorized !!! Please Login',
@@ -204,28 +202,16 @@ async function refreshToken(req, res) {
       });
     }
 
-    const accessToken = jwt.sign(
-      { userId: user.id, storeId: user.store?.id, role: user.role },
-      process.env.ACCESS_TOKEN,
-      { expiresIn: '1d' },
-    );
+    const accessToken = generateAccessToken(user);
 
     res.status(200).json({ accessToken });
   } catch (error) {
-    return res.status(500).json({
-      message: 'Failed to refresh token',
-      error: error.message,
-    });
+    return res.status(500).json({ message: error.message });
   }
 }
 
-async function resetPassword(req, res) {}
-
-async function forgotPassword(req, res) {}
-
 async function createStore(req, res) {
-  const { userId } = req.user;
-
+  const userId = req.user.userId;
   const { name, description, city } = req.body;
 
   try {
@@ -273,16 +259,14 @@ async function createStore(req, res) {
 
     await user.update({ role: 'seller' });
 
-    // await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(201).json({
-      message: 'Store is created',
+      message: 'Store Created Successfully',
       store,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'Failed to create new store', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
