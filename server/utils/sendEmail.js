@@ -1,20 +1,25 @@
-const nodemailer = require("nodemailer");
+const transporter = require('../config/nodemailer');
 
-module.exports = async (options) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail", // port for secure SMTP
-    auth: {
-      user: process.env.USER_EMAIL,
-      pass: process.env.USER_PASSWORD,
-    },
+const sendEmail = (email, otpcode) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      from: `Marketplace <${process.env.USER_EMAIL}>`,
+      to: email,
+      subject: 'One-Time Password (OTP) for Login',
+      text: `Your OTP Code is ${otpcode}`,
+      html: `Your OTP Code is <b>${otpcode}</b>`,
+    };
+
+    transporter.sendMail(options, (err, info) => {
+      if (err) {
+        console.log(err);
+        return reject({
+          message: `An error occurred while sending, ${err.message}`,
+        });
+      }
+      return resolve({ message: 'Email sent successfully' });
+    });
   });
-
-  const mailOptions = {
-    from: `marketplace  <no-reply@marketplace.com>`,
-    to: options.email,
-    subject: options.subject,
-    html: options.message,
-  };
-
-  await transporter.sendMail(mailOptions);
 };
+
+module.exports = sendEmail;
