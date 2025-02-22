@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// Generate Access Token (Short-lived)
 const generateAccessToken = (user, expiresIn = '1d') => {
   if (!user || !user.id) {
     throw new Error('User object must contain an id.');

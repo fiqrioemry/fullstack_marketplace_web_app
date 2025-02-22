@@ -1,6 +1,6 @@
 const transporter = require('../config/nodemailer');
 
-const sendOTP = (email, otpcode) => {
+const sendEmailOTP = (email, otpcode) => {
   return new Promise((resolve, reject) => {
     const options = {
       from: `Marketplace <${process.env.USER_EMAIL}>`,
@@ -22,4 +22,4 @@ const sendOTP = (email, otpcode) => {
   });
 };
 
-module.exports = sendOTP;
+module.exports = sendEmailOTP;

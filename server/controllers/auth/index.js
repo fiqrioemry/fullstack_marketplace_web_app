@@ -1,17 +1,19 @@
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
-const speakeasy = require('speakeasy');
-const sendOtp = require('../../utils/sendOTP');
-const { client } = require('../../utils/redis');
 const { User, Store } = require('../../models');
+const { client } = require('../../utils/redis');
 const createSlug = require('../../utils/createSlug');
-const randomAvatar = require('../../utils/randomAvatar');
 const generateOtp = require('../../utils/generateOtp');
+const sendEmailOTP = require('../../utils/sendEmailOTP');
+const randomAvatar = require('../../utils/randomAvatar');
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require('../../utils/generateToken');
 
 async function sendOTP(req, res) {
   const email = req.body.email;
-
   try {
     const existingUser = await User.findOne({ where: { email } });
 
@@ -22,9 +24,11 @@ async function sendOTP(req, res) {
 
     await client.setEx(`otp:${email}`, 600, otp);
 
-    await sendOtp(email, otp);
+    await sendEmailOTP(email, otp);
+
     return res.status(200).json({ message: 'OTP sent to email' });
   } catch (error) {
+    // send error
     return res.status(500).json({ message: error.message });
   }
 }
@@ -52,13 +56,18 @@ async function verifyOTP(req, res) {
 async function register(req, res) {
   const { fullname, email, password } = req.body;
 
-  if (!fullname || !email || !password)
-    return res.status(400).json({ message: 'All fields required' });
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   try {
-    const newUser = await User.create({
+    if (!fullname || !email || !password)
+      return res.status(400).json({ message: 'All fields required' });
+
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser)
+      return res.status(400).json({ message: 'Email already registered' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.create({
       fullname,
       email,
       password: hashedPassword,
@@ -66,13 +75,10 @@ async function register(req, res) {
     });
 
     res.status(201).json({
-      message: 'Registration is success',
-      user: newUser,
+      message: 'Registration Successfully',
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'Failed to register user', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -99,21 +105,9 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    const accessToken = jwt.sign(
-      { userId: user.id, storeId: user.store?.id, role: user.role },
-      process.env.ACCESS_TOKEN,
-      {
-        expiresIn: '1d',
-      },
-    );
+    const accessToken = generateAccessToken(user);
 
-    const refreshToken = jwt.sign(
-      { userId: user.id, storeId: user.store?.id, role: user.role },
-      process.env.REFRESH_TOKEN,
-      {
-        expiresIn: '7d',
-      },
-    );
+    const refreshToken = generateRefreshToken(user);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -122,13 +116,11 @@ async function login(req, res) {
     });
 
     return res.status(200).json({
-      message: 'Login is successful',
+      message: 'Login successfully',
       accessToken,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'An error occurred', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
