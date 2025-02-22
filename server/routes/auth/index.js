@@ -7,7 +7,6 @@ const {
   verifyOTP,
   createStore,
   refreshToken,
-  resetPassword,
 } = require('../../controllers/auth');
 const router = require('express').Router();
 const isAuthenticate = require('../../middleware/isAuthenticate');

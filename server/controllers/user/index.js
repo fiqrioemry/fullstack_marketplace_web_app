@@ -27,7 +27,7 @@ async function getProfile(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const payload = {
+    const profile = {
       phone: user.phone,
       avatar: user.avatar,
       gender: user.gender,
@@ -35,11 +35,9 @@ async function getProfile(req, res) {
       birthday: user.birthday,
     };
 
-    await client.setEx(`profile:${userId}`, 900, JSON.stringify(payload));
+    await client.setEx(`profile:${userId}`, 900, JSON.stringify(profile));
 
-    return res.status(200).json({
-      payload,
-    });
+    return res.status(200).json(profile);
   } catch (error) {
     return res.status(500).json({
       message: 'Failed to Retrieve Profile',
@@ -80,7 +78,7 @@ async function updateProfile(req, res) {
     }
 
     // Update data pengguna
-    const updatedUser = {
+    const updatedProfile = {
       fullname: fullname || user.fullname,
       avatar: avatar,
       birthday: birthday || user.birthday,
@@ -94,6 +92,7 @@ async function updateProfile(req, res) {
 
     return res.status(200).json({
       message: 'Profile is updated',
+      updatedProfile,
     });
   } catch (error) {
     return res.status(500).json({
@@ -104,7 +103,7 @@ async function updateProfile(req, res) {
 }
 
 async function getAddress(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
 
   try {
     const cachedAddress = await client.get(`address:${userId}`);
@@ -118,25 +117,22 @@ async function getAddress(req, res) {
     if (address.length === 0) {
       return res.status(200).json({
         message: 'No Address is found, Try to add one',
-        payload: [],
+        address: [],
       });
     }
 
     await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
 
-    return res.status(200).json({
-      payload: address,
-    });
+    return res.status(200).json(address);
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to Retrieve address',
-      error: error.message,
+      message: error.message,
     });
   }
 }
 
 async function addAddress(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
   const { name, phone, address, district, province, city, zipcode, isMain } =
     req.body;
 
@@ -157,7 +153,7 @@ async function addAddress(req, res) {
       await Address.update({ isMain: false }, { where: { userId } });
     }
 
-    await Address.create({
+    const newAddress = {
       userId,
       name,
       phone,
@@ -167,33 +163,40 @@ async function addAddress(req, res) {
       district,
       zipcode,
       isMain,
-    });
+    };
+    await Address.create(newAddress);
 
     await client.del(`address:${userId}`);
 
     return res.status(201).json({
       message: 'New Address is added',
+      newAddress,
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to Add New Address',
-      error: error.message,
+      message: error.message,
     });
   }
 }
 
 async function updateAddress(req, res) {
-  const { addressId } = req.params;
+  const userId = req.user.userId;
+  const addressId = req.params.addressId;
   const { name, phone, address, province, city, zipcode, isMain } = req.body;
-  const { userId } = req.user;
 
   try {
+    // Cek apakah address ada dan milik user yang benar
     const currentAddress = await Address.findByPk(addressId);
 
-    if (!currentAddress || currentAddress.userId !== userId) {
+    if (!currentAddress) {
       return res.status(404).json({ message: 'Address not found' });
     }
 
+    if (currentAddress.userId !== userId) {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+
+    // Jika address ini dijadikan utama (isMain: true), reset isMain address lain
     if (isMain === true) {
       await Address.update(
         { isMain: false },
@@ -201,6 +204,7 @@ async function updateAddress(req, res) {
       );
     }
 
+    // Update address berdasarkan input user
     const [updatedRows] = await Address.update(
       { name, phone, address, province, city, zipcode, isMain },
       { where: { id: addressId } },
@@ -208,20 +212,19 @@ async function updateAddress(req, res) {
 
     if (updatedRows === 0) {
       return res
-        .status(404)
-        .json({ message: 'Address not found or no changes made' });
+        .status(400)
+        .json({ message: 'No changes made to the address' });
     }
 
-    // Hapus cache Redis untuk alamat pengguna
-    await client.del(`address:${userId}`);
+    // Ambil data terbaru setelah update
+    const updatedAddress = await Address.findByPk(addressId);
 
     return res.status(200).json({
-      message: 'Address is Updated',
+      message: 'Address updated successfully',
+      updatedAddress,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'Failed to Update Address', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -250,6 +253,7 @@ async function deleteAddress(req, res) {
     });
   }
 }
+
 module.exports = {
   getProfile,
   updateProfile,
