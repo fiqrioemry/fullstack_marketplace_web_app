@@ -6,7 +6,7 @@ const province = [
   'Jawa Timur',
 ];
 
-const city = ['Medan', 'Jakarta', 'Bandung', 'Semarang', 'Jawa Timur'];
+const city = ['Medan', 'Jakarta', 'Bandung', 'Semarang', 'Surabaya'];
 
 export const CustomerNavLinks = [
   {

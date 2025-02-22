@@ -1,22 +1,22 @@
-import { Loader } from "lucide-react";
-import WebLogo from "@/components/ui/WebLogo";
-import StepOne from "@/components/auth/StepOne";
-import StepTwo from "@/components/auth/StepTwo";
-import StepThree from "@/components/auth/StepThree";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useFormSchema } from "@/hooks/useFormSchema";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   registerState,
   registerControl,
   sendOTPControl,
   verifyOTPControl,
 } from "@/config";
+import { Loader } from "lucide-react";
+import WebLogo from "@/components/ui/WebLogo";
 import { useNavigate } from "react-router-dom";
+import StepOne from "@/components/auth/StepOne";
+import StepTwo from "@/components/auth/StepTwo";
+import StepThree from "@/components/auth/StepThree";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useFormSchema } from "@/hooks/useFormSchema";
+import { Card, CardContent } from "@/components/ui/card";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { step, loading, register } = useAuthStore();
+  const { step, signup, loading } = useAuthStore();
 
   const getFormControl = () => {
     switch (step) {
@@ -30,44 +30,55 @@ const SignUp = () => {
         return [];
     }
   };
-  const registerForm = useFormSchema(
+
+  const signUpForm = useFormSchema(
     registerState,
     getFormControl(),
-    register,
-    navigate
+    signup,
+    navigate,
+    false
   );
 
   return (
-    <div className="grid lg:grid-cols-2 h-screen">
-      <div className="relative hidden lg:block bg-primary">
-        <div className="h-screen w-full">
-          <img className="h-full w-full" src="/public/register.webp" />
-        </div>
-      </div>
-      <div className="flex items-center justify-center">
-        <Card className="min-w-80 h-96">
-          <CardContent className="p-4">
-            <div className="text-center">
-              <WebLogo />
-            </div>
-            <div className="h-72 pt-8">
-              {loading ? (
-                <div className="flex h-full items-center justify-center">
-                  <Loader size={50} className="animate-spin" />
-                </div>
-              ) : (
-                <div>
-                  {step === 1 && <StepOne registerForm={registerForm} />}
+    <div className="h-screen flex-center">
+      <Card className="min-w-80 h-96">
+        <CardContent className="p-4">
+          <div className="text-center">
+            <WebLogo />
+          </div>
 
-                  {step === 2 && <StepTwo registerForm={registerForm} />}
+          <div className="h-72 pt-6">
+            {loading ? (
+              <div className="h-full flex-center">
+                <Loader size={50} className="animate-spin" />
+              </div>
+            ) : (
+              <>
+                {step === 1 && (
+                  <StepOne
+                    signUpForm={signUpForm}
+                    formControl={sendOTPControl}
+                  />
+                )}
 
-                  {step === 3 && <StepThree registerForm={registerForm} />}
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                {step === 2 && (
+                  <StepTwo
+                    signUpForm={signUpForm}
+                    formControl={verifyOTPControl}
+                  />
+                )}
+
+                {step === 3 && (
+                  <StepThree
+                    signUpForm={signUpForm}
+                    formControl={registerControl}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

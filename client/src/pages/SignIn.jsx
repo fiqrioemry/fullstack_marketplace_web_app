@@ -1,34 +1,36 @@
 import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import WebLogo from "@/components/ui/WebLogo";
 import { useAuthStore } from "@/store/useAuthStore";
 import { loginControl, loginState } from "@/config";
 import InputForm from "@/components/form/InputForm";
+import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import InputButton from "@/components/form/InputButton";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 const SignIn = () => {
   const { login, loading } = useAuthStore();
   const loginForm = useFormSchema(loginState, loginControl, login);
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <Card className="max-w-xs">
-        <div className="w-full p-4 space-y-6">
-          <div className="text-center">
+    <div className="h-screen flex-center">
+      <Card>
+        <CardContent className="p-4">
+          <div className="py-4 text-center">
             <WebLogo />
           </div>
-
           <InputForm formik={loginForm} formControl={loginControl}>
             <InputButton title={"login"} formik={loginForm} loading={loading} />
           </InputForm>
-          <div className="text-center text-sm">
-            Dont have an account ? register{" "}
-            <Link to="/signup" className="text_button">
+          <div className="flex-center py-2">OR</div>
+          <GoogleAuth buttonTitle={"Signin with google"} />
+          <CardFooter className="mt-2 space-x-2">
+            <span> Dont have an account ? signup</span>
+            <Link to="/signup" className="btn-secondary">
               here
             </Link>
-          </div>
-        </div>
+          </CardFooter>
+        </CardContent>
       </Card>
     </div>
   );

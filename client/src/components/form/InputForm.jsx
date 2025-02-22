@@ -24,9 +24,6 @@ function InputForm({
 
   useEffect(() => {
     formControl.forEach((control) => {
-      if (control.label === "city") {
-        getCities();
-      }
       if (control.label === "category") {
         getCategories();
       }
@@ -37,11 +34,7 @@ function InputForm({
     let element = null;
 
     const options =
-      control.label === "city"
-        ? cities
-        : control.label === "category"
-        ? categories
-        : control.options || [];
+      control.label === "category" ? categories : control.options || [];
 
     switch (control.component) {
       case "upload":
