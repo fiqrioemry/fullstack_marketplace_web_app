@@ -49,7 +49,7 @@ async function getProduct(req, res) {
   }
 }
 
-async function getAllProducts(req, res) {
+async function getProducts(req, res) {
   try {
     let {
       search,
@@ -168,11 +168,10 @@ async function getAllProducts(req, res) {
       totalData: product.count,
     });
   } catch (error) {
-    console.error('Error in getAllProducts:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ message: error.message });
   }
 }
 module.exports = {
   getProduct,
-  getAllProducts,
+  getProducts,
 };

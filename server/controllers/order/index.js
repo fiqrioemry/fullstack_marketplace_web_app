@@ -5,22 +5,13 @@ const {
   Address,
   Product,
   sequelize,
-  Notification,
   Shipment,
   Transaction,
   OrderDetail,
+  Notification,
 } = require('../../models');
-require('dotenv').config();
-
-const midtransClient = require('midtrans-client');
+const snap = require('../../config/midtrans');
 const generateOrderNumber = require('../../utils/generateOrderNumber');
-const transaction = require('../../models/transaction');
-
-let snap = new midtransClient.Snap({
-  isProduction: process.env.NODE_ENV === 'production',
-  clientKey: process.env.MIDTRANS_CLIENT_KEY,
-  serverKey: process.env.MIDTRANS_SERVER_KEY,
-});
 
 const PaymentNotifications = async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -142,27 +133,22 @@ const PaymentNotifications = async (req, res) => {
     return res.status(200).json({ message: 'Order status updated' });
   } catch (error) {
     await transaction.rollback();
-    console.error('Error updating payment status:', error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const createNewOrder = async (req, res) => {
-  const transaction = await sequelize.transaction();
-  const { userId } = req.user;
+  const userId = req.user.userId;
   const { addressId, orders } = req.body;
+  const transaction = await sequelize.transaction();
 
   try {
-    // Validasi input dasar
     if (!addressId || !Array.isArray(orders) || orders.length === 0) {
       return res
         .status(400)
         .json({ message: 'Order information not complete or wrong' });
     }
 
-    // Periksa apakah alamat ada untuk user ini
     const address = await Address.findOne({
       where: { id: addressId, userId },
       transaction,
@@ -171,7 +157,6 @@ const createNewOrder = async (req, res) => {
       return res.status(400).json({ message: 'Address not found' });
     }
 
-    // Buat record transaksi baru dengan nilai default
     const newTransaction = await Transaction.create(
       {
         userId,
@@ -183,7 +168,6 @@ const createNewOrder = async (req, res) => {
       { transaction },
     );
 
-    // Ambil semua cart items yang diperlukan dalam satu query
     const cartIds = orders.flatMap((order) => order.cartItems);
     const cartItems = await Cart.findAll({
       where: { id: cartIds, userId },
@@ -195,21 +179,17 @@ const createNewOrder = async (req, res) => {
         .status(400)
         .json({ message: 'Cart is empty or items not found' });
     }
-    // Buat map untuk mempermudah pencarian cart item berdasarkan ID
+
     const cartMap = new Map(cartItems.map((cart) => [cart.id, cart]));
 
-    // Inisialisasi variabel akumulasi
     let totalAmount = 0;
     let totalShipmentCost = 0;
     const midtransItems = [];
     const cartIdsToRemove = [];
-    const orderDetailsToCreate = []; // Data untuk bulkCreate OrderDetail
-
-    // Proses setiap order secara sequential
+    const orderDetailsToCreate = [];
     for (const order of orders) {
       const { storeId, shipmentCost, cartItems: orderCartItems } = order;
 
-      // Validasi data order
       if (
         !storeId ||
         shipmentCost == null ||
@@ -226,9 +206,9 @@ const createNewOrder = async (req, res) => {
           storeId,
           addressId,
           orderNumber: generateOrderNumber(newTransaction.id),
-          totalPrice: 0, // Akan diupdate setelah menghitung total harga produk
+          totalPrice: 0,
           shipmentCost,
-          totalOrderAmount: 0, // Akan diupdate setelah ditambahkan biaya pengiriman
+          totalOrderAmount: 0,
           orderStatus: 'waiting payment',
         },
         { transaction },
@@ -236,11 +216,9 @@ const createNewOrder = async (req, res) => {
 
       let orderTotalPrice = 0;
 
-      // Proses tiap cart item yang ada dalam order ini
       for (const cartId of orderCartItems) {
         const cart = cartMap.get(cartId);
         if (!cart || !cart.product) {
-          // Lempar error agar transaksi digagalkan, daripada mengirim response dari sini
           throw new Error(
             `Cart item not found or already removed. Cart ID: ${cartId}`,
           );
@@ -251,7 +229,6 @@ const createNewOrder = async (req, res) => {
           throw new Error(`Insufficient stock for product ${product.name}`);
         }
 
-        // Hitung harga total untuk item ini
         const itemTotalPrice = cart.quantity * product.price;
         orderTotalPrice += itemTotalPrice;
 
@@ -274,7 +251,6 @@ const createNewOrder = async (req, res) => {
         cartIdsToRemove.push(cart.id);
       }
 
-      // Tambahkan biaya pengiriman sebagai item Midtrans
       midtransItems.push({
         id: `SHIPPING-${newOrder.orderNumber}`,
         price: shipmentCost,
@@ -347,15 +323,12 @@ const createNewOrder = async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
-    console.error('Error creating order:', error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const getStoreOrders = async (req, res) => {
-  const { storeId } = req.user;
+  const storeId = req.user.storeId;
   try {
     if (!storeId) {
       return res.status(400).json({ message: 'Unauthorized Access' });
@@ -374,14 +347,14 @@ const getStoreOrders = async (req, res) => {
       ],
     });
 
-    return res.status(200).json({ orders });
+    return res.status(200).json(orders);
   } catch (error) {
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const updateStoreOrder = async (req, res) => {
-  const { orderId } = req.params;
+  const orderId = req.params.orderId;
   const { orderStatus, shipmentNumber } = req.body;
 
   const transaction = await sequelize.transaction();
@@ -446,13 +419,12 @@ const updateStoreOrder = async (req, res) => {
     return res.status(200).json({ message: 'Order updated successfully.' });
   } catch (error) {
     await transaction.rollback();
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: error.message });
   }
 };
 
-// get all order for user
 const getUserOrders = async (req, res) => {
-  const { userId } = req.user;
+  const userId = req.user.userId;
   try {
     const orders = await Order.findAll({
       where: { userId },
@@ -477,14 +449,9 @@ const getUserOrders = async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
 
-    return res.status(200).json({
-      data: orders,
-    });
+    return res.status(200).json(orders);
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

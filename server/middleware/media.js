@@ -49,10 +49,10 @@ function multerErrorHandle(err, req, res, next) {
 }
 
 // multer configuration
-function upload(params, size) {
+function upload(params = 'image', size = 1000000) {
   return multer({
     storage: storage,
-    limits: { fileSize: size || 1000000 },
+    limits: { fileSize: size },
     fileFilter: fileFilter(params),
   });
 }

@@ -6,15 +6,14 @@ const {
   updateAddress,
   deleteAddress,
 } = require('../../controllers/user');
-const express = require('express');
-const isAuthenticate = require('../../middleware/isAuthenticate');
+const router = require('express').Router();
 const { upload } = require('../../middleware/media');
-const router = express.Router();
+const isAuthenticate = require('../../middleware/isAuthenticate');
 
 router.put(
   '/profile',
   isAuthenticate,
-  upload('image', 1000000).single('avatar'),
+  upload().single('avatar'),
   updateProfile,
 );
 router.get('/profile', isAuthenticate, getProfile);

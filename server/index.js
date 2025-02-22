@@ -5,7 +5,6 @@ const cors = require('cors');
 const services = require('./routes');
 const cookies = require('cookie-parser');
 const { connectRedis } = require('./utils/redis');
-
 const { PORT, CLIENT_URL } = process.env;
 
 app.use(cookies());
