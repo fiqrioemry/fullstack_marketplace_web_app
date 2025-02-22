@@ -9,12 +9,14 @@ const redis = new Redis({
   port: REDIS_PORT,
 });
 
-redis.on('connect', () => {
-  console.log('✅ Connected to Redis on port :', REDIS_PORT);
-});
+const connectRedis = async () => {
+  try {
+    await redis.connect();
+    console.log('Redis is connected on port', REDIS_PORT);
+  } catch (error) {
+    console.error('Error connecting to Redis', error);
+    process.exit(1);
+  }
+};
 
-redis.on('error', (error) => {
-  console.error('❌ Redis connection error:', error);
-});
-
-module.exports = redis;
+module.exports = { connectRedis, redis };

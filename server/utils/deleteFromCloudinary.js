@@ -1,4 +1,6 @@
-const deleteMediaFromCloudinary = async (imageUrl) => {
+const cloudinary = require('../config/cloudinary');
+
+module.exports = async function deleteMediaFromCloudinary(imageUrl) {
   try {
     const publicId = imageUrl.split('/').slice(-1).join('/').split('.').shift();
     //
@@ -11,5 +13,3 @@ const deleteMediaFromCloudinary = async (imageUrl) => {
     throw new Error('Failed to delete asset from Cloudinary');
   }
 };
-
-module.exports = { uploadMediaToCloudinary, deleteMediaFromCloudinary };
