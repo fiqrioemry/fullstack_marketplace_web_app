@@ -1,14 +1,14 @@
 const { Product, Cart, Store, Gallery } = require('../../models');
 
 async function addCart(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
   const { productId, quantity } = req.body;
 
-  if (!Number.isInteger(quantity) || quantity <= 0) {
-    return res.status(400).json({ message: 'Invalid quantity' });
-  }
-
   try {
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      return res.status(400).json({ message: 'Invalid quantity' });
+    }
+
     const product = await Product.findByPk(productId, {
       attributes: ['stock'],
     });
@@ -17,20 +17,20 @@ async function addCart(req, res) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    let cartItem = await Cart.findOne({
+    let newCart = await Cart.findOne({
       where: { productId, userId },
     });
 
-    const newQuantity = cartItem ? cartItem.quantity + quantity : quantity;
+    const newQuantity = newCart ? newCart.quantity + quantity : quantity;
 
     if (product.stock < newQuantity) {
       return res.status(400).json({ message: 'Product is out of stock' });
     }
 
-    if (cartItem) {
-      await cartItem.update({ quantity: newQuantity });
+    if (newCart) {
+      await newCart.update({ quantity: newQuantity });
     } else {
-      cartItem = await Cart.create({
+      newCart = await Cart.create({
         productId,
         userId,
         quantity,
@@ -39,18 +39,17 @@ async function addCart(req, res) {
 
     return res.status(201).json({
       message: 'Product added to cart',
-      data: cartItem,
+      newCart,
     });
   } catch (error) {
-    console.error('Error adding to cart:', error);
-    return res.status(500).json({ message: 'Internal server error', error });
+    return res.status(500).json({ message: error.message });
   }
 }
 
 async function updateCart(req, res) {
-  const { id } = req.params;
-  const { userId } = req.user;
-  const { quantity } = req.body;
+  const id = req.params.id;
+  const userId = req.user.userId;
+  const quantity = req.body.quantity;
 
   if (!Number.isInteger(quantity) || quantity <= 0) {
     return res.status(400).json({ message: 'Invalid quantity' });
@@ -79,7 +78,7 @@ async function updateCart(req, res) {
 
     return res.status(200).json({
       message: 'Cart is updated',
-      data: cart,
+      updatedCart: cart,
     });
   } catch (error) {
     return res
@@ -89,21 +88,21 @@ async function updateCart(req, res) {
 }
 
 async function deleteCart(req, res) {
-  const { id } = req.params;
-  const { userId } = req.user;
+  const id = req.params.id;
+  const userId = req.user.userIdd;
 
   try {
     const cart = await Cart.findByPk(id);
 
     if (!cart) {
       return res.status(404).json({
-        error: 'Cart not found',
+        message: 'Cart not found',
       });
     }
 
     if (cart.userId !== userId) {
       return res.status(401).json({
-        error: 'Unauthorized access',
+        message: 'Unauthorized access',
       });
     }
 
@@ -117,15 +116,14 @@ async function deleteCart(req, res) {
   }
 }
 
-async function getAllCartItem(req, res) {
-  if (!req.user || !req.user.userId) {
-    return res.status(401).json({ message: 'Unauthorized: User not found' });
-  }
-
-  const { userId } = req.user;
+async function getCarts(req, res) {
+  const userId = req.user.userId;
 
   try {
-    const cart = await Cart.findAll({
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized: User not found' });
+    }
+    const cartData = await Cart.findAll({
       where: { userId },
       attributes: ['id', 'productId', 'quantity'],
       include: [
@@ -149,11 +147,11 @@ async function getAllCartItem(req, res) {
       ],
     });
 
-    if (!cart || cart.length === 0) {
-      return res.status(200).json({ message: 'No items in cart', data: [] });
+    if (!cartData || cartData.length === 0) {
+      return res.status(200).json({ message: 'No items in cart', cart: [] });
     }
 
-    const cartItems = cart.reduce((result, item) => {
+    const cartItems = cartData.reduce((result, item) => {
       const product = item.product;
       const store = product.store || {};
 
@@ -188,16 +186,15 @@ async function getAllCartItem(req, res) {
       return result;
     }, {});
 
-    const groupedCart = Object.values(cartItems);
+    const cart = Object.values(cartItems);
 
     return res.status(200).json({
       message: 'Cart items retrieved successfully',
-      data: groupedCart,
+      cart,
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'An error occurred while fetching cart items',
-      error: error.message,
+      message: error.message,
     });
   }
 }
@@ -206,5 +203,5 @@ module.exports = {
   addCart,
   updateCart,
   deleteCart,
-  getAllCartItem,
+  getCarts,
 };

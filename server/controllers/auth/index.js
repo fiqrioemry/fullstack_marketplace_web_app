@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
-const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 const { User, Store } = require('../../models');
 const { client } = require('../../utils/redis');
 const createSlug = require('../../utils/createSlug');
@@ -278,7 +278,5 @@ module.exports = {
   authCheck,
   verifyOTP,
   refreshToken,
-  resetPassword,
   createStore,
-  forgotPassword,
 };
