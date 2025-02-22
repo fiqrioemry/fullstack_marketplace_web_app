@@ -2,7 +2,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import callApi from "../services/callApi";
 
-export const useUserStore = create((set, get) => ({
+export const useUserStore = create((set) => ({
   profile: [],
   address: [],
   loading: false,
@@ -23,10 +23,9 @@ export const useUserStore = create((set, get) => ({
   updateProfile: async (formData) => {
     set({ updating: true });
     try {
-      console.log(formData);
-      const res = await callApi.updateProfile(formData);
-      await get().getProfile();
-      toast.success(res.message);
+      const { message, updatedProfile } = await callApi.updateProfile(formData);
+      set({ profile: updatedProfile });
+      toast.success(message);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -39,8 +38,8 @@ export const useUserStore = create((set, get) => ({
     try {
       const address = await callApi.getAddress();
       set({ address });
-    } catch (err) {
-      toast.error(err.message);
+    } catch (error) {
+      toast.error(error.message);
       set({ address: [] });
     } finally {
       set({ loading: false });
@@ -50,9 +49,17 @@ export const useUserStore = create((set, get) => ({
   updateAddress: async (formData, addressId) => {
     try {
       set({ updating: true });
-      const res = await callApi.updateAddress(formData, addressId);
-      await get().getAddress();
-      toast.success(res.message);
+      const { message, newAddress } = await callApi.updateAddress(
+        formData,
+        addressId
+      );
+      set((state) => ({
+        address: state.address.map((add) =>
+          add.id === addressId ? newAddress : add
+        ),
+      }));
+
+      toast.success(message);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -63,11 +70,11 @@ export const useUserStore = create((set, get) => ({
   addAddress: async (formData) => {
     try {
       set({ updating: true });
-      const res = await callApi.addAddress(formData);
-      await get().getAddress();
-      toast.success(res.message);
-    } catch (err) {
-      toast.error(err.message);
+      const { message, newAddress } = await callApi.addAddress(formData);
+      set((state) => ({ address: { ...state.address, newAddress } }));
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       set({ updating: false });
     }
@@ -76,11 +83,14 @@ export const useUserStore = create((set, get) => ({
   deleteAddress: async (addressId) => {
     try {
       set({ updating: true });
-      const res = await callApi.deleteAddress(addressId);
-      await get().getAddress();
-      toast.success(res.message);
-    } catch (err) {
-      toast.error(err.message);
+      const { message } = await callApi.deleteAddress(addressId);
+
+      set((state) => ({
+        address: state.address.filter((add) => add.id !== addressId),
+      }));
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       set({ updating: false });
     }

@@ -1,9 +1,7 @@
-import Cookies from 'js-cookie';
-import { authInstance, publicInstance } from './instance';
+import { authInstance, publicInstance } from '.';
 
 const errorHandle = (error) => {
-  console.log(error);
-  const errorMessage = error.response?.data?.message || 'Something went wrong';
+  const errorMessage = error.response?.data?.message;
   return Promise.reject(new Error(errorMessage));
 };
 
@@ -12,8 +10,6 @@ const callApi = {
     return publicInstance
       .post('/auth/login', formData)
       .then((res) => {
-        const { accessToken } = res.data;
-        Cookies.set('accessToken', accessToken, { expires: 1 });
         return res.data;
       })
       .catch(errorHandle);
@@ -23,8 +19,7 @@ const callApi = {
     return authInstance
       .post('/auth/logout')
       .then((res) => {
-        Cookies.remove('accessToken');
-        return res.data.message;
+        return res.data;
       })
       .catch(errorHandle);
   },
@@ -66,14 +61,14 @@ const callApi = {
   authCheck: async () => {
     return authInstance
       .get('/auth/me')
-      .then((res) => res.data.payload)
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
   getProfile: async () => {
     return authInstance
       .get('/user/profile')
-      .then((res) => res.data.payload)
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
@@ -91,7 +86,7 @@ const callApi = {
   getAddress: async () => {
     return authInstance
       .get('/user/profile/address')
-      .then((res) => res.data.payload)
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
@@ -116,10 +111,11 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  //   product and store API management :
   getProduct: async (slug) => {
     return authInstance
       .get(`/product/${slug}`)
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
@@ -142,10 +138,17 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  searchProduct: async (search) => {
+    return authInstance
+      .get(`/product?search=${search}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
   getCategories: async () => {
     return authInstance
       .get('/category')
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
@@ -212,6 +215,35 @@ const callApi = {
   createStore: async (formData) => {
     return authInstance
       .post('/auth/open-store', formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  //   cart API management :
+  getCarts: async (formData) => {
+    return authInstance
+      .get('/cart', formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  addCart: async (formData) => {
+    return authInstance
+      .post('/cart', formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  updateCart: async (formData, cartId) => {
+    return authInstance
+      .put(`/cart/${cartId}`, formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  deleteCart: async (formData, cartId) => {
+    return authInstance
+      .delete(`/cart/${cartId}`, formData)
       .then((res) => res.data)
       .catch(errorHandle);
   },

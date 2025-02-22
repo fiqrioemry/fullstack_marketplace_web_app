@@ -1,13 +1,6 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
-
-export const publicInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'X-API-Key': import.meta.env.VITE_API_KEY,
-  },
-});
+import callApi from './callApi';
+import { useAuthStore } from '../store/useAuthStore';
 
 export const authInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -18,14 +11,21 @@ export const authInstance = axios.create({
   },
 });
 
+export const publicInstance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': import.meta.env.VITE_API_KEY,
+  },
+});
+
 authInstance.interceptors.request.use(
   (config) => {
-    const accessToken = Cookies.get('accessToken');
-
+    const { accessToken } = useAuthStore.getState();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
     return config;
   },
 
@@ -37,33 +37,19 @@ authInstance.interceptors.request.use(
 authInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const { logout } = useAuthStore.getState();
     if (
       error.response.status === 401 &&
       error.config &&
       !error.config.__isRetryRequest
     ) {
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
-          {
-            withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-Key': import.meta.env.VITE_API_KEY,
-            },
-          },
-        );
+        const accessToken = await callApi.refreshToken();
 
-        const newAccessToken = response.data.accessToken;
-
-        Cookies.set('accessToken', newAccessToken, { expires: 1 / 96 });
-
-        error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-
+        error.config.headers.Authorization = `Bearer ${accessToken}`;
         return authInstance(error.config);
       } catch (refreshError) {
-        Cookies.remove('accessToken');
-
+        logout();
         return Promise.reject(refreshError);
       }
     }

@@ -1,60 +1,72 @@
 import { create } from "zustand";
+import toast from "react-hot-toast";
+import callApi from "../services/callApi";
 
+export const userCartStore = create((set) => ({
+  cart: [],
+  loading: false,
 
-export const useCartStore = create(() => ({
-  cart: null,
-  message: null,
-  isCartLoading: false,
+  getCarts: async () => {
+    set({ loading: true });
+    try {
+      const cart = await callApi.getCarts();
+      set({ cart });
+    } catch {
+      set({ cart: [] });
+    } finally {
+      set({ loading: false });
+    }
+  },
 
-  // getCartItems: async () => {
-  //   try {
-  //     const response = await axiosInstance.get("/cart");
+  updateCart: async (formData, cartId) => {
+    set({ updating: true });
+    try {
+      const { message, quantity } = await callApi.updateCart(formData, cartId);
 
-  //     set({ cart: response.data.cart });
-  //   } catch (error) {
-  //     console.log(error);
+      set((state) => ({
+        cart: state.cart.map((c) => (c.id === cartId ? { ...c, quantity } : c)),
+      }));
 
-  //     set({ cart: [] });
-  //   }
-  // },
+      toast.success(message);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      set({ updating: false });
+    }
+  },
 
-  // addCartItem: async (productId, quantity) => {
-  //   try {
-  //     console.log(productId, quantity);
-  //     set({ isCartLoading: true });
+  deleteCart: async (cartId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.deleteCart(cartId);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
 
-  //     const response = await axiosInstance.post("/cart", {
-  //       productId,
-  //       quantity,
-  //     });
+  addCart: async (formData) => {
+    try {
+      set({ loading: true });
 
-  //     toast.success(response.data.message);
+      // Panggil API untuk menambahkan produk ke keranjang
+      const { message, newCart } = await callApi.addCart(formData);
 
-  //     set({ cart: response.data.cart });
-  //   } catch (error) {
-  //     console.log(error);
+      set((state) => ({
+        cart: state.cart.some((c) => c.id === newCart.id)
+          ? state.cart.map((c) =>
+              c.id === newCart.id ? { ...c, quantity: newCart.quantity } : c
+            )
+          : [...state.cart, newCart], // Jika tidak ada, tambahkan item baru
+      }));
 
-  //     toast.error(error.response.data.message);
-  //   } finally {
-  //     set({ isCartLoading: false });
-  //   }
-  // },
-
-  // removeCartItem: async (cartId) => {
-  //   try {
-  //     set({ isCartLoading: true });
-
-  //     const response = await axiosInstance.delete(`/cart/${cartId}`);
-
-  //     toast.success(response.data.message);
-
-  //     set({ cart: response.data.cart });
-  //   } catch (error) {
-  //     console.log(error);
-
-  //     toast.error(error.response.data.message);
-  //   } finally {
-  //     set({ isCartLoading: false });
-  //   }
-  // },
+      toast.success(message);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));
