@@ -1,16 +1,10 @@
-const crypto = require("crypto");
-const { reset } = require("../models");
+const crypto = require('crypto');
 
-module.exports = (user) => {
-  // Generating Unique Token
-  const token = crypto.randomBytes(20).toString("hex");
-  const expires = Date.now() + 10 * 60 * 1000; // 10 Minute expired
+const generateToken = (expiryMinutes = 10) => {
+  const token = crypto.randomBytes(20).toString('hex');
+  const expiresAt = Date.now() + expiryMinutes * 60 * 1000; // Default 10 minutes expiry
 
-  // Hashing and adding unique token to database table
-  reset.create(
-    { userId: user.id, token, ExpiresAt: expires },
-    { where: { email: user.email } },
-  );
-
-  return resetToken;
+  return { token, expiresAt };
 };
+
+module.exports = generateToken;

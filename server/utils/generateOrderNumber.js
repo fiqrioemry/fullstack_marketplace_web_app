@@ -1,4 +1,4 @@
-module.exports = () => {
+const generateOrderNumber = () => {
   const now = new Date();
 
   const day = String(now.getDate()).padStart(2, '0');
@@ -9,3 +9,5 @@ module.exports = () => {
 
   return `INV/${day}${month}${year}/${timeNowInMillisec}`;
 };
+
+module.exports = generateOrderNumber;

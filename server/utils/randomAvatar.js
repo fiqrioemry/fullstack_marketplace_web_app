@@ -1,34 +1,36 @@
-module.exports = randomAvatar = () => {
+const randomAvatar = () => {
   let avatar;
   switch (Math.round(Math.random() * 10)) {
     case 0:
-      avatar = "Lucy";
+      avatar = 'Lucy';
       break;
     case 1:
-      avatar = "Bob";
+      avatar = 'Bob';
       break;
     case 2:
-      avatar = "Cookie";
+      avatar = 'Cookie';
       break;
     case 3:
-      avatar = "Bubba";
+      avatar = 'Bubba';
       break;
     case 4:
-      avatar = "Garfield";
+      avatar = 'Garfield';
       break;
     case 5:
-      avatar = "Cuddles";
+      avatar = 'Cuddles';
       break;
     case 6:
-      avatar = "Leo";
+      avatar = 'Leo';
     case 7:
-      avatar = "Fluffy";
+      avatar = 'Fluffy';
     case 8:
-      avatar = "Gizmo";
+      avatar = 'Gizmo';
     case 9:
-      avatar = "Sheba";
+      avatar = 'Sheba';
     case 10:
-      avatar = "Angel";
+      avatar = 'Angel';
   }
   return `https://api.dicebear.com/5.x/adventurer/svg?seed=${avatar}`;
 };
+
+module.exports = randomAvatar;
