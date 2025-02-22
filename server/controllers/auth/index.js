@@ -15,7 +15,7 @@ async function sendOTP(req, res) {
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser)
-      return res.status(400).send({ message: 'Email already registered' });
+      return res.status(400).json({ message: 'Email already registered' });
 
     const secret = speakeasy.generateSecret({ length: 20 });
     const otp = speakeasy.totp({
@@ -26,11 +26,11 @@ async function sendOTP(req, res) {
     await client.setEx(`otp:${email}`, 300, otp);
 
     await sendOtp(email, otp);
-    return res.status(200).send({ message: 'OTP sent to email' });
+    return res.status(200).json({ message: 'OTP sent to email' });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: 'Failed to send OTP', error: error.message });
+      .json({ message: 'Failed to send OTP', error: error.message });
   }
 }
 
@@ -40,17 +40,17 @@ async function verifyOTP(req, res) {
   try {
     const storedOtp = await client.get(`otp:${email}`);
 
-    if (!storedOtp) return res.status(400).send({ message: 'OTP is expired' });
+    if (!storedOtp) return res.status(400).json({ message: 'OTP is expired' });
 
     if (storedOtp !== otp) {
-      return res.status(400).send({ message: 'Invalid OTP code' });
+      return res.status(400).json({ message: 'Invalid OTP code' });
     } else {
-      return res.status(200).send({ message: 'OTP is verified.' });
+      return res.status(200).json({ message: 'OTP is verified.' });
     }
   } catch (error) {
     return res
       .status(500)
-      .send({ message: 'An error occurred', error: error.message });
+      .json({ message: 'An error occurred', error: error.message });
   }
 }
 
@@ -58,7 +58,7 @@ async function register(req, res) {
   const { fullname, email, password } = req.body;
 
   if (!fullname || !email || !password)
-    return res.status(400).send({ message: 'All fields required' });
+    return res.status(400).json({ message: 'All fields required' });
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -70,14 +70,14 @@ async function register(req, res) {
       avatar: randomAvatar(),
     });
 
-    res.status(201).send({
+    res.status(201).json({
       message: 'Registration is success',
       user: newUser,
     });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: 'Failed to register user', error: error.message });
+      .json({ message: 'Failed to register user', error: error.message });
   }
 }
 
@@ -181,7 +181,7 @@ async function authCheck(req, res) {
 
     res.status(200).json({ payload });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message: 'Failed to get Authorization',
       error: error.message,
     });
@@ -193,7 +193,7 @@ async function refreshToken(req, res) {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(401).send({
+      return res.status(401).json({
         message: 'Unauthorized !!! Please Login',
       });
     }
@@ -201,7 +201,7 @@ async function refreshToken(req, res) {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
 
     if (!decoded) {
-      return res.status(401).send({
+      return res.status(401).json({
         message: 'Unauthorized !!! Session Expired',
       });
     }
@@ -212,7 +212,7 @@ async function refreshToken(req, res) {
     });
 
     if (!user) {
-      return res.status(401).send({
+      return res.status(401).json({
         message: 'Unauthorized !!! User not found',
       });
     }
@@ -223,9 +223,9 @@ async function refreshToken(req, res) {
       { expiresIn: '1d' },
     );
 
-    res.status(200).send({ accessToken });
+    res.status(200).json({ accessToken });
   } catch (error) {
-    return res.status(500).send({
+    return res.status(500).json({
       message: 'Failed to refresh token',
       error: error.message,
     });
@@ -245,7 +245,7 @@ async function createStore(req, res) {
     const slug = createSlug(name);
 
     if (!name || !description || !city)
-      return res.status(400).send({ message: 'All fields required' });
+      return res.status(400).json({ message: 'All fields required' });
 
     const existingStore = await Store.findOne({
       where: {

@@ -1,6 +1,7 @@
 const {
   Cart,
   Order,
+  User,
   Address,
   Product,
   sequelize,
@@ -10,13 +11,11 @@ const {
   OrderDetail,
 } = require('../../models');
 require('dotenv').config();
-const midtransClient = require('midtrans-client');
-const { v4: uuidv4 } = require('uuid');
 
-const generateOrderNumber = (transactionId) => {
-  return `INV-${transactionId}-${uuidv4().split('-')[0]}`;
-};
-// Midtrans Configuration
+const midtransClient = require('midtrans-client');
+const generateOrderNumber = require('../../utils/generateOrderNumber');
+const transaction = require('../../models/transaction');
+
 let snap = new midtransClient.Snap({
   isProduction: process.env.NODE_ENV === 'production',
   clientKey: process.env.MIDTRANS_CLIENT_KEY,
@@ -26,12 +25,10 @@ let snap = new midtransClient.Snap({
 const PaymentNotifications = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    // Destructure the notification response from Midtrans
     const statusResponse = await snap.transaction.notification(req.body);
-    const { order_id: transactionId, transaction_status: transactionStatus } =
-      statusResponse;
+    const transactionId = statusResponse.order_id;
+    const transactionStatus = statusResponse.transactionStatus;
 
-    // Retrieve the transaction along with its orders and order details
     const userTransaction = await Transaction.findOne({
       where: { id: transactionId },
       include: [
@@ -52,7 +49,6 @@ const PaymentNotifications = async (req, res) => {
     let message = '';
 
     if (transactionStatus === 'settlement' || transactionStatus === 'capture') {
-      // Update the transaction's payment status to 'paid'
       await userTransaction.update({ paymentStatus: 'paid' }, { transaction });
       message = 'Your payment is successful, order will be processed';
 
@@ -64,7 +60,6 @@ const PaymentNotifications = async (req, res) => {
           // Update the order status to 'pending'
           await order.update({ orderStatus: 'pending' }, { transaction });
 
-          // Create a shipment record for the order
           await Shipment.create(
             {
               orderId: order.id,
@@ -156,11 +151,10 @@ const PaymentNotifications = async (req, res) => {
 
 const createNewOrder = async (req, res) => {
   const transaction = await sequelize.transaction();
-  try {
-    // Ambil data dari request
-    const { userId } = req.user;
-    const { addressId, orders } = req.body;
+  const { userId } = req.user;
+  const { addressId, orders } = req.body;
 
+  try {
     // Validasi input dasar
     if (!addressId || !Array.isArray(orders) || orders.length === 0) {
       return res
@@ -225,7 +219,6 @@ const createNewOrder = async (req, res) => {
         throw new Error('Invalid Store ID, Shipping Cost, or CartItems');
       }
 
-      // Buat record order baru
       const newOrder = await Order.create(
         {
           userId,
@@ -269,11 +262,8 @@ const createNewOrder = async (req, res) => {
           quantity: cart.quantity,
           price: product.price,
           totalPrice: itemTotalPrice,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         });
 
-        // Tambahkan data untuk Midtrans item detail
         midtransItems.push({
           id: `PRODUCT-${product.id}`,
           price: product.price,
@@ -281,7 +271,6 @@ const createNewOrder = async (req, res) => {
           name: product.name.substring(0, 50),
         });
 
-        // Tandai cart item untuk dihapus
         cartIdsToRemove.push(cart.id);
       }
 
@@ -290,22 +279,19 @@ const createNewOrder = async (req, res) => {
         id: `SHIPPING-${newOrder.orderNumber}`,
         price: shipmentCost,
         quantity: 1,
-        name: `Shipping Cost - Store ${storeId}`,
+        name: `Shipping Cost`,
       });
 
-      // Hitung total order (produk + pengiriman)
       const totalOrderAmount = orderTotalPrice + shipmentCost;
       totalAmount += orderTotalPrice;
       totalShipmentCost += shipmentCost;
 
-      // Update record order dengan total yang telah dihitung
       await newOrder.update(
         { totalPrice: orderTotalPrice, totalOrderAmount },
         { transaction },
       );
     }
 
-    // Bulk create OrderDetail untuk mengurangi jumlah query
     if (orderDetailsToCreate.length > 0) {
       await OrderDetail.bulkCreate(orderDetailsToCreate, { transaction });
     }
@@ -318,8 +304,8 @@ const createNewOrder = async (req, res) => {
       });
     }
 
-    // Update transaksi dengan total harga produk, biaya pengiriman, dan jumlah yang harus dibayar
     const amountToPay = totalAmount + totalShipmentCost;
+
     await newTransaction.update(
       {
         totalAmount,
@@ -329,7 +315,6 @@ const createNewOrder = async (req, res) => {
       { transaction },
     );
 
-    // Buat notifikasi untuk user
     await Notification.create({
       userId,
       type: 'order',
@@ -337,7 +322,6 @@ const createNewOrder = async (req, res) => {
       metadata: { transactionId: newTransaction.id },
     });
 
-    // Persiapkan parameter untuk Midtrans Snap API
     const parameter = {
       transaction_details: {
         order_id: newTransaction.id,
@@ -345,12 +329,12 @@ const createNewOrder = async (req, res) => {
       },
       item_details: midtransItems,
       customer_details: {
-        user_id: userId,
+        first_name: address.name,
         shipping_address: address.address,
+        phone: address.phone,
       },
     };
 
-    // Buat transaksi melalui Midtrans Snap API
     const transactionMidtrans = await snap.createTransaction(parameter);
 
     await transaction.commit();
@@ -370,13 +354,103 @@ const createNewOrder = async (req, res) => {
   }
 };
 
-// get all orders for store / seller
 const getStoreOrders = async (req, res) => {
   const { storeId } = req.user;
+  try {
+    if (!storeId) {
+      return res.status(400).json({ message: 'Unauthorized Access' });
+    }
+
+    const orders = await Order.findAll({
+      where: {
+        storeId,
+        orderStatus: 'pending',
+      },
+      include: [
+        {
+          model: Shipment,
+          attributes: ['shipmentStatus', 'shipmentNumber'],
+        },
+      ],
+    });
+
+    return res.status(200).json({ orders });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const updateStoreOrder = async (req, res) => {
+  const { orderId } = req.params;
+  const { orderStatus, shipmentNumber } = req.body;
+
+  const transaction = await sequelize.transaction();
+  try {
+    if (!['process', 'canceled'].includes(orderStatus)) {
+      return res.status(400).json({ message: 'Invalid order status.' });
+    }
+
+    if (orderStatus === 'process' && !shipmentNumber) {
+      return res.status(400).json({
+        message: 'Shipment number is required to process order.',
+      });
+    }
+
+    const order = await Order.findByPk(orderId, { transaction });
+    if (!order) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Order not found.' });
+    }
+
+    // Update status order
+    await order.update({ orderStatus }, { transaction });
+
+    if (orderStatus === 'process') {
+      // Insert or update shipment data
+      await Shipment.upsert(
+        {
+          orderId: order.id,
+          shipmentStatus: 'shipped',
+          shipmentNumber,
+        },
+        { transaction },
+      );
+
+      await Notification.create(
+        {
+          userId: order.userId,
+          type: 'order',
+          message: `Your order has been processed for shipment.`,
+          metadata: { orderNumber: order.orderNumber },
+        },
+        { transaction },
+      );
+    } else {
+      await User.increment(
+        { balance: order.totalOrderAmount },
+        { where: { id: order.userId }, transaction },
+      );
+
+      await Notification.create(
+        {
+          userId: order.userId,
+          type: 'order',
+          message: `Your order has been canceled. A refund of ${order.totalOrderAmount} has been issued.`,
+          metadata: { orderNumber: order.orderNumber },
+        },
+        { transaction },
+      );
+    }
+
+    await transaction.commit();
+    return res.status(200).json({ message: 'Order updated successfully.' });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
 };
 
 // get all order for user
-
 const getUserOrders = async (req, res) => {
   const { userId } = req.user;
   try {
@@ -416,7 +490,8 @@ const getUserOrders = async (req, res) => {
 
 module.exports = {
   createNewOrder,
-  PaymentNotifications,
   getStoreOrders,
   getUserOrders,
+  updateStoreOrder,
+  PaymentNotifications,
 };
