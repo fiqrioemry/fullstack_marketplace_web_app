@@ -12,7 +12,7 @@ const generateAccessToken = (user, expiresIn = '1d') => {
       storeId: user.store?.id || null,
       role: user.role,
     },
-    process.env.ACCESS_TOKEN_SECRET,
+    process.env.ACCESS_TOKEN,
     { expiresIn },
   );
 };
@@ -23,7 +23,7 @@ const generateRefreshToken = (user, expiresIn = '7d') => {
     throw new Error('User object must contain an id.');
   }
 
-  return jwt.sign({ userId: user.id }, process.env.REFRESH_TOKEN_SECRET, {
+  return jwt.sign({ userId: user.id }, process.env.REFRESH_TOKEN, {
     expiresIn,
   });
 };
