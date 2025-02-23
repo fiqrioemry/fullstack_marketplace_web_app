@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { step, signup, loading } = useAuthStore();
+  const { step, register, loading } = useAuthStore();
 
   const getFormControl = () => {
     switch (step) {
@@ -34,7 +34,7 @@ const SignUp = () => {
   const registerForm = useFormSchema(
     registerState,
     getFormControl(),
-    signup,
+    register,
     navigate,
     false
   );

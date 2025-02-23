@@ -66,7 +66,6 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true });
     try {
       const step = get().step;
-
       if (step === 1) {
         const { message } = await callApi.sendOTP(formData);
         toast.success(message);
