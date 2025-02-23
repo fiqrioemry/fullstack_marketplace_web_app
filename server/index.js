@@ -1,13 +1,16 @@
 require('dotenv').config();
+require('./config/passport');
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const services = require('./routes');
 const cookieParser = require('cookie-parser');
+const limiter = require('./middleware/limiter');
 const { connectRedis } = require('./config/redis');
 
 const { PORT, CLIENT_URL } = process.env;
 
+app.use(limiter);
 app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

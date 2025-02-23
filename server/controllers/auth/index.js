@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const passport = require('passport');
 const { redis } = require('../../config/redis');
 const { User, Store } = require('../../models');
 const createSlug = require('../../utils/createSlug');
@@ -14,6 +15,7 @@ const {
 
 async function sendOTP(req, res) {
   const email = req.body.email;
+
   try {
     const existingUser = await User.findOne({ where: { email } });
 
@@ -282,11 +284,7 @@ async function googleAuthCallback(req, res) {
     }
 
     try {
-      const refreshToken = jwt.sign(
-        { userId: user.id },
-        process.env.REFRESH_TOKEN,
-        { expiresIn: '7d' },
-      );
+      const refreshToken = generateRefreshToken(user);
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -295,7 +293,7 @@ async function googleAuthCallback(req, res) {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect(process.env.CLIENT_HOST);
+      res.redirect(process.env.CLIENT_URL);
     } catch (error) {
       return res
         .status(500)
