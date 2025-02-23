@@ -100,7 +100,6 @@ export const registerControl = [
     label: 'email',
     type: 'email',
     placeholder: 'Enter your email',
-    component: 'input',
     disabled: true,
   },
 

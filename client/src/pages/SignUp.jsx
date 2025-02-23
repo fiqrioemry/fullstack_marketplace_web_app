@@ -31,7 +31,7 @@ const SignUp = () => {
     }
   };
 
-  const signUpForm = useFormSchema(
+  const registerForm = useFormSchema(
     registerState,
     getFormControl(),
     signup,
@@ -41,7 +41,7 @@ const SignUp = () => {
 
   return (
     <div className="h-screen flex-center">
-      <Card className="min-w-80 h-96">
+      <Card className="w-96 h-96">
         <CardContent className="p-4">
           <div className="text-center">
             <WebLogo />
@@ -56,21 +56,21 @@ const SignUp = () => {
               <>
                 {step === 1 && (
                   <StepOne
-                    signUpForm={signUpForm}
+                    registerForm={registerForm}
                     formControl={sendOTPControl}
                   />
                 )}
 
                 {step === 2 && (
                   <StepTwo
-                    signUpForm={signUpForm}
+                    registerForm={registerForm}
                     formControl={verifyOTPControl}
                   />
                 )}
 
                 {step === 3 && (
                   <StepThree
-                    signUpForm={signUpForm}
+                    registerForm={registerForm}
                     formControl={registerControl}
                   />
                 )}

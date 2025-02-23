@@ -80,30 +80,39 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-sm md:text-base;
   }
 
   h1 {
-    @apply text-3xl font-bold tracking-[2px] uppercase;
+    @apply text-2xl md:text-3xl font-bold capitalize;
   }
 
   h2 {
-    @apply text-2xl font-semibold tracking-[1.5px] uppercase;
+    @apply text-xl md:text-2xl font-semibold capitalize;
   }
 
   h3 {
-    @apply text-xl font-semibold uppercase;
+    @apply text-lg md:text-xl font-semibold capitalize;
   }
 
   h4 {
-    @apply text-[16px] md:text-lg font-medium capitalize;
+    @apply text-base md:text-lg font-medium capitalize;
   }
 
   h5 {
-    @apply text-sm font-medium;
+    @apply text-xs md:text-sm font-normal capitalize;
   }
+
   h6 {
     @apply text-xs text-red-500;
+  }
+
+  .btn-primary {
+    @apply text-primary hover:text-primary/50 font-medium duration-300 transition-all;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
   }
 
   .link_animate {

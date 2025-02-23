@@ -14,7 +14,7 @@ const SignIn = () => {
 
   return (
     <div className="h-screen flex-center">
-      <Card>
+      <Card className="w-96">
         <CardContent className="p-4">
           <div className="py-4 text-center">
             <WebLogo />
@@ -26,7 +26,7 @@ const SignIn = () => {
           <GoogleAuth buttonTitle={"Signin with google"} />
           <CardFooter className="mt-2 space-x-2">
             <span> Dont have an account ? signup</span>
-            <Link to="/signup" className="btn-secondary">
+            <Link to="/signup" className="btn-primary">
               here
             </Link>
           </CardFooter>

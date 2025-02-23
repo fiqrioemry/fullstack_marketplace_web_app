@@ -16,7 +16,7 @@ const callApi = {
   },
 
   logout: async () => {
-    return authInstance
+    return publicInstance
       .post('/auth/logout')
       .then((res) => {
         return res.data;
@@ -46,7 +46,7 @@ const callApi = {
 
   refreshToken: async () => {
     return publicInstance
-      .get('/refresh')
+      .post('/refresh')
       .then((res) => res.data.accessToken)
       .catch(errorHandle);
   },

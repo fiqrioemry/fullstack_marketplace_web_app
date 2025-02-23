@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useProductStore } from "@/store/useProductStore";
+import InputLabel from "@/components/ui/InputLabel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { CloudUpload, FilePlus, X } from "lucide-react";
-import InputLabel from "../ui/InputLabel";
+import { useProductStore } from "@/store/useProductStore";
 
 function InputForm({
   formik,
@@ -17,7 +17,7 @@ function InputForm({
   disabled = false,
   children,
 }) {
-  const { getCities, getCategories, cities, categories } = useProductStore();
+  const { getCategories, categories } = useProductStore();
 
   const { multiFile, removePreview, handleDrop, handleDragOver } =
     useFileUpload(formik.setFieldValue, formik.values);
@@ -313,17 +313,6 @@ function InputForm({
       default:
         element = (
           <>
-            <div className="flex items-center space-x-2 mb-2">
-              <Label htmlFor={control.label} className="label_input">
-                {control.label}
-              </Label>
-              {formik.touched[control.name] && formik.errors[control.name] && (
-                <p className="text-red-500 text-xs">
-                  {formik.errors[control.name]}
-                </p>
-              )}
-            </div>
-
             <Input
               id={control.label}
               name={control.name}
@@ -332,8 +321,8 @@ function InputForm({
               onChange={formik.handleChange}
               placeholder={control.placeholder}
               value={formik.values[control.name]}
-              className="mt-1 block w-full"
               disabled={control.disabled || disabled}
+              className="mt-1 block w-full"
             />
           </>
         );

@@ -1,8 +1,8 @@
 import { create } from "zustand";
+import callApi from "@/api/callApi";
 import toast from "react-hot-toast";
-import callApi from "../services/callApi";
 
-export const userCartStore = create((set) => ({
+export const useCartStore = create((set) => ({
   cart: [],
   loading: false,
 

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import callApi from "../api/callApi";
+import callApi from "@/api/callApi";
 
 export const useProductStore = create((set) => ({
   product: [],

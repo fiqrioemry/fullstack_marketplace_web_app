@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import callApi from "../api/callApi";
+import callApi from "@/api/callApi";
 
 export const useAuthStore = create((set, get) => ({
   step: 1,
@@ -13,7 +13,7 @@ export const useAuthStore = create((set, get) => ({
   setAccessToken: (accessToken) => set({ accessToken }),
 
   resetAuthenticate: () =>
-    set({ user: null, isAuthenticate: null, accessToken: null }),
+    set({ user: null, isAuthenticate: false, accessToken: null }),
 
   authCheck: async () => {
     try {
