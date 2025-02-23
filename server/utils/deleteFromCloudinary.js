@@ -1,9 +1,11 @@
 const cloudinary = require('../config/cloudinary');
 
-const deleteFromCloudinary = async (imageUrl) => {
+const deleteFromCloudinary = async (url) => {
   try {
-    const publicId = imageUrl.split('/').slice(-1).join('/').split('.').shift();
-    await cloudinary.uploader.destroy(publicId);
+    const publicId = url.split('/').slice(-1).join('/').split('.').shift();
+    await cloudinary.uploader.destroy(
+      `${process.env.CLOUD_FOLDER}/${publicId}`,
+    );
   } catch (error) {
     throw new Error('Failed to delete asset from Cloudinary');
   }

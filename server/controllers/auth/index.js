@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const { redis } = require('../../config/redis');
 const { User, Store } = require('../../models');
-const { client } = require('../../utils/redis');
 const createSlug = require('../../utils/createSlug');
 const generateOtp = require('../../utils/generateOtp');
 const sendEmailOTP = require('../../utils/sendEmailOTP');
@@ -22,22 +22,20 @@ async function sendOTP(req, res) {
 
     const otp = await generateOtp();
 
-    await client.setEx(`otp:${email}`, 600, otp);
+    await redis.setex(`otp:${email}`, 600, otp);
 
     await sendEmailOTP(email, otp);
 
     return res.status(200).json({ message: 'OTP sent to email' });
   } catch (error) {
-    // send error
     return res.status(500).json({ message: error.message });
   }
 }
-
 async function verifyOTP(req, res) {
   const { email, otp } = req.body;
 
   try {
-    const storedOtp = await client.get(`otp:${email}`);
+    const storedOtp = await redis.get(`otp:${email}`);
 
     if (!storedOtp) return res.status(400).json({ message: 'OTP is expired' });
 
@@ -130,7 +128,7 @@ async function logout(req, res) {
 
   res.clearCookie('refreshToken');
 
-  await client.del(`user:${userId}`);
+  await redis.del(`user:${userId}`);
 
   return res.status(200).json({ message: 'Logout successfully' });
 }
@@ -139,7 +137,7 @@ async function authCheck(req, res) {
   const userId = req.user.userId;
 
   try {
-    const cachedUser = await client.get(`user:${userId}`);
+    const cachedUser = await redis.get(`user:${userId}`);
 
     if (cachedUser) {
       return res.status(200).json({ user: JSON.parse(cachedUser) });
@@ -163,7 +161,7 @@ async function authCheck(req, res) {
       storeAvatar: userData.store?.avatar,
     };
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(user));
+    await redis.setex(`user:${userId}`, 900, JSON.stringify(user));
 
     res.status(200).json(user);
   } catch (error) {
@@ -258,7 +256,7 @@ async function createStore(req, res) {
 
     await user.update({ role: 'seller' });
 
-    await client.setEx(`user:${userId}`, 900, JSON.stringify(payload));
+    await redis.setex(`user:${userId}`, 900, JSON.stringify(payload));
 
     res.status(201).json({
       message: 'Store Created Successfully',
@@ -267,6 +265,43 @@ async function createStore(req, res) {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+}
+
+async function googleAuth(req, res, next) {
+  passport.authenticate('google', { scope: ['profile', 'email'] })(
+    req,
+    res,
+    next,
+  );
+}
+
+async function googleAuthCallback(req, res) {
+  passport.authenticate('google', { session: false }, async (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({ message: 'Google authentication failed' });
+    }
+
+    try {
+      const refreshToken = jwt.sign(
+        { userId: user.id },
+        process.env.REFRESH_TOKEN,
+        { expiresIn: '7d' },
+      );
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.redirect(process.env.CLIENT_HOST);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Failed to generate token', error: error.message });
+    }
+  })(req, res);
 }
 
 module.exports = {
@@ -278,4 +313,6 @@ module.exports = {
   verifyOTP,
   refreshToken,
   createStore,
+  googleAuthCallback,
+  googleAuth,
 };

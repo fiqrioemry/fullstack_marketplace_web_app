@@ -10,7 +10,7 @@ const redis = new Redis({
 
 const connectRedis = async () => {
   try {
-    await redis.connect();
+    await redis.ping();
     console.log('Redis is connected on port', REDIS_PORT);
   } catch (error) {
     console.error('Error connecting to Redis', error);

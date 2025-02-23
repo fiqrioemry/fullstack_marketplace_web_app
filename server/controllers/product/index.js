@@ -3,10 +3,9 @@ const { Op } = require('sequelize');
 const { Store, Product, Category, Gallery } = require('../../models');
 
 async function getProduct(req, res) {
+  const slug = req.params.slug;
   try {
-    const { slug } = req.params;
-
-    const product = await Product.findOne({
+    const productData = await Product.findOne({
       where: { slug: slug },
       include: [
         {
@@ -25,27 +24,27 @@ async function getProduct(req, res) {
       ],
     });
 
-    return res.status(200).send({
-      data: {
-        id: product.id,
-        name: product.name,
-        slug: product.slug,
-        description: product.description,
-        price: product.price,
-        stock: product.stock,
-        city: product.store.city,
-        storeId: product.storeId,
-        storeName: product.store.name,
-        storeSlug: product.store.slug,
-        storeImage: product.store.image,
-        categoryId: product.category.id,
-        categoryName: product.category.name,
-        categorySlug: product.category.slug,
-        images: product.gallery.map((p) => p.image),
-      },
-    });
+    const product = {
+      id: productData.id,
+      name: productData.name,
+      slug: productData.slug,
+      description: productData.description,
+      price: productData.price,
+      stock: productData.stock,
+      city: productData.store.city,
+      storeId: productData.storeId,
+      storeName: productData.store.name,
+      storeSlug: productData.store.slug,
+      storeImage: productData.store.image,
+      categoryId: productData.category.id,
+      categoryName: productData.category.name,
+      categorySlug: productData.category.slug,
+      images: productData.gallery.map((p) => p.image),
+    };
+
+    return res.status(200).json(product);
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).json(error.message);
   }
 }
 

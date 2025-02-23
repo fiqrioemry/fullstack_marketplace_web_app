@@ -78,7 +78,7 @@ async function updateCart(req, res) {
 
     return res.status(200).json({
       message: 'Cart is updated',
-      updatedCart: cart,
+      quantity,
     });
   } catch (error) {
     return res
@@ -188,10 +188,7 @@ async function getCarts(req, res) {
 
     const cart = Object.values(cartItems);
 
-    return res.status(200).json({
-      message: 'Cart items retrieved successfully',
-      cart,
-    });
+    return res.status(200).json(cart);
   } catch (error) {
     return res.status(500).json({
       message: error.message,

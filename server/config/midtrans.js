@@ -1,3 +1,4 @@
+require('dotenv').config();
 const midtransClient = require('midtrans-client');
 
 const snap = new midtransClient.Snap({

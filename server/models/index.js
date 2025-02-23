@@ -1,4 +1,5 @@
 'use strict';
+require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
@@ -6,7 +7,7 @@ const process = require('process');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/database.js')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 let sequelize;
@@ -47,13 +48,14 @@ Object.keys(db).forEach((modelName) => {
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('MySQL is connected');
+    console.log(
+      `Mysql is Connected on port ${sequelize.config.host}:${sequelize.config.port}`,
+    );
   } catch (error) {
-    console.error('Unable to connect to the database:', error.message);
+    console.error('Unable to connect to MySQL database:', error.message);
   }
 })();
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
 
 module.exports = db;

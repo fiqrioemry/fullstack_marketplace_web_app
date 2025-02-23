@@ -3,13 +3,14 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const services = require('./routes');
-const cookies = require('cookie-parser');
-const { connectRedis } = require('./utils/redis');
+const cookieParser = require('cookie-parser');
+const { connectRedis } = require('./config/redis');
+
 const { PORT, CLIENT_URL } = process.env;
 
-app.use(cookies());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(
   cors({
     origin: CLIENT_URL,
@@ -17,7 +18,10 @@ app.use(
     methods: ['POST', 'PUT', 'GET', 'DELETE'],
   }),
 );
-connectRedis().then(() => {
+
+(async () => {
+  await connectRedis();
+
   app.use('/api/auth', services.authRoute);
   app.use('/api/user', services.userRoute);
   app.use('/api/cart', services.cartRoute);
@@ -29,4 +33,4 @@ connectRedis().then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
-});
+})();

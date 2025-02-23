@@ -95,9 +95,7 @@ async function getCategories(req, res) {
   try {
     const category = await Category.findAll();
 
-    return res.status(200).send({
-      category,
-    });
+    return res.status(200).send(category);
   } catch (error) {
     return res.status(500).send({ message: error.message });
   }

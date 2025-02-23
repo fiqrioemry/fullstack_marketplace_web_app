@@ -1,17 +1,14 @@
-const {
-  uploadMediaToCloudinary,
-  deleteMediaFromCloudinary,
-} = require('../../utils/cloudinary');
-const { Op } = require('sequelize');
 const fs = require('fs').promises;
-const { client } = require('../../utils/redis');
+const { Op } = require('sequelize');
+const { redis } = require('../../config/redis');
 const { User, Address } = require('../../models');
+const uploadToCloudinary = require('../../utils/uploadToCloudinary');
+const deleteFromCloudinary = require('../../utils/deleteFromCloudinary');
 
 async function getProfile(req, res) {
   const { userId } = req.user;
-
   try {
-    const cachedUser = await client.get(`profile:${userId}`);
+    const cachedUser = await redis.get(`profile:${userId}`);
 
     if (cachedUser) {
       return res.status(200).json({
@@ -35,7 +32,7 @@ async function getProfile(req, res) {
       birthday: user.birthday,
     };
 
-    await client.setEx(`profile:${userId}`, 900, JSON.stringify(profile));
+    await redis.setex(`profile:${userId}`, 900, JSON.stringify(profile));
 
     return res.status(200).json(profile);
   } catch (error) {
@@ -66,10 +63,10 @@ async function updateProfile(req, res) {
     let avatar = user.avatar;
 
     if (file) {
-      const updatedAvatar = await uploadMediaToCloudinary(file.path);
+      const updatedAvatar = await uploadToCloudinary(file.path);
 
       if (user.avatar) {
-        await deleteMediaFromCloudinary(user.avatar);
+        await deleteFromCloudinary(user.avatar);
       }
 
       avatar = updatedAvatar.secure_url;
@@ -77,7 +74,6 @@ async function updateProfile(req, res) {
       await fs.unlink(file.path);
     }
 
-    // Update data pengguna
     const updatedProfile = {
       fullname: fullname || user.fullname,
       avatar: avatar,
@@ -88,7 +84,7 @@ async function updateProfile(req, res) {
 
     await user.update(updatedUser);
 
-    await client.setEx(`profile:${userId}`, 900, JSON.stringify(updatedUser));
+    await redis.setex(`profile:${userId}`, 900, JSON.stringify(updatedUser));
 
     return res.status(200).json({
       message: 'Profile is updated',
@@ -106,7 +102,7 @@ async function getAddress(req, res) {
   const userId = req.user.userId;
 
   try {
-    const cachedAddress = await client.get(`address:${userId}`);
+    const cachedAddress = await redis.get(`address:${userId}`);
 
     if (cachedAddress) {
       return res.status(200).json({ payload: JSON.parse(cachedAddress) });
@@ -121,7 +117,7 @@ async function getAddress(req, res) {
       });
     }
 
-    await client.setEx(`address:${userId}`, 900, JSON.stringify(address));
+    await redis.setex(`address:${userId}`, 900, JSON.stringify(address));
 
     return res.status(200).json(address);
   } catch (error) {
@@ -166,7 +162,7 @@ async function addAddress(req, res) {
     };
     await Address.create(newAddress);
 
-    await client.del(`address:${userId}`);
+    await redis.del(`address:${userId}`);
 
     return res.status(201).json({
       message: 'New Address is added',
@@ -185,7 +181,6 @@ async function updateAddress(req, res) {
   const { name, phone, address, province, city, zipcode, isMain } = req.body;
 
   try {
-    // Cek apakah address ada dan milik user yang benar
     const currentAddress = await Address.findByPk(addressId);
 
     if (!currentAddress) {
@@ -196,7 +191,6 @@ async function updateAddress(req, res) {
       return res.status(403).json({ message: 'Unauthorized access' });
     }
 
-    // Jika address ini dijadikan utama (isMain: true), reset isMain address lain
     if (isMain === true) {
       await Address.update(
         { isMain: false },
@@ -204,7 +198,6 @@ async function updateAddress(req, res) {
       );
     }
 
-    // Update address berdasarkan input user
     const [updatedRows] = await Address.update(
       { name, phone, address, province, city, zipcode, isMain },
       { where: { id: addressId } },
@@ -216,7 +209,6 @@ async function updateAddress(req, res) {
         .json({ message: 'No changes made to the address' });
     }
 
-    // Ambil data terbaru setelah update
     const updatedAddress = await Address.findByPk(addressId);
 
     return res.status(200).json({
@@ -241,7 +233,7 @@ async function deleteAddress(req, res) {
     await Address.destroy({ where: { id: addressId } });
 
     // Hapus cache Redis untuk alamat pengguna
-    await client.del(`address:${userId}`);
+    await redis.del(`address:${userId}`);
 
     return res.status(200).json({
       message: 'Address is deleted',
