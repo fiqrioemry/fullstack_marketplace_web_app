@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
+import GoogleAuth from "./GoogleAuth";
 import { Link } from "react-router-dom";
 import { sendOTPControl } from "@/config";
 import InputForm from "@/components/form/InputForm";
 import InputButton from "@/components/form/InputButton";
-import GoogleAuth from "./GoogleAuth";
 
 const StepOne = ({ registerForm }) => {
   return (

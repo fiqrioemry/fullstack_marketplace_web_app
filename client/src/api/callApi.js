@@ -9,18 +9,14 @@ const callApi = {
   login: async (formData) => {
     return publicInstance
       .post('/auth/login', formData)
-      .then((res) => {
-        return res.data;
-      })
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
   logout: async () => {
     return publicInstance
       .post('/auth/logout')
-      .then((res) => {
-        return res.data;
-      })
+      .then((res) => res.data)
       .catch(errorHandle);
   },
 
@@ -34,7 +30,8 @@ const callApi = {
   sendOTP: async (formData) => {
     return publicInstance
       .post('/auth/send-otp', formData)
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .catch(errorHandle);
   },
 
   verifyOTP: async (formData) => {

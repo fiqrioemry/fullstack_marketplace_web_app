@@ -13,10 +13,11 @@ import StepThree from "@/components/auth/StepThree";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEffect } from "react";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { step, register, loading } = useAuthStore();
+  const { step, resetStep, register, loading } = useAuthStore();
 
   const getFormControl = () => {
     switch (step) {
@@ -39,6 +40,11 @@ const SignUp = () => {
     false
   );
 
+  useEffect(() => {
+    resetStep();
+  }, []);
+
+  console.log(registerForm.values);
   return (
     <div className="h-screen flex-center">
       <Card className="w-96 h-96">

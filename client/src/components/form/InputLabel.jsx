@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Label } from "./label";
+import { Label } from "@/components/ui/label";
 
 const InputLabel = ({ formik, control }) => {
   return (

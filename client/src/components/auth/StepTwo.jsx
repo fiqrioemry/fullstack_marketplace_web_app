@@ -56,7 +56,7 @@ const StepTwo = ({ registerForm }) => {
             <span>
               Did not receive the code?{" "}
               <button
-                className="text_button"
+                className="btn-primary"
                 type="button"
                 onClick={handleResendOTP}
                 disabled={isResendDisabled}

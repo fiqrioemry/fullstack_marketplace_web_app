@@ -10,6 +10,8 @@ export const useAuthStore = create((set, get) => ({
   accessToen: null,
   isAuthenticate: null,
 
+  resetStep: () => set({ step: 1 }),
+
   setAccessToken: (accessToken) => set({ accessToken }),
 
   resetAuthenticate: () =>

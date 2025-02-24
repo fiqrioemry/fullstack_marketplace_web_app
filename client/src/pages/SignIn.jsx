@@ -6,7 +6,7 @@ import InputForm from "@/components/form/InputForm";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import InputButton from "@/components/form/InputButton";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 const SignIn = () => {
   const { login, loading } = useAuthStore();
@@ -24,12 +24,12 @@ const SignIn = () => {
           </InputForm>
           <div className="flex-center py-2">OR</div>
           <GoogleAuth buttonTitle={"Signin with google"} />
-          <CardFooter className="mt-2 space-x-2">
+          <div className="text-center mt-2 space-x-2">
             <span> Dont have an account ? signup</span>
             <Link to="/signup" className="btn-primary">
               here
             </Link>
-          </CardFooter>
+          </div>
         </CardContent>
       </Card>
     </div>

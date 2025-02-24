@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import InputLabel from "@/components/ui/InputLabel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { CloudUpload, FilePlus, X } from "lucide-react";
 import { useProductStore } from "@/store/useProductStore";
+import InputLabel from "./InputLabel";
 
 function InputForm({
   formik,
@@ -198,17 +198,8 @@ function InputForm({
 
       case "select":
         element = (
-          <div className="flex flex-col space-y-1 mb-2">
-            <div className="flex items-center space-x-2 h-5">
-              <Label htmlFor={control.label} className="label_input">
-                {control.label}
-              </Label>
-              {formik.touched[control.name] && formik.errors[control.name] && (
-                <p className="text-red-500 text-xs">
-                  {formik.errors[control.name]}
-                </p>
-              )}
-            </div>
+          <div>
+            <InputLabel formik={formik} control={control} />
             <select
               id={control.label}
               name={control.name}

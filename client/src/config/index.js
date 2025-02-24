@@ -76,35 +76,17 @@ export const registerState = {
   otp: '',
 };
 
-export const sendOTPControl = [
-  {
-    name: 'email',
-    type: 'email',
-    placeholder: 'Enter your email',
-    component: 'input',
-  },
-];
-
-export const verifyOTPControl = [
-  {
-    name: 'otp',
-    label: 'OTP Code',
-    type: 'text',
-    component: 'input',
-  },
-];
-
 export const registerControl = [
   {
     name: 'email',
     label: 'email',
     type: 'email',
-    placeholder: 'Enter your email',
+    placeholder: 'Enter yourrr email',
     disabled: true,
   },
 
   {
-    name: 'name',
+    name: 'fullname',
     label: 'fullname',
     type: 'text',
     placeholder: 'Enter your full name',
@@ -116,6 +98,23 @@ export const registerControl = [
     label: 'password',
     type: 'password',
     placeholder: 'Enter your password',
+    component: 'input',
+  },
+];
+
+export const sendOTPControl = [
+  {
+    name: 'email',
+    type: 'email',
+    placeholder: 'Enter your email',
+  },
+];
+
+export const verifyOTPControl = [
+  {
+    name: 'otp',
+    label: 'OTP Code',
+    type: 'text',
     component: 'input',
   },
 ];
