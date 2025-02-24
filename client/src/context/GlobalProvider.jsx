@@ -12,6 +12,8 @@ export const GlobalProvider = ({ children }) => {
   const location = useLocation().pathname;
   const { isAuthenticate, authCheck, user } = useAuthStore();
 
+  console.log(isAuthenticate);
+
   useEffect(() => {
     authCheck();
   }, [authCheck]);

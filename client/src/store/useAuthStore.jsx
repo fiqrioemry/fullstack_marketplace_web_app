@@ -19,7 +19,8 @@ export const useAuthStore = create((set, get) => ({
 
   authCheck: async () => {
     try {
-      const user = await callApi.authCheck();
+      const { user } = await callApi.authCheck();
+
       set({ user, isAuthenticate: true });
     } catch {
       get().resetAuthenticate();
@@ -40,9 +41,8 @@ export const useAuthStore = create((set, get) => ({
   login: async (formData) => {
     set({ loading: true });
     try {
-      const { message, accessToken } = await callApi.login(formData);
-      get().setAccessToken(accessToken);
-      await get().authCheck();
+      const { message, accessToken, user } = await callApi.login(formData);
+      set({ user, isAuthenticate: true, accessToken });
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
