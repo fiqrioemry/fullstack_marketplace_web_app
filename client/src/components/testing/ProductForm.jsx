@@ -8,7 +8,7 @@ const ProductForm = () => {
   const { createProduct, loading } = useProductStore();
   const productForm = useFormSchema(testState, testControl, createProduct);
   return (
-    <div>
+    <div className="max-w-5xl p-4">
       <FormInput formik={productForm} formControl={testControl}>
         <InputButton formik={productForm} title="submit" />
       </FormInput>

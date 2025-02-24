@@ -32,97 +32,99 @@ function FormInput({ formik, formControl, children }) {
 
     switch (control.component) {
       case "upload":
-        <div className="min-h-svh">
-          {Array.isArray(value) && value.length !== 0 ? (
-            <div className="grid-display-5">
-              {value.map((image, index) => (
-                <div className="relative" key={index}>
-                  <button
-                    type="button"
-                    name={name}
-                    className="remove_preview_btn"
-                    onClick={() => removePreview(name, index)}
-                  >
-                    <X size={14} />
-                  </button>
-                  <div className="rounded-md overflow-hidden">
-                    {image instanceof File || image instanceof Blob ? (
-                      <img
-                        src={URL.createObjectURL(image)}
-                        className="w-full h-full object-cover"
-                        onLoad={(e) => {
-                          if (e.target.src.startsWith("blob:")) {
-                            URL.revokeObjectURL(e.target.src);
-                          }
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={image}
-                        alt={`image-${index}`}
-                        className="object-cover"
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {value.length < 5 && (
-                <div className="">
-                  <label htmlFor={label} className="">
-                    <FilePlus size={20} />
-                    <input
-                      id={label}
-                      multiple
-                      type="file"
+        return (
+          <div className="min-h-svh flex items-center justify-center bg-red-500">
+            {Array.isArray(value) && value.length !== 0 ? (
+              <div className="grid-display-5">
+                {value.map((image, index) => (
+                  <div className="relative" key={index}>
+                    <button
+                      type="button"
                       name={name}
-                      accept="image/*"
-                      className="hidden"
-                      onChange={multiFile}
-                    />
-                  </label>
-                </div>
-              )}
-            </div>
-          ) : (
-            <label
-              className=""
-              htmlFor={label}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, name)}
-            >
-              <div className="flex_center">
-                <CloudUpload size={24} />
+                      className="remove_preview_btn"
+                      onClick={() => removePreview(name, index)}
+                    >
+                      <X size={14} />
+                    </button>
+                    <div className="rounded-md overflow-hidden">
+                      {image instanceof File || image instanceof Blob ? (
+                        <img
+                          src={URL.createObjectURL(image)}
+                          className="w-full h-full object-cover"
+                          onLoad={(e) => {
+                            if (e.target.src.startsWith("blob:")) {
+                              URL.revokeObjectURL(e.target.src);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={image}
+                          alt={`image-${index}`}
+                          className="object-cover"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {value.length < 5 && (
+                  <div className="">
+                    <label htmlFor={label} className="">
+                      <FilePlus size={20} />
+                      <input
+                        id={label}
+                        multiple
+                        type="file"
+                        name={name}
+                        accept="image/*"
+                        className="hidden"
+                        onChange={multiFile}
+                      />
+                    </label>
+                  </div>
+                )}
               </div>
-              <input
-                multiple
-                id={label}
-                type={type}
-                name={name}
-                accept="image/*"
-                className="hidden"
-                onChange={multiFile}
-              />
-            </label>
-          )}
-        </div>;
-        break;
+            ) : (
+              <label
+                className=""
+                htmlFor={label}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, name)}
+              >
+                <div className="flex_center">
+                  <CloudUpload size={24} />
+                </div>
+                <input
+                  multiple
+                  id={label}
+                  type={type}
+                  name={name}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={multiFile}
+                />
+              </label>
+            )}
+          </div>
+        );
 
       case "input":
-        <>
-          <InputLabel formik={formik} control={control} />
-          <Input
-            id={label}
-            name={name}
-            type={type}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            placeholder={placeholder}
-            value={value}
-            disabled={disabled}
-          />
-        </>;
-        break;
+        return (
+          <>
+            <InputLabel formik={formik} name={name} label={label} />
+            <Input
+              id={label}
+              name={name}
+              type={type}
+              value={value}
+              disabled={disabled}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              placeholder={placeholder}
+            />
+          </>
+        );
 
       case "multiple-checked":
         return (
@@ -163,49 +165,52 @@ function FormInput({ formik, formControl, children }) {
 
       case "single-checked":
         return (
-          <div>
-            <InputLabel />
-            <input
-              id={label}
-              name={name}
-              type="checkbox"
-              onBlur={handleBlur}
-              checked={value}
-              className="w-5 h-5"
-              onChange={(e) => formik.setFieldValue(name, e.target.checked)}
-            />
-            <Label htmlFor={name}>{label}</Label>
-          </div>
+          <>
+            <div className="flex items-center gap-2">
+              <input
+                id={label}
+                name={name}
+                type="checkbox"
+                onBlur={handleBlur}
+                checked={value}
+                className="w-5 h-5"
+                onChange={(e) => formik.setFieldValue(name, e.target.checked)}
+              />
+              <label htmlFor={label}>{label}</label>
+            </div>
+          </>
         );
 
       case "select":
-        <div>
-          <InputLabel formik={formik} control={control} />
-          <select
-            id={label}
-            name={name}
-            type={type}
-            value={value}
-            onBlur={handleBlur}
-            disabled={disabled}
-            onChange={handleChange}
-            placeholder={placeholder}
-          >
-            <option value="" disabled>
-              {placeholder}
-            </option>
-            {options.map((option) => (
-              <option value={option?.id || option} key={option?.id || option}>
-                {option?.name || option}
+        return (
+          <div>
+            <InputLabel formik={formik} name={name} label={label} />
+            <select
+              id={label}
+              name={name}
+              type={type}
+              value={value}
+              onBlur={handleBlur}
+              disabled={disabled}
+              onChange={handleChange}
+              placeholder={placeholder}
+              className="px-2 py-2 w-full"
+            >
+              <option value="" disabled>
+                {placeholder}
               </option>
-            ))}
-          </select>
-        </div>;
-        break;
+              {options.map((option) => (
+                <option value={option?.id || option} key={option?.id || option}>
+                  {option?.name || option}
+                </option>
+              ))}
+            </select>
+          </div>
+        );
 
       case "filter":
         <>
-          <InputLabel formik={formik} control={control} />
+          <InputLabel formik={formik} name={name} label={label} />
           <select
             id={label}
             name={name}
@@ -229,7 +234,7 @@ function FormInput({ formik, formControl, children }) {
         break;
       case "textarea":
         <>
-          <InputLabel formik={formik} control={control} />
+          <InputLabel formik={formik} name={name} label={label} />
           <Textarea
             id={name}
             name={name}
@@ -245,7 +250,7 @@ function FormInput({ formik, formControl, children }) {
         break;
       case "date":
         <div className="mb-4">
-          <InputLabel formik={formik} control={control} />
+          <InputLabel formik={formik} name={name} label={label} />
           <Input
             id={label}
             type={type}
@@ -277,7 +282,7 @@ function FormInput({ formik, formControl, children }) {
   }
 
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} className="space-y-4">
       {formControl.map((control) => (
         <div key={control.label}>{renderComponentByType(control)}</div>
       ))}

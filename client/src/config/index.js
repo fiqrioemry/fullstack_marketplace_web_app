@@ -503,6 +503,7 @@ export const testControl = [
     type: 'text',
     placeholder: 'Select a city',
     component: 'select',
+    option: city,
   },
   {
     name: 'isMain',
