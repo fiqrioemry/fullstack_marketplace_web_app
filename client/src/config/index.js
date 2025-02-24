@@ -465,6 +465,7 @@ export const testControl = [
   {
     name: 'files',
     label: 'files',
+    type: 'file',
     placeholder: 'Maksimum 5 Images and less than 1mb each',
     component: 'upload',
   },
