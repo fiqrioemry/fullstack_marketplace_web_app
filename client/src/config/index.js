@@ -448,3 +448,74 @@ export const addressControl = [
     component: 'radio',
   },
 ];
+
+export const testState = {
+  name: '',
+  category: '',
+  city: '',
+  description: '',
+  price: 0,
+  stock: 0,
+  files: [],
+  date: '',
+};
+
+export const testControl = [
+  {
+    name: 'files',
+    label: 'files',
+    placeholder: 'Maksimum 5 Images and less than 1mb each',
+    component: 'upload',
+  },
+  {
+    name: 'name',
+    label: 'product name',
+    type: 'text',
+    placeholder: 'Enter your product name ...',
+    component: 'input',
+  },
+  {
+    name: 'description',
+    label: 'description',
+    type: 'text',
+    placeholder: 'Describe about your product ...',
+    component: 'textarea',
+  },
+  {
+    name: 'price',
+    label: 'price',
+    type: 'text',
+    placeholder: 'Set the price',
+    component: 'input',
+  },
+  {
+    name: 'stock',
+    label: 'stock',
+    type: 'text',
+    placeholder: 'Set the stock',
+    component: 'input',
+  },
+  {
+    name: 'city',
+    label: 'city',
+    type: 'text',
+    placeholder: 'Select a city',
+    component: 'select',
+  },
+
+  {
+    name: 'category',
+    label: 'category',
+    type: 'checkbox',
+    placeholder: 'Choose a category',
+    component: 'multiple',
+  },
+
+  {
+    name: 'date',
+    label: 'date',
+    type: 'date',
+    placeholder: 'Select a date',
+    component: 'date',
+  },
+];
