@@ -5,14 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 const CategoryCard = ({ category }) => {
   return (
     <Link to={`/category/${category.slug}`}>
-      <Card className="h-[225px] overflow-hidden">
-        <CardContent>
+      <Card className="p-2">
+        <CardContent className="flex items-center justify-center">
           <img
-            className="w-full object-contain"
-            src={
-              category.image ||
-              "https://images.tokopedia.net/img/cache/500-square/VqbcmM/2024/12/19/3b8604db-0cd5-410b-b74c-108511796f14.jpg.webp?ect=4g"
-            }
+            className="h-40 object-contain"
+            src={category.image}
             alt="category"
           />
         </CardContent>

@@ -1,34 +1,31 @@
 import { useEffect } from "react";
-import { searchState } from "@/config";
+import { sortState } from "@/config";
 import { useSearchParams } from "react-router-dom";
+import { useFormSchema } from "@/hooks/useFormSchema";
 import ProductCard from "@/components/card/ProductCard";
-import { useHandleForm } from "@/hooks/useHandleForm";
 import SortingBox from "@/components/layout/SortingBox";
 import { useProductStore } from "@/store/useProductStore";
 import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
 import ProductsSkeleton from "@/components/loading/ProductsSkeleton";
 
 const ProductCategory = () => {
+  const filterForm = useFormSchema(sortState);
   const { getProducts, products } = useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { formData, setFormData } = useHandleForm(searchState);
-  console.log(formData);
-  useEffect(() => {
-    const params = Object.fromEntries(searchParams.entries());
-    console.log(params.slug);
-    setFormData({
-      category: params.slug || "",
-      order: params.order || "asc",
-      sortBy: params.sortBy || "",
-      minPrice: params.minPrice || "",
-      maxPrice: params.maxPrice || "",
-      page: parseInt(params.page) || 1,
-    });
-  }, [searchParams, setFormData]);
 
   useEffect(() => {
-    getProducts(formData);
-  }, [getProducts, formData]);
+    const params = Object.fromEntries(searchParams.entries());
+    filterForm.setValues((prevValues) => ({
+      ...prevValues,
+      orderBy: params.orderBy || "asc",
+      sortBy: params.sortBy || "",
+      page: Number(params.page) > 0 ? Number(params.page) : 1,
+    }));
+  }, [searchParams]);
+
+  useEffect(() => {
+    getProducts(filterForm.values);
+  }, [filterForm.values]);
 
   return (
     <section>
@@ -38,10 +35,7 @@ const ProductCategory = () => {
 
           <div>
             <div className=" space-y-6">
-              <SortingBox
-                setSearchParams={setSearchParams}
-                result={formData.query}
-              />
+              <SortingBox setSearchParams={setSearchParams} />
               {!products && (
                 <ProductsSkeleton style="grid_display_5" value={9} />
               )}

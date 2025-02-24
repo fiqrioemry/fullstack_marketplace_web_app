@@ -4,7 +4,7 @@ const PaginationLayout = ({ totalPage, currentPage, searchForm }) => {
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPage) {
-      searchForm.setFieldValue("page", page);
+      searchForm.setValues((prev) => ({ ...prev, page: page }));
     }
   };
 

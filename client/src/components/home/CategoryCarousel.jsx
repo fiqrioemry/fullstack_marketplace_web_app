@@ -1,8 +1,8 @@
 import {
   Carousel,
-  CarouselContent,
   CarouselItem,
   CarouselNext,
+  CarouselContent,
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useEffect } from "react";
@@ -10,10 +10,10 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import CategoryCard from "@/components/card/CategoryCard";
 import { useProductStore } from "@/store/useProductStore";
-import CategoriesCarouselLoading from "@/components/loading/CategoriesCarouselLoading";
+import CategoriesLoading from "@/components/loading/CategoriesLoading";
 
 const CategoryCarousel = () => {
-  const { getCategories, categories } = useProductStore();
+  const { getCategories, categories, loading } = useProductStore();
 
   useEffect(() => {
     getCategories();
@@ -29,8 +29,8 @@ const CategoryCarousel = () => {
         </Link>
       </div>
       <div>
-        {!categories ? (
-          <CategoriesCarouselLoading />
+        {loading.categories && categories.length === 0 ? (
+          <CategoriesLoading />
         ) : (
           <Carousel className="w-full ">
             <CarouselContent>

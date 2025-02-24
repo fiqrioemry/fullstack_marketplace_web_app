@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 const useResponsiveCount = (total) => {
-  const [count, setCount] = useState(total || 6); // Default dibuat 6
+  const [count, setCount] = useState(total);
 
   useEffect(() => {
     const updateCount = () => {
@@ -9,13 +9,13 @@ const useResponsiveCount = (total) => {
 
       if (width >= 1280) {
         // xl
-        setCount(count - 1);
+        setCount(count);
       } else if (width >= 1024) {
         // lg
-        setCount(count - 2);
+        setCount(count - 1);
       } else if (width >= 768) {
         // md
-        setCount(count - 3);
+        setCount(count - 2);
       } else {
         // sm dan lebih kecil
         setCount(2);

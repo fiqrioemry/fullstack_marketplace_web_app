@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { searchState } from "@/config";
 import { useSearchParams } from "react-router-dom";
-import ProductCard from "@/components/card/ProductCard";
 import { useFormSchema } from "@/hooks/useFormSchema";
-import FilterBox from "@/components/layout/FilterBox";
 import SortingBox from "@/components/layout/SortingBox";
+import FilterBox from "@/components/layout/FilterBox";
+import ProductCard from "@/components/card/ProductCard";
 import { useProductStore } from "@/store/useProductStore";
 import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
-import { PaginationBox } from "@/components/layout/PaginationBox";
-import ProductsSkeleton from "@/components/loading/ProductsSkeleton";
+import ProductsLoading from "@/components/loading/ProductsLoading";
+import PaginationLayout from "@/components/layout/PaginationLayout";
 
 const SearchResult = () => {
   const searchForm = useFormSchema(searchState);
@@ -28,9 +28,8 @@ const SearchResult = () => {
       city: params.city ? params.city.split(",") : [],
       category: params.category ? params.category.split(",") : [],
     });
-  }, [searchParams]);
+  }, []);
 
-  // Sinkronisasi formik.values ke searchParams
   useEffect(() => {
     const params = new URLSearchParams();
     Object.entries(searchForm.values).forEach(([key, value]) => {
@@ -42,50 +41,44 @@ const SearchResult = () => {
         }
       }
     });
-    setSearchParams(params);
-  }, [setSearchParams, searchForm.values]);
-
-  // Fetch produk ketika searchParams berubah
-  useEffect(() => {
-    getProducts(Object.fromEntries(searchParams.entries()));
-  }, [getProducts, searchParams]);
+    getProducts(params.toString());
+  }, []);
 
   return (
     <section>
       <div className="container mx-auto">
         <div className="px-2 md:px-6 space-y-6 py-6">
           <PageBreadCrumb />
+        </div>
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-3">
+            <FilterBox searchForm={searchForm} />
+          </div>
 
-          <div className="grid grid-cols-12 gap-4 ">
-            <div className="col-span-12 md:col-span-3">
-              <FilterBox searchForm={searchForm} />
+          <div className="col-span-12 md:col-span-9 space-y-6">
+            <div className="flex justify-end">
+              <SortingBox searchForm={searchForm} />
             </div>
 
-            <div className="col-span-12 md:col-span-9 space-y-6">
-              <div className="flex justify-end">
-                <SortingBox searchForm={searchForm} />
+            {loading.get && products.length === 0 ? (
+              <ProductsLoading />
+            ) : products.length === 0 ? (
+              <div>No Results</div>
+            ) : (
+              <div>
+                <div className="grid-display-4">
+                  {products.map((product, index) => (
+                    <ProductCard product={product} key={index} />
+                  ))}
+                </div>
+
+                <PaginationLayout
+                  totalPage={totalPage}
+                  searchForm={searchForm}
+                  currentPage={currentPage}
+                />
               </div>
-
-              {products.length === 0 ? (
-                <ProductsSkeleton style="grid_display_4" value={9} />
-              ) : loading ? (
-                <ProductsSkeleton style="grid_display_4" value={9} />
-              ) : (
-                <>
-                  <div className="grid_display_4">
-                    {products.map((product, index) => (
-                      <ProductCard product={product} key={index} />
-                    ))}
-                  </div>
-                </>
-              )}
-
-              <PaginationBox
-                paginate={searchForm}
-                totalPage={totalPage}
-                currentPage={currentPage}
-              />
-            </div>
+            )}
           </div>
         </div>
       </div>

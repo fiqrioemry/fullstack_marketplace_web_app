@@ -1,3 +1,4 @@
+import SearchNav from "../navigation/SearchNav";
 import NavMenu from "./NavMenu";
 import { Link } from "react-router-dom";
 
@@ -9,6 +10,7 @@ const Header = () => {
           <Link to="/">
             <h3>Marketplace</h3>
           </Link>
+          <SearchNav />
           <NavMenu />
         </div>
       </div>

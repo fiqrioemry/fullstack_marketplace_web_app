@@ -32,6 +32,7 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="testing" element={<TestingUI />} />
         <Route
           path="signin"
           element={

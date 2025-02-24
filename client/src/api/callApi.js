@@ -116,26 +116,14 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  getProducts: async ({
-    search = '',
-    city = [],
-    category = [],
-    minPrice = '',
-    maxPrice = '',
-    page = 1,
-    sortBy = 'price',
-    orderBy = 'asc',
-    limit,
-  }) => {
+  getProducts: async (search) => {
     return authInstance
-      .get(
-        `/product?search=${search}&city=${city}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&sortBy=${sortBy}&orderBy=${orderBy}&limit=${limit}`,
-      )
+      .get(`/product?${search}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  searchProduct: async (search) => {
+  searchProducts: async (search) => {
     return authInstance
       .get(`/product?search=${search}`)
       .then((res) => res.data)

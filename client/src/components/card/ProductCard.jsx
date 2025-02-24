@@ -5,10 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 const ProductCard = ({ product }) => {
   return (
     <Link to={`/${product.storeSlug}/${product.slug}`}>
-      <Card className="h-[315px] overflow-hidden">
+      <Card className="p-2">
         <CardContent>
           <img
-            className="w-full object-contain"
+            className="w-full object-contain rounded-md"
             src={product.images}
             alt="product"
           />

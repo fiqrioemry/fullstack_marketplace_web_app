@@ -12,11 +12,11 @@ import {
 const SortingBox = ({ searchForm }) => {
   const handleChange = (value) => {
     const [sortBy, orderBy] = value.split(":");
-    searchForm.setValues({
-      ...searchForm.values,
+    searchForm.setValues((prevValues) => ({
+      ...prevValues,
       sortBy: sortBy,
       orderBy: orderBy,
-    });
+    }));
   };
 
   return (

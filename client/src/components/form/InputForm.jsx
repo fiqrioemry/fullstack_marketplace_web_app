@@ -31,25 +31,27 @@ function InputForm({
   }, []);
 
   function renderComponentByType(control) {
+    const { label, name, type, placeholder, option } = control;
+    const value = formik.values[name];
+    const handleBlur = formik.handleBlur;
+    const handleChange = formik.handleChange;
     let element = null;
 
-    const options =
-      control.label === "category" ? categories : control.options || [];
+    const options = label === "category" ? categories : option || [];
 
     switch (control.component) {
       case "upload":
         element = (
           <div className={`min-${inputStyle}`}>
-            {Array.isArray(formik.values[control.name]) &&
-            formik.values[control.name].length !== 0 ? (
-              <div className="grid_display_5">
-                {formik.values[control.name].map((image, index) => (
+            {Array.isArray(value) && value.length !== 0 ? (
+              <div className="grid-display-5">
+                {value.map((image, index) => (
                   <div className="relative" key={index}>
                     <button
                       type="button"
-                      name={control.name}
+                      name={name}
                       className="remove_preview_btn"
-                      onClick={() => removePreview(control.name, index)}
+                      onClick={() => removePreview(name, index)}
                     >
                       <X size={14} />
                     </button>
@@ -77,17 +79,17 @@ function InputForm({
                   </div>
                 ))}
                 {/* kalau file tidak melebihi maksimum, kolom tambah ditampilkan */}
-                {formik.values[control.name].length < 5 && (
+                {value.length < 5 && (
                   <div className={inputStyle}>
-                    <label htmlFor={control.label} className="upload_btn">
+                    <label htmlFor={label} className="upload_btn">
                       <FilePlus size={20} />
                       <input
-                        id={control.label}
+                        id={label}
                         multiple
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        name={control.name}
+                        name={name}
                         onChange={multiFile}
                       />
                     </label>
@@ -97,20 +99,20 @@ function InputForm({
             ) : (
               <label
                 className={`upload_btn ${inputStyle}`}
-                htmlFor={control.label}
+                htmlFor={label}
                 onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, control.name)}
+                onDrop={(e) => handleDrop(e, name)}
               >
                 <div className="flex_center">
                   <CloudUpload size={24} />
                 </div>
                 <input
-                  id={control.label}
+                  id={label}
                   multiple
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  name={control.name}
+                  name={name}
                   onChange={multiFile}
                 />
               </label>
@@ -124,13 +126,13 @@ function InputForm({
           <div>
             <InputLabel formik={formik} control={control} />
             <Input
-              id={control.label}
-              name={control.name}
-              type={control.type}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder={control.placeholder}
-              value={formik.values[control.name]}
+              id={label}
+              name={name}
+              type={type}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              placeholder={placeholder}
+              value={value}
               disabled={control.disabled || disabled}
               className="mt-1 block w-full"
             />
@@ -142,7 +144,7 @@ function InputForm({
         return (
           <div>
             {options.map((option) => {
-              const selectedValues = formik.values[control.name] || [];
+              const selectedValues = value || [];
               return (
                 <div
                   className="flex items-center space-x-3 py-2 px-3"
@@ -151,9 +153,9 @@ function InputForm({
                   <input
                     id={option.id}
                     type="checkbox"
-                    name={control.name}
+                    name={name}
                     value={option.name}
-                    onBlur={formik.handleBlur}
+                    onBlur={handleBlur}
                     onChange={() => {
                       let newValues = [...selectedValues];
                       if (newValues.includes(option.name)) {
@@ -163,7 +165,7 @@ function InputForm({
                       } else {
                         newValues.push(option.name);
                       }
-                      formik.setFieldValue(control.name, newValues);
+                      formik.setFieldValue(name, newValues);
                     }}
                     checked={selectedValues.includes(option.name)}
                     className="w-4 h-4"
@@ -177,22 +179,17 @@ function InputForm({
 
       case "checkbox-single":
         return (
-          <div
-            className="flex items-center space-x-3 py-2 px-3"
-            key={control.name}
-          >
+          <div className="flex items-center space-x-3 py-2 px-3" key={name}>
             <input
-              id={control.label}
-              name={control.name}
+              id={label}
+              name={name}
               type="checkbox"
-              onBlur={formik.handleBlur}
-              onChange={(e) =>
-                formik.setFieldValue(control.name, e.target.checked)
-              }
-              checked={formik.values[control.name]}
+              onBlur={handleBlur}
+              onChange={(e) => formik.setFieldValue(name, e.target.checked)}
+              checked={value}
               className="w-5 h-5"
             />
-            <Label htmlFor={control.name}>{control.label}</Label>
+            <Label htmlFor={name}>{label}</Label>
           </div>
         );
 
@@ -201,18 +198,18 @@ function InputForm({
           <div>
             <InputLabel formik={formik} control={control} />
             <select
-              id={control.label}
-              name={control.name}
-              type={control.type}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder={control.placeholder}
-              value={formik.values[control.name]}
+              id={label}
+              name={name}
+              type={type}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              placeholder={placeholder}
+              value={value}
               disabled={control.disabled || disabled}
               className="rounded-md border border-input px-3 py-2 text-sm"
             >
               <option value="" disabled>
-                {control.placeholder}
+                {placeholder}
               </option>
               {options.map((option) => (
                 <option value={option?.id || option} key={option?.id || option}>
@@ -227,18 +224,18 @@ function InputForm({
       case "filter":
         element = (
           <select
-            id={control.label}
-            name={control.name}
-            type={control.type}
-            onBlur={formik.handleBlur}
-            placeholder={control.placeholder}
-            onChange={formik.handleChange}
-            value={formik.values[control.name]}
+            id={label}
+            name={name}
+            type={type}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            onChange={handleChange}
+            value={value}
             disabled={control.disabled || disabled}
             className="rounded-md border border-input px-3 py-2 text-sm w-full"
           >
             <option value="" disabled>
-              {control.placeholder}
+              {placeholder}
             </option>
             {control.options.map((option) => (
               <option value={option?.id || option} key={option?.id || option}>
@@ -251,23 +248,14 @@ function InputForm({
       case "textarea":
         element = (
           <>
-            <div className="flex items-center space-x-2 mb-2">
-              <Label htmlFor={control.label} className="label_input">
-                {control.label}
-              </Label>
-              {formik.touched[control.name] && formik.errors[control.name] && (
-                <p className="text-red-500 text-xs">
-                  {formik.errors[control.name]}
-                </p>
-              )}
-            </div>
+            <InputLabel formik={formik} control={control} />
             <Textarea
-              id={control.name}
-              name={control.name}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values[control.name]}
-              placeholder={control.placeholder}
+              id={name}
+              name={name}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={value}
+              placeholder={placeholder}
               disabled={control.disabled || disabled}
               maxLength="400"
               className="resize-none h-60"
@@ -278,26 +266,19 @@ function InputForm({
       case "date":
         element = (
           <div className="mb-4">
-            <Label htmlFor={control.label} className="label_input">
-              {control.label}
-            </Label>
+            <InputLabel formik={formik} control={control} />
             <Input
-              id={control.label}
-              name={control.name}
+              id={label}
+              name={name}
               type="date"
-              onBlur={formik.handleBlur}
+              onBlur={handleBlur}
               onChange={(e) => {
-                formik.setFieldValue(control.name, e.target.value);
+                formik.setFieldValue(name, e.target.value);
               }}
-              placeholder={control.placeholder}
-              value={formik.values[control.name] ? "" : ""}
+              placeholder={placeholder}
+              value={value ? "" : ""}
               className="mt-1 block w-full"
             />
-            {formik.touched[control.name] && formik.errors[control.name] && (
-              <p className="text-red-500 text-xs">
-                {formik.errors[control.name]}
-              </p>
-            )}
           </div>
         );
         break;
@@ -305,13 +286,13 @@ function InputForm({
         element = (
           <>
             <Input
-              id={control.label}
-              name={control.name}
-              type={control.type}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              placeholder={control.placeholder}
-              value={formik.values[control.name]}
+              id={label}
+              name={name}
+              type={type}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              placeholder={placeholder}
+              value={value}
               disabled={control.disabled || disabled}
               className="mt-1 block w-full"
             />
@@ -326,7 +307,7 @@ function InputForm({
   return (
     <form onSubmit={formik.handleSubmit} className={`space-y-4 ${formStyle}`}>
       {formControl.map((control) => (
-        <div key={control.name}>{renderComponentByType(control)}</div>
+        <div key={name}>{renderComponentByType(control)}</div>
       ))}
       <div>{children}</div>
     </form>

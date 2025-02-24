@@ -157,4 +157,23 @@
   .upload_btn {
     @apply h-full z-10 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted transition-all duration-300;
   }
+
+  .btn-nav {
+    @apply py-2 px-4 m-1 rounded-md hover:bg-muted/50 transition-colors;
+  }
+
+  .search-input {
+    @apply absolute top-12 left-0 right-0 z-30 border bg-background rounded-md;
+  }
+  .search-margin {
+    @apply relative w-full max-w-md md:max-w-2xl;
+  }
+
+  .grid-display-5 {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4;
+  }
+
+  .grid-display-4 {
+    @apply grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
 }
