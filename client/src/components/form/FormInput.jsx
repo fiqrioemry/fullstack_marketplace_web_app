@@ -133,7 +133,7 @@ function FormInput({
         </div>;
         break;
 
-      case "checkbox-multiple":
+      case "multiple-checked":
         return (
           <div>
             {options.map((option) => {
@@ -170,7 +170,7 @@ function FormInput({
           </div>
         );
 
-      case "checkbox-single":
+      case "single-checked":
         return (
           <div className="flex items-center space-x-3 py-2 px-3" key={name}>
             <input
@@ -178,9 +178,9 @@ function FormInput({
               name={name}
               type="checkbox"
               onBlur={handleBlur}
-              onChange={(e) => formik.setFieldValue(name, e.target.checked)}
               checked={value}
               className="w-5 h-5"
+              onChange={(e) => formik.setFieldValue(name, e.target.checked)}
             />
             <Label htmlFor={name}>{label}</Label>
           </div>
@@ -193,11 +193,11 @@ function FormInput({
             id={label}
             name={name}
             type={type}
+            value={value}
             onBlur={handleBlur}
+            disabled={disabled}
             onChange={handleChange}
             placeholder={placeholder}
-            value={value}
-            disabled={control.disabled || disabled}
             className="rounded-md border border-input px-3 py-2 text-sm"
           >
             <option value="" disabled>
@@ -217,11 +217,11 @@ function FormInput({
           id={label}
           name={name}
           type={type}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          onChange={handleChange}
           value={value}
-          disabled={control.disabled || disabled}
+          onBlur={handleBlur}
+          disabled={disabled}
+          onChange={handleChange}
+          placeholder={placeholder}
           className="rounded-md border border-input px-3 py-2 text-sm w-full"
         >
           <option value="" disabled>

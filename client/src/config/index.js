@@ -458,6 +458,7 @@ export const testState = {
   stock: 0,
   files: [],
   date: '',
+  isMain: '',
 };
 
 export const testControl = [
@@ -502,13 +503,20 @@ export const testControl = [
     placeholder: 'Select a city',
     component: 'select',
   },
+  {
+    name: 'isMain',
+    label: 'main address',
+    type: 'text',
+    placeholder: 'Set as main address',
+    component: 'single-checked',
+  },
 
   {
     name: 'category',
     label: 'category',
     type: 'checkbox',
     placeholder: 'Choose a category',
-    component: 'multiple',
+    component: 'multiple-checked',
   },
 
   {
