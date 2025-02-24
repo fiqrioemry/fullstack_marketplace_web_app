@@ -8,6 +8,8 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { CloudUpload, FilePlus, X } from "lucide-react";
 import { useProductStore } from "@/store/useProductStore";
 import InputLabel from "./InputLabel";
+import DateComponent from "./DateComponent";
+import DateDropDown from "./DateDropDown";
 
 function FormInput({ formik, formControl, children }) {
   const { getCategories, categories } = useProductStore();
@@ -233,37 +235,32 @@ function FormInput({ formik, formControl, children }) {
         </>;
         break;
       case "textarea":
-        <>
-          <InputLabel formik={formik} name={name} label={label} />
-          <Textarea
-            id={name}
-            name={name}
-            value={value}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            placeholder={placeholder}
-            disabled={disabled}
-            maxLength="400"
-            className="resize-none h-60"
-          />
-        </>;
-        break;
+        return (
+          <>
+            <InputLabel formik={formik} name={name} label={label} />
+            <Textarea
+              id={name}
+              name={name}
+              value={value}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              placeholder={placeholder}
+              disabled={disabled}
+              maxLength="400"
+              className="resize-none h-60"
+            />
+          </>
+        );
       case "date":
-        <div className="mb-4">
-          <InputLabel formik={formik} name={name} label={label} />
-          <Input
-            id={label}
-            type={type}
+        return (
+          <DateDropDown
             name={name}
-            onBlur={handleBlur}
-            value={value ? "" : ""}
-            onChange={(e) => {
-              formik.setFieldValue(name, e.target.value);
-            }}
+            label={label}
+            formik={formik}
+            value={value}
             placeholder={placeholder}
           />
-        </div>;
-        break;
+        );
       default:
         <>
           <Input
