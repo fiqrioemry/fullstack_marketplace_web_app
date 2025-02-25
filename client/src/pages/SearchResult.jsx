@@ -15,7 +15,6 @@ const SearchResult = () => {
     useProductStore();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Ambil nilai dari URL untuk inisialisasi state
   const initialSearchValues = {
     ...searchState,
     search: searchParams.get("search") || "",
@@ -26,11 +25,11 @@ const SearchResult = () => {
     sortBy: searchParams.get("sortBy") || "",
     orderBy: searchParams.get("orderBy") || "",
     page: Number(searchParams.get("page")) || 1,
+    limit: 8,
   };
 
   const searchForm = useFormSchema(initialSearchValues);
 
-  // Effect untuk memperbarui URL saat searchForm berubah
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
     Object.entries(searchForm.values).forEach(([key, value]) => {
@@ -44,44 +43,39 @@ const SearchResult = () => {
     setSearchParams(newSearchParams);
   }, [searchForm.values]);
 
-  // Fetch products setiap kali searchForm berubah
   useEffect(() => {
     getProducts(searchForm.values);
   }, [searchForm.values]);
 
   return (
-    <section>
-      <div className="container mx-auto">
-        <div className="px-2 md:px-6 space-y-6 py-6">
-          <PageBreadCrumb />
-        </div>
+    <section className="container mx-auto">
+      <div className="px-2 md:px-6 space-y-6 py-6">
+        <PageBreadCrumb />
+
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12 md:col-span-3">
             <FilterBox searchForm={searchForm} />
           </div>
-          <div className="col-span-12 md:col-span-9 space-y-6">
-            <div className="flex justify-end">
+          <div className="col-span-12 md:col-span-9">
+            <div className="flex justify-end mb-4">
               <SortingBox searchForm={searchForm} />
             </div>
 
             {loading.get && products.length === 0 ? (
               <ProductsLoading />
-            ) : products.length === 0 ? (
-              <div>No Results</div>
-            ) : (
-              <div>
+            ) : products.length > 0 ? (
+              <>
                 <div className="grid-display-4">
-                  {products.map((product, index) => (
-                    <ProductCard product={product} key={index} />
-                  ))}
+                  <ProductCard products={products} />
                 </div>
-
                 <PaginationLayout
                   totalPage={totalPage}
                   searchForm={searchForm}
                   currentPage={currentPage}
                 />
-              </div>
+              </>
+            ) : (
+              <div>No Result of products</div>
             )}
           </div>
         </div>

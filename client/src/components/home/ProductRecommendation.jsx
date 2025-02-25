@@ -16,21 +16,15 @@ const ProductRecommendation = () => {
     getProducts({ limit });
   }, [getProducts, limit]);
 
-  console.log(products);
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h4>Product Recommendation</h4>
-      </div>
+      <h4>Product Recommendation</h4>
       {loading.get && products.length === 0 ? (
         <ProductsLoading />
       ) : (
         <div className="space-y-6">
-          <div className="grid-display-5">
-            {products.map((product) => (
-              <ProductCard product={product} key={product.id} />
-            ))}
+          <div className="grid-display-5 mb-4">
+            <ProductCard products={products} />
           </div>
           {loading.get && products.length > 0 && <ProductsLoading />}
           {limit <= totalData && (
@@ -41,7 +35,7 @@ const ProductRecommendation = () => {
             />
           )}
           {limit >= totalData && (
-            <div className="text-center py-4">
+            <div className="text-center mt-4">
               <div>Sorry, You have reach the end</div>
               <h4>No more products to show</h4>
             </div>
