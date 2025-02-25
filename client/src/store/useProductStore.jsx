@@ -10,6 +10,7 @@ export const useProductStore = create((set) => ({
   totalData: 0,
   currentPage: 0,
   loading: false,
+  message: null,
 
   getProducts: async (searchParams) => {
     try {
@@ -29,7 +30,7 @@ export const useProductStore = create((set) => ({
       const categories = await callApi.getCategories();
       set({ categories });
     } catch (error) {
-      console.log(error);
+      set({ message: error.message });
     }
   },
 

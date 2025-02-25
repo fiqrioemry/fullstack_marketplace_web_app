@@ -1,26 +1,25 @@
 import { useEffect } from "react";
-import CategoryCard from "@/components/card/CategoryCard";
 import { useProductStore } from "@/store/useProductStore";
-import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
-import CategoriesLoading from "@/components/loading/CategoriesLoading";
+import CategoryCard from "@/components/category/CategoryCard";
+import CategoryError from "@/components/category/CategoryError";
+import CategoryLoading from "@/components/category/CategoryLoading";
 
 const Category = () => {
-  const { getCategories, categories } = useProductStore();
+  const { getCategories, categories, message } = useProductStore();
 
   useEffect(() => {
     getCategories();
   }, [getCategories]);
 
-  if (categories.length === 0) return <CategoriesLoading />;
+  if (categories.length === 0) return <CategoryLoading />;
+
+  if (categories.length === 0 && message)
+    return <CategoryError message={message} onRetry={getCategories} />;
 
   return (
     <section className="min-h-svh">
       <div className="section-margin">
-        <PageBreadCrumb />
-        <h4>List of Product Categories</h4>
-        <div className="grid-display-5">
-          <CategoryCard categories={categories} />
-        </div>
+        <CategoryCard categories={categories} />
       </div>
     </section>
   );
