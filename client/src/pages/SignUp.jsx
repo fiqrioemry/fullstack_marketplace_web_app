@@ -44,7 +44,6 @@ const SignUp = () => {
     resetStep();
   }, []);
 
-  console.log(registerForm.values);
   return (
     <div className="h-screen flex-center">
       <Card className="w-96 h-96">

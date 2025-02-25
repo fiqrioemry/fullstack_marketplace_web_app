@@ -24,13 +24,13 @@ const Product = ({ product }) => {
 
   return (
     <div className="grid grid-cols-12 gap-4">
-      <div className=" col-start-1 col-end-13 md:col-start-1 md:col-end-7">
+      <div className="col-start-1 col-end-13 md:col-start-1 md:col-end-7">
         <div className="grid grid-cols-10 gap-2 ">
           <div className="col-span-10 md:col-span-2 flex md:grid grid-rows-4 gap-2">
             {images.map((image, index) => (
-              <div key={index}>
+              <div className="border rounded-md overflow-hidden" key={index}>
                 <img
-                  className="object-cover w-full h-full  "
+                  className="object-cover w-full h-full"
                   src={image}
                   onClick={() => handleThumbnail(index)}
                   alt="product"
@@ -40,7 +40,7 @@ const Product = ({ product }) => {
           </div>
 
           <div className="col-span-10 md:col-span-8">
-            <div className="flex justify-center items-center rounded-md ">
+            <div className="border rounded-md overflow-hidden">
               <img
                 className="object-cover w-full h-full"
                 src={images[activeIndex]}
@@ -60,7 +60,7 @@ const Product = ({ product }) => {
               <button
                 onClick={handleDecrease}
                 disabled={quantity <= 1}
-                className="p-3 border-r hover:bg-gray-100 disabled:opacity-50"
+                className="bnt-nav p-3"
               >
                 <Minus size={16} />
               </button>
@@ -68,7 +68,7 @@ const Product = ({ product }) => {
               <button
                 onClick={handleIncrease}
                 disabled={quantity >= stock}
-                className="p-3 border-l hover:bg-gray-100 disabled:opacity-50"
+                className="btn-nav p-3"
               >
                 <Plus size={16} />
               </button>
@@ -77,7 +77,6 @@ const Product = ({ product }) => {
             <h4>Stock : {stock}</h4>
           </div>
           <h2>Subtotal : Rp. {quantity * price}</h2>
-          {/* button */}
           <div className="space-y-4">
             <ProcessButton
               loading={loading}
