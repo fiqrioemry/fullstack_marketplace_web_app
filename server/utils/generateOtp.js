@@ -8,7 +8,7 @@ const generateOtp = async (secretLength = 20) => {
     encoding: 'base32',
   });
 
-  return { secret: secret.base32, otp };
+  return otp;
 };
 
 module.exports = generateOtp;

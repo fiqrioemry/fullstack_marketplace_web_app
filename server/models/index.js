@@ -47,7 +47,7 @@ Object.keys(db).forEach((modelName) => {
 
 (async () => {
   try {
-    await sequelize.authenticate();
+    // await sequelize.authenticate();
     console.log(
       `Mysql is Connected on port ${sequelize.config.host}:${sequelize.config.port}`,
     );

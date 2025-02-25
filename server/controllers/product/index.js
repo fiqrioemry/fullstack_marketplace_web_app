@@ -1,6 +1,7 @@
 const slugify = require('slugify');
 const { Op } = require('sequelize');
 const { Store, Product, Category, Gallery } = require('../../models');
+const createSlug = require('../../utils/createSlug');
 
 async function getProduct(req, res) {
   const slug = req.params.slug;
@@ -62,41 +63,39 @@ async function getProducts(req, res) {
       limit,
     } = req.query;
 
-    const dataPerPage = Number(limit) > 0 ? parseInt(limit) : 5;
-    const currentPage = Number(page) > 0 ? parseInt(page) : 1;
+    console.log(search);
+    const dataPerPage = limit > 0 ? parseInt(limit) : 5;
+    const currentPage = page > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
-
     let query = {};
 
     // **Filter by Search**
     if (search && search.trim()) {
       query[Op.or] = [
         { name: { [Op.like]: `%${search.trim()}%` } },
+        { slug: { [Op.like]: `%${search.trim()}%` } },
         { description: { [Op.like]: `%${search.trim()}%` } },
       ];
     }
 
     // **Filter by Category**
     if (category) {
-      const categoryArray = category
-        .split(',')
-        .map((c) => slugify(c.trim(), { lower: true }));
-
+      const categories = category.split(',').map((cat) => createSlug(cat));
       const findCategories = await Category.findAll({
-        where: { slug: { [Op.in]: categoryArray } },
+        where: { slug: { [Op.in]: categories } },
         attributes: ['id'],
       });
 
       if (findCategories.length > 0) {
         query.categoryId = { [Op.in]: findCategories.map((c) => c.id) };
       } else {
-        return res.status(200).json({ data: [] });
+        return res.status(200).json({ products: [] });
       }
     }
 
     // **Filter by City**
     if (city) {
-      const cities = city.split(',');
+      const cities = city.split(',').map((c) => c.toLowerCase());
 
       const findCities = await Store.findAll({
         where: { city: { [Op.in]: cities } },
@@ -105,7 +104,7 @@ async function getProducts(req, res) {
       if (findCities.length > 0) {
         query.storeId = { [Op.in]: findCities.map((c) => c.id) };
       } else {
-        return res.status(200).json({ data: [] });
+        return res.status(200).json({ products: [] });
       }
     }
 
@@ -116,6 +115,7 @@ async function getProducts(req, res) {
       if (maxPrice) query.price[Op.lte] = Number(maxPrice) || 0;
     }
 
+    console.log(query);
     // **Fetch Products**
     const product = await Product.findAndCountAll({
       where: query,
@@ -136,7 +136,7 @@ async function getProducts(req, res) {
 
     // **Jika tidak ada produk, kembalikan array kosong**
     if (product.count === 0) {
-      return res.status(200).json({ data: [] });
+      return res.status(200).json({ products: [] });
     }
 
     // **Format Response**

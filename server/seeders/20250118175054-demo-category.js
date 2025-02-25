@@ -1,49 +1,49 @@
-"use strict";
-const createSlug = require("../utils/createSlug");
+'use strict';
+const createSlug = require('../utils/createSlug');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
-      "Categories",
+      'Categories',
       [
         {
-          name: "Books",
+          name: 'Books',
           image:
-            "https://cf.shopee.co.id/file/998c7682fd5e7a3563b2ad00aaa4e6f3_tn",
-          slug: "books",
+            'https://cf.shopee.co.id/file/998c7682fd5e7a3563b2ad00aaa4e6f3_tn',
+          slug: 'books',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: "Electronics",
+          name: 'Electronics',
           image:
-            "https://cf.shopee.co.id/file/dcd61dcb7c1448a132f49f938b0cb553_tn",
-          slug: "electronics",
+            'https://cf.shopee.co.id/file/dcd61dcb7c1448a132f49f938b0cb553_tn',
+          slug: 'electronics',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: "Food & Beverages",
+          name: 'Food & Beverages',
           image:
-            "https://cf.shopee.co.id/file/7873b8c3824367239efb02d18eeab4f5_tn",
-          slug: "food-and-beverages",
+            'https://cf.shopee.co.id/file/7873b8c3824367239efb02d18eeab4f5_tn',
+          slug: 'food--beverages',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: "Cosmetics",
+          name: 'Cosmetics',
           image:
-            "https://cf.shopee.co.id/file/2715b985ae706a4c39a486f83da93c4b_tn",
-          slug: "cosmetics",
+            'https://cf.shopee.co.id/file/2715b985ae706a4c39a486f83da93c4b_tn',
+          slug: 'cosmetics',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: "Fashion",
+          name: 'Fashion',
           image:
-            "https://cf.shopee.co.id/file/04dba508f1ad19629518defb94999ef9_tn",
-          slug: "fashion",
+            'https://cf.shopee.co.id/file/04dba508f1ad19629518defb94999ef9_tn',
+          slug: 'fashion',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -53,6 +53,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Categories", null, {});
+    await queryInterface.bulkDelete('Categories', null, {});
   },
 };

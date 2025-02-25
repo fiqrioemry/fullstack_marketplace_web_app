@@ -6,7 +6,7 @@ const generateAccessToken = (user, expiresIn = '1d') => {
     throw new Error('User object must contain an id.');
   }
 
-  return jwt.sign(
+  const accessToken = jwt.sign(
     {
       userId: user.id,
       storeId: user.store?.id || null,
@@ -15,6 +15,8 @@ const generateAccessToken = (user, expiresIn = '1d') => {
     process.env.ACCESS_TOKEN,
     { expiresIn },
   );
+
+  return accessToken;
 };
 
 // Generate Refresh Token (Long-lived)

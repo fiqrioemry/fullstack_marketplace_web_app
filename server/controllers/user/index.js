@@ -12,7 +12,7 @@ async function getProfile(req, res) {
 
     if (cachedUser) {
       return res.status(200).json({
-        payload: JSON.parse(cachedUser),
+        profile: JSON.parse(cachedUser),
       });
     }
 
@@ -105,7 +105,10 @@ async function getAddress(req, res) {
     const cachedAddress = await redis.get(`address:${userId}`);
 
     if (cachedAddress) {
-      return res.status(200).json({ payload: JSON.parse(cachedAddress) });
+      return res.status(200).json({
+        message: 'Get Address Success',
+        address: JSON.parse(cachedAddress),
+      });
     }
 
     const address = await Address.findAll({ where: { userId } });
@@ -119,7 +122,9 @@ async function getAddress(req, res) {
 
     await redis.setex(`address:${userId}`, 900, JSON.stringify(address));
 
-    return res.status(200).json(address);
+    return res
+      .status(200)
+      .json({ message: 'Get Address Success', address: address });
   } catch (error) {
     return res.status(500).json({
       message: error.message,

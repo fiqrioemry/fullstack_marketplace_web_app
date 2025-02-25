@@ -33,6 +33,7 @@ async function sendOTP(req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
+
 async function verifyOTP(req, res) {
   const { email, otp } = req.body;
 
@@ -84,39 +85,58 @@ async function register(req, res) {
 
 async function login(req, res) {
   const { email, password } = req.body;
+
   try {
     if (!email || !password)
-      return res.status(401).json({ message: 'All fields are required' });
+      return res.status(400).json({ message: 'All fields are required' });
 
-    const user = await User.findOne({
+    const userData = await User.findOne({
       where: { email },
       include: [
         { model: Store, as: 'store', attributes: ['id', 'name', 'avatar'] },
       ],
     });
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    if (!userData) {
+      return res.status(400).json({ message: 'Invalid email' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // for google signin that set password as null
+    if (!userData.password) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, userData.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    const accessToken = generateAccessToken(user);
+    const accessToken = generateAccessToken(userData);
 
-    const refreshToken = generateRefreshToken(user);
+    const refreshToken = generateRefreshToken(userData);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
     });
+
+    const user = {
+      userId: userData.id,
+      email: userData.email,
+      fullname: userData.fullname,
+      role: userData.role,
+      avatar: userData.avatar,
+      storeId: userData.store?.id,
+      storeName: userData.store?.name,
+      storeAvatar: userData.store?.avatar,
+    };
 
     return res.status(200).json({
       message: 'Login successfully',
       accessToken,
+      user,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -124,7 +144,7 @@ async function login(req, res) {
 }
 
 async function logout(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
 
   delete req.headers.authorization;
 
@@ -175,10 +195,11 @@ async function authCheck(req, res) {
 
 async function refreshToken(req, res) {
   const refreshToken = req.cookies.refreshToken;
+
   try {
     if (!refreshToken) {
       return res.status(401).json({
-        message: 'Unauthorized !!! Please Login',
+        message: 'Unauthorized !!! Please Login ',
       });
     }
 
@@ -293,11 +314,9 @@ async function googleAuthCallback(req, res) {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect(process.env.CLIENT_URL);
+      res.redirect(`${process.env.CLIENT_URL}/signin`);
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'Failed to generate token', error: error.message });
+      return res.status(500).json({ message: error.message });
     }
   })(req, res);
 }
