@@ -20,18 +20,20 @@ const Product = ({ product }) => {
     setActiveIndex(index);
   };
 
+  const { id, name, price, description, stock, images } = product;
+
   return (
     <div className="grid grid-cols-12 gap-4">
       <div className=" col-start-1 col-end-13 md:col-start-1 md:col-end-7">
         <div className="grid grid-cols-10 gap-2 ">
           <div className="col-span-10 md:col-span-2 flex md:grid grid-rows-4 gap-2">
-            {product?.images.map((image, index) => (
+            {images.map((image, index) => (
               <div key={index}>
                 <img
                   className="object-cover w-full h-full  "
                   src={image}
                   onClick={() => handleThumbnail(index)}
-                  alt="product_image"
+                  alt="product"
                 />
               </div>
             ))}
@@ -41,64 +43,54 @@ const Product = ({ product }) => {
             <div className="flex justify-center items-center rounded-md ">
               <img
                 className="object-cover w-full h-full"
-                src={product.images[activeIndex]}
-                alt="product_image"
+                src={images[activeIndex]}
+                alt="product"
               />
             </div>
           </div>
         </div>
       </div>
       <div className="col-start-1 col-end-13 md:col-start-8 md:col-end-13">
-        <div className="mb-2">
-          <h1 className="text-2xl font-semibold">{product.name}</h1>
-        </div>
-
-        {/* product price */}
-        <div className="text-xl font-medium">Rp. {product.price}</div>
-
-        {/* product description */}
-        <div className="py-4 mb-4 border-b-2">{product.description}</div>
-
-        {/* product quantity and add box */}
-        <div className="flex gap-5 items-center mb-4">
-          <div className="flex items-center border rounded-md">
-            <button
-              disabled={loading || quantity === 1}
-              onClick={handleDecrease}
-              className=" p-4 border-r rounded-l-md"
-            >
-              <Minus />
-            </button>
-            <div className="text-center w-[100px]">{quantity}</div>
-            <button
-              disabled={loading || quantity === product.stock}
-              onClick={handleIncrease}
-              className=" p-4 border-l rounded-l-md"
-            >
-              <Plus />
-            </button>
-          </div>
-          <div className="text-xl">Stock : {product.stock}</div>
-        </div>
-
-        {/* product price in total */}
-        <div className="font-medium h text-xl mb-6">
-          Subtotal : {quantity * product.price}
-        </div>
-
-        {/* button */}
         <div className="space-y-4">
-          <ProcessButton
-            title={"Add to Cart"}
-            variant={"secondary"}
-            loading={loading}
-            onClick={() => handleAddToCart(product.id)}
-          />
-          <ProcessButton
-            title={"Checkout"}
-            loading={loading}
-            onClick={handleCheckout}
-          />
+          <h2>{name}</h2>
+          <h3>Rp.{price}</h3>
+          <p>{description}</p>
+          <div className="flex items-center gap-5">
+            <div className="flex items-center border rounded-lg overflow-hidden w-32">
+              <button
+                onClick={handleDecrease}
+                disabled={quantity <= 1}
+                className="p-3 border-r hover:bg-gray-100 disabled:opacity-50"
+              >
+                <Minus size={16} />
+              </button>
+              <div className="w-12 text-center font-medium">{quantity}</div>
+              <button
+                onClick={handleIncrease}
+                disabled={quantity >= stock}
+                className="p-3 border-l hover:bg-gray-100 disabled:opacity-50"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+
+            <h4>Stock : {stock}</h4>
+          </div>
+          <h2>Subtotal : Rp. {quantity * price}</h2>
+          {/* button */}
+          <div className="space-y-4">
+            <ProcessButton
+              loading={loading}
+              title={"Add to Cart"}
+              variant={"secondary"}
+              onClick={() => handleAddToCart(id)}
+            />
+            <ProcessButton
+              loading={loading}
+              title={"Checkout"}
+              onClick={handleCheckout}
+            />
+          </div>
         </div>
       </div>
     </div>
