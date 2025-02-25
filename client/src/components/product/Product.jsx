@@ -73,7 +73,7 @@ const Product = ({ product }) => {
             <button
               disabled={loading || quantity === product.stock}
               onClick={handleIncrease}
-              className=" p-4 border-r rounded-l-md"
+              className=" p-4 border-l rounded-l-md"
             >
               <Plus />
             </button>

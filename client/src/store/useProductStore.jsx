@@ -13,11 +13,14 @@ export const useProductStore = create((set) => ({
   message: null,
 
   getProduct: async (slug) => {
+    set({ loading: true });
     try {
       const product = await callApi.getProduct(slug);
       set({ product });
     } catch {
       set({ product: [] });
+    } finally {
+      set({ loading: false });
     }
   },
 

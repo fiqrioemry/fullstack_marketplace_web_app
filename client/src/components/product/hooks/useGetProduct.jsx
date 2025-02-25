@@ -4,13 +4,13 @@ import { useProductStore } from "@/store/useProductStore";
 
 const useGetProduct = () => {
   const { slug } = useParams();
-  const { product, getProduct } = useProductStore();
+  const { getProduct, product, loading } = useProductStore();
 
   useEffect(() => {
     getProduct(slug);
   }, [getProduct, slug]);
 
-  return product;
+  return { product, loading };
 };
 
 export default useGetProduct;

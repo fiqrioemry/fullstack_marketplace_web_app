@@ -1,12 +1,15 @@
+import NotFound from "./NotFound";
 import Product from "@/components/product/Product";
 import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
 import ProductLoading from "@/components/product/ProductLoading";
 import useGetProduct from "@/components/product/hooks/useGetProduct";
 
 const ProductPage = () => {
-  const product = useGetProduct();
+  const { product, loading } = useGetProduct();
 
-  if (product.length === 0) return <ProductLoading />;
+  if (loading) return <ProductLoading />;
+
+  if (product.length === 0) return <NotFound />;
 
   return (
     <section className="section-margin">
