@@ -25,7 +25,7 @@ const CategoryCarousel = () => {
       <div className="flex items-center justify-between">
         <h4>Category List</h4>
         <Link to="/category" className="link_animate">
-          See all categories
+          <h4>See All Categories</h4>
         </Link>
       </div>
       <Carousel className="w-full">
@@ -50,12 +50,11 @@ const CategoryCarousel = () => {
             </CarouselItem>
           ))}
           <CarouselItem className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-            <Link to="/category">
-              <Card className="h-[225px] overflow-hidden">
-                <div className="h-full flex items-center justify-center hover:bg-muted-foreground/25 duration-300 transition-all">
-                  <h4>See All Categories</h4>
-                </div>
+            <Link to={`/category`}>
+              <Card className="h-[11rem] p-2">
+                <CardContent className=" flex items-center justify-center"></CardContent>
               </Card>
+              <h4 className="text-center mt-2">See All Categories</h4>
             </Link>
           </CarouselItem>
         </CarouselContent>
