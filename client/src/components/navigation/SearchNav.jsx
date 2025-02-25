@@ -8,18 +8,19 @@ import useDebouncedSearch from "@/hooks/useDebounchSearch";
 import SearchLoading from "@/components/loading/SearchLoading";
 
 const SearchNav = () => {
+  const inputRef = useRef(null);
   const navigate = useNavigate();
   const searchForm = useFormSchema(searchState);
   const { searchProducts, results, loading } = useProductStore();
-  const inputRef = useRef(null);
-
-  const handleSearchNavigation = (searchParams) => {
-    searchForm.resetForm();
-    navigate(`/search?search=${searchParams}`);
-    inputRef.current?.blur();
-  };
 
   useDebouncedSearch(searchForm.values.search, 300, searchProducts);
+
+  const handleSearchNavigation = (searchParams) => {
+    if (!searchParams.trim()) return;
+    searchForm.resetForm();
+    inputRef.current?.blur();
+    navigate(`/search?search=${searchParams}`);
+  };
 
   return (
     <div className="search-margin">
@@ -41,7 +42,7 @@ const SearchNav = () => {
 
       {searchForm.values.search?.length > 0 && (
         <div className="search-input">
-          {loading.search ? (
+          {loading ? (
             <SearchLoading />
           ) : results?.length > 0 ? (
             <div className="flex flex-col">

@@ -1,19 +1,19 @@
 import { useEffect } from "react";
+import { searchState } from "@/config";
 import { useSearchParams } from "react-router-dom";
 import { useFormSchema } from "@/hooks/useFormSchema";
-import { searchState } from "@/config";
 import SortingBox from "@/components/layout/SortingBox";
 import FilterBox from "@/components/layout/FilterBox";
 import ProductCard from "@/components/card/ProductCard";
 import { useProductStore } from "@/store/useProductStore";
 import PageBreadCrumb from "@/components/layout/PageBreadCrumb";
-import ProductsLoading from "@/components/loading/ProductsLoading";
 import PaginationLayout from "@/components/layout/PaginationLayout";
+import SearchResultLoading from "../components/loading/SearchResultLoading";
 
 const SearchResult = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { getProducts, products, totalPage, currentPage, loading } =
     useProductStore();
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const initialSearchValues = {
     ...searchState,
@@ -47,37 +47,32 @@ const SearchResult = () => {
     getProducts(searchForm.values);
   }, [searchForm.values]);
 
+  if (loading && products.length === 0) return <SearchResultLoading />;
+
   return (
-    <section className="container mx-auto">
-      <div className="px-2 md:px-6 space-y-6 py-6">
-        <PageBreadCrumb />
+    <section className="section-margin">
+      <PageBreadCrumb />
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 md:col-span-3">
+          <FilterBox searchForm={searchForm} />
+        </div>
+        <div className="col-span-12 md:col-span-9">
+          <SortingBox searchForm={searchForm} />
+          {products.length > 0 ? (
+            <>
+              <div className="grid-display-4">
+                <ProductCard products={products} />
+              </div>
 
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12 md:col-span-3">
-            <FilterBox searchForm={searchForm} />
-          </div>
-          <div className="col-span-12 md:col-span-9">
-            <div className="flex justify-end mb-4">
-              <SortingBox searchForm={searchForm} />
-            </div>
-
-            {loading.get && products.length === 0 ? (
-              <ProductsLoading />
-            ) : products.length > 0 ? (
-              <>
-                <div className="grid-display-4">
-                  <ProductCard products={products} />
-                </div>
-                <PaginationLayout
-                  totalPage={totalPage}
-                  searchForm={searchForm}
-                  currentPage={currentPage}
-                />
-              </>
-            ) : (
-              <div>No Result of products</div>
-            )}
-          </div>
+              <PaginationLayout
+                totalPage={totalPage}
+                searchForm={searchForm}
+                currentPage={currentPage}
+              />
+            </>
+          ) : (
+            <div>No Result of products</div>
+          )}
         </div>
       </div>
     </section>

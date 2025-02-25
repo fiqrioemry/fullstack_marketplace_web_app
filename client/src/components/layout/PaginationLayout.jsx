@@ -9,7 +9,7 @@ const PaginationLayout = ({ totalPage, currentPage, searchForm }) => {
   };
 
   return (
-    <div className="flex items-center justify-center space-x-2 mt-4">
+    <div className="flex items-center justify-start space-x-2 mt-8">
       {/* First Page Button */}
       <button
         onClick={() => handlePageChange(1)}

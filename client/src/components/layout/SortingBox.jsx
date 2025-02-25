@@ -20,20 +20,22 @@ const SortingBox = ({ searchForm }) => {
   };
 
   return (
-    <Select onValueChange={handleChange}>
-      <SelectTrigger className="w-full md:w-1/3">
-        <SelectValue placeholder="Sort By" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Select Parameter</SelectLabel>
-          <SelectItem value="price:asc">Minimum Price</SelectItem>
-          <SelectItem value="price:desc">Maximum Price</SelectItem>
-          <SelectItem value="name:asc">From A to Z</SelectItem>
-          <SelectItem value="name:desc">From Z to A</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="flex justify-end mb-4">
+      <Select onValueChange={handleChange}>
+        <SelectTrigger className="w-full md:w-1/3">
+          <SelectValue placeholder="Sort By" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Select Parameter</SelectLabel>
+            <SelectItem value="price:asc">Minimum Price</SelectItem>
+            <SelectItem value="price:desc">Maximum Price</SelectItem>
+            <SelectItem value="name:asc">From A to Z</SelectItem>
+            <SelectItem value="name:desc">From Z to A</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 

@@ -9,48 +9,27 @@ export const useProductStore = create((set) => ({
   totalPage: 0,
   totalData: 0,
   currentPage: 0,
-  loading: {
-    get: false,
-    search: false,
-    categories: false,
-  },
+  loading: false,
 
   getProducts: async (searchParams) => {
-    console.log(searchParams);
     try {
-      set((state) => ({
-        loading: { ...state.loading, get: true },
-        products: [],
-      }));
+      set({ loading: true });
       const { products, totalPage, totalData, currentPage } =
         await callApi.getProducts(searchParams);
-
-      set({
-        products,
-        totalPage,
-        totalData,
-        currentPage,
-      });
+      set({ products, totalPage, totalData, currentPage });
     } catch {
       set({ products: [] });
     } finally {
-      set((state) => ({
-        loading: { ...state.loading, get: false },
-      }));
+      set({ loading: false });
     }
   },
 
   getCategories: async () => {
-    set((state) => ({
-      loading: { ...state.loading, categories: true },
-    }));
     try {
       const categories = await callApi.getCategories();
       set({ categories });
-    } catch {
-      set((state) => ({
-        loading: { ...state.loading, categories: false },
-      }));
+    } catch (error) {
+      console.log(error);
     }
   },
 
@@ -70,19 +49,14 @@ export const useProductStore = create((set) => ({
   },
 
   searchProducts: async (search) => {
-    set((state) => ({
-      loading: { ...state.loading, search: true },
-      results: [],
-    }));
+    set({ loading: true });
     try {
       const { products } = await callApi.searchProducts(search);
       set({ results: products });
     } catch {
       set({ results: [] });
     } finally {
-      set((state) => ({
-        loading: { ...state.loading, search: false },
-      }));
+      set({ loading: false });
     }
   },
 }));
