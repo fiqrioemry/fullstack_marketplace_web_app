@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { searchState } from "@/config";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +11,8 @@ const SearchNav = () => {
   const inputRef = useRef(null);
   const navigate = useNavigate();
   const searchForm = useFormSchema(searchState);
-  const { searchProducts, results, loading } = useProductStore();
   const [showResults, setShowResults] = useState(true);
+  const { searchProducts, results, loading } = useProductStore();
 
   useDebouncedSearch(searchForm.values.search, 300, searchProducts);
 
@@ -40,7 +40,7 @@ const SearchNav = () => {
           value={searchForm.values.search}
           onChange={(e) => {
             searchForm.handleChange(e);
-            setShowResults(true); // Tampilkan hasil pencarian saat user mengetik
+            setShowResults(true);
           }}
         />
       </form>

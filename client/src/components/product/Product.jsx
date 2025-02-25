@@ -1,56 +1,22 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useCartStore } from "@/store/useCartStore";
-import { useProvider } from "@/context/GlobalProvider";
 import ProcessButton from "@/components/form/processButton";
+import useHandleCart from "@/components/product/hooks/useHandleCart";
 
-const ProductDisplay = ({ product }) => {
-  const navigate = useNavigate();
-  const { isAuthenticate } = useProvider();
-  const [quantity, setQuantity] = useState(1);
+const Product = ({ product }) => {
+  const {
+    loading,
+    quantity,
+    handleIncrease,
+    handleDecrease,
+    handleAddToCart,
+    handleCheckout,
+  } = useHandleCart(product);
+
   const [activeIndex, setActiveIndex] = useState(0);
-  const { addCartItem, isCartLoading } = useCartStore();
 
-  const handleIncrease = () => {
-    setQuantity((prev) => {
-      const newQuantity = prev + 1;
-      return Math.min(newQuantity, product.stock);
-    });
-  };
-
-  const handleDecrease = () => {
-    setQuantity((prev) => {
-      const newQuantity = prev - 1;
-      return Math.max(newQuantity, 1);
-    });
-  };
-
-  const handleCheckout = () => {
-    if (isAuthenticate) {
-      navigate("/cart/checkout", {
-        state: {
-          product: {
-            slug: product.slug,
-            quantity,
-          },
-        },
-      });
-    } else {
-      navigate("/signin");
-    }
-  };
-
-  const handleAddToCart = (productId) => {
-    if (isAuthenticate) {
-      addCartItem(productId, quantity);
-    } else {
-      navigate("/signin");
-    }
-  };
-
-  const handleSetThumbnail = (index) => {
+  const handleThumbnail = (index) => {
     setActiveIndex(index);
   };
 
@@ -64,7 +30,7 @@ const ProductDisplay = ({ product }) => {
                 <img
                   className="object-cover w-full h-full  "
                   src={image}
-                  onClick={() => handleSetThumbnail(index)}
+                  onClick={() => handleThumbnail(index)}
                   alt="product_image"
                 />
               </div>
@@ -97,7 +63,7 @@ const ProductDisplay = ({ product }) => {
         <div className="flex gap-5 items-center mb-4">
           <div className="flex items-center border rounded-md">
             <button
-              disabled={isCartLoading || quantity === 1}
+              disabled={loading || quantity === 1}
               onClick={handleDecrease}
               className=" p-4 border-r rounded-l-md"
             >
@@ -105,7 +71,7 @@ const ProductDisplay = ({ product }) => {
             </button>
             <div className="text-center w-[100px]">{quantity}</div>
             <button
-              disabled={isCartLoading || quantity === product.stock}
+              disabled={loading || quantity === product.stock}
               onClick={handleIncrease}
               className=" p-4 border-r rounded-l-md"
             >
@@ -125,12 +91,12 @@ const ProductDisplay = ({ product }) => {
           <ProcessButton
             title={"Add to Cart"}
             variant={"secondary"}
-            loading={isCartLoading}
+            loading={loading}
             onClick={() => handleAddToCart(product.id)}
           />
           <ProcessButton
             title={"Checkout"}
-            loading={isCartLoading}
+            loading={loading}
             onClick={handleCheckout}
           />
         </div>
@@ -139,4 +105,4 @@ const ProductDisplay = ({ product }) => {
   );
 };
 
-export default ProductDisplay;
+export default Product;

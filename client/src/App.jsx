@@ -9,7 +9,7 @@ import Checkout from "./pages/Checkout";
 import Category from "./pages/Category";
 import OpenStore from "./pages/OpenStore";
 import SearchResult from "./pages/SearchResult";
-import ProductDetail from "./pages/ProductDetail";
+import ProductPage from "./pages/ProductPage";
 import ProductCategory from "./pages/ProductCategory";
 import AddressLayout from "./pages/customer/AddressLayout";
 import ProfileLayout from "./pages/customer/ProfileLayout";
@@ -55,7 +55,7 @@ function App() {
           <Route path=":storename" element={<Store />} />
           <Route path="category" element={<Category />} />
           <Route path="search" element={<SearchResult />} />
-          <Route path=":storename/:slug" element={<ProductDetail />} />
+          <Route path=":storename/:slug" element={<ProductPage />} />
           <Route path="category/:slug" element={<ProductCategory />} />
           <Route path="testing" element={<TestingUI />} />
 
