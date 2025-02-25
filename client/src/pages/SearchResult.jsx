@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { searchState } from "@/config";
 import { useSearchParams } from "react-router-dom";
 import { useFormSchema } from "@/hooks/useFormSchema";
+import { searchState } from "@/config";
 import SortingBox from "@/components/layout/SortingBox";
 import FilterBox from "@/components/layout/FilterBox";
 import ProductCard from "@/components/card/ProductCard";
@@ -11,38 +11,43 @@ import ProductsLoading from "@/components/loading/ProductsLoading";
 import PaginationLayout from "@/components/layout/PaginationLayout";
 
 const SearchResult = () => {
-  const searchForm = useFormSchema(searchState);
-  const [searchParams, setSearchParams] = useSearchParams();
   const { getProducts, products, totalPage, currentPage, loading } =
     useProductStore();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  useEffect(() => {
-    const params = Object.fromEntries(searchParams.entries());
-    searchForm.setValues({
-      search: params.search || "",
-      orderBy: params.orderBy || "asc",
-      sortBy: params.sortBy || "",
-      minPrice: params.minPrice || "",
-      maxPrice: params.maxPrice || "",
-      page: parseInt(params.page) || 1,
-      city: params.city ? params.city.split(",") : [],
-      category: params.category ? params.category.split(",") : [],
-    });
-  }, []);
+  // Ambil nilai dari URL untuk inisialisasi state
+  const initialSearchValues = {
+    ...searchState,
+    search: searchParams.get("search") || "",
+    category: searchParams.getAll("category") || [],
+    city: searchParams.getAll("city") || [],
+    minPrice: searchParams.get("minPrice") || "",
+    maxPrice: searchParams.get("maxPrice") || "",
+    sortBy: searchParams.get("sortBy") || "",
+    orderBy: searchParams.get("orderBy") || "",
+    page: Number(searchParams.get("page")) || 1,
+  };
 
+  const searchForm = useFormSchema(initialSearchValues);
+
+  // Effect untuk memperbarui URL saat searchForm berubah
   useEffect(() => {
-    const params = new URLSearchParams();
+    const newSearchParams = new URLSearchParams();
     Object.entries(searchForm.values).forEach(([key, value]) => {
-      if (value) {
-        if (Array.isArray(value)) {
-          if (value.length > 0) params.set(key, value.join(","));
-        } else {
-          params.set(key, value);
-        }
+      if (Array.isArray(value)) {
+        value.forEach((val) => newSearchParams.append(key, val));
+      } else if (value !== "" && value !== null) {
+        newSearchParams.set(key, value);
       }
     });
-    getProducts(params.toString());
-  }, []);
+
+    setSearchParams(newSearchParams);
+  }, [searchForm.values]);
+
+  // Fetch products setiap kali searchForm berubah
+  useEffect(() => {
+    getProducts(searchForm.values);
+  }, [searchForm.values]);
 
   return (
     <section>
@@ -54,7 +59,6 @@ const SearchResult = () => {
           <div className="col-span-12 md:col-span-3">
             <FilterBox searchForm={searchForm} />
           </div>
-
           <div className="col-span-12 md:col-span-9 space-y-6">
             <div className="flex justify-end">
               <SortingBox searchForm={searchForm} />

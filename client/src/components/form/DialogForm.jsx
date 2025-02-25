@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import InputForm from "./InputForm";
+import FormInput from "./FormInput";
 import InputButton from "./InputButton";
 import { Button } from "@/components/ui/button";
 import { useFormSchema } from "@/hooks/useFormSchema";
@@ -68,7 +68,7 @@ export function DialogForm({
           </div>
           <ScrollArea className="h-72 border">
             <div className="p-4">
-              <InputForm
+              <FormInput
                 formik={formik}
                 formControl={control}
                 inputStyle={"h-40 md:h-[4rem]"}
@@ -88,7 +88,7 @@ export function DialogForm({
                     title="save changes"
                   />
                 </div>
-              </InputForm>
+              </FormInput>
             </div>
           </ScrollArea>
         </DialogContent>

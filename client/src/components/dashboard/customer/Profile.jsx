@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { profileControl } from "@/config";
 import { Button } from "@/components/ui/button";
-import InputForm from "@/components/form/InputForm";
+import FormInput from "@/components/form/FormInput";
 import { useUserStore } from "@/store/useUserStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useFileUpload } from "@/hooks/useFileUpload";
@@ -50,7 +50,7 @@ const Profile = () => {
         </div>
       </div>
       <div className="col-span-8 ">
-        <InputForm
+        <FormInput
           formik={profileForm}
           disabled={!editProfile}
           formControl={profileControl}
@@ -81,7 +81,7 @@ const Profile = () => {
               </Button>
             </div>
           )}
-        </InputForm>
+        </FormInput>
       </div>
     </div>
   );

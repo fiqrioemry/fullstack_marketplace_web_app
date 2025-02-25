@@ -1,52 +1,58 @@
+import { useRef } from "react";
 import { searchState } from "@/config";
-import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 import { useFormSchema } from "@/hooks/useFormSchema";
-import { useCallback, useEffect, useRef } from "react";
 import { useProductStore } from "@/store/useProductStore";
+import useDebouncedSearch from "@/hooks/useDebounchSearch";
 import SearchLoading from "@/components/loading/SearchLoading";
 
 const SearchNav = () => {
-  const debounceRef = useRef(null);
+  const navigate = useNavigate();
   const searchForm = useFormSchema(searchState);
   const { searchProducts, results, loading } = useProductStore();
+  const inputRef = useRef(null);
 
-  const searchHandler = useCallback(() => {
-    if (!searchForm.values.search.trim()) return;
-    searchProducts(searchForm.values.search);
-  }, [searchForm.values.search, searchProducts]);
+  const handleSearchNavigation = (searchParams) => {
+    searchForm.resetForm();
+    navigate(`/search?search=${searchParams}`);
+    inputRef.current?.blur();
+  };
 
-  useEffect(() => {
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(searchHandler, 300);
-
-    return () => clearTimeout(debounceRef.current);
-  }, [searchForm.values.search, searchHandler]);
+  useDebouncedSearch(searchForm.values.search, 300, searchProducts);
 
   return (
     <div className="search-margin">
-      <Input
-        name="search"
-        className="border-muted"
-        placeholder="Search a product..."
-        value={searchForm.values.search}
-        onChange={searchForm.handleChange}
-      />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearchNavigation(searchForm.values.search);
+        }}
+      >
+        <Input
+          ref={inputRef}
+          name="search"
+          className="border-muted"
+          placeholder="Search a product..."
+          value={searchForm.values.search}
+          onChange={searchForm.handleChange}
+        />
+      </form>
 
-      {searchForm.values.search && searchForm.values.search.length > 0 && (
+      {searchForm.values.search?.length > 0 && (
         <div className="search-input">
           {loading.search ? (
             <SearchLoading />
-          ) : results && results.length > 0 ? (
+          ) : results?.length > 0 ? (
             <div className="flex flex-col">
-              {results.map((result) => (
-                <Link
-                  to={`/search?search=${result.slug}`}
-                  className="w-full btn-nav"
-                  key={result.id}
+              {results.map(({ id, name, slug }) => (
+                <button
+                  key={id}
+                  className="py-2 px-4 flex items-start bg-background hover:bg-muted m-1 rounded-md transition-colors"
+                  onClick={() => handleSearchNavigation(slug)}
                 >
-                  {result.name}
-                </Link>
+                  {name}
+                </button>
               ))}
             </div>
           ) : (

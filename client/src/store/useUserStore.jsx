@@ -5,13 +5,15 @@ import callApi from "@/api/callApi";
 export const useUserStore = create((set) => ({
   profile: [],
   address: [],
+  message: "",
   loading: false,
   updating: false,
 
   getProfile: async () => {
     set({ loading: true });
     try {
-      const profile = await callApi.getProfile();
+      const { profile } = await callApi.getProfile();
+
       set({ profile });
     } catch {
       set({ user: [] });
@@ -36,10 +38,9 @@ export const useUserStore = create((set) => ({
   getAddress: async () => {
     set({ loading: true });
     try {
-      const address = await callApi.getAddress();
-      set({ address });
-    } catch (error) {
-      toast.error(error.message);
+      const { message, address } = await callApi.getAddress();
+      set({ message, address });
+    } catch {
       set({ address: [] });
     } finally {
       set({ loading: false });

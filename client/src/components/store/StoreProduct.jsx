@@ -26,7 +26,7 @@ const StoreProduct = () => {
           </SelectContent>
         </Select>
       </div>
-      <div className="grid_display_5">
+      <div className="grid-display-5">
         {[...Array(15)].map((_, index) => (
           <ProductCard product={index} key={index} />
         ))}

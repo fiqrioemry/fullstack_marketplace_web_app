@@ -5,7 +5,7 @@ import ProcessButton from "@/components/form/processButton";
 import ProductsLoading from "@/components/loading/ProductsLoading";
 
 const ProductRecommendation = () => {
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const { getProducts, products, loading, totalData } = useProductStore();
 
   const handleShowMore = () => {
@@ -13,8 +13,10 @@ const ProductRecommendation = () => {
   };
 
   useEffect(() => {
-    getProducts({ limit: limit });
+    getProducts({ limit });
   }, [getProducts, limit]);
+
+  console.log(products);
 
   return (
     <div className="space-y-6">

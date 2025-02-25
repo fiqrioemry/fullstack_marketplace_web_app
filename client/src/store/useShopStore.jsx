@@ -51,8 +51,8 @@ export const useShopStore = create((set, get) => ({
   getStoreInfo: async () => {
     set({ loading: true });
     try {
-      const store = await callApi.getStoreInfo();
-      set({ store });
+      const { store, products } = await callApi.getStoreInfo();
+      set({ store, products });
     } catch (err) {
       console.log(err.message);
     } finally {

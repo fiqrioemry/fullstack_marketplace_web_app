@@ -4,7 +4,7 @@ import Address from "@/components/dashboard/customer/Address";
 import AddressLoading from "@/components/loading/AddressLoading";
 
 const AddressLayout = () => {
-  const { address, getAddress, loading } = useUserStore();
+  const { getAddress, loading } = useUserStore();
 
   useEffect(() => {
     getAddress();
@@ -12,7 +12,7 @@ const AddressLayout = () => {
 
   return (
     <div className="space-y-6 p-4">
-      {loading ? <AddressLoading /> : <Address address={address} />}
+      {loading ? <AddressLoading /> : <Address />}
     </div>
   );
 };

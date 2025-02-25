@@ -2,9 +2,9 @@ import { create } from "zustand";
 import callApi from "@/api/callApi";
 
 export const useProductStore = create((set) => ({
+  results: [],
   product: [],
   products: [],
-  results: [],
   categories: [],
   totalPage: 0,
   totalData: 0,
@@ -15,24 +15,22 @@ export const useProductStore = create((set) => ({
     categories: false,
   },
 
-  getProducts: async (searchQuery) => {
+  getProducts: async (searchParams) => {
+    console.log(searchParams);
     try {
       set((state) => ({
         loading: { ...state.loading, get: true },
         products: [],
       }));
       const { products, totalPage, totalData, currentPage } =
-        await callApi.getProducts(searchQuery);
+        await callApi.getProducts(searchParams);
+
       set({
         products,
         totalPage,
         totalData,
         currentPage,
       });
-      console.log(products);
-      console.log(totalPage);
-      console.log(totalData);
-      console.log(products);
     } catch {
       set({ products: [] });
     } finally {

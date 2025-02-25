@@ -9,7 +9,7 @@ import { Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const OpenShop = () => {
+const DropDownOpenStore = () => {
   const navigate = useNavigate();
   return (
     <DropdownMenu>
@@ -18,12 +18,12 @@ const OpenShop = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel className="text-center">
-          You Dont Have Shop
+          You Dont Have Store
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <div className="p-2">
-          <Button onClick={() => navigate("/open-shop")} className="w-full">
-            Open Shop
+          <Button onClick={() => navigate("/open-store")} className="w-full">
+            Open Store
           </Button>
         </div>
       </DropdownMenuContent>
@@ -31,4 +31,4 @@ const OpenShop = () => {
   );
 };
 
-export default OpenShop;
+export default DropDownOpenStore;

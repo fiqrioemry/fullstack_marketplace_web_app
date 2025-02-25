@@ -125,38 +125,6 @@ export const verifyOTPControl = [
   },
 ];
 
-// open store state and control
-export const openStoreState = {
-  name: '',
-  description: '',
-  city: '',
-};
-
-export const openStoreControl = [
-  {
-    name: 'name',
-    label: 'store name',
-    type: 'text',
-    placeholder: 'Enter your store name',
-    component: 'input',
-  },
-  {
-    name: 'description',
-    label: 'description',
-    type: 'text',
-    placeholder: 'Write a short description of your store',
-    component: 'textarea',
-  },
-  {
-    name: 'city',
-    label: 'city',
-    type: 'select',
-    placeholder: 'Select your city',
-    component: 'select',
-    options: city,
-  },
-];
-
 export const productFilterState = {
   search: '',
   page: '',
@@ -167,56 +135,30 @@ export const productFilterState = {
 export const filterControl = [
   {
     name: 'category',
-    label: 'category',
+    label: 'select category',
     type: 'checkbox',
-    component: 'checkbox',
+    component: 'multiple-checked',
   },
   {
     name: 'city',
-    label: 'city',
+    label: 'select city',
     type: 'checkbox',
-    component: 'checkbox',
-  },
-];
-
-export const profileState = {
-  fullname: '',
-  birthday: '',
-  gender: '',
-  phone: '',
-  email: '',
-  avatar: '',
-};
-
-export const profileControl = [
-  {
-    name: 'fullname',
-    label: 'fullname',
-    type: 'text',
-    placeholder: 'Enter your fullname',
-    component: 'input',
+    component: 'multiple-checked',
+    option: city,
   },
   {
-    name: 'birthday',
-    label: 'birthday',
-    type: 'date',
-    placeholder: 'Add your birthday',
-    component: 'input',
+    name: 'minPrice',
+    label: 'minimum price',
+    type: 'number',
+    component: 'input-number',
+    maxLength: 10,
   },
   {
-    name: 'gender',
-    label: 'gender',
-    type: 'select',
-    placeholder: 'Select your gender',
-    component: 'select',
-    options: ['male', 'female'],
-  },
-  {
-    name: 'phone',
-    label: 'phone',
-    type: 'text',
-    placeholder: 'Add your phone',
-    component: 'input',
+    name: 'maxPrice',
+    label: 'maximum price',
+    type: 'number',
+    component: 'input-number',
+    maxLength: 10,
   },
 ];
 
@@ -226,7 +168,7 @@ export const searchState = {
   city: [],
   minPrice: '',
   maxPrice: '',
-  sortBy: '',
+  sortBy: 'name',
   page: 1,
   orderBy: 'asc',
   limit: 10,
@@ -383,79 +325,14 @@ export const storeProductFilterState = {
   search: '',
 };
 
-export const addressState = {
-  name: '',
-  isMain: false,
-  address: '',
-  province: '',
-  city: '',
-  zipcode: '',
-  phone: '',
-};
-
-export const addressControl = [
-  {
-    name: 'name',
-    label: 'name',
-    type: 'text',
-    placeholder: 'Enter receipient name',
-    component: 'input',
-  },
-  {
-    name: 'address',
-    label: 'address',
-    type: 'text',
-    placeholder: 'Enter receipient address',
-    component: 'textarea',
-  },
-  {
-    name: 'province',
-    label: 'province',
-    type: 'select',
-    placeholder: 'Enter receipient province',
-    component: 'select',
-    options: province,
-  },
-  {
-    name: 'city',
-    label: 'city',
-    type: 'select',
-    placeholder: 'Enter receipient city',
-    component: 'select',
-    options: city,
-  },
-  {
-    name: 'zipcode',
-    label: 'zipcode',
-    type: 'text',
-    placeholder: 'Enter receipient zipcode',
-    component: 'input',
-    maxLength: '6',
-  },
-
-  {
-    name: 'phone',
-    label: 'phone number',
-    type: 'tel',
-    placeholder: 'Enter receipient phone',
-    component: 'input',
-    maxLength: '13',
-  },
-  {
-    name: 'isMain',
-    label: 'set as main address',
-    type: 'checkbox',
-    component: 'radio',
-  },
-];
-
 export const testState = {
+  default: '',
   name: '',
   category: '',
   city: '',
   description: '',
-  price: 0,
-  stock: 0,
+  price: '',
+  stock: '',
   files: [],
   date: '',
   isMain: '',
@@ -463,18 +340,24 @@ export const testState = {
 
 export const testControl = [
   {
+    name: 'default',
+    label: 'default input',
+    type: 'text',
+    placeholder: 'Enter a default value',
+  },
+  {
     name: 'files',
     label: 'files',
     type: 'file',
     placeholder: 'Maksimum 5 Images and less than 1mb each',
-    component: 'upload',
+    component: 'multi-upload',
   },
   {
     name: 'name',
     label: 'product name',
     type: 'text',
     placeholder: 'Enter your product name ...',
-    component: 'input',
+    component: 'input-text',
   },
   {
     name: 'description',
@@ -488,14 +371,14 @@ export const testControl = [
     label: 'price',
     type: 'text',
     placeholder: 'Set the price',
-    component: 'input',
+    component: 'input-number',
   },
   {
     name: 'stock',
     label: 'stock',
     type: 'text',
     placeholder: 'Set the stock',
-    component: 'input',
+    component: 'input-number',
   },
   {
     name: 'city',
@@ -507,9 +390,8 @@ export const testControl = [
   },
   {
     name: 'isMain',
-    label: 'main address',
-    type: 'text',
-    placeholder: 'Set as main address',
+    label: 'set as main address',
+    type: 'checkbox',
     component: 'single-checked',
   },
 
@@ -527,5 +409,149 @@ export const testControl = [
     type: 'date',
     placeholder: 'Select a date',
     component: 'date',
+  },
+];
+
+// change to a new feature :
+// change to a new feature :
+// change to a new feature :
+export const openStoreState = {
+  name: '',
+  description: '',
+  city: '',
+};
+
+export const openStoreControl = [
+  {
+    name: 'name',
+    label: 'store name',
+    type: 'text',
+    placeholder: 'Enter your store name',
+    component: 'input-text',
+  },
+  {
+    name: 'description',
+    label: 'description',
+    type: 'text',
+    placeholder: 'Write a short description of your store',
+    component: 'textarea',
+    maxLength: 400,
+  },
+  {
+    name: 'city',
+    label: 'city',
+    type: 'select',
+    placeholder: 'Select your city',
+    component: 'select',
+    option: city,
+  },
+];
+
+export const profileState = {
+  fullname: '',
+  birthday: '',
+  gender: '',
+  phone: '',
+  email: '',
+  avatar: '',
+};
+
+export const profileControl = [
+  {
+    name: 'fullname',
+    label: 'fullname',
+    type: 'text',
+    placeholder: 'Enter your fullname',
+    component: 'input-text',
+  },
+  {
+    name: 'birthday',
+    label: 'birthday',
+    type: 'date',
+    placeholder: 'Add your birthday',
+    component: 'date',
+  },
+  {
+    name: 'gender',
+    label: 'gender',
+    type: 'select',
+    placeholder: 'Select your gender',
+    component: 'select',
+    option: ['male', 'female'],
+  },
+  {
+    name: 'phone',
+    label: 'phone',
+    type: 'tel',
+    placeholder: 'Add your phone',
+    component: 'input-number',
+    maxLength: 13,
+  },
+];
+
+export const addressState = {
+  name: '',
+  isMain: false,
+  address: '',
+  province: '',
+  city: '',
+  zipcode: '',
+  phone: '',
+};
+
+export const addressControl = [
+  {
+    name: 'name',
+    label: 'name',
+    type: 'text',
+    placeholder: 'Enter receipient name',
+    component: 'input-text',
+  },
+  {
+    name: 'address',
+    label: 'address',
+    type: 'text',
+    placeholder: 'Enter receipient address',
+    component: 'textarea',
+    maxLength: 200,
+  },
+  {
+    name: 'province',
+    label: 'province',
+    type: 'select',
+    placeholder: 'Enter receipient province',
+    component: 'select',
+    option: province,
+  },
+  {
+    name: 'city',
+    label: 'city',
+    type: 'select',
+    placeholder: 'Enter receipient city',
+    component: 'select',
+    option: city,
+  },
+  {
+    name: 'zipcode',
+    label: 'zipcode',
+    type: 'number',
+    placeholder: 'Enter receipient zipcode',
+    component: 'input-number',
+    maxLength: 6,
+  },
+
+  {
+    name: 'phone',
+    label: 'phone number',
+    type: 'tel',
+    placeholder: 'Enter receipient phone',
+    component: 'input-number',
+    maxLength: 13,
+  },
+  {
+    name: 'isMain',
+    label: 'set as main address',
+    type: 'checkbox',
+    component: 'single-checked',
   },
 ];

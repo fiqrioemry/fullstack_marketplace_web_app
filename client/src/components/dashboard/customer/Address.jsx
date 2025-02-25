@@ -1,12 +1,11 @@
-/* eslint-disable react/prop-types */
 import { useUserStore } from "@/store/useUserStore";
 import { addressControl, addressState } from "@/config";
 import AddressCard from "@/components/card/AddressCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DialogForm } from "@/components/form/DialogForm";
 
-const Address = ({ address }) => {
-  const { addAddress } = useUserStore();
+const Address = () => {
+  const { addAddress, message, address } = useUserStore();
 
   return (
     <div>
@@ -24,7 +23,7 @@ const Address = ({ address }) => {
         </div>
         {address.length === 0 ? (
           <div className="h-96 default_border flex items-center justify-center">
-            <h4>You Dont Have an Address, Try to add one</h4>
+            <h4>{message}</h4>
           </div>
         ) : (
           <ScrollArea className="h-96 bg-muted p-4">

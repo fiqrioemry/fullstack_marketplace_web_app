@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
-import UserAvatar from "../ui/Avatar";
 import { Link } from "react-router-dom";
-import UserMenu from "../dropdown/UserMenu";
-import OpenShop from "../dropdown/OpenShop";
+import UserAvatar from "@/components/ui/Avatar";
+import UserMenu from "@/components/dropdown/UserMenu";
 import ShoppingCart from "@/components/cart/ShoppingCart";
-import NotificationMenu from "../dropdown/NotificationMenu";
+import NotificationMenu from "@/components/dropdown/NotificationMenu";
+import DropDownOpenStore from "@/components/dropdown/DropDownOpenStore";
 
 const AuthNav = ({ user }) => {
   return (
@@ -12,7 +12,7 @@ const AuthNav = ({ user }) => {
       <NotificationMenu />
       <ShoppingCart />
       {user.role === "customer" ? (
-        <OpenShop />
+        <DropDownOpenStore />
       ) : (
         <Link to="/store">
           <UserAvatar avatar={user.storeAvatar} />

@@ -5,8 +5,9 @@ import { useFormSchema } from "../../hooks/useFormSchema";
 import { useProductStore } from "../../store/useProductStore";
 
 const ProductForm = () => {
-  const { createProduct, loading } = useProductStore();
+  const { createProduct } = useProductStore();
   const productForm = useFormSchema(testState, testControl, createProduct);
+
   return (
     <div className="max-w-5xl p-4">
       <FormInput formik={productForm} formControl={testControl}>

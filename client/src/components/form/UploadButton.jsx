@@ -6,8 +6,8 @@ const UploadButton = ({ title, inputName, icon, action, loading, variant }) => {
   return (
     <Button
       variant={variant}
-      className="relative w-full overflow-hidden"
       disabled={loading}
+      className="relative w-full overflow-hidden"
     >
       {loading ? (
         <Loader className="animate-spin" />

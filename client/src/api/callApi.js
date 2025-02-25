@@ -1,5 +1,4 @@
 import { authInstance, publicInstance } from '.';
-
 const errorHandle = (error) => {
   const errorMessage = error.response?.data?.message;
   return Promise.reject(new Error(errorMessage));
@@ -116,9 +115,30 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  getProducts: async (search) => {
+  getProducts: async ({
+    search = '',
+    category = [''],
+    city = [''],
+    minPrice = '',
+    maxPrice = '',
+    sortBy = '',
+    page = 1,
+    orderBy = 'asc',
+    limit = 10,
+  }) => {
+    const searchParams = new URLSearchParams({
+      search,
+      category: category.join(','),
+      city: city.join(','),
+      minPrice,
+      maxPrice,
+      sortBy,
+      orderBy,
+      page,
+      limit,
+    }).toString();
     return authInstance
-      .get(`/product?${search}`)
+      .get(`/product?${searchParams}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
