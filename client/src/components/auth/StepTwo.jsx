@@ -2,68 +2,51 @@
 
 import { Mail } from "lucide-react";
 import { verifyOTPControl } from "@/config";
-import { useState, useEffect } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
-import InputForm from "@/components/form/InputForm";
+import useHandleOTP from "./hooks/useHandleOTP";
+import FormInput from "@/components/form/FormInput";
 import InputButton from "@/components/form/InputButton";
 
 const StepTwo = ({ registerForm }) => {
-  const { resendOTP } = useAuthStore();
-  const [countdown, setCountdown] = useState(30);
-  const [isResendDisabled, setIsResendDisabled] = useState(true);
-
-  useEffect(() => {
-    if (countdown === 0) {
-      setIsResendDisabled(false);
-      return;
-    }
-    const timer = setInterval(() => {
-      setCountdown((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [countdown]);
-
-  const handleResendOTP = () => {
-    resendOTP(registerForm.values.email);
-    setIsResendDisabled(true);
-    setCountdown(countdown + 30);
-  };
+  const { countdown, resendOTP, isSendDisabled } = useHandleOTP(
+    registerForm.values.email
+  );
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-4">
-        <div className="flex justify-center">
-          <Mail size={40} />
-        </div>
-
-        <div className="text-center">
-          <h5>Enter Verification Code</h5>
-          <div>Your verification code has been sent to:</div>
-          <span>{registerForm.values.email}</span>
-        </div>
+    <div>
+      {/* Header */}
+      <div className="flex flex-col items-center text-center ">
+        <Mail size={40} />
+        <h4>Enter Verification Code</h4>
+        <p className="text-sm text-gray-600">
+          Your verification code has been sent to:
+        </p>
+        <span className="font-medium">{registerForm.values.email}</span>
       </div>
-      <div className="flex flex-col space-y-4 items-center justify-center">
-        <InputForm formik={registerForm} formControl={verifyOTPControl}>
-          <InputButton title={"Submit"} formik={registerForm} />
-        </InputForm>
-        <div className="text-sm">
+
+      {/* Form */}
+      <div className="flex flex-col items-center space-y-2 mt-6">
+        <FormInput formik={registerForm} formControl={verifyOTPControl}>
+          <InputButton title="Submit" formik={registerForm} />
+        </FormInput>
+
+        {/* Resend OTP */}
+        <div>
           {countdown > 0 ? (
             <span>
               Please wait <b>{countdown}s</b> to resend code
             </span>
           ) : (
-            <span>
-              Did not receive the code?{" "}
+            <div className="text-sm md:text-md">
+              <span>Didn&apos;t receive the code?</span>
               <button
-                className="btn-primary"
                 type="button"
-                onClick={handleResendOTP}
-                disabled={isResendDisabled}
+                onClick={resendOTP}
+                className="btn-primary"
+                disabled={isSendDisabled}
               >
                 Resend
               </button>
-            </span>
+            </div>
           )}
         </div>
       </div>

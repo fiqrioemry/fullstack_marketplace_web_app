@@ -52,7 +52,8 @@ function FormInput({ formik, formControl, disabled, children }) {
       case "input-text":
         return (
           <>
-            <InputLabel formik={formik} name={name} label={label} />
+            {label && <InputLabel formik={formik} name={name} label={label} />}
+
             <Input
               id={label}
               name={name}

@@ -58,14 +58,14 @@ export const loginControl = [
     type: 'email',
     label: 'email',
     placeholder: 'Enter your email',
-    component: 'input',
+    component: 'input-text',
   },
   {
     name: 'password',
     label: 'password',
     type: 'password',
     placeholder: 'Enter your password',
-    component: 'input',
+    component: 'input-text',
   },
 ];
 
@@ -87,7 +87,8 @@ export const registerControl = [
     name: 'email',
     label: 'email',
     type: 'email',
-    placeholder: 'Enter yourrr email',
+    placeholder: 'Enter your email',
+    component: 'input-text',
     disabled: true,
   },
 
@@ -96,7 +97,7 @@ export const registerControl = [
     label: 'fullname',
     type: 'text',
     placeholder: 'Enter your full name',
-    component: 'input',
+    component: 'input-text',
   },
 
   {
@@ -104,7 +105,7 @@ export const registerControl = [
     label: 'password',
     type: 'password',
     placeholder: 'Enter your password',
-    component: 'input',
+    component: 'input-text',
   },
 ];
 
@@ -113,6 +114,7 @@ export const sendOTPControl = [
     name: 'email',
     type: 'email',
     placeholder: 'Enter your email',
+    component: 'input-text',
   },
 ];
 
@@ -121,7 +123,9 @@ export const verifyOTPControl = [
     name: 'otp',
     label: 'OTP Code',
     type: 'text',
-    component: 'input',
+    placeholder: 'Enter the OTP code',
+    component: 'input-number',
+    maxLength: 6,
   },
 ];
 

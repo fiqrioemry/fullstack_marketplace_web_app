@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import WebLogo from "@/components/ui/WebLogo";
 import { useAuthStore } from "@/store/useAuthStore";
 import { loginControl, loginState } from "@/config";
-import InputForm from "@/components/form/InputForm";
+import FormInput from "@/components/form/FormInput";
 import GoogleAuth from "@/components/auth/GoogleAuth";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import InputButton from "@/components/form/InputButton";
@@ -19,9 +19,9 @@ const SignIn = () => {
           <div className="py-4 text-center">
             <WebLogo />
           </div>
-          <InputForm formik={loginForm} formControl={loginControl}>
+          <FormInput formik={loginForm} formControl={loginControl}>
             <InputButton title={"login"} formik={loginForm} loading={loading} />
-          </InputForm>
+          </FormInput>
           <div className="flex-center py-2">OR</div>
           <GoogleAuth buttonTitle={"Signin with google"} />
           <div className="text-center mt-2 space-x-2">

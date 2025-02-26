@@ -26,10 +26,12 @@ export const useAuthStore = create((set, get) => ({
       get().resetAuthenticate();
     }
   },
-  resendOTP: async (email) => {
+  sendOTP: async (email) => {
     set({ loading: true });
+    const formData = new FormData();
+    formData.append("email", email);
     try {
-      const { message } = await callApi.sendOTP(email);
+      const { message } = await callApi.sendOTP(formData);
       toast.success(message);
     } catch (error) {
       toast.error(error.message);

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 const ProcessButton = ({ onClick, title, loading, variant }) => {
   return (
     <Button
+      type="button"
       variant={variant}
       onClick={onClick}
       className="w-full"
