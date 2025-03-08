@@ -154,10 +154,6 @@
     @apply h-full z-10 flex items-center justify-center default_border border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted transition-all duration-300;
   }
 
-  .btn-nav {
-    @apply py-2 px-4 m-1 rounded-md hover:bg-muted/50 transition-colors;
-  }
-
   .search-input {
     @apply absolute top-12 left-0 right-0 z-30 border bg-background rounded-md;
   }
@@ -182,13 +178,17 @@
   }
 
   .btn-primary {
-    @apply bg-blue-700 hover:bg-blue-500 text-background transition-colors duration-300;
+    @apply bg-blue-700 hover:bg-blue-500 text-background transition-colors duration-300 capitalize cursor-pointer;
   }
   .btn-secondary {
-    @apply bg-gray-300 hover:bg-gray-200 text-background duration-300 transition-colors;
+    @apply bg-gray-300 hover:bg-gray-200 text-background duration-300 transition-colors capitalize cursor-pointer;
+  }
+
+  .btn-nav {
+    @apply bg-background hover:bg-gray-200 flex items-center   justify-between duration-300 transition-colors capitalize cursor-pointer text-sm px-4 py-2 rounded-md;
   }
 
   .btn-accent {
-    @apply font-medium text-blue-500 hover:text-blue-700 duration-300 transition-colors;
+    @apply font-medium text-blue-500 hover:text-blue-700 duration-300 transition-colors capitalize cursor-pointer;
   }
 }

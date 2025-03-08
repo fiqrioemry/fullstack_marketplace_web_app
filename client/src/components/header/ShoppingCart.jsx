@@ -22,9 +22,9 @@ const ShoppingCart = () => {
         <ShoppingBag />
       </PopoverTrigger>
       <PopoverContent className="h-72 flex flex-col">
-        <div>
+        <div className="flex items-center justify-between">
           <h5>Shopping Cart</h5>
-          <Link className="btn-accent">See all</Link>
+          <Link className="btn-accent text-sm">See all</Link>
         </div>
         <DropdownMenuSeparator />
         <div className="flex-1 ">

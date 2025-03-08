@@ -1,13 +1,11 @@
 import {
   DropdownMenu,
   DropdownMenuLabel,
-  DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, X } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import UserAvatar from "@/components/ui/Avatar";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -32,29 +30,23 @@ const UserMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="py-10 h-20" asChild>
-        <UserAvatar avatar={user?.avatar} />
+      <DropdownMenuTrigger asChild>
+        <button>
+          <UserAvatar avatar={user?.avatar} />
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent>
         <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {NavMenu.map((menu) => (
-          <Link to={menu.href} key={menu.href}>
-            <DropdownMenuItem
-              value={menu.title}
-              className="w-full cursor-pointer capitalize"
-            >
-              {menu.title}
-            </DropdownMenuItem>
+          <Link to={menu.href} key={menu.href} className="btn-nav ">
+            {menu.title}
           </Link>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
-          Log out
-          <DropdownMenuShortcut>
-            <LogOut />
-          </DropdownMenuShortcut>
-        </DropdownMenuItem>
+        <button onClick={logout} className="btn-nav w-full rounded-md">
+          signout <LogOut size={18} />
+        </button>
       </DropdownMenuContent>
     </DropdownMenu>
   );
