@@ -7,7 +7,7 @@ import { useFormSchema } from "@/hooks/useFormSchema";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import UploadButton from "@/components/form/UploadButton";
 
-const Profile = () => {
+const SettingsDisplay = () => {
   const [editProfile, setEditProfile] = useState(false);
   const { updateProfile, profile, updating } = useUserStore();
 
@@ -87,4 +87,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default SettingsDisplay;

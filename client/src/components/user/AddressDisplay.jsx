@@ -4,7 +4,7 @@ import AddressCard from "@/components/card/AddressCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DialogForm } from "@/components/form/DialogForm";
 
-const Address = () => {
+const AddressDisplay = () => {
   const { addAddress, message, address } = useUserStore();
 
   return (
@@ -37,4 +37,4 @@ const Address = () => {
   );
 };
 
-export default Address;
+export default AddressDisplay;

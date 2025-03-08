@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-const ProfileLoading = () => {
+const SettingsLoading = () => {
   return (
-    <div className="grid grid-cols-12 gap-4 p-4 default_border">
+    <div className="grid grid-cols-12 gap-4 p-4">
       <div className=" col-span-4 space-y-">
         <Skeleton className="h-60 w-full rounded-md" />
         <Skeleton className="h-60 w-full rounded-md" />
@@ -18,4 +18,4 @@ const ProfileLoading = () => {
   );
 };
 
-export default ProfileLoading;
+export default SettingsLoading;
