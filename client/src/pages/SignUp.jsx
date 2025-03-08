@@ -4,8 +4,9 @@ import {
   sendOTPControl,
   verifyOTPControl,
 } from "@/config";
+import { useEffect } from "react";
 import { Loader } from "lucide-react";
-import WebLogo from "@/components/ui/WebLogo";
+import Logo from "@/components/ui/Logo";
 import { useNavigate } from "react-router-dom";
 import StepOne from "@/components/auth/StepOne";
 import StepTwo from "@/components/auth/StepTwo";
@@ -13,7 +14,6 @@ import StepThree from "@/components/auth/StepThree";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEffect } from "react";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const SignUp = () => {
       <Card className="w-96 h-96">
         <CardContent className="p-4">
           <div className="text-center">
-            <WebLogo />
+            <Logo />
           </div>
 
           <div className="h-72 pt-6">

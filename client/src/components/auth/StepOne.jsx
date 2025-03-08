@@ -16,7 +16,7 @@ const StepOne = ({ registerForm }) => {
       </FormInput>
       <div className="text-center">
         Already have an account?{" "}
-        <Link to="/signin" className="btn-primary">
+        <Link to="/signin" className="btn-accent">
           Sign In
         </Link>
       </div>

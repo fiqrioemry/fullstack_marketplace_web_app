@@ -9,7 +9,7 @@ import { Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-const DropDownOpenStore = () => {
+const StoreOptions = () => {
   const navigate = useNavigate();
   return (
     <DropdownMenu>
@@ -31,4 +31,4 @@ const DropDownOpenStore = () => {
   );
 };
 
-export default DropDownOpenStore;
+export default StoreOptions;

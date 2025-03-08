@@ -3,18 +3,15 @@ import callApi from "@/api/callApi";
 import toast from "react-hot-toast";
 
 export const useCartStore = create((set) => ({
-  cart: [],
+  cart: null,
   loading: false,
 
   getCarts: async () => {
-    set({ loading: true });
     try {
-      const cart = await callApi.getCarts();
-      set({ cart });
-    } catch {
-      set({ cart: [] });
-    } finally {
-      set({ loading: false });
+      const { cart } = await callApi.getCarts();
+      set({ cart: cart });
+    } catch (error) {
+      console.log(error.message);
     }
   },
 

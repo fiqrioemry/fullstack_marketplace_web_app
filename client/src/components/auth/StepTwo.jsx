@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
-
 import { Mail } from "lucide-react";
 import { verifyOTPControl } from "@/config";
-import useHandleOTP from "./hooks/useHandleOTP";
+import useHandleOTP from "@/hooks/useHandleOTP";
 import FormInput from "@/components/form/FormInput";
 import InputButton from "@/components/form/InputButton";
 

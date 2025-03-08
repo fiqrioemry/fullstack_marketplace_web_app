@@ -20,19 +20,28 @@ import StoreProductsLayout from "./pages/seller/StoreProductsLayout";
 import NotificationLayout from "./pages/customer/NotificationLayout";
 import StoreDashboardLayout from "./pages/seller/StoreDashboardLayout";
 import StoreNotificationLayout from "./pages/seller/StoreNotificationLayout";
+import Layout from "./components/layout/Layout";
+import PageLoading from "./components/loading/PageLoading";
+import DashboardLayout from "./components/layout/DashboardLayout";
 
-// support
-import MainLayout from "./components/layout/MainLayout";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/useAuthStore";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
-import DashboardLayout from "./components/layout/DashboardLayout";
-import TestingUI from "./pages/TestingUI";
 
 function App() {
+  const { authCheck, checkingAuth } = useAuthStore();
+  useAuthStore();
+
+  useEffect(() => {
+    authCheck();
+  }, [authCheck]);
+
+  if (checkingAuth) return <PageLoading />;
+
   return (
     <>
       <Routes>
-        <Route path="testing" element={<TestingUI />} />
         <Route
           path="signin"
           element={
@@ -50,14 +59,13 @@ function App() {
           }
         />
 
-        <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path=":storename" element={<Store />} />
           <Route path="category" element={<Category />} />
           <Route path="search" element={<SearchResult />} />
           <Route path=":storename/:slug" element={<ProductPage />} />
           <Route path="category/:slug" element={<ProductCategory />} />
-          <Route path="testing" element={<TestingUI />} />
 
           <Route
             path="cart"

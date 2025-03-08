@@ -8,30 +8,26 @@ export const useAuthStore = create((set, get) => ({
   store: null,
   loading: false,
   accessToen: null,
-  isAuthenticate: null,
+  checkingAuth: true,
 
   resetStep: () => set({ step: 1 }),
 
   setAccessToken: (accessToken) => set({ accessToken }),
 
-  resetAuthenticate: () =>
-    set({ user: null, isAuthenticate: false, accessToken: null }),
-
   authCheck: async () => {
     try {
       const { user } = await callApi.authCheck();
-
-      set({ user, isAuthenticate: true });
+      set({ user });
     } catch {
-      get().resetAuthenticate();
+      set({ user: null });
+    } finally {
+      set({ checkingAuth: false });
     }
   },
   sendOTP: async (email) => {
     set({ loading: true });
-    const formData = new FormData();
-    formData.append("email", email);
     try {
-      const { message } = await callApi.sendOTP(formData);
+      const { message } = await callApi.sendOTP(email);
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
@@ -44,7 +40,7 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true });
     try {
       const { message, accessToken, user } = await callApi.login(formData);
-      set({ user, isAuthenticate: true, accessToken });
+      set({ user, accessToken });
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
@@ -54,15 +50,11 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logout: async () => {
-    set({ loading: true });
     try {
       const { message } = await callApi.logout();
-      get().resetAuthenticate();
       toast.success(message);
     } catch (error) {
       console.log(error.message);
-    } finally {
-      set({ loading: false });
     }
   },
 

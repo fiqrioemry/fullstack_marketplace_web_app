@@ -4,13 +4,14 @@ import callApi from "@/api/callApi";
 export const useProductStore = create((set) => ({
   results: [],
   product: [],
-  products: [],
-  categories: [],
+  products: null,
+  categories: null,
   totalPage: 0,
   totalData: 0,
   currentPage: 0,
   loading: false,
   message: null,
+  totalProducts: 0,
 
   getProduct: async (slug) => {
     set({ loading: true });
@@ -27,11 +28,11 @@ export const useProductStore = create((set) => ({
   getProducts: async (searchParams) => {
     try {
       set({ loading: true });
-      const { products, totalPage, totalData, currentPage } =
+      const { products, totalPage, totalProducts, currentPage } =
         await callApi.getProducts(searchParams);
-      set({ products, totalPage, totalData, currentPage });
-    } catch {
-      set({ products: [] });
+      set({ products, totalPage, totalProducts, currentPage });
+    } catch (error) {
+      console.log(error.message);
     } finally {
       set({ loading: false });
     }
@@ -39,13 +40,10 @@ export const useProductStore = create((set) => ({
 
   getCategories: async () => {
     try {
-      set({ loading: true, categories: [] });
       const categories = await callApi.getCategories();
       set({ categories });
     } catch (error) {
-      set({ message: error.message });
-    } finally {
-      set({ loading: false });
+      console.log(error.message);
     }
   },
 

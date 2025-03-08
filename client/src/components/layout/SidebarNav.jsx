@@ -65,7 +65,6 @@ const sellerNav = [
 
 export function SidebarNav() {
   const location = useLocation().pathname;
-
   const navigationMenu = location.includes("store") ? sellerNav : customerNav;
 
   return (

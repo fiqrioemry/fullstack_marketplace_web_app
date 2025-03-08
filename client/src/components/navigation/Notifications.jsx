@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import {
   DropdownMenu,
   DropdownMenuLabel,
@@ -8,47 +7,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import { CustomerNavLinks } from "@/config";
-import UserAvatar from "@/components/ui/Avatar";
-import { useAuthStore } from "@/store/useAuthStore";
+import { BellRing } from "lucide-react";
+import { CustomerNavLinks } from "../../config";
 
-const UserMenu = ({ user }) => {
-  const { logout } = useAuthStore();
-
+const Notifications = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="cursor-pointer">
-          <UserAvatar avatar={user.avatar} />
-        </div>
+        <BellRing className="cursor-pointer" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+        <DropdownMenuLabel>My Shop</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {CustomerNavLinks.map((link) => {
           return (
             <Link to={link.href} key={link.href}>
               <DropdownMenuItem
                 value={link.title}
-                className="w-full cursor-pointer  capitalize"
+                className="w-full cursor-pointer"
               >
                 {link.title}
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
             </Link>
           );
         })}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
+        <DropdownMenuItem className="w-full cursor-pointer">
           Log out
-          <DropdownMenuShortcut>
-            <LogOut />
-          </DropdownMenuShortcut>
+          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
 
-export default UserMenu;
+export default Notifications;

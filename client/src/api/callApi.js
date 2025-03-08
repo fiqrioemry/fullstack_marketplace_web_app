@@ -225,9 +225,9 @@ const callApi = {
   },
 
   //   cart API management :
-  getCarts: async (formData) => {
+  getCarts: async () => {
     return authInstance
-      .get('/cart', formData)
+      .get('/cart')
       .then((res) => res.data)
       .catch(errorHandle);
   },

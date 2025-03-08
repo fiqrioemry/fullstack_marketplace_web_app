@@ -107,10 +107,6 @@
     @apply text-xs text-red-500;
   }
 
-  .btn-primary {
-    @apply text-primary hover:text-primary/50 font-medium duration-300 transition-all;
-  }
-
   .flex-center {
     @apply flex items-center justify-center;
   }
@@ -179,5 +175,20 @@
 
   .section-margin {
     @apply container mx-auto space-y-6 py-6 md:px-6 px-2;
+  }
+
+  .btn {
+    @apply flex items-center justify-center text-xs md:text-sm gap-4 py-2 px-4 capitalize;
+  }
+
+  .btn-primary {
+    @apply bg-blue-700 hover:bg-blue-500 text-background transition-colors duration-300;
+  }
+  .btn-secondary {
+    @apply bg-gray-300 hover:bg-gray-200 text-background duration-300 transition-colors;
+  }
+
+  .btn-accent {
+    @apply font-medium text-blue-500 hover:text-blue-700 duration-300 transition-colors;
   }
 }
