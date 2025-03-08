@@ -1,46 +1,55 @@
-import { Menu } from "lucide-react";
+import { cn } from "@/lib/utils";
 import Logo from "@/components/ui/Logo";
-import { Link } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
-import UserMenu from "@/components/header/UserMenu";
-import SearchBar from "@/components/header/SearchBar";
-import ShoppingCart from "@/components/header/ShoppingCart";
-import StoreOptions from "@/components/header/StoreOptions";
-import Notifications from "@/components/header/Notifications";
+import SearchInput from "@/components/header/SearchInput";
+import { useProductStore } from "@/store/useProductStore";
+import useSearchProducts from "@/hooks/useSearchProducts";
+import SearchResult from "@/components/header/SearchResult";
+import NavigationMenu from "@/components/header/NavigationMenu";
 
 const Header = () => {
-  const { accessToken, user } = useAuthStore();
-  console.log(user);
-  console.log(accessToken);
+  const { user } = useAuthStore();
+
+  const { searchProducts, results, searching } = useProductStore();
+  const { searchForm, searchRef, openSearch, handleSearch } =
+    useSearchProducts(searchProducts);
+
+  const searchActive = cn(
+    openSearch ? "w-0 md:w-auto" : "w-auto",
+    "overflow-hidden delay-50 duration-300 ease-in-out transition-all"
+  );
+
+  const inputActive = cn(
+    openSearch ? "w-full md:w-96" : "max-w-lg md:max-w-xl",
+    " relative duration-300"
+  );
+
+  const resultActive = cn(
+    openSearch ? "max-h-96" : "max-h-0",
+    "absolute top-11 right-0 left-0 bg-background border rounded-lg shadow-lg border-muted overflow-hidden z-40 duration-300 ease-in-out  transition-all"
+  );
 
   return (
     <header className="border-b py-2 px-2">
-      <div className="flex items-center justify-between mx-auto container">
-        <Logo />
-        <SearchBar />
+      <div className="flex items-center justify-between container mx-auto">
+        {/* Website Logo */}
+        <div className={searchActive}>
+          <Logo />
+        </div>
 
-        {!accessToken ? (
-          <nav>
-            <div className="hidden md:flex items-center gap-4">
-              <Link to="signin" className="btn btn-primary">
-                Signin
-              </Link>
-              <Link to="signup" className="btn btn-secondary">
-                Signup
-              </Link>
-            </div>
-            <div className="block md:hidden cursor-pointer">
-              <Menu />
-            </div>
-          </nav>
-        ) : (
-          <nav className="flex items-center gap-4">
-            <Notifications />
-            <StoreOptions />
-            <ShoppingCart />
-            <UserMenu />
-          </nav>
-        )}
+        {/* search products*/}
+        <div ref={searchRef} className={inputActive}>
+          <SearchInput handleSearch={handleSearch} searchForm={searchForm} />
+
+          <div className={resultActive}>
+            <SearchResult results={results} searching={searching} />
+          </div>
+        </div>
+
+        {/* Navigation menu */}
+        <div className={searchActive}>
+          <NavigationMenu user={user} />
+        </div>
       </div>
     </header>
   );

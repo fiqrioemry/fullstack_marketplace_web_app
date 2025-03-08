@@ -2,7 +2,7 @@ import { create } from "zustand";
 import callApi from "@/api/callApi";
 
 export const useProductStore = create((set) => ({
-  results: [],
+  results: null,
   product: [],
   products: null,
   categories: null,
