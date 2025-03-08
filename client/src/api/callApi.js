@@ -128,14 +128,14 @@ const callApi = {
   }) => {
     const searchParams = new URLSearchParams({
       search,
-      category: category.join(','),
-      city: city.join(','),
       minPrice,
       maxPrice,
       sortBy,
       orderBy,
       page,
       limit,
+      city: city.join(','),
+      category: category.join(','),
     }).toString();
     return authInstance
       .get(`/product?${searchParams}`)

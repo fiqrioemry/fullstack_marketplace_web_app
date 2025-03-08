@@ -12,6 +12,7 @@ export const useProductStore = create((set) => ({
   loading: false,
   message: null,
   totalProducts: 0,
+  searching: false,
 
   getProduct: async (slug) => {
     set({ loading: true });
@@ -48,14 +49,14 @@ export const useProductStore = create((set) => ({
   },
 
   searchProducts: async (search) => {
-    set({ loading: true });
+    set({ searching: true });
     try {
       const { products } = await callApi.searchProducts(search);
       set({ results: products });
     } catch {
       set({ results: [] });
     } finally {
-      set({ loading: false });
+      set({ searching: false });
     }
   },
 }));
