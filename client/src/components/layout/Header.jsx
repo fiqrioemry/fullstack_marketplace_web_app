@@ -15,25 +15,25 @@ const Header = () => {
     useSearchProducts(searchProducts);
 
   const searchActive = cn(
-    openSearch ? "w-0 md:w-auto" : "w-auto",
-    "overflow-hidden delay-50 duration-300 ease-in-out transition-all"
+    openSearch ? "w-0 md:w-auto" : "w-36 md:w-auto",
+    "overflow-hidden  delay-50  duration-150 ease-in transition-all"
   );
 
   const inputActive = cn(
-    openSearch ? "w-full md:w-96" : "max-w-lg md:max-w-xl",
-    " relative duration-300"
+    openSearch ? "w-full md:w-96" : "w-96",
+    "flex-1 relative duration-300 ease-in transition-all"
   );
 
   const resultActive = cn(
     openSearch ? "max-h-96" : "max-h-0",
-    "absolute top-11 right-0 left-0 bg-background border rounded-lg shadow-lg border-muted overflow-hidden z-40 duration-300 ease-in-out  transition-all"
+    "absolute top-11 right-0 left-0 bg-background  border rounded-lg shadow-lg border-muted overflow-hidden z-40 delay-300 duration-150 ease-in transition-all"
   );
 
   return (
     <header className="border-b py-2 px-2">
-      <div className="flex items-center justify-between container mx-auto">
+      <div className="flex items-center justify-between container mx-auto gap-4">
         {/* Website Logo */}
-        <div className={searchActive}>
+        <div className="hidden md:flex px-2">
           <Logo />
         </div>
 

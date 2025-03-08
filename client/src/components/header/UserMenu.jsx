@@ -7,8 +7,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import UserAvatar from "@/components/ui/Avatar";
+
 import { useAuthStore } from "@/store/useAuthStore";
+import Avatar from "@/components/ui/Avatar";
 
 const NavMenu = [
   {
@@ -32,7 +33,7 @@ const UserMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button>
-          <UserAvatar avatar={user?.avatar} />
+          <Avatar user={user} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

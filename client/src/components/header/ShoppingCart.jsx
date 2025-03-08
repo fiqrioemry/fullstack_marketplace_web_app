@@ -19,7 +19,7 @@ const ShoppingCart = () => {
   return (
     <Popover>
       <PopoverTrigger>
-        <ShoppingBag />
+        <ShoppingBag className="md:h-7 md:w-7 w-5 h-5" />
       </PopoverTrigger>
       <PopoverContent className="h-72 flex flex-col">
         <div className="flex items-center justify-between">

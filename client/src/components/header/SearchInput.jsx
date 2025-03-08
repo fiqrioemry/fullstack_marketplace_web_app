@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 
 const SearchInput = ({ searchForm, handleSearch }) => {
   return (
-    <div className="w-96">
+    <div className="w-full">
       <Input
         name="search"
         onFocus={handleSearch}

@@ -1,10 +1,11 @@
-const Avatar = ({ avatar }) => {
+/* eslint-disable react/prop-types */
+const Avatar = ({ user }) => {
   return (
-    <div className="w-8 h-8  flex items-center justify-center">
+    <div className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center">
       <img
-        className="object-contain w-full h-full rounded-full border border-foreground"
-        src={avatar}
-        alt="user_avatar"
+        className="object-cover w-full aspect-square rounded-full border border-foreground"
+        src={user.avatar}
+        alt={user.username}
       />
     </div>
   );

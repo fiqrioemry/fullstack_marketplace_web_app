@@ -11,8 +11,8 @@ import { Link } from "react-router-dom";
 const StoreOptions = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Store />
+      <DropdownMenuTrigger>
+        <Store className="md:h-7 md:w-7 w-5 h-5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel className="text-center">
