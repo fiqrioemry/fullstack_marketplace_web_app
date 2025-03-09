@@ -1,30 +1,17 @@
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
-import { CheckSquare, Minus, Plus, Square, Trash2 } from "lucide-react";
+import { Minus, Plus, Square, Trash2, CheckSquare } from "lucide-react";
 
 const CartDisplay = () => {
   const {
     cart,
-    setCheckoutItem,
-    checkoutItem,
     removeCart,
-    updateCart,
+    checkoutItem,
     selectAllCheckout,
+    handleCartDecrease,
+    handleCartIncrease,
+    toggleCheckoutItem,
   } = useCartStore();
-
-  const handleSelectAll = () => {
-    selectAllCheckout();
-  };
-
-  const handleDecrease = (item) => {
-    const newQuantity = item.quantity - 1;
-    updateCart(item.cartId, newQuantity);
-  };
-
-  const handleIncrease = (item) => {
-    const newQuantity = item.quantity + 1;
-    updateCart(item.cartId, newQuantity);
-  };
 
   const totalPrice = cart.reduce(
     (sum, store) =>
@@ -37,19 +24,19 @@ const CartDisplay = () => {
 
   return (
     <section className="bg-gray-100">
-      <div className="container mx-auto py-3 md:py-6">
-        <h2 className="text-2xl font-bold mb-4">Keranjang</h2>
+      <div className="container mx-auto py-3 md:py-6 px-2">
+        <h2 className="mb-4">Keranjang</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Cart Items */}
-          <div className="md:col-span-2 bg-white shadow-md rounded-lg p-4">
+          <div className="md:col-span-2 bg-background border rounded-lg p-4">
             <div className="flex justify-between items-center border-b pb-2">
               <button
-                onClick={handleSelectAll}
-                className="flex items-center space-x-2"
+                onClick={selectAllCheckout}
+                className="flex gap-4 btn-accent"
               >
                 {checkoutItem.length ===
                 cart.flatMap((store) => store.items).length ? (
-                  <CheckSquare className="text-green-500" />
+                  <CheckSquare />
                 ) : (
                   <Square />
                 )}
@@ -57,7 +44,6 @@ const CartDisplay = () => {
                   Pilih Semua ({cart.flatMap((store) => store.items).length})
                 </span>
               </button>
-              <button className="text-red-500 hover:text-red-700">Hapus</button>
             </div>
 
             {cart.map((store) => (
@@ -69,9 +55,10 @@ const CartDisplay = () => {
                     className="flex items-center justify-between py-3"
                   >
                     <div className="flex items-center space-x-3">
+                      {/* Checkbox untuk memilih satu item */}
                       <button
-                        className="text-accent"
-                        onClick={() => setCheckoutItem(item.cartId)}
+                        className="btn-accent"
+                        onClick={() => toggleCheckoutItem(item.cartId)}
                       >
                         {checkoutItem.includes(item.cartId) ? (
                           <CheckSquare />
@@ -94,7 +81,7 @@ const CartDisplay = () => {
                     <div className="flex items-center space-x-2">
                       <button
                         className="btn-nav"
-                        onClick={() => handleDecrease(item)}
+                        onClick={() => handleCartDecrease(item)}
                         disabled={item.quantity <= 1}
                       >
                         <Minus size={16} />
@@ -104,7 +91,7 @@ const CartDisplay = () => {
                       </span>
                       <button
                         className="btn-nav"
-                        onClick={() => handleIncrease(item)}
+                        onClick={() => handleCartIncrease(item)}
                         disabled={item.quantity >= item.stock}
                       >
                         <Plus size={16} />
@@ -124,15 +111,13 @@ const CartDisplay = () => {
           </div>
 
           {/* Ringkasan Belanja */}
-          <div className="bg-white shadow-md rounded-lg p-4">
-            <h3 className="text-lg font-semibold border-b pb-2">
-              Ringkasan Belanja
-            </h3>
+          <div className="h-40 bg-background rounded-lg p-4 border">
+            <h3 className=" font-semibold border-b pb-2">Ringkasan Belanja</h3>
             <div className="flex justify-between py-3 text-lg font-semibold">
               <span>Total</span>
               <span>{formatToRupiah(totalPrice)}</span>
             </div>
-            <button className="w-full bg-green-500 text-white py-2 rounded-md font-semibold">
+            <button className="btn btn-primary w-full rounded-md font-semibold">
               Beli ({checkoutItem.length})
             </button>
           </div>

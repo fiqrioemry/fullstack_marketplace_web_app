@@ -12,7 +12,7 @@ const Cart = () => {
 
   if (!cart) return <CartLoading />;
 
-  return <CartDisplay cart={cart} />;
+  return <CartDisplay />;
 };
 
 export default Cart;
