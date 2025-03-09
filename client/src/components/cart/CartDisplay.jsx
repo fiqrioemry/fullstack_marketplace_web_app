@@ -3,17 +3,17 @@ import { useCartStore } from "@/store/useCartStore";
 import { CheckSquare, Minus, Plus, Square, Trash2 } from "lucide-react";
 
 const CartDisplay = () => {
-  const { cart, setCheckoutItem, checkoutItem, removeCart, updateCart } =
-    useCartStore();
+  const {
+    cart,
+    setCheckoutItem,
+    checkoutItem,
+    removeCart,
+    updateCart,
+    selectAllCheckout,
+  } = useCartStore();
 
   const handleSelectAll = () => {
-    if (checkoutItem.length === cart.flatMap((store) => store.items).length) {
-      setCheckoutItem([]);
-    } else {
-      setCheckoutItem(
-        cart.flatMap((store) => store.items.map((item) => item.cartId))
-      );
-    }
+    selectAllCheckout();
   };
 
   const handleDecrease = (item) => {
@@ -34,6 +34,7 @@ const CartDisplay = () => {
         .reduce((acc, item) => acc + item.price * item.quantity, 0),
     0
   );
+
   return (
     <section className="bg-gray-100">
       <div className="container mx-auto py-3 md:py-6">
@@ -94,7 +95,7 @@ const CartDisplay = () => {
                       <button
                         className="btn-nav"
                         onClick={() => handleDecrease(item)}
-                        disabled={Math.max(item.quantity <= 1, 0)}
+                        disabled={item.quantity <= 1}
                       >
                         <Minus size={16} />
                       </button>
@@ -104,10 +105,7 @@ const CartDisplay = () => {
                       <button
                         className="btn-nav"
                         onClick={() => handleIncrease(item)}
-                        disabled={Math.min(
-                          item.quantity >= item.stock,
-                          item.quantity
-                        )}
+                        disabled={item.quantity >= item.stock}
                       >
                         <Plus size={16} />
                       </button>
