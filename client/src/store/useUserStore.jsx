@@ -3,19 +3,16 @@ import toast from "react-hot-toast";
 import callApi from "@/api/callApi";
 
 export const useUserStore = create((set, get) => ({
-  profile: [],
+  profile: null,
   address: null,
   loading: false,
 
   getProfile: async () => {
-    set({ loading: true });
     try {
       const { profile } = await callApi.getProfile();
       set({ profile });
-    } catch {
-      set({ user: [] });
-    } finally {
-      set({ loading: false });
+    } catch (error) {
+      console.log(error.message);
     }
   },
 
@@ -25,8 +22,8 @@ export const useUserStore = create((set, get) => ({
       const { message, updatedProfile } = await callApi.updateProfile(formData);
       set({ profile: updatedProfile });
       toast.success(message);
-    } catch (err) {
-      toast.error(err.message);
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       set({ loading: false });
     }
@@ -36,8 +33,8 @@ export const useUserStore = create((set, get) => ({
     try {
       const { address } = await callApi.getAddress();
       set({ address });
-    } catch {
-      set({ address: [] });
+    } catch (error) {
+      console.log(error.message);
     }
   },
 
