@@ -25,12 +25,10 @@ const AddressDisplay = () => {
           <h4>{message}</h4>
         </div>
       ) : (
-        <ScrollArea className="h-96 bg-muted p-4">
-          <div className="space-y-4">
-            {address.map((item) => (
-              <AddressCard address={item} key={item.id} />
-            ))}
-          </div>
+        <ScrollArea className="h-[30rem] bg-muted p-4">
+          {address.map((addrs) => (
+            <AddressCard address={addrs} key={addrs.id} />
+          ))}
         </ScrollArea>
       )}
     </div>

@@ -1,15 +1,15 @@
 /* eslint-disable react/prop-types */
 import { addressControl } from "@/config";
-import { DialogForm } from "../form/DialogForm";
-import { DeleteBox } from "../modal/DeleteBox";
 import { useUserStore } from "@/store/useUserStore";
+import { DialogForm } from "@/components/form/DialogForm";
+import { DeleteBox } from "@/components/modal/DeleteBox";
 import { Card, CardContent } from "@/components/ui/card";
 
 const AddressCard = ({ address }) => {
   const { updateAddress, deleteAddress } = useUserStore();
 
   return (
-    <Card>
+    <Card className="mb-4">
       <CardContent className="p-4 space-y-2">
         <h4>Shipment Address</h4>
         <div className="flex items-center space-x-2 text-sm">

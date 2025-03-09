@@ -26,7 +26,7 @@ const UserLayout = () => {
   const currentPath = location.pathname;
 
   return (
-    <main className="h-screen py-3 md:py-6">
+    <main className="py-3 md:py-6">
       <Tabs defaultValue={currentPath} className="container mx-auto mb-3 px-2">
         <TabsList className="justify-between md:justify-start">
           {userMenu.map((menu) => {
@@ -48,7 +48,7 @@ const UserLayout = () => {
           })}
         </TabsList>
       </Tabs>
-      <section className="container mx-auto mb-3 px-2">
+      <section className="h-screen container mx-auto mb-3 px-2">
         <Outlet />
       </section>
     </main>

@@ -4,8 +4,7 @@ import callApi from "@/api/callApi";
 
 export const useUserStore = create((set) => ({
   profile: [],
-  address: [],
-  message: "",
+  address: null,
   loading: false,
   updating: false,
 
@@ -36,27 +35,24 @@ export const useUserStore = create((set) => ({
   },
 
   getAddress: async () => {
-    set({ loading: true });
     try {
-      const { message, address } = await callApi.getAddress();
-      set({ message, address });
+      const { address } = await callApi.getAddress();
+      set({ address });
     } catch {
       set({ address: [] });
-    } finally {
-      set({ loading: false });
     }
   },
 
   updateAddress: async (formData, addressId) => {
     try {
-      set({ updating: true });
-      const { message, newAddress } = await callApi.updateAddress(
+      set({ loading: true });
+      const { message, updatedAddress } = await callApi.updateAddress(
         formData,
         addressId
       );
       set((state) => ({
         address: state.address.map((add) =>
-          add.id === addressId ? newAddress : add
+          add.id === addressId ? [...state.address, updatedAddress] : add
         ),
       }));
 
@@ -64,20 +60,20 @@ export const useUserStore = create((set) => ({
     } catch (err) {
       toast.error(err.message);
     } finally {
-      set({ updating: false });
+      set({ loading: false });
     }
   },
 
   addAddress: async (formData) => {
     try {
-      set({ updating: true });
+      set({ loading: true });
       const { message, newAddress } = await callApi.addAddress(formData);
-      set((state) => ({ address: { ...state.address, newAddress } }));
+      set((state) => ({ address: [...state.address, newAddress] }));
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
     } finally {
-      set({ updating: false });
+      set({ loading: false });
     }
   },
 

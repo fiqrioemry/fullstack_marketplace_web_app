@@ -196,73 +196,6 @@ export const shipmentMethods = [
   },
 ];
 
-// address
-// export const addressState = {
-//   name: '',
-//   isMain: false,
-//   address: '',
-//   province: '',
-//   city: '',
-//   zipcode: '',
-//   phone: '',
-// };
-
-// export const addressControl = [
-//   {
-//     name: 'name',
-//     label: 'name',
-//     type: 'text',
-//     placeholder: 'Enter receipient name',
-//     component: 'input',
-//   },
-//   {
-//     name: 'address',
-//     label: 'address',
-//     type: 'text',
-//     placeholder: 'Enter receipient address',
-//     component: 'textarea',
-//   },
-//   {
-//     name: 'province',
-//     label: 'province',
-//     type: 'select',
-//     placeholder: 'Enter receipient province',
-//     component: 'select',
-//     options: province,
-//   },
-//   {
-//     name: 'city',
-//     label: 'city',
-//     type: 'select',
-//     placeholder: 'Enter receipient city',
-//     component: 'select',
-//     options: city,
-//   },
-//   {
-//     name: 'zipcode',
-//     label: 'zipcode',
-//     type: 'text',
-//     placeholder: 'Enter receipient zipcode',
-//     component: 'input',
-//     maxLength: '6',
-//   },
-
-//   {
-//     name: 'phone',
-//     label: 'phone number',
-//     type: 'tel',
-//     placeholder: 'Enter receipient phone',
-//     component: 'input',
-//     maxLength: '13',
-//   },
-//   {
-//     name: 'isMain',
-//     label: 'set as main address',
-//     type: 'checkbox',
-//     component: 'checkbox',
-//   },
-// ];
-
 export const orderState = {
   productId: [],
   quantity: [],
@@ -417,8 +350,6 @@ export const testControl = [
 ];
 
 // change to a new feature :
-// change to a new feature :
-// change to a new feature :
 export const openStoreState = {
   name: '',
   description: '',
@@ -501,6 +432,7 @@ export const addressState = {
   city: '',
   zipcode: '',
   phone: '',
+  district: '',
 };
 
 export const addressControl = [

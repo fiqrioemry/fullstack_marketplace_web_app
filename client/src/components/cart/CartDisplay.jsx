@@ -48,7 +48,7 @@ const CartDisplay = () => {
 
             {cart.map((store) => (
               <div key={store.storeId} className="border-b py-4">
-                <h3 className="text-lg font-semibold">{store.storeName}</h3>
+                <h5>{store.storeName}</h5>
                 {store.items.map((item) => (
                   <div
                     key={item.cartId}
@@ -69,39 +69,40 @@ const CartDisplay = () => {
                       <img
                         src={item.images}
                         alt={item.name}
-                        className="h-16 w-16 object-cover rounded-md"
+                        className="h-16 w-16 border object-cover rounded-md"
                       />
                       <div>
-                        <h4 className="text-sm font-medium">{item.name}</h4>
-                        <div className="text-lg font-semibold">
+                        <h5>{item.name}</h5>
+                        <span className="text-sm md:text-md font-semibold">
                           {formatToRupiah(item.price)}
-                        </div>
+                        </span>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        className="btn-nav"
-                        onClick={() => handleCartDecrease(item)}
-                        disabled={item.quantity <= 1}
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <span className="text-sm font-semibold">
-                        {item.quantity}
-                      </span>
-                      <button
-                        className="btn-nav"
-                        onClick={() => handleCartIncrease(item)}
-                        disabled={item.quantity >= item.stock}
-                      >
-                        <Plus size={16} />
-                      </button>
-
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center text-sm border p-1 rounded-md gap-2">
+                        <button
+                          className="btn-nav"
+                          disabled={item.quantity <= 1}
+                          onClick={() => handleCartDecrease(item)}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span className="text-sm md:text-md w-10 text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          className="btn-nav"
+                          disabled={item.quantity >= item.stock}
+                          onClick={() => handleCartIncrease(item)}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
                       <button
                         onClick={() => removeCart(item.cartId)}
                         className="btn-delete"
                       >
-                        <Trash2 />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
@@ -112,12 +113,12 @@ const CartDisplay = () => {
 
           {/* Ringkasan Belanja */}
           <div className="h-40 bg-background rounded-lg p-4 border">
-            <h3 className=" font-semibold border-b pb-2">Ringkasan Belanja</h3>
-            <div className="flex justify-between py-3 text-lg font-semibold">
+            <h4>Ringkasan Belanja</h4>
+            <div className="flex justify-between py-3 text-lg font-medium">
               <span>Total</span>
               <span>{formatToRupiah(totalPrice)}</span>
             </div>
-            <button className="btn btn-primary w-full rounded-md font-semibold">
+            <button className="btn btn-primary w-full rounded-md font-medium">
               Beli ({checkoutItem.length})
             </button>
           </div>
