@@ -2,9 +2,12 @@ import { useEffect } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import CartLoading from "@/components/loading/CartLoading";
 import AddressSelection from "../components/checkout/AddressSelection";
+import CheckoutOrder from "../components/checkout/CheckoutOrder";
 
 const Cart = () => {
-  const { cart, getCarts } = useCartStore();
+  const { cart, getCarts, checkoutItem } = useCartStore();
+
+  console.log(checkoutItem);
 
   useEffect(() => {
     getCarts();
@@ -18,6 +21,7 @@ const Cart = () => {
         <h2 className="mb-4">Checkout</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <AddressSelection />
+          <CheckoutOrder />
         </div>
       </div>
     </section>

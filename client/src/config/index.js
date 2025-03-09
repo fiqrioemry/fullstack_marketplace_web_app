@@ -196,12 +196,6 @@ export const shipmentMethods = [
   },
 ];
 
-export const orderState = {
-  productId: [],
-  quantity: [],
-  shipmentCost: [],
-};
-
 export const productState = {
   name: '',
   categoryId: '',
