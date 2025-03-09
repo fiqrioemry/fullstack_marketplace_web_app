@@ -13,46 +13,42 @@ const deleteFromCloudinary = require('../../utils/deleteFromCloudinary');
 
 async function getStoreInfo(req, res) {
   const slug = req.params.slug;
+
   try {
     const storeData = await Store.findOne({
       where: { slug },
-      attributes: { exclude: ['userId'] },
-      include: [
-        {
-          model: Product,
-          as: 'product',
-          include: [
-            {
-              model: Gallery,
-              as: 'gallery',
-              attributes: ['image'],
-            },
-          ],
-        },
-      ],
     });
 
     if (!storeData) return res.status(404).json({ message: 'Store not found' });
 
-    const products = store.product.map((item) => ({
+    const productsData = await Product.findAll({
+      where: { storeId: storeData.id },
+      include: [
+        { model: Gallery, as: 'gallery', attributes: ['image'] },
+        { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
+      ],
+    });
+
+    const store = {
+      slug: slug,
+      name: storeData.name,
+      image: storeData.image,
+      city: storeData.city,
+      avatar: storeData.avatar,
+      description: storeData.description,
+    };
+
+    const products = productsData.map((item) => ({
       id: item.id,
       name: item.name,
       slug: item.slug,
       price: item.price,
-      stock: item.stock,
-      city: item.store?.city,
-      description: item.description,
-      images: item.gallery.map((img) => img.image),
+      storeName: store?.name,
+      storeSlug: store?.slug,
+      storeAvatar: store?.avatar,
+      categoryName: item.category?.name,
+      images: item.gallery[0].image,
     }));
-
-    const store = {
-      name: store.name,
-      slug: slug,
-      image: store.image,
-      city: store.city,
-      avatar: store.avatar,
-      description: store.description,
-    };
 
     return res.status(200).json({ store, products });
   } catch (error) {
@@ -358,7 +354,6 @@ const updateProduct = async function (req, res) {
     await transaction.commit();
     return res.status(200).json({ message: 'Product updated successfully' });
   } catch (error) {
-    console.log(error);
     await transaction.rollback();
     return res.status(500).json({
       message: error.message,

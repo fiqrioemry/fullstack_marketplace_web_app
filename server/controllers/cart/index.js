@@ -30,7 +30,7 @@ async function addCart(req, res) {
     if (newCart) {
       await newCart.update({ quantity: newQuantity });
     } else {
-      newCart = await Cart.create({
+      await Cart.create({
         productId,
         userId,
         quantity,
@@ -39,7 +39,6 @@ async function addCart(req, res) {
 
     return res.status(201).json({
       message: 'Product added to cart',
-      newCart,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -77,20 +76,16 @@ async function updateCart(req, res) {
     await cart.update({ quantity });
 
     return res.status(200).json({
-      message: 'Cart is updated',
-      quantity,
+      message: 'Cart Updated',
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
-async function deleteCart(req, res) {
+async function removeCart(req, res) {
   const id = req.params.id;
-  const userId = req.user.userIdd;
-
+  const userId = req.user.userId;
   try {
     const cart = await Cart.findByPk(id);
 
@@ -109,10 +104,10 @@ async function deleteCart(req, res) {
     await cart.destroy();
 
     return res.status(200).json({
-      message: 'Cart is deleted',
+      message: 'Product Removed From Cart',
     });
   } catch (error) {
-    return res.status(500).json(error.message);
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -148,7 +143,7 @@ async function getCarts(req, res) {
     });
 
     if (!cartData || cartData.length === 0) {
-      return res.status(200).json({ message: 'No items in cart', cart: [] });
+      return res.status(200).json({ message: 'Cart is empty', cart: [] });
     }
 
     const cartItems = cartData.reduce((result, item) => {
@@ -188,7 +183,7 @@ async function getCarts(req, res) {
 
     const cart = Object.values(cartItems);
 
-    return res.status(200).json(cart);
+    return res.status(200).json({ cart });
   } catch (error) {
     return res.status(500).json({
       message: error.message,
@@ -199,6 +194,6 @@ async function getCarts(req, res) {
 module.exports = {
   addCart,
   updateCart,
-  deleteCart,
+  removeCart,
   getCarts,
 };

@@ -1,7 +1,6 @@
-const slugify = require('slugify');
 const { Op } = require('sequelize');
-const { Store, Product, Category, Gallery } = require('../../models');
 const createSlug = require('../../utils/createSlug');
+const { Store, Product, Category, Gallery } = require('../../models');
 
 async function getProduct(req, res) {
   const slug = req.params.slug;
@@ -33,17 +32,15 @@ async function getProduct(req, res) {
       price: productData.price,
       stock: productData.stock,
       city: productData.store.city,
-      storeId: productData.storeId,
       storeName: productData.store.name,
       storeSlug: productData.store.slug,
-      storeImage: productData.store.image,
-      categoryId: productData.category.id,
+      storeAvatar: productData.store.avatar,
       categoryName: productData.category.name,
       categorySlug: productData.category.slug,
       images: productData.gallery.map((p) => p.image),
     };
 
-    return res.status(200).json(product);
+    return res.status(200).json({ product });
   } catch (error) {
     return res.status(500).json(error.message);
   }
@@ -63,7 +60,6 @@ async function getProducts(req, res) {
       limit,
     } = req.query;
 
-    console.log(search);
     const dataPerPage = limit > 0 ? parseInt(limit) : 5;
     const currentPage = page > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
@@ -115,7 +111,6 @@ async function getProducts(req, res) {
       if (maxPrice) query.price[Op.lte] = Number(maxPrice) || 0;
     }
 
-    console.log(query);
     // **Fetch Products**
     const product = await Product.findAndCountAll({
       where: query,
@@ -162,9 +157,9 @@ async function getProducts(req, res) {
 
     return res.status(200).json({
       products: data,
-      currentPage: parseInt(page),
       totalPage: totalPage,
-      totalData: product.count,
+      currentPage: parseInt(page),
+      totalProducts: product.count,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

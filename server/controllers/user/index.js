@@ -102,15 +102,6 @@ async function getAddress(req, res) {
   const userId = req.user.userId;
 
   try {
-    const cachedAddress = await redis.get(`address:${userId}`);
-
-    if (cachedAddress) {
-      return res.status(200).json({
-        message: 'Get Address Success',
-        address: JSON.parse(cachedAddress),
-      });
-    }
-
     const address = await Address.findAll({ where: { userId } });
 
     if (address.length === 0) {
@@ -119,8 +110,6 @@ async function getAddress(req, res) {
         address: [],
       });
     }
-
-    await redis.setex(`address:${userId}`, 900, JSON.stringify(address));
 
     return res
       .status(200)
@@ -134,19 +123,10 @@ async function getAddress(req, res) {
 
 async function addAddress(req, res) {
   const userId = req.user.userId;
-  const { name, phone, address, district, province, city, zipcode, isMain } =
-    req.body;
+  const { name, phone, address, province, city, zipcode, isMain } = req.body;
 
   try {
-    if (
-      !name ||
-      !phone ||
-      !address ||
-      !province ||
-      !city ||
-      !zipcode ||
-      !district
-    ) {
+    if (!name || !phone || !address || !province || !city || !zipcode) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -154,20 +134,16 @@ async function addAddress(req, res) {
       await Address.update({ isMain: false }, { where: { userId } });
     }
 
-    const newAddress = {
+    const newAddress = await Address.create({
       userId,
       name,
       phone,
       address,
       province,
       city,
-      district,
       zipcode,
       isMain,
-    };
-    await Address.create(newAddress);
-
-    await redis.del(`address:${userId}`);
+    });
 
     return res.status(201).json({
       message: 'New Address is added',
@@ -217,7 +193,7 @@ async function updateAddress(req, res) {
     const updatedAddress = await Address.findByPk(addressId);
 
     return res.status(200).json({
-      message: 'Address updated successfully',
+      message: 'Address updated',
       updatedAddress,
     });
   } catch (error) {
