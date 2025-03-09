@@ -15,7 +15,7 @@ const AddressCard = ({ address }) => {
         <div className="flex items-center space-x-2 text-sm">
           <h5 className="capitalize">{address.name}</h5>
           {address.isMain && (
-            <span className="bg-primary px-3 py-[0.5px] text-white rounded-md">
+            <span className="bg-primary h-4 w-8 text-xs flex items-center justify-center text-white rounded-md">
               main
             </span>
           )}
