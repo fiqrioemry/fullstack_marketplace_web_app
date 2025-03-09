@@ -3,26 +3,24 @@ import callApi from "@/api/callApi";
 
 export const useProductStore = create((set) => ({
   results: null,
-  product: [],
+  product: null,
   products: null,
   categories: null,
   totalPage: 0,
   totalData: 0,
   currentPage: 0,
   loading: false,
-  message: null,
   totalProducts: 0,
   searching: false,
 
   getProduct: async (slug) => {
-    set({ loading: true });
+    set({ product: null });
     try {
-      const product = await callApi.getProduct(slug);
+      const { product } = await callApi.getProduct(slug);
       set({ product });
-    } catch {
+    } catch (error) {
       set({ product: [] });
-    } finally {
-      set({ loading: false });
+      console.log(error.message);
     }
   },
 

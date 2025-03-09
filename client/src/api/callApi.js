@@ -157,9 +157,9 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  getStoreInfo: async (slug) => {
+  getStoreInfo: async (shopname) => {
     return authInstance
-      .get(`/store/${slug}`)
+      .get(`/store/${shopname}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
@@ -232,23 +232,23 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  addCart: async (formData) => {
+  addCart: async (productId, quantity) => {
     return authInstance
-      .post('/cart', formData)
+      .post('/cart', { productId, quantity })
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  updateCart: async (formData, cartId) => {
+  updateCart: async (cartId, quantity) => {
     return authInstance
-      .put(`/cart/${cartId}`, formData)
+      .put(`/cart/${cartId}`, { quantity })
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  deleteCart: async (formData, cartId) => {
+  removeCart: async (cartId) => {
     return authInstance
-      .delete(`/cart/${cartId}`, formData)
+      .delete(`/cart/${cartId}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },

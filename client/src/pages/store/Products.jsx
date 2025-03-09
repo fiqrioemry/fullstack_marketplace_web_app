@@ -1,42 +1,38 @@
 import { cn } from "@/lib/utils";
+import { PackagePlus, PackageSearch } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { CreditCard, MapPin, UserRoundPen } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const userMenu = [
+const productsMenu = [
   {
-    title: "settings",
-    path: "/user/settings",
-    icon: UserRoundPen,
+    title: "products",
+    path: "/store/products",
+    icon: PackageSearch,
   },
   {
-    title: "address",
-    path: "/user/address",
-    icon: MapPin,
-  },
-  {
-    title: "transactions",
-    path: "/user/transactions",
-    icon: CreditCard,
+    title: "Add products",
+    path: "/store/products/add",
+    icon: PackagePlus,
   },
 ];
 
-const UserLayout = () => {
+const Products = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
   return (
-    <main className="h-screen py-3 md:py-6">
+    <main className="py-3 md:py-6">
       <Tabs defaultValue={currentPath} className="container mx-auto mb-3 px-2">
         <TabsList className="justify-between md:justify-start">
-          {userMenu.map((menu) => {
+          {productsMenu.map((menu) => {
             const activePath = currentPath === menu.path;
             return (
-              <TabsTrigger value={menu.path} key={menu.title} asChild>
+              <TabsTrigger value={menu.path} key={menu.title}>
                 <Link
                   to={menu.path}
                   className={cn(
-                    activePath ? "text-blue-700" : "text-foreground"
+                    activePath ? "text-blue-700" : "text-foreground",
+                    "hover:text-blue-700"
                   )}
                   key={menu.title}
                 >
@@ -55,4 +51,4 @@ const UserLayout = () => {
   );
 };
 
-export default UserLayout;
+export default Products;

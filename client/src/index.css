@@ -100,7 +100,7 @@
   }
 
   h5 {
-    @apply text-xs md:text-sm font-normal capitalize;
+    @apply text-xs md:text-sm font-medium capitalize;
   }
 
   h6 {
@@ -185,7 +185,7 @@
   }
 
   .btn-nav {
-    @apply bg-background hover:bg-gray-200 flex items-center   justify-between duration-300 transition-colors capitalize cursor-pointer text-sm px-4 py-2 rounded-md;
+    @apply bg-background hover:bg-gray-200 flex items-center   justify-between duration-300 transition-colors capitalize cursor-pointer  gap-4 text-sm px-4 py-2 rounded-md;
   }
 
   .btn-accent {

@@ -3,9 +3,9 @@ import toast from "react-hot-toast";
 import callApi from "@/api/callApi";
 
 export const useShopStore = create((set, get) => ({
-  store: [],
+  store: null,
+  products: null,
   profile: [],
-  products: [],
   currentPage: 1,
   totalPage: 0,
   totalData: 0,
@@ -48,15 +48,14 @@ export const useShopStore = create((set, get) => ({
     }
   },
 
-  getStoreInfo: async () => {
-    set({ loading: true });
+  getStoreInfo: async (shopname) => {
+    set({ store: null, products: null });
     try {
-      const { store, products } = await callApi.getStoreInfo();
+      const { store, products } = await callApi.getStoreInfo(shopname);
       set({ store, products });
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-      set({ loading: false });
+    } catch (error) {
+      set({ store: [], products: [] });
+      console.log(error.message);
     }
   },
 

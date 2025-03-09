@@ -26,32 +26,34 @@ const Header = () => {
 
   const resultActive = cn(
     openSearch ? "max-h-96" : "max-h-0",
-    "absolute top-11 right-0 left-0 bg-background  border rounded-lg shadow-lg border-muted overflow-hidden z-40 delay-300 duration-150 ease-in transition-all"
+    "absolute top-11 right-0 left-0 bg-background  rounded-lg shadow-lg  overflow-hidden z-40 delay-300 duration-150 ease-in transition-all"
   );
 
   return (
-    <header className="border-b py-2 px-2">
-      <div className="flex items-center justify-between container mx-auto gap-4">
-        {/* Website Logo */}
-        <div className="hidden md:flex px-2">
-          <Logo />
-        </div>
+    <div className="h-14">
+      <header className="border-b py-2 px-2 fixed w-full z-50 bg-background">
+        <div className="flex items-center justify-between container mx-auto gap-4">
+          {/* Website Logo */}
+          <div className="hidden md:flex px-2">
+            <Logo />
+          </div>
 
-        {/* search products*/}
-        <div ref={searchRef} className={inputActive}>
-          <SearchInput handleSearch={handleSearch} searchForm={searchForm} />
+          {/* search products*/}
+          <div ref={searchRef} className={inputActive}>
+            <SearchInput handleSearch={handleSearch} searchForm={searchForm} />
 
-          <div className={resultActive}>
-            <SearchResult results={results} searching={searching} />
+            <div className={resultActive}>
+              <SearchResult results={results} searching={searching} />
+            </div>
+          </div>
+
+          {/* Navigation menu */}
+          <div className={searchActive}>
+            <NavigationMenu user={user} />
           </div>
         </div>
-
-        {/* Navigation menu */}
-        <div className={searchActive}>
-          <NavigationMenu user={user} />
-        </div>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 };
 

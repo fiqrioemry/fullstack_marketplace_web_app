@@ -13,8 +13,8 @@ import Avatar from "@/components/ui/Avatar";
 
 const NavMenu = [
   {
-    title: "profile",
-    href: "/user/profile",
+    title: "settings",
+    href: "/user/settings",
   },
   {
     title: "address",

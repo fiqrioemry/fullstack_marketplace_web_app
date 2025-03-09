@@ -1,38 +1,45 @@
 // pages
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
-import Store from "./pages/Store";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import Category from "./pages/Category";
 import OpenStore from "./pages/OpenStore";
+import ProductDetail from "./pages/ProductDetail";
 import SearchResult from "./pages/SearchResult";
-import ProductPage from "./pages/ProductPage";
 import ProductCategory from "./pages/ProductCategory";
+import PageLoading from "./components/loading/PageLoading";
+
+// halaman shop khusus masing2 toko
+import ShopInfo from "./pages/shop/ShopInfo";
+import ShopProducts from "./pages/shop/ShopProducts";
+import ShopLayout from "./components/shop/ShopLayout";
 
 // halaman user
 import Address from "./pages/user/Address";
 import Settings from "./pages/user/Settings";
 import Transactions from "./pages/user/Transactions";
+import UserLayout from "./components/user/UserLayout";
 
-// halaman seller
-import StoreOrderLayout from "./pages/seller/StoreOrderLayout";
-import StoreProfileLayout from "./pages/seller/StoreProfileLayout";
-import StoreProductsLayout from "./pages/seller/StoreProductsLayout";
-
-import StoreDashboardLayout from "./pages/seller/StoreDashboardLayout";
-import StoreNotificationLayout from "./pages/seller/StoreNotificationLayout";
-import Layout from "./components/layout/Layout";
-import PageLoading from "./components/loading/PageLoading";
-import DashboardLayout from "./components/layout/DashboardLayout";
+// halaman store untuk seller
+import Sales from "./pages/store/Sales";
+import Orders from "./pages/store/Orders";
+import Profile from "./pages/store/Profile";
+import Products from "./pages/store/Products";
+import Notifications from "./pages/store/Notifications";
+import ProductsAdd from "./components/dashboard/ProductsAdd";
+import ProductsList from "./components/dashboard/ProductsList";
+import DashboardLayout from "./components/dashboard/DashboardLayout";
 
 import { useEffect } from "react";
+import Layout from "./components/layout/Layout";
 import { useAuthStore } from "./store/useAuthStore";
 import { Navigate, Route, Routes } from "react-router-dom";
+
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
-import UserLayout from "./components/user/UserLayout";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const { authCheck, checkingAuth } = useAuthStore();
@@ -46,6 +53,7 @@ function App() {
 
   return (
     <>
+      <Toaster />
       <Routes>
         <Route
           path="signin"
@@ -66,11 +74,13 @@ function App() {
 
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path=":storename" element={<Store />} />
+          <Route path=":shopname" element={<ShopLayout />}>
+            <Route index element={<ShopInfo />} />
+            <Route path="products" element={<ShopProducts />} />
+          </Route>
           <Route path="category" element={<Category />} />
           <Route path="search" element={<SearchResult />} />
-
-          <Route path=":storename/:slug" element={<ProductPage />} />
+          <Route path=":shopname/:slug" element={<ProductDetail />} />
           <Route path="category/:slug" element={<ProductCategory />} />
           <Route
             path="user"
@@ -116,7 +126,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
 
-        {/* seller */}
+        {/* store */}
         <Route
           path="/store"
           element={
@@ -125,12 +135,16 @@ function App() {
             </SellerRoute>
           }
         >
-          <Route index element={<StoreDashboardLayout />} />
-          <Route path="order" element={<StoreOrderLayout />} />
-          <Route path="products" element={<StoreProductsLayout />} />
-          <Route index path="profile" element={<StoreProfileLayout />} />
-          <Route path="notification" element={<StoreNotificationLayout />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="sales" element={<Sales />} />
+          <Route path="order" element={<Orders />} />
+          <Route path="products" element={<Products />}>
+            <Route path="add" element={<ProductsAdd />} />
+            <Route index element={<ProductsList />} />
+          </Route>
+          <Route path="profile" element={<Profile />} />
+          <Route path="notification" element={<Notifications />} />
+          <Route index element={<Navigate to="sales" replace />} />
         </Route>
       </Routes>
     </>

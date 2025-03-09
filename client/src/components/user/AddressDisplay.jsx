@@ -12,10 +12,10 @@ const AddressDisplay = () => {
       <div className="flex justify-end">
         <div>
           <DialogForm
-            title="Form New Address"
             button="Add Address"
             action={addAddress}
             state={addressState}
+            title="Form New Address"
             control={addressControl}
           />
         </div>

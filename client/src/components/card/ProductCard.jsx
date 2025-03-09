@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
+import { formatToRupiah } from "../../lib/utils";
 
 const ProductCard = ({ products }) => {
   return (
@@ -35,7 +36,7 @@ const ProductCard = ({ products }) => {
                   ? product.name.slice(0, 25) + "..."
                   : product.name}
               </h5>
-              <span className="text-sm">Rp. {product.price}</span>
+              <span className="text-sm">{formatToRupiah(product.price)}</span>
             </div>
           </article>
         </Link>
