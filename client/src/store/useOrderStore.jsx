@@ -9,15 +9,14 @@ export const useOrderStore = create((set) => ({
   createNewOrder: async (formData) => {
     set({ loading: true });
     try {
-      const { message, transactionUrl, data } = await callApi.createNewOrder(
+      const { message, transactionUrl } = await callApi.createNewOrder(
         formData
       );
 
-      //   if (transactionUrl) {
-      //     window.location.href = transactionUrl;
-      //   }
-
-      console.log(data);
+      console.log(transactionUrl);
+      if (transactionUrl) {
+        window.location.href = transactionUrl;
+      }
 
       toast.success(message);
     } catch (error) {
