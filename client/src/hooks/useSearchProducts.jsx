@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const useSearchProducts = (searchUser) => {
   const searchRef = useRef(null);
   const debounceRef = useRef(null);
-  const searchForm = useFormSchema(searchState);
+  const searchForm = useFormSchema(null, searchState);
   const [openSearch, setOpenSearch] = useState(false);
 
   const handleSearch = () => {

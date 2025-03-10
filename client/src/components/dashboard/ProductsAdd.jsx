@@ -7,9 +7,9 @@ import { productControl, productState } from "@/config";
 const ProductsAdd = () => {
   const { createProduct, loading } = useShopStore();
   const productForm = useFormSchema(
+    createProduct,
     productState,
-    productControl,
-    createProduct
+    productControl
   );
 
   return (

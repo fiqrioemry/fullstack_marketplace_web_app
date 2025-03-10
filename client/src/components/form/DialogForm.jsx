@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useState, useCallback, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export function DialogForm({
   title,
@@ -17,7 +17,7 @@ export function DialogForm({
   size,
   param = null,
 }) {
-  const formik = useFormSchema(state, control, action, param);
+  const formik = useFormSchema(action, state, control, param);
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const isFormDirty = useMemo(() => formik.dirty, [formik.dirty]);
@@ -60,20 +60,20 @@ export function DialogForm({
           {button}
         </Button>
         <DialogContent className="sm:max-w-[425px] p-0 rounded-lg">
-          <div className="text-center mt-4">
+          <DialogTitle className="text-center mt-4">
             <h4>{title}</h4>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm font-normal">
               Save button will active once all fields are filled or Changes
             </p>
-          </div>
-          <ScrollArea className="h-72 border">
+          </DialogTitle>
+          <ScrollArea className="h-96 border pb-8">
             <div className="p-4">
               <FormInput
                 formik={formik}
                 formControl={control}
                 inputStyle={"h-40 md:h-[4rem]"}
               >
-                <div className="flex justify-end gap-2 p-2">
+                <div className="flex justify-end gap-2 p-2 absolute bottom-0 right-0 left-0 bg-background border-t">
                   <Button
                     type="button"
                     variant="destructive"
@@ -96,23 +96,28 @@ export function DialogForm({
 
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
         <DialogContent className="w-full sm:max-w-xl rounded-lg">
-          <div className="text-center mt-4">
-            <h4>Unsaved Changes</h4>
-            <p className="text-gray-600">
-              You have unsaved changes. Are you sure you want to discard them?
-            </p>
-          </div>
-          <div className="flex justify-end gap-2 p-2">
-            <Button
-              variant="destructive"
-              onClick={() => handleConfirmation(true)}
-            >
-              Yes, discard changes
-            </Button>
-            <Button variant="outline" onClick={() => handleConfirmation(false)}>
-              No, keep changes
-            </Button>
-          </div>
+          <DialogTitle>
+            <div className="text-center mt-4">
+              <h4>Unsaved Changes</h4>
+              <p className="text-gray-600">
+                You have unsaved changes. Are you sure you want to discard them?
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 p-2">
+              <Button
+                variant="destructive"
+                onClick={() => handleConfirmation(true)}
+              >
+                Yes, discard changes
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleConfirmation(false)}
+              >
+                No, keep changes
+              </Button>
+            </div>
+          </DialogTitle>
         </DialogContent>
       </Dialog>
     </>

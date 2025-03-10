@@ -3,9 +3,9 @@ import { useFormik } from "formik";
 import { newValidationSchema } from "@/lib/utils";
 
 export const useFormSchema = (
+  action,
   state,
   control,
-  action,
   params,
   resetOnSubmit = false
 ) => {

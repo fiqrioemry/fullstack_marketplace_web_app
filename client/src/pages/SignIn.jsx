@@ -10,7 +10,7 @@ import Logo from "@/components/ui/Logo";
 
 const SignIn = () => {
   const { login, loading } = useAuthStore();
-  const loginForm = useFormSchema(loginState, loginControl, login);
+  const loginForm = useFormSchema(login, loginState, loginControl);
 
   return (
     <div className="h-screen flex-center">

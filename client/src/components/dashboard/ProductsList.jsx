@@ -24,13 +24,7 @@ const ProductsList = () => {
     deleteProduct,
     loading,
   } = useShopStore();
-  const searchForm = useFormSchema(
-    productFilterState,
-    undefined,
-    getStoreProduct,
-    undefined,
-    false
-  );
+  const searchForm = useFormSchema(getStoreProduct, productFilterState);
 
   const handleSort = (key) => {
     const isSameSort = searchForm.values.sortBy === key;

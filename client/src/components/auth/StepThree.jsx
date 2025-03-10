@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-
 import { registerControl } from "@/config";
 import InputForm from "@/components/form/InputForm";
 import InputButton from "@/components/form/InputButton";

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
@@ -33,7 +34,7 @@ const CheckoutOrder = ({ checkoutForm }) => {
   const transformData = (data) => {
     return data.map((store) => ({
       storeId: store.storeId,
-      shipmentCost: "", // Set default ke string kosong agar tidak memilih opsi pertama
+      shipmentCost: "",
       cartItems: store.items.map((item) => item.cartId),
     }));
   };

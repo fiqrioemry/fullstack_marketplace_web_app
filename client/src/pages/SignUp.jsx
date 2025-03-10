@@ -33,9 +33,9 @@ const SignUp = () => {
   };
 
   const registerForm = useFormSchema(
+    register,
     registerState,
     getFormControl(),
-    register,
     navigate,
     false
   );

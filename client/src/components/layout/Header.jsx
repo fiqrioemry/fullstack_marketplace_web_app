@@ -9,7 +9,6 @@ import NavigationMenu from "@/components/header/NavigationMenu";
 
 const Header = () => {
   const { user } = useAuthStore();
-
   const { searchProducts, results, searching } = useProductStore();
   const { searchForm, searchRef, openSearch, handleSearch } =
     useSearchProducts(searchProducts);

@@ -7,9 +7,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-
-import { useAuthStore } from "@/store/useAuthStore";
 import Avatar from "@/components/ui/Avatar";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const NavMenu = [
   {

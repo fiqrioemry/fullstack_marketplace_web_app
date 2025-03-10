@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import toast from "react-hot-toast";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +14,7 @@ export const useCheckoutLoading = () => {
   useEffect(() => {
     getCarts();
     getAddress();
-  }, []);
+  }, [getCarts, getAddress]);
 
   useEffect(() => {
     if (!cart || !address || hasRedirected.current) return;

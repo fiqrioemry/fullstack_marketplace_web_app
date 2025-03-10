@@ -6,8 +6,8 @@ import CheckoutLoading from "@/components/loading/CheckoutLoading";
 import CheckoutAddress from "@/components/checkout/CheckoutAddress";
 
 const Checkout = () => {
-  const checkoutForm = useFormSchema(checkoutState);
   const { cart, address, checkoutItem } = useCheckoutLoading();
+  const checkoutForm = useFormSchema(null, checkoutState);
 
   if (
     !cart ||
