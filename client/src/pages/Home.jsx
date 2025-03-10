@@ -4,10 +4,12 @@ import ProductRecommendation from "@/components/home/ProductRecommendation";
 
 const Home = () => {
   return (
-    <section className="section-margin">
-      <HomeBanner />
-      <CategoryCarousel />
-      <ProductRecommendation />
+    <section className="container mx-auto">
+      <div className="px-2 space-y-4 py-3 md:py-6">
+        <HomeBanner />
+        <CategoryCarousel />
+        <ProductRecommendation />
+      </div>
     </section>
   );
 };
