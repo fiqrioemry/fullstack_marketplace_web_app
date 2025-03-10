@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { useCartStore } from "@/store/useCartStore";
+import CartLayout from "@/components/cart/CartLayout";
 import CartLoading from "@/components/loading/CartLoading";
-import TotalCartPrice from "@/components/cart/TotalCartPrice";
+import CartTotalPrice from "@/components/cart/CartTotalPrice";
 import CartItemDisplay from "@/components/cart/CartItemDisplay";
-import CartLayout from "../components/cart/CartLayout";
+import CartEmpty from "../components/cart/CartEmpty";
 
 const Cart = () => {
   const { cart, getCarts } = useCartStore();
@@ -12,17 +13,14 @@ const Cart = () => {
     getCarts();
   }, [getCarts]);
 
-  if (!cart)
-    return (
-      <CartLayout>
-        <CartLoading />
-      </CartLayout>
-    );
+  if (!cart) return <CartLoading />;
+
+  if (cart && cart.length === 0) return <CartEmpty />;
 
   return (
     <CartLayout>
       <CartItemDisplay cart={cart} />
-      <TotalCartPrice cart={cart} />
+      <CartTotalPrice cart={cart} />
     </CartLayout>
   );
 };
