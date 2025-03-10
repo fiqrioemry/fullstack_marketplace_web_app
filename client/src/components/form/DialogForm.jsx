@@ -73,7 +73,7 @@ export function DialogForm({
                 formControl={control}
                 inputStyle={"h-40 md:h-[4rem]"}
               >
-                <div className="flex justify-end gap-2 p-2 absolute bottom-0 right-0 left-0 bg-background border-t">
+                <div className="flex gap-2 p-2 absolute bottom-0 right-0 left-0 bg-background border-t">
                   <Button
                     type="button"
                     variant="destructive"
@@ -96,28 +96,25 @@ export function DialogForm({
 
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
         <DialogContent className="w-full sm:max-w-xl rounded-lg">
-          <DialogTitle>
-            <div className="text-center mt-4">
+          <div className="text-center mt-4">
+            <DialogTitle>
               <h4>Unsaved Changes</h4>
-              <p className="text-gray-600">
-                You have unsaved changes. Are you sure you want to discard them?
-              </p>
-            </div>
-            <div className="flex justify-end gap-2 p-2">
-              <Button
-                variant="destructive"
-                onClick={() => handleConfirmation(true)}
-              >
-                Yes, discard changes
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => handleConfirmation(false)}
-              >
-                No, keep changes
-              </Button>
-            </div>
-          </DialogTitle>
+            </DialogTitle>
+            <p className="text-gray-600">
+              You have unsaved changes. Are you sure you want to discard them?
+            </p>
+          </div>
+          <div className="flex justify-center gap-2 ">
+            <Button
+              variant="destructive"
+              onClick={() => handleConfirmation(true)}
+            >
+              Yes, discard changes
+            </Button>
+            <Button variant="outline" onClick={() => handleConfirmation(false)}>
+              No, keep changes
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </>

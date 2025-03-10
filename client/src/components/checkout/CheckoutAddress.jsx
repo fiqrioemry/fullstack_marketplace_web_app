@@ -22,7 +22,7 @@ const CheckoutAddress = ({ checkoutForm }) => {
       </div>
       <div className="text-sm">{selectedAddress.phone}</div>
       <div className="text-sm mb-4">
-        {selectedAddress.address} {selectedAddress.province}{" "}
+        {selectedAddress.address} {selectedAddress.province}
         {selectedAddress.city}
         {selectedAddress.zipcode}
       </div>
