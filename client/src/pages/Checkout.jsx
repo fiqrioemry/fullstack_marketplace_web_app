@@ -27,9 +27,7 @@ const Checkout = () => {
             <CheckoutAddress checkoutForm={checkoutForm} />
             <CheckoutOrder checkoutForm={checkoutForm} />
           </div>
-          <div className="col-span-1">
-            <Checkout />
-          </div>
+          <div className="col-span-1"></div>
         </div>
       </div>
     </section>

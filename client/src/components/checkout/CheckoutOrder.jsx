@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
@@ -23,6 +22,7 @@ const shipmentOptions = [
 
 const CheckoutOrder = ({ checkoutForm }) => {
   const { cart, checkoutItem } = useCartStore();
+
   const orders = cart
     .map((store) => ({
       ...store,
@@ -33,7 +33,7 @@ const CheckoutOrder = ({ checkoutForm }) => {
   const transformData = (data) => {
     return data.map((store) => ({
       storeId: store.storeId,
-      shipmentCost: 0, // Default 0
+      shipmentCost: "", // Set default ke string kosong agar tidak memilih opsi pertama
       cartItems: store.items.map((item) => item.cartId),
     }));
   };
@@ -44,13 +44,15 @@ const CheckoutOrder = ({ checkoutForm }) => {
   }, []);
 
   const handleShipmentOptions = (event, storeId) => {
-    const selectedPrice = parseFloat(event.target.value);
+    const selectedPrice =
+      event.target.value === "" ? "" : parseFloat(event.target.value);
 
     const updatedOrders = checkoutForm.values.orders.map((order) =>
       order.storeId === storeId
         ? { ...order, shipmentCost: selectedPrice }
         : order
     );
+
     checkoutForm.setFieldValue("orders", updatedOrders);
   };
 
@@ -85,6 +87,11 @@ const CheckoutOrder = ({ checkoutForm }) => {
           <h5 className="mb-1">Select shipment method</h5>
           <select
             name="shipmentCost"
+            value={
+              checkoutForm.values.orders.find(
+                (order) => order.storeId === store.storeId
+              )?.shipmentCost || ""
+            }
             onChange={(event) => handleShipmentOptions(event, store.storeId)}
             className="px-2 py-2 w-full border border-muted-foreground/50 rounded-md"
           >

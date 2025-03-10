@@ -16,13 +16,14 @@ const CheckoutAddress = ({ checkoutForm }) => {
   if (!checkoutForm.values.address) return <AddressCardLoading />;
 
   return (
-    <div className="p-4 border rounded-lg bg-background">
+    <div className="p-4 border rounded-lg bg-background mb-4">
       <div className="flex items-center space-x-2 text-sm">
         <h5 className="capitalize">{selectedAddress.name}</h5>
       </div>
       <div className="text-sm">{selectedAddress.phone}</div>
       <div className="text-sm mb-4">
-        {mainAddress.address} {selectedAddress.province} {selectedAddress.city}
+        {selectedAddress.address} {selectedAddress.province}{" "}
+        {selectedAddress.city}
         {selectedAddress.zipcode}
       </div>
       <AddressSelection checkoutForm={checkoutForm} />
