@@ -10,6 +10,11 @@ export const useCartStore = create(
       loading: false,
       checkoutItem: [],
 
+      createNewOrder: async () => {
+        console.log("berhasil");
+        toast.success("success create new order");
+      },
+
       getCarts: async () => {
         try {
           const { cart } = await callApi.getCarts();

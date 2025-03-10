@@ -1,13 +1,16 @@
 import { checkoutState } from "@/config";
+import { useCartStore } from "@/store/useCartStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useCheckoutLoading } from "@/hooks/useCheckoutLoading";
 import CheckoutOrder from "@/components/checkout/CheckoutOrder";
 import CheckoutLoading from "@/components/loading/CheckoutLoading";
 import CheckoutAddress from "@/components/checkout/CheckoutAddress";
+import CheckoutTotalPrice from "@/components/checkout/CheckoutTotalPrice";
 
 const Checkout = () => {
+  const { createNewOrder } = useCartStore();
   const { cart, address, checkoutItem } = useCheckoutLoading();
-  const checkoutForm = useFormSchema(null, checkoutState);
+  const checkoutForm = useFormSchema(createNewOrder, checkoutState);
 
   if (
     !cart ||
@@ -27,7 +30,9 @@ const Checkout = () => {
             <CheckoutAddress checkoutForm={checkoutForm} />
             <CheckoutOrder checkoutForm={checkoutForm} />
           </div>
-          <div className="col-span-1"></div>
+          <div className="col-span-1">
+            <CheckoutTotalPrice checkoutForm={checkoutForm} />
+          </div>
         </div>
       </div>
     </section>

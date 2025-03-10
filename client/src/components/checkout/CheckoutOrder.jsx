@@ -10,14 +10,14 @@ const shipmentOptions = [
     estimatedTime: "7 days",
   },
   {
-    method: "Express",
-    price: 50000,
-    estimatedTime: "3 days",
-  },
-  {
     method: "Regular",
     price: 25000,
     estimatedTime: "5 days",
+  },
+  {
+    method: "Express",
+    price: 50000,
+    estimatedTime: "3 days",
   },
 ];
 
@@ -85,7 +85,7 @@ const CheckoutOrder = ({ checkoutForm }) => {
             </div>
           ))}
 
-          <h5 className="mb-1">Select shipment method</h5>
+          <h5 className="mb-1">Choose shipment method</h5>
           <select
             name="shipmentCost"
             value={
@@ -97,7 +97,7 @@ const CheckoutOrder = ({ checkoutForm }) => {
             className="px-2 py-2 w-full border border-muted-foreground/50 rounded-md"
           >
             <option value="" disabled>
-              Shipment Method
+              Select shipment
             </option>
             {shipmentOptions.map((opsi) => (
               <option value={opsi.price} key={opsi.method}>

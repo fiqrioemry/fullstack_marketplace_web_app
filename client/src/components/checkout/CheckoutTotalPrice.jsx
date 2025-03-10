@@ -1,15 +1,13 @@
+/* eslint-disable react/prop-types */
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 
-const CheckoutTotalPrice = () => {
+const CheckoutTotalPrice = ({ checkoutForm }) => {
   const { checkoutItem, cart } = useCartStore();
 
-  const totalShipmentCost = cart.reduce(
-    (sum, store) =>
-      sum +
-      store.items
-        .filter((item) => checkoutItem.includes(item.cartId))
-        .reduce((acc, item) => acc + item.price * item.quantity, 0),
+  const totalShipmentCost = checkoutForm.values.orders.reduce(
+    (sum, order) =>
+      sum + (order.shipmentCost ? parseFloat(order.shipmentCost) : 0),
     0
   );
 
@@ -24,17 +22,42 @@ const CheckoutTotalPrice = () => {
 
   const totalBilling = totalItemPrice + totalShipmentCost;
 
+  const isShipmentIncomplete = checkoutForm.values.orders.some(
+    (order) => order.shipmentCost === ""
+  );
+
   return (
-    <div className="bg-background rounded-lg p-4 border">
-      <h4 className="mb-4">Order Summary</h4>
-      <div className="flex flex-col space-y-2 mb-4">
-        <span>Total Shipment Cost :{formatToRupiah(totalShipmentCost)} </span>
-        <span>Total Items Price :{formatToRupiah(totalItemPrice)}</span>
-        <span>Total Billing :{formatToRupiah(totalBilling)}</span>
+    <div className="bg-background rounded-lg border">
+      <h4 className="p-2 border-b">Order Summary</h4>
+      <div className="space-y-2 p-2 border-b">
+        <div className="flex items-center justify-between">
+          Total Shipment Cost :
+          <span className="font-medium text-sm">
+            {formatToRupiah(totalShipmentCost)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          Total Items Price :
+          <span className="font-medium text-sm">
+            {formatToRupiah(totalItemPrice)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          Total Billing to Pay :
+          <span className="font-medium text-sm">
+            {formatToRupiah(totalBilling)}
+          </span>
+        </div>
       </div>
-      <button className="btn btn-primary w-full rounded-md font-medium">
-        Proceed To Payment
-      </button>
+      <div className="p-2">
+        <button
+          disabled={isShipmentIncomplete}
+          onClick={checkoutForm.handleSubmit}
+          className="btn btn-primary w-full rounded-md"
+        >
+          Proceed To Payment
+        </button>
+      </div>
     </div>
   );
 };
