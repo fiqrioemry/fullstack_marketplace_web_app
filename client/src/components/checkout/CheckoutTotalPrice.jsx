@@ -43,7 +43,7 @@ const CheckoutTotalPrice = ({ checkoutForm }) => {
           </span>
         </div>
         <div className="flex items-center justify-between">
-          Total Billing to Pay :
+          Billing to Pay :
           <span className="font-medium text-sm">
             {formatToRupiah(totalBilling)}
           </span>

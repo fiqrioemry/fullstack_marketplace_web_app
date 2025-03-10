@@ -252,6 +252,21 @@ const callApi = {
       .then((res) => res.data)
       .catch(errorHandle);
   },
+
+  //   cart API management :
+  getOrders: async () => {
+    return authInstance
+      .get('/order')
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  createNewOrder: async (formData) => {
+    return authInstance
+      .post('/order', formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
 };
 
 export default callApi;

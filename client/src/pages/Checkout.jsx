@@ -1,5 +1,5 @@
 import { checkoutState } from "@/config";
-import { useCartStore } from "@/store/useCartStore";
+import { useOrderStore } from "@/store/useOrderStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useCheckoutLoading } from "@/hooks/useCheckoutLoading";
 import CheckoutOrder from "@/components/checkout/CheckoutOrder";
@@ -8,7 +8,7 @@ import CheckoutAddress from "@/components/checkout/CheckoutAddress";
 import CheckoutTotalPrice from "@/components/checkout/CheckoutTotalPrice";
 
 const Checkout = () => {
-  const { createNewOrder } = useCartStore();
+  const { createNewOrder } = useOrderStore();
   const { cart, address, checkoutItem } = useCheckoutLoading();
   const checkoutForm = useFormSchema(createNewOrder, checkoutState);
 
