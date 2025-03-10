@@ -253,17 +253,32 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  //   cart API management :
-  getOrders: async () => {
+  //   user transactions API management :
+  getUserTransactions: async () => {
     return authInstance
       .get('/order')
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  createNewOrder: async (formData) => {
+  createNewTransactions: async (formData) => {
     return authInstance
       .post('/order', formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  //   store Order API management :
+  getStoreOrders: async () => {
+    return authInstance
+      .get('/order/store')
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  updateOrderStatus: async (formData) => {
+    return authInstance
+      .put('/order/store', formData)
       .then((res) => res.data)
       .catch(errorHandle);
   },

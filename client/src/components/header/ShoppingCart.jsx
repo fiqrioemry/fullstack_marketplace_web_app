@@ -34,7 +34,7 @@ const ShoppingCart = () => {
     <Popover>
       <PopoverTrigger asChild>
         <button className="relative">
-          <ShoppingBag className="md:h-7 md:w-7 w-5 h-5" />
+          <ShoppingBag className="w-5 h-5" />
           <div className="absolute top-0 -right-2 h-4 w-4 bg-red-500 flex items-center justify-center text-white rounded-full text-xs">
             {totalItems}
           </div>
@@ -43,6 +43,7 @@ const ShoppingCart = () => {
       <PopoverContent>
         <div className="flex items-center justify-between border-b px-2 pb-2">
           <h4>Shopping Cart</h4>
+
           <Link to="/cart" className="text-xs btn-accent">
             See all
           </Link>
@@ -51,7 +52,19 @@ const ShoppingCart = () => {
         <ScrollArea className="flex-1 overflow-y-auto max-h-72 px-2">
           {cart.length === 0 ? (
             <div className="h-40 flex items-center justify-center">
-              <h4 className="text-gray-500">Your cart is empty</h4>
+              <div className="text-center">
+                {/* Teks */}
+                <h2 className="text-lg font-semibold text-gray-800">
+                  Wah, keranjang belanjamu kosong
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  Yuk, isi dengan barang-barang impianmu!
+                </p>
+
+                <Link to="/" className="btn btn-primary rounded-md mt-4">
+                  Mulai Belanja
+                </Link>
+              </div>
             </div>
           ) : (
             cart.map((store) => (

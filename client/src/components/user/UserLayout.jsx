@@ -48,7 +48,7 @@ const UserLayout = () => {
           })}
         </TabsList>
       </Tabs>
-      <section className="h-screen container mx-auto mb-3 px-2">
+      <section className="container mx-auto mb-3 px-2">
         <Outlet />
       </section>
     </main>

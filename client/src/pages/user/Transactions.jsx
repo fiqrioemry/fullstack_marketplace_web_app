@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useUserStore } from "@/store/useUserStore";
+import { useShopStore } from "@/store/useShopStore";
 import TransactionsDisplay from "@/components/user/TransactionsDisplay";
 import TransactionsLoading from "@/components/loading/TransactionsLoading";
 
 const Transactions = () => {
-  const { getTransactions, transactions } = useUserStore();
+  const { getTransactions, transactions } = useShopStore();
 
   useEffect(() => {
     getTransactions();

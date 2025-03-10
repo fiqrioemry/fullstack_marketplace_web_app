@@ -21,7 +21,7 @@ const shipmentOptions = [
   },
 ];
 
-const CheckoutOrder = ({ checkoutForm }) => {
+const CheckoutOrder = ({ transactionForm }) => {
   const { cart, checkoutItem } = useCartStore();
 
   const orders = cart
@@ -41,20 +41,20 @@ const CheckoutOrder = ({ checkoutForm }) => {
 
   useEffect(() => {
     const transformedOrders = transformData(orders);
-    checkoutForm.setFieldValue("orders", transformedOrders);
+    transactionForm.setFieldValue("orders", transformedOrders);
   }, []);
 
   const handleShipmentOptions = (event, storeId) => {
     const selectedPrice =
       event.target.value === "" ? "" : parseFloat(event.target.value);
 
-    const updatedOrders = checkoutForm.values.orders.map((order) =>
+    const updatedOrders = transactionForm.values.orders.map((order) =>
       order.storeId === storeId
         ? { ...order, shipmentCost: selectedPrice }
         : order
     );
 
-    checkoutForm.setFieldValue("orders", updatedOrders);
+    transactionForm.setFieldValue("orders", updatedOrders);
   };
 
   return (
@@ -89,7 +89,7 @@ const CheckoutOrder = ({ checkoutForm }) => {
           <select
             name="shipmentCost"
             value={
-              checkoutForm.values.orders.find(
+              transactionForm.values.orders.find(
                 (order) => order.storeId === store.storeId
               )?.shipmentCost || ""
             }

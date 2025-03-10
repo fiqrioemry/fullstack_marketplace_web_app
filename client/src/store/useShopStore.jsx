@@ -4,13 +4,15 @@ import callApi from "@/api/callApi";
 
 export const useShopStore = create((set, get) => ({
   store: null,
+  orders: null,
+  profile: null,
+  loading: false,
+
+  // product
   products: null,
-  profile: [],
-  currentPage: 1,
   totalPage: 0,
   totalData: 0,
-  updating: false,
-  loading: false,
+  currentPage: 1,
 
   getStoreProduct: async (
     formData = {
@@ -30,8 +32,8 @@ export const useShopStore = create((set, get) => ({
         totalData,
         currentPage,
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error.message);
     }
   },
 
@@ -60,14 +62,11 @@ export const useShopStore = create((set, get) => ({
   },
 
   getStoreProfile: async () => {
-    set({ loading: true });
     try {
       const profile = await callApi.getStoreProfile();
       set({ profile });
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-      set({ loading: false });
+    } catch (error) {
+      console.log(error.message);
     }
   },
 
@@ -91,6 +90,28 @@ export const useShopStore = create((set, get) => ({
       toast.success(res.message);
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  getStoreOrders: async () => {
+    try {
+      const { message, orders } = await callApi.getStoreOrders();
+      set({ orders });
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  },
+
+  updateOrderStatus: async () => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.updateOrderStatus();
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       set({ loading: false });
     }

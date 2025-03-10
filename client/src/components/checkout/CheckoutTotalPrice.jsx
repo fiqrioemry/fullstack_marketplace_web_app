@@ -2,10 +2,10 @@
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 
-const CheckoutTotalPrice = ({ checkoutForm }) => {
+const CheckoutTotalPrice = ({ transactionForm }) => {
   const { checkoutItem, cart } = useCartStore();
 
-  const totalShipmentCost = checkoutForm.values.orders.reduce(
+  const totalShipmentCost = transactionForm.values.orders.reduce(
     (sum, order) =>
       sum + (order.shipmentCost ? parseFloat(order.shipmentCost) : 0),
     0
@@ -22,7 +22,7 @@ const CheckoutTotalPrice = ({ checkoutForm }) => {
 
   const totalBilling = totalItemPrice + totalShipmentCost;
 
-  const isShipmentIncomplete = checkoutForm.values.orders.some(
+  const isShipmentIncomplete = transactionForm.values.orders.some(
     (order) => order.shipmentCost === ""
   );
 
@@ -52,7 +52,7 @@ const CheckoutTotalPrice = ({ checkoutForm }) => {
       <div className="p-2">
         <button
           disabled={isShipmentIncomplete}
-          onClick={checkoutForm.handleSubmit}
+          onClick={transactionForm.handleSubmit}
           className="btn btn-primary w-full rounded-md"
         >
           Proceed To Payment

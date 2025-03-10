@@ -28,7 +28,7 @@ const InputNumberComponent = ({
         disabled={disabled}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full border border-muted-foreground  py-2 px-4"
+        className="p-2 w-full border border-muted-foreground/50 rounded-md"
         maxLength={maxLength}
       />
     </div>

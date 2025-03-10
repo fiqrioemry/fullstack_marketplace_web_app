@@ -1,16 +1,17 @@
 import { checkoutState } from "@/config";
-import { useOrderStore } from "@/store/useOrderStore";
+import { useUserStore } from "@/store/useUserStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useCheckoutLoading } from "@/hooks/useCheckoutLoading";
 import CheckoutOrder from "@/components/checkout/CheckoutOrder";
+import CheckoutLayout from "@/components/checkout/checkoutLayout";
 import CheckoutLoading from "@/components/loading/CheckoutLoading";
 import CheckoutAddress from "@/components/checkout/CheckoutAddress";
 import CheckoutTotalPrice from "@/components/checkout/CheckoutTotalPrice";
 
 const Checkout = () => {
-  const { createNewOrder } = useOrderStore();
+  const { createNewTransaction } = useUserStore();
   const { cart, address, checkoutItem } = useCheckoutLoading();
-  const checkoutForm = useFormSchema(createNewOrder, checkoutState);
+  const transactionForm = useFormSchema(createNewTransaction, checkoutState);
 
   if (
     !cart ||
@@ -22,20 +23,15 @@ const Checkout = () => {
     return <CheckoutLoading />;
 
   return (
-    <section className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto py-3 md:py-6 px-2">
-        <h3 className="mb-4">Checkout</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="col-span-2">
-            <CheckoutAddress checkoutForm={checkoutForm} />
-            <CheckoutOrder checkoutForm={checkoutForm} />
-          </div>
-          <div className="col-span-1">
-            <CheckoutTotalPrice checkoutForm={checkoutForm} />
-          </div>
-        </div>
+    <CheckoutLayout>
+      <div className="col-span-2">
+        <CheckoutAddress transactionForm={transactionForm} />
+        <CheckoutOrder transactionForm={transactionForm} />
       </div>
-    </section>
+      <div className="col-span-1">
+        <CheckoutTotalPrice transactionForm={transactionForm} />
+      </div>
+    </CheckoutLayout>
   );
 };
 

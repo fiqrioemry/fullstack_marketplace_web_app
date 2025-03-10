@@ -6,8 +6,10 @@ export const useUserStore = create((set, get) => ({
   profile: null,
   address: null,
   loading: false,
+  transactions: null,
 
   getProfile: async () => {
+    set({ profile: null });
     try {
       const { profile } = await callApi.getProfile();
       set({ profile });
@@ -108,5 +110,36 @@ export const useUserStore = create((set, get) => ({
     set((state) => ({
       address: state.address.filter((add) => add.id !== addressId),
     }));
+  },
+
+  // user / customer transaction management
+  getUserTransactions: async () => {
+    try {
+      const { message, transactions } = await callApi.getUserTransactions();
+      set({ transactions });
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  },
+
+  createNewTransactions: async (formData) => {
+    set({ loading: true });
+    try {
+      const { message, transactionUrl } = await callApi.createNewTransactions(
+        formData
+      );
+
+      console.log(transactionUrl);
+      if (transactionUrl) {
+        window.location.href = transactionUrl;
+      }
+
+      toast.success(message);
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
   },
 }));

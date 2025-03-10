@@ -7,12 +7,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DialogForm } from "@/components/form/DialogForm";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-export function AddressSelection({ checkoutForm }) {
+export function AddressSelection({ transactionForm }) {
   const [isOpen, setIsOpen] = useState(false);
   const { addAddress, address } = useUserStore();
 
   const handleSelectAddress = (address) => {
-    checkoutForm.setFieldValue("address", address);
+    transactionForm.setFieldValue("address", address);
     setIsOpen(false);
   };
 
@@ -39,7 +39,7 @@ export function AddressSelection({ checkoutForm }) {
             {address.map((add) => (
               <div
                 className={cn(
-                  checkoutForm.values.address.id === add.id
+                  transactionForm.values.address.id === add.id
                     ? "border-blue-500"
                     : "border-gray-200",
                   "p-2 rounded-lg border mb-4"
@@ -54,7 +54,7 @@ export function AddressSelection({ checkoutForm }) {
                   {add.address} {add.province} {add.city}
                   {address.zipcode}
                 </div>
-                {checkoutForm.values.address.id !== add.id && (
+                {transactionForm.values.address.id !== add.id && (
                   <button
                     onClick={() => handleSelectAddress(add)}
                     className="btn btn-primary w-40 text-xs rounded-md"

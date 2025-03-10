@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useUserStore } from "@/store/useUserStore";
-import SettingsDisplay from "@/components/user/SettingsDisplay";
+import SettingsAvatar from "@/components/user/SettingsAvatar";
+import SettingsProfile from "@/components/user/SettingsProfile";
 import SettingsLoading from "@/components/loading/SettingsLoading";
 
 const Settings = () => {
@@ -12,7 +13,12 @@ const Settings = () => {
 
   if (!profile) return <SettingsLoading />;
 
-  return <SettingsDisplay />;
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3">
+      <SettingsAvatar />
+      <SettingsProfile />
+    </div>
+  );
 };
 
 export default Settings;
