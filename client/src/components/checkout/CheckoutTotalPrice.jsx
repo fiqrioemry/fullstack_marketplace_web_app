@@ -1,7 +1,7 @@
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 
-const TotalCheckoutPrice = () => {
+const CheckoutTotalPrice = () => {
   const { checkoutItem, cart } = useCartStore();
 
   const totalShipmentCost = cart.reduce(
@@ -39,4 +39,4 @@ const TotalCheckoutPrice = () => {
   );
 };
 
-export default TotalCheckoutPrice;
+export default CheckoutTotalPrice;

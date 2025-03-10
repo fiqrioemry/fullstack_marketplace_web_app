@@ -48,7 +48,7 @@ export const SellerNavLinks = [
 ];
 
 export const checkoutState = {
-  addressId: '',
+  address: null,
   orders: [],
 };
 

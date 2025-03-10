@@ -1,14 +1,21 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { useUserStore } from "@/store/useUserStore";
 import { addressControl, addressState } from "@/config";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DialogForm } from "@/components/form/DialogForm";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
-export function AddressSelection() {
+
+export function AddressSelection({ checkoutForm }) {
   const [isOpen, setIsOpen] = useState(false);
   const { addAddress, address } = useUserStore();
-  console.log(address);
+
+  const handleSelectAddress = (address) => {
+    checkoutForm.setFieldValue("address", address);
+    setIsOpen(false);
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={() => setIsOpen((prev) => !prev)}>
@@ -32,7 +39,9 @@ export function AddressSelection() {
             {address.map((add) => (
               <div
                 className={cn(
-                  add.isMain ? "border-blue-500" : "border-muted",
+                  checkoutForm.values.address.id === add.id
+                    ? "border-blue-500"
+                    : "border-gray-200",
                   "p-2 rounded-lg border mb-4"
                 )}
                 key={add.id}
@@ -45,8 +54,11 @@ export function AddressSelection() {
                   {add.address} {add.province} {add.city}
                   {address.zipcode}
                 </div>
-                {!add.isMain && (
-                  <button className="btn btn-primary text-xs rounded-md">
+                {checkoutForm.values.address.id !== add.id && (
+                  <button
+                    onClick={() => handleSelectAddress(add)}
+                    className="btn btn-primary w-40 text-xs rounded-md"
+                  >
                     Select
                   </button>
                 )}
