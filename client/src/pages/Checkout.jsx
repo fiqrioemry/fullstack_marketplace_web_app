@@ -1,31 +1,27 @@
-import { useEffect } from "react";
-import { useCartStore } from "@/store/useCartStore";
-import CartLoading from "@/components/loading/CartLoading";
-import AddressSelection from "../components/checkout/AddressSelection";
-import CheckoutOrder from "../components/checkout/CheckoutOrder";
+import { useCheckoutLoading } from "@/hooks/useCheckoutLoading";
+import CheckoutLoading from "@/components/loading/CheckoutLoading";
+import CheckoutDetail from "../components/checkout/CheckoutDetail";
 
-const Cart = () => {
-  const { cart, getCarts, checkoutItem } = useCartStore();
+const Checkout = () => {
+  const { cart, address, checkoutItem } = useCheckoutLoading();
 
-  console.log(checkoutItem);
-
-  useEffect(() => {
-    getCarts();
-  }, [getCarts]);
-
-  if (!cart) return <CartLoading />;
+  if (
+    !cart ||
+    !address ||
+    cart.length === 0 ||
+    address.length === 0 ||
+    checkoutItem.length === 0
+  )
+    return <CheckoutLoading />;
 
   return (
-    <section className="bg-gray-100 ">
+    <section className="bg-gray-100 min-h-screen">
       <div className="container mx-auto py-3 md:py-6 px-2">
-        <h2 className="mb-4">Checkout</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <AddressSelection />
-          <CheckoutOrder />
-        </div>
+        <h3 className="mb-4">Checkout</h3>
+        <CheckoutDetail />
       </div>
     </section>
   );
 };
 
-export default Cart;
+export default Checkout;

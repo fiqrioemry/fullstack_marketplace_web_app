@@ -1,9 +1,8 @@
-/* eslint-disable react/prop-types */
 import { formatToRupiah } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 
-const TotalCheckoutPrice = ({ cart }) => {
-  const { checkoutItem } = useCartStore();
+const TotalCheckoutPrice = () => {
+  const { checkoutItem, cart } = useCartStore();
 
   const totalShipmentCost = cart.reduce(
     (sum, store) =>
@@ -26,15 +25,15 @@ const TotalCheckoutPrice = ({ cart }) => {
   const totalBilling = totalItemPrice + totalShipmentCost;
 
   return (
-    <div className="h-40 bg-background rounded-lg p-4 border">
-      <h4>Order Summary</h4>
-      <div className="flex justify-between py-3 text-lg font-medium">
+    <div className="bg-background rounded-lg p-4 border">
+      <h4 className="mb-4">Order Summary</h4>
+      <div className="flex flex-col space-y-2 mb-4">
         <span>Total Shipment Cost :{formatToRupiah(totalShipmentCost)} </span>
         <span>Total Items Price :{formatToRupiah(totalItemPrice)}</span>
         <span>Total Billing :{formatToRupiah(totalBilling)}</span>
       </div>
       <button className="btn btn-primary w-full rounded-md font-medium">
-        Create a payment ({checkoutItem.length})
+        Proceed To Payment
       </button>
     </div>
   );

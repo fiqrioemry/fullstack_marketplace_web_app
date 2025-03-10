@@ -47,6 +47,11 @@ export const SellerNavLinks = [
   },
 ];
 
+export const checkoutState = {
+  addressId: '',
+  orders: [],
+};
+
 export const loginState = {
   email: '',
   password: '',

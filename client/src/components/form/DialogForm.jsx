@@ -59,7 +59,7 @@ export function DialogForm({
         <Button variant={variant} size={size} onClick={() => setIsOpen(true)}>
           {button}
         </Button>
-        <DialogContent className="sm:max-w-[425px] p-0">
+        <DialogContent className="sm:max-w-[425px] p-0 rounded-lg">
           <div className="text-center mt-4">
             <h4>{title}</h4>
             <p className="text-gray-600">
@@ -95,7 +95,7 @@ export function DialogForm({
       </Dialog>
 
       <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-        <DialogContent className="sm:w-[425px]">
+        <DialogContent className="w-full sm:max-w-xl rounded-lg">
           <div className="text-center mt-4">
             <h4>Unsaved Changes</h4>
             <p className="text-gray-600">

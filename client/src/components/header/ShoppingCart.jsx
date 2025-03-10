@@ -59,7 +59,7 @@ const ShoppingCart = () => {
                 <div className="flex items-center">
                   <h5>{store.storeName}</h5>
                 </div>
-                {store.items.map((item) => (
+                {store?.items.map((item) => (
                   <div
                     key={item.cartId}
                     className="flex items-center justify-between py-2"
