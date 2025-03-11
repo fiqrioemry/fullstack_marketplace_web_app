@@ -73,10 +73,10 @@ export const useShopStore = create((set, get) => ({
   createProduct: async (formData) => {
     set({ loading: true });
     try {
-      const res = await callApi.createProduct(formData);
-      toast.success(res.message);
-    } catch (err) {
-      toast.error(err.message);
+      const { message } = await callApi.createProduct(formData);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       set({ loading: false });
     }

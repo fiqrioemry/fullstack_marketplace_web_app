@@ -200,13 +200,13 @@ export const productState = {
   description: '',
   price: '',
   stock: 1,
-  files: [],
+  images: [],
 };
 
 export const productControl = [
   {
-    name: 'files',
-    label: 'files',
+    name: 'images',
+    label: 'images',
     placeholder: 'Maksimum 5 Images and less than 1mb each',
     component: 'multi-upload',
   },

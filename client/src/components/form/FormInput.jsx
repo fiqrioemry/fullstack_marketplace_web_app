@@ -127,11 +127,12 @@ function FormInput({ formik, formControl, disabled, children }) {
           <>
             <InputLabel formik={formik} name={name} label={label} />
             <Textarea
-              id={name}
+              id={label}
               name={name}
               value={value}
               maxLength={maxLength}
               disabled={disabled}
+              onBlur={handleBlur}
               onChange={handleChange}
               placeholder={placeholder}
               className="resize-none h-60"
