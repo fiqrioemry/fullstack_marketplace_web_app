@@ -198,8 +198,8 @@ export const productState = {
   name: '',
   categoryId: '',
   description: '',
-  price: 0,
-  stock: 0,
+  price: '',
+  stock: 1,
   files: [],
 };
 
@@ -227,14 +227,14 @@ export const productControl = [
   {
     name: 'price',
     label: 'price',
-    type: 'text',
+    type: 'number',
     placeholder: 'Set the price',
     component: 'input-number',
   },
   {
     name: 'stock',
     label: 'stock',
-    type: 'text',
+    type: 'number',
     placeholder: 'Set the stock',
     component: 'input-number',
   },

@@ -6,7 +6,11 @@ import { productControl, productState } from "@/config";
 
 const ProductsAdd = () => {
   const { createProduct, loading } = useShopStore();
-  const productForm = useFormSchema(createProduct, productState);
+  const productForm = useFormSchema(
+    createProduct,
+    productState,
+    productControl
+  );
 
   return (
     <section className="space-y-6">
