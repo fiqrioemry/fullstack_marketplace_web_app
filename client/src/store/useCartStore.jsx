@@ -32,7 +32,6 @@ export const useCartStore = create(
         }
       },
 
-      // Menghapus satu item dari checkoutItem
       removeCheckoutItem: (cartId) => {
         const { checkoutItem } = get();
         set({ checkoutItem: checkoutItem?.filter((id) => id !== cartId) });
@@ -109,7 +108,7 @@ export const useCartStore = create(
     }),
     {
       name: "cart-storage",
-      partialize: (state) => ({ checkoutItem: state.checkoutItem }),
+      partialize: (state) => ({ checkoutItem: [state.checkoutItem] }),
     }
   )
 );

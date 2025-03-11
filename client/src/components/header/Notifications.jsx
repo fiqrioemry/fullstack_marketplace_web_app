@@ -14,8 +14,12 @@ const Notifications = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-72 py-2 p-0">
-        <div className="flex justify-between items-center border-b p-2">
-          <h3>Notifications</h3>
+        <div className="flex items-center justify-between border-b px-2 pb-2">
+          <h4>Notifications</h4>
+
+          <Link to="/user/notifications" className="text-xs btn-accent">
+            See all
+          </Link>
         </div>
 
         <div className="p-2">

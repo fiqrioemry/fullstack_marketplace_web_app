@@ -6,7 +6,6 @@ const DashboardLayout = () => {
   return (
     <SidebarProvider>
       <DashboardSidebar />
-
       <SidebarTrigger />
       <div className="flex-1">
         <Outlet />

@@ -1,4 +1,4 @@
-import InputForm from "@/components/form/InputForm";
+import FormInput from "@/components/form/FormInput";
 import { useShopStore } from "@/store/useShopStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import InputButton from "@/components/form/InputButton";
@@ -15,13 +15,13 @@ const ProductsAdd = () => {
   return (
     <section className="space-y-6">
       <div className="rounded-md border p-4">
-        <InputForm
+        <FormInput
           formik={productForm}
-          formControl={productControl}
           inputStyle={"h-40"}
+          formControl={productControl}
         >
           <InputButton title="Submit" formik={productForm} loading={loading} />
-        </InputForm>
+        </FormInput>
       </div>
     </section>
   );

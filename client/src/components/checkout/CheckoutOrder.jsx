@@ -23,6 +23,7 @@ const shipmentOptions = [
 
 const CheckoutOrder = ({ transactionForm }) => {
   const { cart, checkoutItem } = useCartStore();
+  console.log(checkoutItem);
 
   const orders = cart
     .map((store) => ({

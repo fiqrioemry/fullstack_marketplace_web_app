@@ -7,7 +7,7 @@ export const useAuthStore = create((set, get) => ({
   user: null,
   store: null,
   loading: false,
-  accessToen: null,
+  accessToken: null,
   checkingAuth: true,
 
   resetStep: () => set({ step: 1 }),
@@ -17,6 +17,7 @@ export const useAuthStore = create((set, get) => ({
   authCheck: async () => {
     try {
       const { user } = await callApi.authCheck();
+
       set({ user });
     } catch {
       set({ user: null });
@@ -87,6 +88,7 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true });
     try {
       const { message, store } = await callApi.createStore(formData);
+      await get().authCheck();
       set({ store });
       toast.success(message);
     } catch (error) {

@@ -86,7 +86,6 @@ function App() {
               </AuthRoute>
             }
           >
-            <Route path="*" element={<NotFound />} />
             <Route path="address" element={<Address />} />
             <Route path="settings" element={<Settings />} />
             <Route path="transaction" element={<Transactions />} />
@@ -118,8 +117,6 @@ function App() {
               </AuthRoute>
             }
           />
-
-          <Route path="*" element={<NotFound />} />
         </Route>
 
         {/* store */}
@@ -131,7 +128,6 @@ function App() {
             </SellerRoute>
           }
         >
-          <Route path="*" element={<NotFound />} />
           <Route path="sales" element={<Sales />} />
           <Route path="order" element={<Orders />} />
           <Route path="products" element={<Products />}>
@@ -142,6 +138,8 @@ function App() {
           <Route path="notification" element={<Notifications />} />
           <Route index element={<Navigate to="sales" replace />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

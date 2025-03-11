@@ -44,6 +44,7 @@ const ProductsList = () => {
     return () => clearTimeout(debounceSearch);
   }, [searchForm.values]);
 
+  if (!products) return null;
   return (
     <div className="overflow-x-auto ">
       <div className="mb-4">

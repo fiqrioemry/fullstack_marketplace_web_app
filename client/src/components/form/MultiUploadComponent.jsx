@@ -7,7 +7,7 @@ const MultiUploadComponent = ({ formik, value, name, label, type }) => {
     useFileUpload(formik.setFieldValue, formik.values);
 
   return (
-    <div className="min-h-svh flex items-center justify-center bg-red-500">
+    <div className="min-h-svh flex items-center justify-center">
       {Array.isArray(value) && value.length !== 0 ? (
         <div className="grid-display-5">
           {value.map((image, index) => (

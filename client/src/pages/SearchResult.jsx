@@ -60,7 +60,7 @@ const SearchResult = () => {
   }, [searchParams]);
 
   if (!products || loading) return <SearchResultLoading />;
-  console.log(products);
+
   return (
     <div className="container mx-auto">
       <div className="px-2 py-3 md:py-6 space-y-4">

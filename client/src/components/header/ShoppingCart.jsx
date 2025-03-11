@@ -43,7 +43,6 @@ const ShoppingCart = () => {
       <PopoverContent>
         <div className="flex items-center justify-between border-b px-2 pb-2">
           <h4>Shopping Cart</h4>
-
           <Link to="/cart" className="text-xs btn-accent">
             See all
           </Link>
