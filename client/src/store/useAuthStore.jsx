@@ -17,7 +17,6 @@ export const useAuthStore = create((set, get) => ({
   authCheck: async () => {
     try {
       const { user } = await callApi.authCheck();
-
       set({ user });
     } catch {
       set({ user: null });
