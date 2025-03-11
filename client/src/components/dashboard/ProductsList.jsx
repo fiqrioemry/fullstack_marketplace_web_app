@@ -9,7 +9,7 @@ import { useShopStore } from "@/store/useShopStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { DeleteBox } from "@/components/modal/DeleteBox";
 import { DialogForm } from "@/components/form/DialogForm";
-import { productControl, productFilterState } from "@/config";
+import { productControl, storeProductFilterState } from "@/config";
 import PaginationLayout from "@/components/layout/PaginationLayout";
 import ProductListLoading from "@/components/loading/ProductListLoading";
 import { Trash, ArrowUpDown, Pencil, EllipsisVertical } from "lucide-react";
@@ -24,7 +24,7 @@ const ProductsList = () => {
     deleteProduct,
     loading,
   } = useShopStore();
-  const searchForm = useFormSchema(getStoreProduct, productFilterState);
+  const searchForm = useFormSchema(getStoreProduct, storeProductFilterState);
 
   const handleSort = (key) => {
     const isSameSort = searchForm.values.sortBy === key;

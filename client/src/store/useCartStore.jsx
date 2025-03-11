@@ -35,15 +35,14 @@ export const useCartStore = create(
       // Menghapus satu item dari checkoutItem
       removeCheckoutItem: (cartId) => {
         const { checkoutItem } = get();
-        set({ checkoutItem: checkoutItem.filter((id) => id !== cartId) });
+        set({ checkoutItem: checkoutItem?.filter((id) => id !== cartId) });
       },
 
-      // Menghapus item dari cart dan juga dari checkoutItem
       removeCart: async (cartId) => {
         set({ loading: true });
         try {
           const { message } = await callApi.removeCart(cartId);
-          get().removeCheckoutItem(cartId); // Hapus dari checkoutItem
+          get().removeCheckoutItem(cartId);
           await get().getCarts();
           toast.success(message);
         } catch (error) {
@@ -77,6 +76,12 @@ export const useCartStore = create(
       handleCartIncrease: (cartItem) => {
         const newQuantity = cartItem.quantity + 1;
         get().updateCart(cartItem.cartId, newQuantity);
+      },
+
+      handleDirectCheckout: async (productId, quantity) => {
+        const { newCart } = await callApi.addCart(productId, quantity);
+        set({ checkoutItem: newCart.id });
+        window.location.href = "/cart/checkout";
       },
 
       // Menambah atau menghapus satu item dari checkoutItem

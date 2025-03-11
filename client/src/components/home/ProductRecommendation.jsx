@@ -1,26 +1,24 @@
-import ProductCard from "../card/ProductCard";
+import { useEffect, useState } from "react";
 import LoadMoreProducts from "./LoadMoreProducts";
-import useLoadProducts from "@/hooks/useLoadProducts";
+import ProductCard from "@/components/card/ProductCard";
+import { useProductStore } from "@/store/useProductStore";
 import ProductsLoading from "@/components/loading/ProductsLoading";
 
 const ProductRecommendation = () => {
-  const { products, loading, handleLoadMore, limit, totalProducts } =
-    useLoadProducts();
+  const [limit, setLimit] = useState(5);
+  const { products, getProducts } = useProductStore();
+
+  useEffect(() => {
+    getProducts({ limit });
+  }, [getProducts, limit]);
 
   if (!products) return <ProductsLoading />;
 
   return (
     <div className="space-y-6">
       <h4>Product Recommendation</h4>
-      <div className="grid-display-5 mb-4">
-        <ProductCard products={products} />
-      </div>
-      <LoadMoreProducts
-        limit={limit}
-        loading={loading}
-        total={totalProducts}
-        handleLoad={handleLoadMore}
-      />
+      <ProductCard products={products} />
+      <LoadMoreProducts limit={limit} setLimit={setLimit} />
     </div>
   );
 };

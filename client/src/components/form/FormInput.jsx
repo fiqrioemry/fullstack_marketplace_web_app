@@ -19,12 +19,14 @@ function FormInput({ formik, formControl, disabled, children }) {
     getCategories();
   }, []);
 
+  if (!categories) return null;
+
   function renderComponentByType(control) {
     const { label, name, type, placeholder, maxLength, option } = control;
     const value = formik.values[name];
     const handleBlur = formik.handleBlur;
     const handleChange = formik.handleChange;
-    const options = name === "category" ? categories : option || [];
+    const options = name === "category" ? categories : option;
 
     switch (control.component) {
       case "multi-upload":
@@ -76,7 +78,7 @@ function FormInput({ formik, formControl, disabled, children }) {
             value={value}
             formik={formik}
             disabled={disabled}
-            onChange={handleChange}
+            onBlur={handleChange}
             maxLength={maxLength}
             placeholder={placeholder}
           />

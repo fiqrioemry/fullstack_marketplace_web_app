@@ -12,6 +12,8 @@ const Transactions = () => {
 
   if (!transactions) return <TransactionsLoading />;
 
+  
+
   return <TransactionsDisplay />;
 };
 

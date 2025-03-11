@@ -3,20 +3,24 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 const SearchResultLoading = () => {
   return (
-    <section className="section-margin">
-      <Skeleton className="h-8 w-72 rounded-md" />
-      <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-12 md:col-span-3">
-          <Skeleton className="h-full w-full rounded-md" />
-        </div>
-        <div className="col-span-12 md:col-span-9">
-          <div className="flex justify-end">
-            <Skeleton className=" h-8 w-72 rounded-md mb-4" />
+    <div className="container mx-auto">
+      <div className="px-2 py-3 md:py-6 space-y-4">
+        <Skeleton className="h-6 w-32" />
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 pt-2">
+          <div className="col-span-1">
+            <Skeleton className="rounded-lg w-full h-full" />
           </div>
-          <ProductsLoading />
+          <div className="col-span-4 space-y-4">
+            <div>
+              <ProductsLoading />
+            </div>
+            <div>
+              <ProductsLoading />
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

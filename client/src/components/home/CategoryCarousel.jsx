@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/carousel";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useProductStore } from "@/store/useProductStore";
 import CategoriesLoading from "@/components/loading/CategoriesLoading";
@@ -22,16 +21,8 @@ const CategoryCarousel = () => {
   if (!categories) return <CategoriesLoading />;
 
   return (
-    <div className="space-y-6">
-      {/* sub title */}
-      <div className="flex items-center justify-between">
-        <h4>Category List</h4>
-        <Link to="/category" className="btn btn-accent">
-          <span>see all categories</span>
-          <ArrowRight />
-        </Link>
-      </div>
-
+    <div className="space-y-4">
+      <h4>Category List</h4>
       <Carousel className="w-full">
         <CarouselContent>
           {categories.map(({ id, slug, image, name }) => (
@@ -39,7 +30,7 @@ const CategoryCarousel = () => {
               key={id}
               className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
             >
-              <Link to={`/category/${slug}`}>
+              <Link to={`/search?category=${slug}`}>
                 <Card className="p-4">
                   <CardContent>
                     <img

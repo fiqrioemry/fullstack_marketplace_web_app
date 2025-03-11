@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 
 const ShopHeader = ({ store }) => {
   return (
-    <Card className="min-h-40 p-4 rounded-md mb-4">
+    <Card className="min-h-40 p-4 rounded-md mb-6">
       <div className="flex md:flex-row flex-col items-center justify-between gap-4">
         <div className="flex justify-start  items-center gap-4">
           <img

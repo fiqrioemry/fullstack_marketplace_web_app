@@ -115,30 +115,10 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  getProducts: async ({
-    search = '',
-    category = [''],
-    city = [''],
-    minPrice = '',
-    maxPrice = '',
-    sortBy = '',
-    page = 1,
-    orderBy = 'asc',
-    limit = 10,
-  }) => {
-    const searchParams = new URLSearchParams({
-      search,
-      minPrice,
-      maxPrice,
-      sortBy,
-      orderBy,
-      page,
-      limit,
-      city: city.join(','),
-      category: category.join(','),
-    }).toString();
+  getProducts: async (searchParams) => {
+    const queryString = new URLSearchParams(searchParams).toString();
     return authInstance
-      .get(`/product?${searchParams}`)
+      .get(`/product?${queryString}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },

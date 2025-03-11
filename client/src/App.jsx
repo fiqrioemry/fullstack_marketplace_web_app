@@ -5,11 +5,9 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
-import Category from "./pages/Category";
 import OpenStore from "./pages/OpenStore";
 import ProductDetail from "./pages/ProductDetail";
 import SearchResult from "./pages/SearchResult";
-import ProductCategory from "./pages/ProductCategory";
 import PageLoading from "./components/loading/PageLoading";
 
 // halaman shop khusus masing2 toko
@@ -78,10 +76,8 @@ function App() {
             <Route index element={<ShopInfo />} />
             <Route path="products" element={<ShopProducts />} />
           </Route>
-          <Route path="category" element={<Category />} />
           <Route path="search" element={<SearchResult />} />
           <Route path=":shopname/:slug" element={<ProductDetail />} />
-          <Route path="category/:slug" element={<ProductCategory />} />
           <Route
             path="user"
             element={

@@ -9,7 +9,7 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 
-const SortingBox = ({ searchForm }) => {
+const ProductsSorting = ({ searchForm }) => {
   const handleChange = (value) => {
     const [sortBy, orderBy] = value.split(":");
     searchForm.setValues((prevValues) => ({
@@ -39,4 +39,4 @@ const SortingBox = ({ searchForm }) => {
   );
 };
 
-export default SortingBox;
+export default ProductsSorting;

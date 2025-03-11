@@ -134,13 +134,6 @@ export const verifyOTPControl = [
   },
 ];
 
-export const productFilterState = {
-  search: '',
-  page: '',
-  orderBy: 'desc',
-  sortBy: 'createdAt',
-};
-
 export const filterControl = [
   {
     name: 'category',
@@ -177,9 +170,9 @@ export const searchState = {
   city: [],
   minPrice: '',
   maxPrice: '',
-  sortBy: 'name',
+  sortBy: '',
+  orderBy: '',
   page: 1,
-  orderBy: 'asc',
   limit: 10,
 };
 
@@ -260,93 +253,6 @@ export const storeProductFilterState = {
   limit: 5,
   search: '',
 };
-
-export const testState = {
-  default: '',
-  name: '',
-  category: '',
-  city: '',
-  description: '',
-  price: '',
-  stock: '',
-  files: [],
-  date: '',
-  isMain: '',
-};
-
-export const testControl = [
-  {
-    name: 'default',
-    label: 'default input',
-    type: 'text',
-    placeholder: 'Enter a default value',
-  },
-  {
-    name: 'files',
-    label: 'files',
-    type: 'file',
-    placeholder: 'Maksimum 5 Images and less than 1mb each',
-    component: 'multi-upload',
-  },
-  {
-    name: 'name',
-    label: 'product name',
-    type: 'text',
-    placeholder: 'Enter your product name ...',
-    component: 'input-text',
-  },
-  {
-    name: 'description',
-    label: 'description',
-    type: 'text',
-    placeholder: 'Describe about your product ...',
-    component: 'textarea',
-  },
-  {
-    name: 'price',
-    label: 'price',
-    type: 'text',
-    placeholder: 'Set the price',
-    component: 'input-number',
-  },
-  {
-    name: 'stock',
-    label: 'stock',
-    type: 'text',
-    placeholder: 'Set the stock',
-    component: 'input-number',
-  },
-  {
-    name: 'city',
-    label: 'city',
-    type: 'text',
-    placeholder: 'Select a city',
-    component: 'select',
-    option: city,
-  },
-  {
-    name: 'isMain',
-    label: 'set as main address',
-    type: 'checkbox',
-    component: 'single-checked',
-  },
-
-  {
-    name: 'category',
-    label: 'category',
-    type: 'checkbox',
-    placeholder: 'Choose a category',
-    component: 'multiple-checked',
-  },
-
-  {
-    name: 'date',
-    label: 'date',
-    type: 'date',
-    placeholder: 'Select a date',
-    component: 'date',
-  },
-];
 
 // change to a new feature :
 export const openStoreState = {

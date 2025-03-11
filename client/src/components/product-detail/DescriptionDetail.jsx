@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
 import { Minus, Plus } from "lucide-react";
+import { formatToRupiah } from "@/lib/utils";
 import useHandleCart from "@/hooks/useHandleCart";
 import ProcessButton from "@/components/form/processButton";
-import { formatToRupiah } from "../../lib/utils";
 
 const DescriptionDetail = ({ product }) => {
   const {
@@ -15,53 +15,50 @@ const DescriptionDetail = ({ product }) => {
     handleCheckout,
   } = useHandleCart(product);
 
-  const {
-    name,
-    price,
-    stock,
-    storeSlug,
-    storeName,
-    storeAvatar,
-    description,
-    categoryName,
-  } = product;
+  const { name, price, stock, store, description, category } = product;
 
   return (
     <div className="col-start-1 col-end-13 md:col-start-8 md:col-end-13">
       <div>
         <div className="border-b border-muted pb-4">
           <Link
-            to={`/category/${categoryName}`}
+            to={`/category/${category.name}`}
             className="text-muted-foreground"
           >
-            {categoryName}
+            {category.name}
           </Link>
           <h4 className="mb-2">{name}</h4>
           <span>Rp.{price}</span>
         </div>
         <div className="border-b border-muted py-4">
           <span className="text-md font-medium">Description :</span>
+          <p>{description}</p>
           <p>
-            {description} Lorem ipsum dolor, sit amet consectetur adipisicing
-            elit. Id ratione obcaecati rerum ab inventore velit assumenda, quos
-            numquam necessitatibus corrupti.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Id ratione
+            obcaecati rerum ab inventore velit assumenda, quos numquam
+            necessitatibus corrupti.
+          </p>
+          <p>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Id ratione
+            obcaecati rerum ab inventore velit assumenda, quos numquam
+            necessitatibus corrupti.
           </p>
         </div>
 
         <div className="flex justify-between gap-4 items-center border-b border-muted pt-4 pb-4">
           <div className="flex items-center gap-4">
             <img
-              src={storeAvatar}
+              src={store.avatar}
               className="w-14 object-cover rounded-full flex-shrink-0"
             />
             <div className="flex-1 flex flex-col">
               <Link
-                to={`/${storeSlug}`}
+                to={`/${store.slug}`}
                 className="font-medium text-xs md:text-sm"
               >
-                {storeName}
+                {store.name}
               </Link>
-              <span className="text-xs md:text-sm">Jakarta</span>
+              <span className="text-xs md:text-sm">{store.city}</span>
             </div>
           </div>
         </div>

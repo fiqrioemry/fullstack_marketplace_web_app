@@ -34,8 +34,8 @@ const MultipleCheckedComponent = ({
             id={option.id || option}
             type={type}
             disabled={disabled}
-            checked={value.includes(option?.name || option)}
-            onChange={() => handleChange(option.name || option)}
+            checked={value.includes(option.slug || option)}
+            onChange={() => handleChange(option.slug || option)}
             className="w-4 h-4"
           />
           <label htmlFor={option?.id || option}>{option?.name || option}</label>

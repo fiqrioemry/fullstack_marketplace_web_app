@@ -7,7 +7,7 @@ const useHandleCart = (product) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [quantity, setQuantity] = useState(1);
-  const { addCart, loading } = useCartStore();
+  const { addCart, handleDirectCheckout, loading } = useCartStore();
 
   const handleIncrease = () => {
     setQuantity((prev) => {
@@ -29,18 +29,8 @@ const useHandleCart = (product) => {
   };
 
   const handleCheckout = () => {
-    if (user && user.length > 0) {
-      navigate("/cart/checkout", {
-        state: {
-          product: {
-            slug: product.slug,
-            quantity,
-          },
-        },
-      });
-    } else {
-      navigate("/signin");
-    }
+    if (!user) navigate("/signin");
+    handleDirectCheckout(product.id, quantity);
   };
 
   return {
