@@ -11,7 +11,7 @@ import { useLocation } from "react-router-dom";
 
 const PageBreadCrumb = () => {
   const location = useLocation();
-  const navPath = location.pathname.split("/").filter(Boolean); // Menghapus elemen kosong
+  const navPath = location.pathname.split("/").filter(Boolean);
 
   return (
     <Breadcrumb>

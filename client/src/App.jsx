@@ -7,10 +7,10 @@ import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import OpenStore from "./pages/OpenStore";
 import ProductDetail from "./pages/ProductDetail";
-import ProductsPreview from "./pages/ProductsPreview";
+import ProductsPreview from "./pages/ProductsPrevew";
 import PageLoading from "./components/loading/PageLoading";
 
-// halaman shop khusus masing2 toko
+// halaman shop
 import ShopInfo from "./pages/shop/ShopInfo";
 import ShopProducts from "./pages/shop/ShopProducts";
 import ShopLayout from "./components/shop/ShopLayout";
@@ -31,13 +31,13 @@ import ProductsAdd from "./components/dashboard/ProductsAdd";
 import ProductsList from "./components/dashboard/ProductsList";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 
+// middleware
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
 import { useAuthStore } from "./store/useAuthStore";
 import { Navigate, Route, Routes } from "react-router-dom";
-
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
-import { Toaster } from "react-hot-toast";
 
 function App() {
   const { authCheck, checkingAuth } = useAuthStore();

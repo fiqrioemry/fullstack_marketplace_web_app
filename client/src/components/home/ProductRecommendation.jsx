@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import LoadMoreProducts from "./LoadMoreProducts";
 import ProductCard from "@/components/card/ProductCard";
 import { useProductStore } from "@/store/useProductStore";
-import ProductsLoading from "@/components/loading/ProductsLoading";
+import ProductsPreviewLoading from "@/components/loading/ProductsPreviewLoading";
 
 const ProductRecommendation = () => {
   const [limit, setLimit] = useState(5);
@@ -12,7 +12,7 @@ const ProductRecommendation = () => {
     getProducts({ limit });
   }, [getProducts, limit]);
 
-  if (!products) return <ProductsLoading />;
+  if (!products) return <ProductsPreviewLoading />;
 
   return (
     <div className="space-y-6">

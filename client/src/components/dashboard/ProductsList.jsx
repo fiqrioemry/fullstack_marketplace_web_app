@@ -10,9 +10,9 @@ import { useFormSchema } from "@/hooks/useFormSchema";
 import { DeleteBox } from "@/components/modal/DeleteBox";
 import { DialogForm } from "@/components/form/DialogForm";
 import { productControl, storeProductFilterState } from "@/config";
-import PaginationLayout from "@/components/layout/PaginationLayout";
 import ProductListLoading from "@/components/loading/ProductListLoading";
 import { Trash, ArrowUpDown, Pencil, EllipsisVertical } from "lucide-react";
+import ProductsPagination from "@/components/products-preview/ProductsPagination";
 
 const ProductsList = () => {
   const {
@@ -177,7 +177,7 @@ const ProductsList = () => {
       </div>
 
       <div className="mb-8">
-        <PaginationLayout
+        <ProductsPagination
           totalPage={totalPage}
           searchForm={searchForm}
           currentPage={currentPage}

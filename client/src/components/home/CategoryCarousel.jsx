@@ -30,7 +30,7 @@ const CategoryCarousel = () => {
               key={id}
               className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
             >
-              <Link to={`/search?category=${slug}`}>
+              <Link to={`/products?category=${slug}`}>
                 <Card className="p-4">
                   <CardContent>
                     <img

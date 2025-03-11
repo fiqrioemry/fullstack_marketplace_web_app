@@ -17,7 +17,7 @@ const Header = () => {
     useSearchProducts(searchProducts, searchState);
 
   const handleSubmit = () => {
-    navigate(`/search?search=${searchForm.values.search}`);
+    navigate(`/products?search=${searchForm.values.search}`);
   };
 
   const searchActive = cn(

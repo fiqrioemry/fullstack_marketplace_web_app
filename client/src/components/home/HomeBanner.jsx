@@ -34,7 +34,7 @@ const HomeBanner = () => {
               <CardContent className="flex items-center justify-center">
                 <img
                   className="w-full aspect-ratio rounded-lg"
-                  src="https://images.tokopedia.net/img/NsjrJu/2020/9/25/b1d2ed1e-ef80-4d7a-869f-a0394f0629be.jpg?ect=4g"
+                  src="https://placehold.co/800x400"
                   alt="banner"
                 />
               </CardContent>
