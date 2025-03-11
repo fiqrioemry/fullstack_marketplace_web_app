@@ -45,13 +45,14 @@ const ProductsList = () => {
   }, [searchForm.values]);
 
   if (!products) return null;
+
   return (
     <div className="overflow-x-auto ">
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search products..."
           name="search"
+          placeholder="Search products..."
           value={searchForm.values.search}
           onChange={searchForm.handleChange}
           className="border border-gray-300 rounded px-3 py-2 w-full"
@@ -116,7 +117,7 @@ const ProductsList = () => {
                   <td className="px-1 md:px-3 py-3">
                     {formatToRupiah(product.price)}
                   </td>
-                  <td className="px-1 md:px-3 py-3">{product.categoryName}</td>
+                  <td className="px-1 md:px-3 py-3">{product.category.name}</td>
                   <td className="block md:hidden px-1 md:px-3 py-3 text-center space-x-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger>

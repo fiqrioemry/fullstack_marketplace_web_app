@@ -19,8 +19,6 @@ function FormInput({ formik, formControl, disabled, children }) {
     getCategories();
   }, []);
 
-  if (!categories) return null;
-
   function renderComponentByType(control) {
     const { label, name, type, placeholder, maxLength, option } = control;
     const value = formik.values[name];

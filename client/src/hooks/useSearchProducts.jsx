@@ -1,22 +1,24 @@
-import { searchState } from "@/config";
 import { useFormSchema } from "./useFormSchema";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const useSearchProducts = (searchUser) => {
+const useSearchProducts = (searchFunction, searchState) => {
   const searchRef = useRef(null);
   const debounceRef = useRef(null);
-  const searchForm = useFormSchema(null, searchState);
   const [openSearch, setOpenSearch] = useState(false);
+  const searchForm = useFormSchema(searchFunction, searchState);
 
   const handleSearch = () => {
-    setOpenSearch((prev) => !prev);
+    setOpenSearch(true);
   };
 
+  const handleBlur = () => {
+    if (!document.hasFocus()) return;
+    setOpenSearch(false);
+  };
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setOpenSearch(false);
-        searchForm.resetForm();
       }
     };
 
@@ -26,10 +28,26 @@ const useSearchProducts = (searchUser) => {
     };
   }, [openSearch]);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState === "visible" &&
+        document.activeElement === searchRef.current
+      ) {
+        setOpenSearch(true);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   const searchHandler = useCallback(() => {
     if (!searchForm.values.search.trim()) return;
-    searchUser(searchForm.values.search);
-  }, [searchForm.values.search, searchUser]);
+    searchFunction(searchForm.values.search);
+  }, [searchForm.values.search, searchFunction]);
 
   useEffect(() => {
     clearTimeout(debounceRef.current);
@@ -43,6 +61,7 @@ const useSearchProducts = (searchUser) => {
     searchRef,
     openSearch,
     handleSearch,
+    handleBlur,
   };
 };
 
