@@ -205,8 +205,8 @@ export const productState = {
 
 export const productControl = [
   {
-    name: 'images',
-    label: 'file',
+    name: 'files',
+    label: 'files',
     placeholder: 'Maksimum 5 Images and less than 1mb each',
     component: 'multi-upload',
   },
@@ -239,7 +239,7 @@ export const productControl = [
     component: 'input-number',
   },
   {
-    name: 'category',
+    name: 'categoryId',
     label: 'category',
     type: 'text',
     placeholder: 'Choose product category',

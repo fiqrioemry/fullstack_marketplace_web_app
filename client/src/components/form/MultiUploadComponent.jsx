@@ -2,21 +2,21 @@
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { CloudUpload, FilePlus, X } from "lucide-react";
 
-const MultiUploadComponent = ({ formik, value, name, label, type }) => {
+const MultiUploadComponent = ({ formik, value, name, label }) => {
   const { multiFile, removePreview, handleDrop, handleDragOver } =
     useFileUpload(formik.setFieldValue, formik.values);
 
   return (
-    <div className="min-h-svh flex items-center justify-center">
-      {Array.isArray(value) && value.length !== 0 ? (
+    <div className="mb-6">
+      {Array.isArray(value) && value.length > 0 ? (
         <div className="grid-display-5">
           {value.map((image, index) => (
             <div className="relative" key={index}>
               <button
                 type="button"
                 name={name}
-                className="remove_preview_btn"
                 onClick={() => removePreview(name, index)}
+                className="bg-primary text-background rounded-full p-2 absolute -top-2 -right-2"
               >
                 <X size={14} />
               </button>
@@ -24,18 +24,13 @@ const MultiUploadComponent = ({ formik, value, name, label, type }) => {
                 {image instanceof File || image instanceof Blob ? (
                   <img
                     src={URL.createObjectURL(image)}
-                    className="w-full h-full object-cover"
-                    onLoad={(e) => {
-                      if (e.target.src.startsWith("blob:")) {
-                        URL.revokeObjectURL(e.target.src);
-                      }
-                    }}
+                    className="w-full h-48 object-cover aspect-square"
                   />
                 ) : (
                   <img
                     src={image}
                     alt={`image-${index}`}
-                    className="object-cover"
+                    className="w-full h-48 object-cover aspect-square"
                   />
                 )}
               </div>
@@ -43,37 +38,38 @@ const MultiUploadComponent = ({ formik, value, name, label, type }) => {
           ))}
 
           {value.length < 5 && (
-            <div className="">
-              <label htmlFor={label} className="">
-                <FilePlus size={20} />
-                <input
-                  id={label}
-                  multiple
-                  type="file"
-                  name={name}
-                  accept="image/*"
-                  className="hidden"
-                  onChange={multiFile}
-                />
-              </label>
-            </div>
+            <label
+              htmlFor={label}
+              className="relative h-48 flex items-center justify-center border bg-gray-100  hover:bg-gray-200  border-dashed rounded-lg transition-colors"
+            >
+              <FilePlus size={20} />
+              <input
+                id={label}
+                multiple
+                type="file"
+                name={name}
+                accept="image/*"
+                className="hidden"
+                onChange={multiFile}
+              />
+            </label>
           )}
         </div>
       ) : (
         <label
-          className=""
+          className="h-96 flex items-center justify-center border border-dashed rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
           htmlFor={label}
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, name)}
         >
-          <div className="flex_center">
+          <div className="flex items-center flex-col">
             <CloudUpload size={24} />
-            <span>Pilih </span>
+            <span>Select product image</span>
           </div>
           <input
             multiple
             id={label}
-            type={type}
+            type="file"
             name={name}
             accept="image/*"
             className="hidden"

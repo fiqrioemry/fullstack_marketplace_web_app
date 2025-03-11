@@ -26,14 +26,13 @@ function FormInput({ formik, formControl, disabled, children }) {
     const value = formik.values[name];
     const handleBlur = formik.handleBlur;
     const handleChange = formik.handleChange;
-    const options = name === "category" ? categories : option;
+    const options = label === "category" ? categories : option;
 
     switch (control.component) {
       case "multi-upload":
         return (
           <MultiUploadComponent
             name={name}
-            type={type}
             label={label}
             value={value}
             formik={formik}
