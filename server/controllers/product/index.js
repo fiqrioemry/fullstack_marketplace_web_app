@@ -4,40 +4,28 @@ const { Store, Product, Category, Gallery } = require('../../models');
 async function getProduct(req, res) {
   const slug = req.params.slug;
   try {
-    const productData = await Product.findOne({
+    const data = await Product.findOne({
       where: { slug: slug },
-      include: [
-        {
-          model: Store,
-          as: 'store',
-        },
-        {
-          model: Category,
-          as: 'category',
-        },
-        {
-          model: Gallery,
-          as: 'gallery',
-          attributes: ['image'],
-        },
-      ],
+      include: ['store', 'category', 'gallery'],
     });
 
+    if (!data) return res.status(404).send({ message: ' Product Not Found' });
+
     const product = {
-      id: productData.id,
-      name: productData.name,
-      slug: productData.slug,
-      price: productData.price,
-      stock: productData.stock,
-      store: productData.store,
-      category: productData.category,
-      description: productData.description,
-      images: productData.gallery.map((p) => p.image),
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      price: data.price,
+      stock: data.stock,
+      store: data.store,
+      category: data.category,
+      description: data.description,
+      images: data.gallery.map((product) => product.image),
     };
 
     return res.status(200).json({ product });
   } catch (error) {
-    return res.status(500).json(error.message);
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -71,7 +59,7 @@ async function getProducts(req, res) {
     // **Filter by Category**
     if (category) {
       const categories = category.split(',').map((cat) => cat);
-      console.log('kategori', categories);
+
       const findCategories = await Category.findAll({
         where: { slug: { [Op.in]: categories } },
         attributes: ['id'],
@@ -107,47 +95,40 @@ async function getProducts(req, res) {
     }
 
     // **Fetch Products**
-    const product = await Product.findAndCountAll({
+    const results = await Product.findAndCountAll({
       where: query,
       limit: dataPerPage,
       offset: offset,
-      include: [
-        {
-          model: Store,
-          as: 'store',
-          attributes: ['id', 'name', 'slug', 'avatar'],
-        },
-        { model: Gallery, as: 'gallery', attributes: ['image'] },
-        { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
-      ],
-      distinct: true,
+      include: ['store', 'category', 'gallery'],
       order: [[sortBy || 'createdAt', orderBy?.toUpperCase() || 'DESC']],
+      distinct: true,
     });
 
     // **Jika tidak ada produk, kembalikan array kosong**
-    if (product.count === 0) {
+    if (results.count === 0) {
       return res.status(200).json({ products: [] });
     }
 
-    const data = product.rows.map((item) => ({
-      id: item.id,
-      name: item.name,
-      slug: item.slug,
-      price: item.price,
-      stock: item.stock,
-      category: item.category?.name,
-      description: item.description,
-      images: item.gallery.map((img) => img.image),
-      store: item.store,
+    const products = results.rows.map((data) => ({
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      price: data.price,
+      stock: data.stock,
+      category: data.category?.name,
+      description: data.description,
+      images: data.gallery.map((gal) => gal.image),
+      store: data.store,
     }));
 
-    const totalPage = Math.floor(product.count / dataPerPage);
+    const totalPage = Math.floor(results.count / dataPerPage);
+    const totalData = results.count;
 
     return res.status(200).json({
-      products: data,
-      totalPage: totalPage,
+      products,
+      totalPage,
+      totalData,
       currentPage: parseInt(page),
-      totalData: product.count,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

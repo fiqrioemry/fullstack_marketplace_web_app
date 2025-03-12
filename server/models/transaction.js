@@ -36,14 +36,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0,
       },
-      // paymentLink: {
-      //   type: DataTypes.STRING,
-      //   allowNull: true,
-      // },
-      // paymentDue: {
-      //   type: DataTypes.DATE,
-      //   allowNull: true,
-      // },
+      paymentLink: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      paymentDue: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
       paymentStatus: {
         type: DataTypes.ENUM('pending', 'paid', 'expired', 'canceled'),
         allowNull: false,

@@ -91,29 +91,27 @@ async function login(req, res) {
     if (!email || !password)
       return res.status(400).json({ message: 'All fields are required' });
 
-    const userData = await User.findOne({
+    const data = await User.findOne({
       where: { email },
-      include: [
-        { model: Store, as: 'store', attributes: ['id', 'name', 'avatar'] },
-      ],
+      include: ['store'],
     });
 
-    if (!userData) {
+    if (!data) {
       return res.status(400).json({ message: 'Invalid email' });
     }
 
-    if (!userData.password) {
+    if (!data.password) {
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, userData.password);
+    const isPasswordValid = await bcrypt.compare(password, data.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    const accessToken = generateAccessToken(userData);
+    const accessToken = generateAccessToken(data);
 
-    const refreshToken = generateRefreshToken(userData);
+    const refreshToken = generateRefreshToken(data);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -123,12 +121,12 @@ async function login(req, res) {
     });
 
     const user = {
-      userId: userData.id,
-      email: userData.email,
-      fullname: userData.fullname,
-      role: userData.role,
-      avatar: userData.avatar,
-      store: userData?.store,
+      userId: data.id,
+      role: data.role,
+      email: data.email,
+      store: data?.store,
+      avatar: data.avatar,
+      fullname: data.fullname,
     };
 
     return res.status(200).json({
@@ -151,13 +149,9 @@ async function logout(req, res) {
 
 async function authCheck(req, res) {
   const userId = req.user.userId;
-
   try {
     const userData = await User.findByPk(userId, {
-      attributes: { exclude: ['password'] },
-      include: [
-        { model: Store, as: 'store', attributes: ['id', 'name', 'avatar'] },
-      ],
+      include: ['store'],
     });
 
     const user = {
@@ -307,6 +301,6 @@ module.exports = {
   verifyOTP,
   refreshToken,
   createStore,
-  googleAuthCallback,
   googleAuth,
+  googleAuthCallback,
 };

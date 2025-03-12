@@ -47,7 +47,6 @@ async function PaymentNotifications(req, res) {
 
       await Promise.all(
         userTransaction.order.map(async (order) => {
-          // Update the order status to 'pending'
           await order.update({ orderStatus: 'pending' }, { transaction });
 
           await Shipment.create(
@@ -316,7 +315,6 @@ async function createNewTransaction(req, res) {
 
     return res.status(201).json({
       message: 'New Order is created',
-      transaction: newTransaction,
       transactionToken: transactionMidtrans.token,
       transactionUrl: transactionMidtrans.redirect_url,
     });
@@ -329,11 +327,9 @@ async function createNewTransaction(req, res) {
 async function getAllTransactions(req, res) {
   try {
     const userId = req.user.userId;
-
     const transactions = await Transaction.findAll({
       where: { userId },
     });
-
     return res.status(200).json({ transactions });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -403,9 +399,10 @@ async function getAllOrders(req, res) {
         totalPrice: order.totalPrice,
         orderStatus: order.orderStatus,
         createdAt: order.createdAt,
-        product: order.orderDetail.map(({ quantity, price }) => ({
-          quantity,
-          price,
+        product: order.orderDetail.map((product) => ({
+          name: product.name,
+          price: product.price,
+          quantity: product.quantity,
         })),
       };
     });
@@ -448,10 +445,9 @@ async function getOrderDetail(req, res) {
 }
 
 async function getOrderShipmentDetail(req, res) {
+  const orderId = req.params.orderId;
   try {
-    const { orderId } = req.params;
     const shipment = await Shipment.findOne({ where: { orderId } });
-
     return res.status(200).json({ shipment });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -473,16 +469,13 @@ async function confirmOrderDelivery(req, res) {
     }
 
     if (status === 'success') {
-      // Update status pesanan
       await order.update({ orderStatus: 'success' }, { transaction });
 
-      // Tambahkan balance ke Store yang bersangkutan
       await Store.update(
         { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
         { where: { id: order.storeId }, transaction },
       );
 
-      // Buat notifikasi untuk Store
       await Notification.create(
         {
           storeId: order.storeId,
@@ -497,16 +490,13 @@ async function confirmOrderDelivery(req, res) {
       await transaction.commit();
       return res.status(200).send({ message: 'Order received successfully' });
     } else if (status === 'canceled') {
-      // Update status pesanan ke "canceled"
       await order.update({ orderStatus: 'canceled' }, { transaction });
 
-      // Refund ke balance user
       await User.update(
         { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
         { where: { id: userId }, transaction },
       );
 
-      // Buat notifikasi ke user
       await Notification.create(
         {
           userId,
@@ -517,7 +507,6 @@ async function confirmOrderDelivery(req, res) {
         { transaction },
       );
 
-      // Update status pengiriman menjadi "returned"
       await Shipment.update(
         { shipmentStatus: 'returned' },
         { where: { orderId }, transaction },
@@ -527,7 +516,6 @@ async function confirmOrderDelivery(req, res) {
       return res.status(200).send({ message: 'Order is being returned' });
     }
 
-    // Jika status tidak valid
     await transaction.rollback();
     return res.status(400).json({ message: 'Invalid status provided' });
   } catch (error) {

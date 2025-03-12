@@ -57,10 +57,7 @@ async function updateCart(req, res) {
 
   try {
     const cart = await Cart.findByPk(id, {
-      include: {
-        model: Product,
-        as: 'product',
-      },
+      include: ['product'],
     });
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
@@ -119,40 +116,25 @@ async function getCarts(req, res) {
     if (!userId) {
       return res.status(401).json({ message: 'Unauthorized: User not found' });
     }
-    const cartData = await Cart.findAll({
+    const data = await Cart.findAll({
       where: { userId },
-      attributes: ['id', 'productId', 'quantity'],
       include: [
         {
           model: Product,
           as: 'product',
-          attributes: ['id', 'storeId', 'name', 'slug', 'price', 'stock'],
-          include: [
-            {
-              model: Store,
-              as: 'store',
-              attributes: ['id', 'name', 'slug', 'image'],
-            },
-            {
-              model: Gallery,
-              as: 'gallery',
-              attributes: ['image'],
-            },
-          ],
+          include: ['store', 'gallery'],
         },
       ],
     });
 
-    if (!cartData || cartData.length === 0) {
+    if (!data || data.length === 0) {
       return res.status(200).json({ message: 'Cart is empty', cart: [] });
     }
 
-    const cartItems = cartData.reduce((result, item) => {
+    const cartItems = data.reduce((result, item) => {
       const product = item.product;
       const store = product.store || {};
-
       if (!product) return result;
-
       const storeId = store.id;
       const storeName = store.name;
       const storeSlug = store.slug;
