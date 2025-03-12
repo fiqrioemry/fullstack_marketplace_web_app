@@ -12,7 +12,6 @@ const { Op } = require('sequelize');
 const cron = require('node-cron');
 
 async function autoCompleteOrders() {
-  const transaction = await sequelize.transaction();
   try {
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
@@ -22,45 +21,68 @@ async function autoCompleteOrders() {
         orderStatus: 'delivered',
         updatedAt: { [Op.lte]: twoDaysAgo },
       },
-      transaction,
     });
 
     if (ordersToUpdate.length === 0) {
-      await transaction.commit();
       console.log('Tidak ada pesanan yang perlu diperbarui.');
       return;
     }
 
-    // Update status order menjadi 'success' dan tambahkan balance ke Store
+    // Update setiap pesanan dalam transaksi terpisah
     for (const order of ordersToUpdate) {
-      await order.update({ orderStatus: 'success' }, { transaction });
+      const transaction = await sequelize.transaction();
+      try {
+        // Ubah status order menjadi "success"
+        await order.update({ orderStatus: 'success' }, { transaction });
 
-      // Tambahkan balance ke store berdasarkan totalOrderAmount
-      await Store.update(
-        { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
-        { where: { id: order.storeId }, transaction },
-      );
+        // Ambil semua order detail untuk order ini
+        const orderDetails = await OrderDetail.findAll({
+          where: { orderId: order.id },
+          transaction,
+        });
 
-      // Buat notifikasi ke Store
-      await Notification.create(
-        {
-          userId: order.userId,
-          storeId: order.storeId,
-          type: 'order',
-          message:
-            'Your order has been marked as successful and the store balance has been updated.',
-        },
-        { transaction },
-      );
+        // Update jumlah sold pada product
+        for (const detail of orderDetails) {
+          await Product.update(
+            {
+              sold: sequelize.literal(`COALESCE(sold, 0) + ${detail.quantity}`),
+            },
+            { where: { id: detail.productId }, transaction },
+          );
+        }
+
+        // Tambahkan balance ke store
+        await Store.update(
+          { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
+          { where: { id: order.storeId }, transaction },
+        );
+
+        // Buat notifikasi ke store
+        await Notification.create(
+          {
+            userId: order.userId,
+            storeId: order.storeId,
+            type: 'order',
+            message:
+              'Your order has been marked as successful and the store balance has been updated.',
+          },
+          { transaction },
+        );
+
+        await transaction.commit();
+        console.log(
+          `Order #${order.id} berhasil diperbarui ke status "success".`,
+        );
+      } catch (error) {
+        await transaction.rollback();
+        console.error(`Gagal memperbarui Order #${order.id}:`, error.message);
+      }
     }
-
-    await transaction.commit();
-    console.log(
-      `Berhasil memperbarui ${ordersToUpdate.length} pesanan menjadi "success" dan memperbarui balance Store.`,
-    );
   } catch (error) {
-    await transaction.rollback();
-    console.error('Gagal memperbarui pesanan:', error.message);
+    console.error(
+      'Kesalahan dalam cron job autoCompleteOrders:',
+      error.message,
+    );
   }
 }
 

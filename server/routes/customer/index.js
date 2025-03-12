@@ -5,13 +5,12 @@ const {
   PaymentNotifications,
   createNewTransaction,
   getTransactionDetail,
-  getOrderShipmentDetail,
   getDashboardSummary,
+  getOrderShipmentDetail,
 } = require('../../controllers/customer');
 const router = require('express').Router();
 const isAuthenticate = require('../../middleware/isAuthenticate');
 
-router.post('/notifications', PaymentNotifications);
 router.get('/summary', isAuthenticate, getDashboardSummary);
 router.get('/transactions', isAuthenticate, getAllTransactions);
 router.post('/transactions', isAuthenticate, createNewTransaction);
@@ -20,6 +19,7 @@ router.get(
   isAuthenticate,
   getTransactionDetail,
 );
+router.post('/transactions/notifications', PaymentNotifications);
 
 router.get('/orders', isAuthenticate, getAllOrders);
 router.get('/orders/:orderId', isAuthenticate, getOrderDetail);
