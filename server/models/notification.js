@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: {
         type: DataTypes.INTEGER,
-        allowNull: true, // Bisa null jika notifikasi untuk seller
+        allowNull: true,
       },
       storeId: {
         type: DataTypes.INTEGER,
