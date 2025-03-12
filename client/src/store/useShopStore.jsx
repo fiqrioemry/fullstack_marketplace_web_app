@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
 import callApi from "@/api/callApi";
+import { useAuthStore } from "./useAuthStore";
 
 export const useShopStore = create((set, get) => ({
-  store: null,
   orders: null,
   profile: null,
   loading: false,
+  statistic: null,
 
   // product
   products: null,
@@ -14,26 +15,67 @@ export const useShopStore = create((set, get) => ({
   totalData: 0,
   currentPage: 1,
 
-  getStoreProduct: async (
-    formData = {
-      sortBy: "createdAt",
-      orderBy: "desc",
-      page: 1,
-      limit: 5,
-      search: "",
-    }
-  ) => {
+  // TODO : Create feature getStoreStatisticSummary
+  getStoreStatisticSummary: async () => {
+    set({ statistic: null });
     try {
+      const { statistic } = await callApi.getStoreStatisticSummary();
+      set({ statistic });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+
+  createStore: async (formData) => {
+    set({ loading: true });
+    try {
+      const { message, store } = await callApi.createStore(formData);
+      await useAuthStore.getState().authCheck();
+      set({ store });
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  // store products management
+  createProduct: async (formData) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.createProduct(formData);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  updateProduct: async (formData, productId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.updateProduct(formData, productId);
+      await get().getStoreProducts();
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  getStoreProducts: async (searchParams) => {
+    try {
+      set({ loading: true });
       const { products, totalPage, totalData, currentPage } =
-        await callApi.getStoreProduct(formData);
-      set({
-        products,
-        totalPage,
-        totalData,
-        currentPage,
-      });
+        await callApi.getStoreProducts(searchParams);
+      set({ products, totalPage, totalData, currentPage });
     } catch (error) {
       console.log(error.message);
+    } finally {
+      set({ loading: false });
     }
   },
 
@@ -50,18 +92,8 @@ export const useShopStore = create((set, get) => ({
     }
   },
 
-  getStoreInfo: async (shopname) => {
-    set({ store: null, products: null });
-    try {
-      const { store, products } = await callApi.getStoreInfo(shopname);
-      set({ store, products });
-    } catch (error) {
-      set({ store: [], products: [] });
-      console.log(error.message);
-    }
-  },
-
   getStoreProfile: async () => {
+    set({ profile: null });
     try {
       const profile = await callApi.getStoreProfile();
       set({ profile });
@@ -70,45 +102,71 @@ export const useShopStore = create((set, get) => ({
     }
   },
 
-  createProduct: async (formData) => {
+  // TODO : Create feature update store profile
+  updateStoreProfile: async (formData) => {
     set({ loading: true });
     try {
-      const { message } = await callApi.createProduct(formData);
+      const { message, updatedProfile } = await callApi.updateStoreProfile(
+        formData
+      );
+      set({ profile: updatedProfile });
       toast.success(message);
     } catch (error) {
-      toast.error(error.message);
+      console.log(error.message);
     } finally {
       set({ loading: false });
     }
   },
 
-  updateProduct: async (formData, productId) => {
-    set({ loading: true });
+  // store orders management
+  getAllStoreOrders: async () => {
+    set({ orders: null });
     try {
-      const res = await callApi.updateProduct(formData, productId);
-      await get().getStoreProduct();
-      toast.success(res.message);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  getStoreOrders: async () => {
-    try {
-      const { message, orders } = await callApi.getStoreOrders();
+      const { orders } = await callApi.getAllStoreOrders();
       set({ orders });
-      toast.success(message);
     } catch (error) {
-      toast.error(error.message);
+      console.error(error.message);
     }
   },
 
-  updateOrderStatus: async () => {
+  getStoreOrderDetail: async (orderId) => {
+    set({ orderDetail: null });
+    try {
+      const { orderDetail } = await callApi.getStoreOrderDetail(orderId);
+      set({ orderDetail });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+
+  cancelStoreOrder: async (orderId) => {
     set({ loading: true });
     try {
-      const { message } = await callApi.updateOrderStatus();
+      const { message } = await callApi.cancelStoreOrder(orderId);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  proceedStoreOrder: async (formData, orderId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.proceedStoreOrder(formData, orderId);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  updateShipmentStatus: async (orderId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.updateShipmentStatus(orderId);
       toast.success(message);
     } catch (error) {
       toast.error(error.message);

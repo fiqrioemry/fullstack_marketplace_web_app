@@ -1,11 +1,11 @@
-import { useAuthStore } from "@/store/useAuthStore";
+import { useShopStore } from "@/store/useShopStore";
 import FormInput from "@/components/form/FormInput";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import InputButton from "@/components/form/InputButton";
 import { openStoreControl, openStoreState } from "@/config";
 
 const OpenStore = () => {
-  const { createStore, loading } = useAuthStore();
+  const { createStore, loading } = useShopStore();
   const openStoreForm = useFormSchema(
     createStore,
     openStoreState,

@@ -18,20 +18,22 @@ import ShopLayout from "./components/shop/ShopLayout";
 // halaman user
 import Address from "./pages/user/Address";
 import Settings from "./pages/user/Settings";
+import UserOrders from "./pages/user/UserOrders";
 import Transactions from "./pages/user/Transactions";
 import UserLayout from "./components/user/UserLayout";
 
 // halaman store untuk seller
-import Sales from "./pages/store/Sales";
+
 import Orders from "./pages/store/Orders";
 import Profile from "./pages/store/Profile";
 import Products from "./pages/store/Products";
+import Statistics from "./pages/store/Statistics";
 import Notifications from "./pages/store/Notifications";
 import ProductsAdd from "./components/dashboard/ProductsAdd";
 import ProductsList from "./components/dashboard/ProductsList";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 
-// middleware
+// middleware and hooks
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
@@ -88,7 +90,8 @@ function App() {
           >
             <Route path="address" element={<Address />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="transaction" element={<Transactions />} />
+            <Route path="orders" element={<UserOrders />} />
+            <Route path="transactions" element={<Transactions />} />
             <Route index element={<Navigate to="settings" replace />} />
           </Route>
 
@@ -128,15 +131,14 @@ function App() {
             </SellerRoute>
           }
         >
-          <Route path="sales" element={<Sales />} />
-          <Route path="order" element={<Orders />} />
+          <Route index element={<Statistics />} />
+          <Route path="orders" element={<Orders />} />
           <Route path="products" element={<Products />}>
             <Route path="add" element={<ProductsAdd />} />
             <Route index element={<ProductsList />} />
           </Route>
           <Route path="profile" element={<Profile />} />
           <Route path="notification" element={<Notifications />} />
-          <Route index element={<Navigate to="sales" replace />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

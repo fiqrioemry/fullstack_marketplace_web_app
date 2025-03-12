@@ -82,18 +82,4 @@ export const useAuthStore = create((set, get) => ({
       set({ loading: false });
     }
   },
-
-  createStore: async (formData) => {
-    set({ loading: true });
-    try {
-      const { message, store } = await callApi.createStore(formData);
-      await get().authCheck();
-      set({ store });
-      toast.success(message);
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
 }));

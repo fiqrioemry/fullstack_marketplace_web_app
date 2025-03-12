@@ -3,10 +3,14 @@ import toast from "react-hot-toast";
 import callApi from "@/api/callApi";
 
 export const useUserStore = create((set, get) => ({
+  orders: null,
   profile: null,
   address: null,
-  loading: false,
+  shipment: null,
   transactions: null,
+  orderDetail: null,
+  transactionDetail: null,
+  loading: false,
 
   getProfile: async () => {
     set({ profile: null });
@@ -22,6 +26,7 @@ export const useUserStore = create((set, get) => ({
     set({ loading: true });
     try {
       const { message, updatedProfile } = await callApi.updateProfile(formData);
+      console.log(message);
       set({ profile: updatedProfile });
       toast.success(message);
     } catch (error) {
@@ -112,14 +117,80 @@ export const useUserStore = create((set, get) => ({
     }));
   },
 
-  // user / customer transaction management
-  getUserTransactions: async () => {
+  // customer transactions and orders management
+  getAllUserOrders: async () => {
+    set({ orders: null });
     try {
-      const { message, transactions } = await callApi.getUserTransactions();
-      set({ transactions });
+      const { orders } = await callApi.getAllUserOrders();
+      set({ orders });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+
+  getUserOrderDetail: async () => {
+    set({ orderDetail: null });
+    try {
+      const { orderDetail } = await callApi.getUserOrderDetail();
+      set({ orderDetail });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+
+  cancelUserOrder: async (orderId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.cancelUserOrder(orderId);
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  confirmOrderDelivery: async (formData, orderId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.confirmOrderDelivery(formData, orderId);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  getShipmentDetail: async () => {
+    set({ shipment: null });
+    try {
+      const { shipment } = await callApi.getShipmentDetail();
+      set({ shipment });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+
+  getAllTransactions: async () => {
+    set({ transactions: null });
+    try {
+      const { transactions } = await callApi.getAllTransactions();
+      set({ transactions });
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+
+  getTransactionDetail: async (transactionId) => {
+    set({ transactionDetail: null });
+    try {
+      const { transactionDetail } = await callApi.getTransactionDetail(
+        transactionId
+      );
+      set({ transactionDetail });
+    } catch (error) {
+      console.error(error.message);
     }
   },
 

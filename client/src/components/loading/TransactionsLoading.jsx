@@ -2,18 +2,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const TransactionsLoading = () => {
   return (
-    <div className="grid grid-cols-12 gap-4 p-4">
-      <div className=" col-span-4 space-y-">
-        <Skeleton className="h-60 w-full rounded-md" />
-        <Skeleton className="h-60 w-full rounded-md" />
-      </div>
-
-      <div className="col-span-8 space-y-4">
-        <Skeleton className="w-full h-5 rounded-md" />
-        <Skeleton className="w-full h-5 rounded-md" />
-        <Skeleton className="w-full h-5 rounded-md" />
-        <Skeleton className="w-full h-5 rounded-md" />
-      </div>
+    <div className="space-y-6">
+      <Skeleton className="w-full h-7 rounded-md" />
+      <Skeleton className="w-full h-7 rounded-md" />
+      <Skeleton className="w-full h-7 rounded-md" />
+      <Skeleton className="w-full h-7 rounded-md" />
+      <Skeleton className="w-full h-7 rounded-md" />
+      <Skeleton className="w-full h-7 rounded-md" />
+      <Skeleton className="w-full h-7 rounded-md" />
     </div>
   );
 };

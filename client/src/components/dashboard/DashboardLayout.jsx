@@ -7,7 +7,7 @@ const DashboardLayout = () => {
     <SidebarProvider>
       <DashboardSidebar />
       <SidebarTrigger />
-      <div className="flex-1">
+      <div className="flex-1 container mx-auto px-2 py-3 md:py-6">
         <Outlet />
       </div>
     </SidebarProvider>

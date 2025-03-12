@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import ShopHeader from "./ShopHeader";
 import NotFound from "@/pages/NotFound";
-import { useShopStore } from "@/store/useShopStore";
-import { Outlet, useParams } from "react-router-dom";
-import ShopLoading from "@/components/loading/ShopLoading";
 import ShopNavTabs from "./ShopNavTabs";
+import { Outlet, useParams } from "react-router-dom";
+import { useProductStore } from "@/store/useProductStore";
+import ShopLoading from "@/components/loading/ShopLoading";
 
 const ShopLayout = () => {
   const { shopname } = useParams();
-  const { getStoreInfo, store } = useShopStore();
+  const { getStoreInfo, store } = useProductStore();
 
   useEffect(() => {
     getStoreInfo(shopname);

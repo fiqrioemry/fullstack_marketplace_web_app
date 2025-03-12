@@ -13,7 +13,7 @@ const SignIn = () => {
   const loginForm = useFormSchema(login, loginState, loginControl);
 
   return (
-    <div className="h-screen flex-center">
+    <div className="h-screen flex items-center justify-center">
       <Card className="w-96">
         <CardContent className="p-4">
           <div className="py-4 text-center">
@@ -22,7 +22,7 @@ const SignIn = () => {
           <FormInput formik={loginForm} formControl={loginControl}>
             <InputButton title={"login"} formik={loginForm} loading={loading} />
           </FormInput>
-          <div className="flex-center py-2">OR</div>
+          <div className="flex items-center justify-center py-2">OR</div>
           <GoogleAuth buttonTitle={"Signin with google"} />
           <div className="text-center mt-2 space-x-2">
             <span> Dont have an account ? signup</span>

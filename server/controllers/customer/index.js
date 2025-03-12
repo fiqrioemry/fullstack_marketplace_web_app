@@ -444,7 +444,7 @@ async function getOrderDetail(req, res) {
   }
 }
 
-async function getOrderShipment(req, res) {
+async function getShipmentInfo(req, res) {
   const orderId = req.params.orderId;
   try {
     const shipment = await Shipment.findOne({ where: { orderId } });
@@ -549,7 +549,7 @@ module.exports = {
   getTransactionDetail,
   createNewTransaction,
   PaymentNotifications,
-  getOrderShipment,
+  getShipmentInfo,
   confirmOrderDelivery,
   cancelOrder,
 };

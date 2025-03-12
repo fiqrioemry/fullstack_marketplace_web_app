@@ -1,17 +1,18 @@
 import { useEffect } from "react";
-import { useShopStore } from "@/store/useShopStore";
+import { useUserStore } from "@/store/useUserStore";
+import TransactionsList from "@/components/user/TransactionsList";
 import TransactionsLoading from "@/components/loading/TransactionsLoading";
 
 const Transactions = () => {
-  const { getTransactions, transactions } = useShopStore();
+  const { getAllTransactions, transactions } = useUserStore();
 
   useEffect(() => {
-    getTransactions();
-  }, [getTransactions]);
+    getAllTransactions();
+  }, [getAllTransactions]);
 
   if (!transactions) return <TransactionsLoading />;
 
-  return null;
+  return <TransactionsList />;
 };
 
 export default Transactions;

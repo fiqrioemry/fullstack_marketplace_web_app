@@ -21,19 +21,16 @@ const Products = () => {
   const currentPath = location.pathname;
 
   return (
-    <main className="py-3 md:py-6">
-      <Tabs defaultValue={currentPath} className="container mx-auto mb-3 px-2">
+    <>
+      <Tabs defaultValue={currentPath}>
         <TabsList className="justify-between md:justify-start">
           {productsMenu.map((menu) => {
             const activePath = currentPath === menu.path;
             return (
-              <TabsTrigger value={menu.path} key={menu.title}>
+              <TabsTrigger value={menu.path} key={menu.title} asChild>
                 <Link
                   to={menu.path}
-                  className={cn(
-                    activePath ? "text-blue-700" : "text-foreground",
-                    "hover:text-blue-700"
-                  )}
+                  className={cn(activePath ? "btn-accent" : "text-foreground")}
                   key={menu.title}
                 >
                   {menu.title}
@@ -44,10 +41,10 @@ const Products = () => {
           })}
         </TabsList>
       </Tabs>
-      <section className="container mx-auto mb-3 px-2">
+      <div className="pt-4 pb-4">
         <Outlet />
-      </section>
-    </main>
+      </div>
+    </>
   );
 };
 

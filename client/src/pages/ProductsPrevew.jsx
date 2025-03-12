@@ -72,15 +72,17 @@ const ProductsPreview = () => {
           <div className="col-span-4">
             <ProductsSorting searchForm={searchForm} />
             {products.length > 0 ? (
-              <ProductCard products={products} />
+              <>
+                <ProductCard products={products} />
+                <ProductsPagination
+                  totalPage={totalPage}
+                  searchForm={searchForm}
+                  currentPage={currentPage}
+                />
+              </>
             ) : (
               <ProductsNotFound />
             )}
-            <ProductsPagination
-              totalPage={totalPage}
-              searchForm={searchForm}
-              currentPage={currentPage}
-            />
           </div>
         </div>
       </div>

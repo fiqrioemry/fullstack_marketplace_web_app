@@ -19,12 +19,12 @@ const ProductsList = () => {
     products,
     totalPage,
     currentPage,
-    getStoreProduct,
+    getStoreProducts,
     updateProduct,
     deleteProduct,
     loading,
   } = useShopStore();
-  const searchForm = useFormSchema(getStoreProduct, storeProductFilterState);
+  const searchForm = useFormSchema(getStoreProducts, storeProductFilterState);
 
   const handleSort = (key) => {
     const isSameSort = searchForm.values.sortBy === key;

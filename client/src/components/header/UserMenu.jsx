@@ -21,7 +21,7 @@ const NavMenu = [
   },
   {
     title: "transaction",
-    href: "/user/transaction",
+    href: "/user/transactions",
   },
 ];
 

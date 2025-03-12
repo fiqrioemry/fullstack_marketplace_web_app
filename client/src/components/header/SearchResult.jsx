@@ -7,7 +7,7 @@ const SearchResult = ({ results, searchForm, searching }) => {
 
   const handleClick = (params) => {
     searchForm.setFieldValue("search", params);
-    navigate(`/search?search=${params}`);
+    navigate(`/products?search=${params}`);
   };
 
   if (!results || searchForm.values.search.length === 0) return null;

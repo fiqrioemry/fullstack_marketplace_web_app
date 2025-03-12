@@ -15,12 +15,12 @@ async function createCategory(req, res) {
       slug,
     });
 
-    return res.status(201).send({
+    return res.status(201).json({
       message: 'New Category Created',
       category,
     });
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -31,12 +31,12 @@ async function updateCategory(req, res) {
 
   try {
     if (!image || !id || !name)
-      return res.status(400).send({ message: 'All field required' });
+      return res.status(400).json({ message: 'All field required' });
 
     const category = await Category.findByPk(id);
 
     if (!category) {
-      return res.status(404).send({ message: 'Category not found' });
+      return res.status(404).json({ message: 'Category not found' });
     }
 
     let imageUrl = category.image;
@@ -61,12 +61,12 @@ async function updateCategory(req, res) {
 
     await category.update(updatedCategory);
 
-    return res.status(200).send({
+    return res.status(200).json({
       message: 'Category Updated',
       updatedCategory,
     });
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -76,27 +76,27 @@ async function deleteCategory(req, res) {
     const category = await Category.findByPk(id);
 
     if (!category) {
-      return res.status(404).send({ message: 'Category not found' });
+      return res.status(404).json({ message: 'Category not found' });
     }
 
     await deleteFromCloudinary(category.image);
 
     await category.destroy();
 
-    return res.status(200).send({
+    return res.status(200).json({
       message: 'Category Deleted',
     });
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).json(error.message);
   }
 }
 
 async function getCategories(req, res) {
   try {
-    const category = await Category.findAll();
-    return res.status(200).send(category);
+    const categories = await Category.findAll();
+    return res.status(200).json({ categories });
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 

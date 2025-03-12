@@ -5,6 +5,8 @@ const errorHandle = (error) => {
 };
 
 const callApi = {
+  // NOTE : PUBLIC API route
+  // User Authentication management
   login: async (formData) => {
     return publicInstance
       .post('/auth/login', formData)
@@ -47,13 +49,6 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  resetPassword: async (token, formData) => {
-    return publicInstance
-      .put(`/auth/reset/${token}`, formData)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
   authCheck: async () => {
     return authInstance
       .get('/auth/me')
@@ -61,6 +56,46 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  // products management
+  getProduct: async (slug) => {
+    return authInstance
+      .get(`/product/${slug}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getProducts: async (searchParams) => {
+    const queryString = new URLSearchParams(searchParams).toString();
+    return authInstance
+      .get(`/product?${queryString}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  searchProducts: async (search) => {
+    return authInstance
+      .get(`/product?search=${search}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getCategories: async () => {
+    return authInstance
+      .get('/category')
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getStoreInfo: async (shopname) => {
+    return authInstance
+      .get(`/store/${shopname}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // note : CUSTOMER API Route
+
+  // customer profile management
   getProfile: async () => {
     return authInstance
       .get('/user/profile')
@@ -107,43 +142,137 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  //   product and store API management :
-  getProduct: async (slug) => {
+  // customer transactions and orders management
+  getAllUserOrders: async () => {
     return authInstance
-      .get(`/product/${slug}`)
+      .get('/customer/orders')
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  getProducts: async (searchParams) => {
-    const queryString = new URLSearchParams(searchParams).toString();
+  getUserOrderDetail: async (orderId) => {
     return authInstance
-      .get(`/product?${queryString}`)
+      .get(`/customer/orders/${orderId}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  searchProducts: async (search) => {
+  cancelUserOrder: async (orderId) => {
     return authInstance
-      .get(`/product?search=${search}`)
+      .put(`/customer/orders/${orderId}/cancel`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  getCategories: async () => {
+  confirmOrderDelivery: async (formData, orderId) => {
     return authInstance
-      .get('/category')
+      .put(`/customer/orders/${orderId}/confirm`, formData)
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  getStoreInfo: async (shopname) => {
+  getAllShipments: async (orderId) => {
     return authInstance
-      .get(`/store/${shopname}`)
+      .get(`/customer/orders/${orderId}/shipment`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
+  getAllTransactions: async () => {
+    return authInstance
+      .get('/customer/transactions')
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getTransactionDetail: async (transactionId) => {
+    return authInstance
+      .get(`/customer/transactions/${transactionId}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  createNewTransaction: async (transactionData) => {
+    return authInstance
+      .post('/customer/transactions', transactionData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // customer carts management
+  getCarts: async () => {
+    return authInstance
+      .get('/cart')
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  addCart: async (productId, quantity) => {
+    return authInstance
+      .post('/cart', { productId, quantity })
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  updateCart: async (cartId, quantity) => {
+    return authInstance
+      .put(`/cart/${cartId}`, { quantity })
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  removeCart: async (cartId) => {
+    return authInstance
+      .delete(`/cart/${cartId}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // note : ADMIN API Route
+
+  // category management
+  // TODO : Create feature create new category
+  createNewCategory: async () => {
+    return authInstance
+      .post(`/category`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // TODO : Create feature update category
+  updateCategory: async (formData, categoryId) => {
+    return authInstance
+      .put(`/category/${categoryId}`, formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // TODO : Create feature delete category
+  deleteCategory: async (categoryId) => {
+    return authInstance
+      .delete(`/category/${categoryId}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // TODO : Create feature getUserStatisticSummary
+  getUserStatisticSummary: async () => {
+    return authInstance
+      .get(`/admin/user/statistic`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // note : SELLER  API Route
+  // open store management
+  createStore: async (formData) => {
+    return authInstance
+      .post('/auth/open-store', formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // store profile management
   getStoreProfile: async () => {
     return authInstance
       .get(`/store`)
@@ -151,19 +280,64 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  getStoreProduct: async ({
-    sortBy = 'createdAt',
-    orderBy = 'desc',
-    page = 1,
-    limit = 5,
-    search = '',
-  }) => {
+  // TODO : Create feature update store profile
+  updateStoreProfile: async (formData) => {
     return authInstance
-      .get(
-        `/store/product?search=${encodeURIComponent(
-          search,
-        )}&sortBy=${sortBy}&orderBy=${orderBy}&page=${page}&limit=${limit}}`,
-      )
+      .put(`/store`, formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // store statistic management
+  // TODO : Create feature getStoreStatisticSummary
+  getStoreStatisticSummary: async (formData) => {
+    return authInstance
+      .get(`/seller/statistic`, formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // store order management
+  getAllStoreOrders: async () => {
+    return authInstance
+      .get('/seller/orders')
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getStoreOrderDetail: async (orderId) => {
+    return authInstance
+      .get(`/seller/orders/${orderId}`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  cancelStoreOrder: async (orderId) => {
+    return authInstance
+      .put(`/seller/orders/${orderId}/cancel`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  proceedStoreOrder: async (formData, orderId) => {
+    return authInstance
+      .put(`/seller/orders/${orderId}/process`, formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  updateShipmentStatus: async (orderId, shipmentData) => {
+    return authInstance
+      .put(`/seller/orders/${orderId}/shipment`, shipmentData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  // store products management
+  getStoreProducts: async (searchParams) => {
+    const queryString = new URLSearchParams(searchParams).toString();
+    return authInstance
+      .get(`/store/product?${queryString}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
@@ -193,72 +367,6 @@ const callApi = {
   deleteProduct: async (productId) => {
     return authInstance
       .delete(`/store/product/${productId}`)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  createStore: async (formData) => {
-    return authInstance
-      .post('/auth/open-store', formData)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  //   cart API management :
-  getCarts: async () => {
-    return authInstance
-      .get('/cart')
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  addCart: async (productId, quantity) => {
-    return authInstance
-      .post('/cart', { productId, quantity })
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  updateCart: async (cartId, quantity) => {
-    return authInstance
-      .put(`/cart/${cartId}`, { quantity })
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  removeCart: async (cartId) => {
-    return authInstance
-      .delete(`/cart/${cartId}`)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  //   user transactions API management :
-  getUserTransactions: async () => {
-    return authInstance
-      .get('/order')
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  createNewTransactions: async (formData) => {
-    return authInstance
-      .post('/order', formData)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  //   store Order API management :
-  getStoreOrders: async () => {
-    return authInstance
-      .get('/order/store')
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  updateOrderStatus: async (formData) => {
-    return authInstance
-      .put('/order/store', formData)
       .then((res) => res.data)
       .catch(errorHandle);
   },

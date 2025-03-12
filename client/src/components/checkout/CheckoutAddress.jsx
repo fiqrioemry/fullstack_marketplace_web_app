@@ -7,7 +7,7 @@ import AddressCardLoading from "@/components/loading/AddressCardLoading";
 const CheckoutAddress = ({ transactionForm }) => {
   const { address } = useUserStore();
   const selectedAddress = transactionForm.values.address;
-  const mainAddress = address.find((add) => add.isMain);
+  const mainAddress = address.find((add) => add.isMain) || address[0];
 
   useEffect(() => {
     transactionForm.setFieldValue("address", mainAddress);

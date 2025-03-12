@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { CreditCard, MapPin, UserRoundPen } from "lucide-react";
+import { CreditCard, MapPin, Truck, UserRoundPen } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const userMenu = [
@@ -18,6 +18,11 @@ const userMenu = [
     title: "transactions",
     path: "/user/transactions",
     icon: CreditCard,
+  },
+  {
+    title: "orders",
+    path: "/user/orders",
+    icon: Truck,
   },
 ];
 

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
+import CartEmpty from "@/components/cart/CartEmpty";
 import { useCartStore } from "@/store/useCartStore";
 import CartLayout from "@/components/cart/CartLayout";
 import CartLoading from "@/components/loading/CartLoading";
 import CartTotalPrice from "@/components/cart/CartTotalPrice";
 import CartItemDisplay from "@/components/cart/CartItemDisplay";
-import CartEmpty from "../components/cart/CartEmpty";
 
 const Cart = () => {
   const { cart, getCarts } = useCartStore();

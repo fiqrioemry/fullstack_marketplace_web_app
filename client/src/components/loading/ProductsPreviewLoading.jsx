@@ -1,12 +1,11 @@
 import { Skeleton } from "@/components/ui/Skeleton";
 import useResponsiveCount from "@/hooks/useResponsiveCount";
 
-// eslint-disable-next-line react/prop-types
-const ProductsLoading = ({ style = "grid-display-5" }) => {
+const ProductsPreviewLoading = () => {
   const count = useResponsiveCount(5);
 
   return (
-    <div className={style}>
+    <div className="grid-display-5">
       {Array.from({ length: count }).map((_, index) => (
         <div className="space-y-4" key={index}>
           <Skeleton className="h-52 w-full rounded-md" />
@@ -18,4 +17,4 @@ const ProductsLoading = ({ style = "grid-display-5" }) => {
   );
 };
 
-export default ProductsLoading;
+export default ProductsPreviewLoading;

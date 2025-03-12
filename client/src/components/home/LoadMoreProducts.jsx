@@ -1,28 +1,22 @@
 /* eslint-disable react/prop-types */
-import NoMoreProducts from "./NoMoreProducts";
 import { useProductStore } from "@/store/useProductStore";
-import ProductsLoading from "@/components/loading/ProductsLoading";
+import ProductsPreviewLoading from "@/components/loading/ProductsPreviewLoading";
 
 const LoadMoreProducts = ({ setLimit, limit }) => {
-  const { totalProducts, loading } = useProductStore();
+  const { totalData, loading } = useProductStore();
 
   const handleLoadMore = () => {
     setLimit((prev) => prev + 5);
   };
 
-  if (loading) return <ProductsLoading />;
+  if (limit >= totalData) return null;
 
-  if (limit >= totalProducts) return <NoMoreProducts />;
+  if (loading) return <ProductsPreviewLoading />;
 
   return (
-    <div>
-      <button
-        onClick={handleLoadMore}
-        className="btn btn-primary rounded-md w-full"
-      >
-        load more
-      </button>
-    </div>
+    <button onClick={handleLoadMore} className="btn btn-primary  w-full">
+      load more
+    </button>
   );
 };
 
