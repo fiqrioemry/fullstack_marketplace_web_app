@@ -43,11 +43,8 @@ async function getStoreInfo(req, res) {
       name: item.name,
       slug: item.slug,
       price: item.price,
-      storeName: store?.name,
-      storeSlug: store?.slug,
-      storeAvatar: store?.avatar,
-      categoryName: item.category?.name,
-      images: item.gallery[0].image,
+      images: item.gallery.map((img) => img.image),
+      store: store,
     }));
 
     return res.status(200).json({ store, products });
@@ -88,14 +85,10 @@ async function getMyStoreProfile(req, res) {
 async function updateMyStoreProfile(req, res) {
   const imageFile = req.files?.image?.[0];
   const avatarFile = req.files?.avatar?.[0];
-  const { userId, storeId, role } = req.user;
+  const { userId, storeId } = req.user;
   const { name, city, description, updateType } = req.body;
 
   try {
-    if (role !== 'seller') {
-      return res.status(401).json({ message: 'Unauthorized Access' });
-    }
-
     const store = await Store.findByPk(storeId);
 
     if (!store || store.userId !== userId) {
@@ -205,9 +198,8 @@ async function getMyStoreProducts(req, res) {
       slug: item.slug,
       price: item.price,
       stock: item.stock,
+      category: item.category,
       description: item.description,
-      categoryId: item.category?.id,
-      categoryName: item.category?.name,
       images: item.gallery.map((img) => img.image),
     }));
 
@@ -225,52 +217,52 @@ async function getMyStoreProducts(req, res) {
 }
 // tested - completed
 async function createProduct(req, res) {
-  const { storeId, role } = req.user;
+  const files = req.files;
+  const storeId = req.user.storeId;
   const transaction = await sequelize.transaction();
-  try {
-    if (role !== 'seller') {
-      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
-    }
+  const { name, description, price, stock, categoryId } = req.body;
 
-    const { name, description, price, stock, categoryId } = req.body;
+  try {
     if (!name || !description || !price || !stock || !categoryId) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    if (!req.files || req.files.length === 0) {
-      return res
-        .status(400)
-        .json({ message: 'You must upload at least 1 image' });
+    if (!files || files.length === 0) {
+      return res.status(400).json({ message: 'Must upload at least 1 image' });
     }
 
     const slug = await createSlug(name);
+
     const existingProduct = await Product.findOne({ where: { slug } });
+
     if (existingProduct) {
       return res.status(400).json({
-        message: 'Product name must be unique, Please choose another',
+        message: 'Product name must be unique',
       });
     }
 
     const newProduct = await Product.create(
       {
-        storeId,
         name,
         slug,
-        description,
         price,
         stock,
+        storeId,
         categoryId,
+        description,
       },
       { transaction },
     );
-
     const uploadPromises = req.files.map(async (file) => {
-      const uploadedMedia = await uploadToCloudinary(file.path);
-      await fs.unlink(file.path);
+      const uploadedMedia = await uploadToCloudinary(
+        file.buffer,
+        file.mimetype,
+      );
       return uploadedMedia;
     });
 
     const uploadedImages = await Promise.all(uploadPromises);
+
     const images = uploadedImages.map((url) => ({
       productId: newProduct.id,
       image: url.secure_url,
@@ -280,22 +272,25 @@ async function createProduct(req, res) {
 
     await transaction.commit();
 
-    return res.status(201).json({ message: 'New product is added' });
+    return res.status(201).json({ message: 'New product is created' });
   } catch (error) {
     await transaction.rollback();
+
     return res.status(500).json({
       message: error.message,
     });
   }
 }
-// tested - completed
-const updateProduct = async function (req, res) {
+
+async function updateProduct(req, res) {
+  const files = req.files;
   const productId = req.params.productId;
   const transaction = await sequelize.transaction();
-  try {
-    let { name, images, description, price, stock, categoryId } = req.body;
+  let { name, images, description, price, stock, categoryId } = req.body;
 
+  try {
     const product = await Product.findByPk(productId);
+
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
@@ -324,10 +319,15 @@ const updateProduct = async function (req, res) {
     });
 
     let newImages = [];
-    if (req.files && req.files.length > 0) {
+
+    await Gallery.bulkCreate(images, { transaction });
+
+    if (files && files.length > 0) {
       const uploadPromises = req.files.map(async (file) => {
-        const uploadedMedia = await uploadToCloudinary(file.path);
-        await fs.unlink(file.path);
+        const uploadedMedia = await uploadToCloudinary(
+          file.buffer,
+          file.mimetype,
+        );
         return uploadedMedia;
       });
 
@@ -343,25 +343,27 @@ const updateProduct = async function (req, res) {
     await product.update(
       {
         name,
-        description,
         price,
         stock,
         categoryId,
+        description,
       },
       { transaction },
     );
 
     await transaction.commit();
+
     return res.status(200).json({ message: 'Product updated successfully' });
   } catch (error) {
     await transaction.rollback();
+
     return res.status(500).json({
       message: error.message,
     });
   }
-};
+}
 // tested - completed
-const deleteProduct = async function (req, res) {
+async function deleteProduct(req, res) {
   const productId = req.params.productId;
   const transaction = await sequelize.transaction();
 
@@ -386,7 +388,7 @@ const deleteProduct = async function (req, res) {
       message: error.message,
     });
   }
-};
+}
 
 module.exports = {
   getStoreInfo,

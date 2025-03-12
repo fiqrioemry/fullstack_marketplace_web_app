@@ -1,21 +1,12 @@
-const fs = require('fs').promises;
 const { Op } = require('sequelize');
 const { redis } = require('../../config/redis');
-const { User, Address } = require('../../models');
+const { User, Address, sequelize } = require('../../models');
 const uploadToCloudinary = require('../../utils/uploadToCloudinary');
 const deleteFromCloudinary = require('../../utils/deleteFromCloudinary');
 
 async function getProfile(req, res) {
-  const { userId } = req.user;
+  const userId = req.user.userId;
   try {
-    const cachedUser = await redis.get(`profile:${userId}`);
-
-    if (cachedUser) {
-      return res.status(200).json({
-        profile: JSON.parse(cachedUser),
-      });
-    }
-
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['password'] },
     });
@@ -32,68 +23,75 @@ async function getProfile(req, res) {
       birthday: user.birthday,
     };
 
-    await redis.setex(`profile:${userId}`, 900, JSON.stringify(profile));
-
-    return res.status(200).json(profile);
+    return res.status(200).json({ profile });
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to Retrieve Profile',
-      error: error.message,
+      message: error.message,
     });
   }
 }
 
 async function updateProfile(req, res) {
   const file = req.file;
-  const { userId } = req.user;
-  const { fullname, gender, birthday, phone } = req.body;
+  const userId = req.user.userId;
+  const transaction = await sequelize.transaction();
+  const { fullname, phone, birthday, gender } = req.body;
 
   try {
-    const user = await User.findByPk(userId, {
-      attributes: { exclude: ['password'] },
-    });
+    const user = await User.findOne({ where: { id: userId }, transaction });
 
     if (!user) {
-      if (file) {
-        await fs.unlink(file.path);
-      }
       return res.status(404).json({ message: 'User not found' });
     }
 
     let avatar = user.avatar;
+    let uploadedImage;
 
-    if (file) {
-      const updatedAvatar = await uploadToCloudinary(file.path);
+    const isUpdated =
+      (phone && user.phone !== phone) ||
+      (gender && user.gender !== gender) ||
+      (birthday && user.birthday !== birthday) ||
+      (fullname && user.fullname !== fullname) ||
+      file;
 
-      if (user.avatar) {
-        await deleteFromCloudinary(user.avatar);
-      }
-
-      avatar = updatedAvatar.secure_url;
-
-      await fs.unlink(file.path);
+    if (!isUpdated) {
+      return res.status(400).json({
+        message: 'No changes detected',
+      });
     }
 
-    const updatedProfile = {
-      fullname: fullname || user.fullname,
-      avatar: avatar,
-      birthday: birthday || user.birthday,
-      phone: phone || user.phone,
-      gender: gender || user.gender,
-    };
+    if (file?.buffer) {
+      try {
+        uploadedImage = await uploadToCloudinary(file.buffer, file.mimetype);
 
-    await user.update(updatedUser);
+        if (user.avatar) {
+          await deleteFromCloudinary(user.avatar);
+        }
+        avatar = uploadedImage.secure_url;
+      } catch (error) {
+        await transaction.rollback();
+        return res.status(500).json({ message: 'Failed to upload avatar' });
+      }
+    }
 
-    await redis.setex(`profile:${userId}`, 900, JSON.stringify(updatedUser));
+    user.avatar = avatar;
+    user.phone = phone || user.phone;
+    user.gender = gender || user.gender;
+    user.birthday = birthday || user.birthday;
+    user.fullname = fullname || user.fullname;
+
+    await user.save({ transaction });
+
+    await transaction.commit();
 
     return res.status(200).json({
-      message: 'Profile is updated',
-      updatedProfile,
+      message: 'Profile updated',
+      updatedProfile: user,
     });
   } catch (error) {
+    await transaction.rollback();
     return res.status(500).json({
-      message: 'Failed to Update Profile',
-      error: error.message,
+      message: error.message,
     });
   }
 }
@@ -202,8 +200,8 @@ async function updateAddress(req, res) {
 }
 
 async function deleteAddress(req, res) {
-  const { userId } = req.user;
-  const { addressId } = req.params;
+  const userId = req.user.userId;
+  const addressId = req.params.addressId;
   try {
     const currentAddress = await Address.findByPk(addressId);
 
@@ -212,9 +210,6 @@ async function deleteAddress(req, res) {
     }
 
     await Address.destroy({ where: { id: addressId } });
-
-    // Hapus cache Redis untuk alamat pengguna
-    await redis.del(`address:${userId}`);
 
     return res.status(200).json({
       message: 'Address is deleted',
@@ -229,9 +224,9 @@ async function deleteAddress(req, res) {
 
 module.exports = {
   getProfile,
-  updateProfile,
-  updateAddress,
-  deleteAddress,
   addAddress,
   getAddress,
+  updateAddress,
+  updateProfile,
+  deleteAddress,
 };

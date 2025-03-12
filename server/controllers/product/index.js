@@ -1,5 +1,4 @@
 const { Op } = require('sequelize');
-const createSlug = require('../../utils/createSlug');
 const { Store, Product, Category, Gallery } = require('../../models');
 
 async function getProduct(req, res) {
@@ -28,15 +27,11 @@ async function getProduct(req, res) {
       id: productData.id,
       name: productData.name,
       slug: productData.slug,
-      description: productData.description,
       price: productData.price,
       stock: productData.stock,
-      city: productData.store.city,
-      storeName: productData.store.name,
-      storeSlug: productData.store.slug,
-      storeAvatar: productData.store.avatar,
-      categoryName: productData.category.name,
-      categorySlug: productData.category.slug,
+      store: productData.store,
+      category: productData.category,
+      description: productData.description,
       images: productData.gallery.map((p) => p.image),
     };
 
@@ -47,19 +42,18 @@ async function getProduct(req, res) {
 }
 
 async function getProducts(req, res) {
+  let {
+    search,
+    city,
+    category,
+    minPrice,
+    maxPrice,
+    page,
+    sortBy,
+    orderBy,
+    limit,
+  } = req.query;
   try {
-    let {
-      search,
-      city,
-      category,
-      minPrice,
-      maxPrice,
-      page,
-      sortBy,
-      orderBy,
-      limit,
-    } = req.query;
-
     const dataPerPage = limit > 0 ? parseInt(limit) : 5;
     const currentPage = page > 0 ? parseInt(page) : 1;
     const offset = (currentPage - 1) * dataPerPage;
@@ -76,14 +70,15 @@ async function getProducts(req, res) {
 
     // **Filter by Category**
     if (category) {
-      const categories = category.split(',').map((cat) => createSlug(cat));
+      const categories = category.split(',').map((cat) => cat);
+      console.log('kategori', categories);
       const findCategories = await Category.findAll({
         where: { slug: { [Op.in]: categories } },
         attributes: ['id'],
       });
 
       if (findCategories.length > 0) {
-        query.categoryId = { [Op.in]: findCategories.map((c) => c.id) };
+        query.categoryId = { [Op.in]: findCategories.map((cat) => cat.id) };
       } else {
         return res.status(200).json({ products: [] });
       }
@@ -120,7 +115,7 @@ async function getProducts(req, res) {
         {
           model: Store,
           as: 'store',
-          attributes: ['id', 'name', 'slug', 'city', 'image'],
+          attributes: ['id', 'name', 'slug', 'avatar'],
         },
         { model: Gallery, as: 'gallery', attributes: ['image'] },
         { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
@@ -134,23 +129,16 @@ async function getProducts(req, res) {
       return res.status(200).json({ products: [] });
     }
 
-    // **Format Response**
     const data = product.rows.map((item) => ({
       id: item.id,
       name: item.name,
       slug: item.slug,
       price: item.price,
       stock: item.stock,
-      city: item.store?.city,
-      storeId: item.storeId,
-      storeName: item.store?.name,
-      storeSlug: item.store?.slug,
-      storeImage: item.store?.image,
+      category: item.category?.name,
       description: item.description,
-      categoryId: item.category?.id,
-      categoryName: item.category?.name,
-      categorySlug: item.category?.slug,
       images: item.gallery.map((img) => img.image),
+      store: item.store,
     }));
 
     const totalPage = Math.floor(product.count / dataPerPage);
@@ -159,7 +147,7 @@ async function getProducts(req, res) {
       products: data,
       totalPage: totalPage,
       currentPage: parseInt(page),
-      totalProducts: product.count,
+      totalData: product.count,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

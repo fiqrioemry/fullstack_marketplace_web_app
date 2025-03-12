@@ -1,6 +1,6 @@
-module.exports = async function isAdmin(req, res, next) {
+module.exports = async function isSeller(req, res, next) {
   try {
-    if (req.user.role !== 'admin')
+    if (req.user.role !== 'seller')
       return res
         .status(403)
         .send({ message: 'Forbidden !!! Access is Prohibited' });

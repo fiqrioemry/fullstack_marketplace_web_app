@@ -30,7 +30,7 @@ async function addCart(req, res) {
     if (newCart) {
       await newCart.update({ quantity: newQuantity });
     } else {
-      await Cart.create({
+      newCart = await Cart.create({
         productId,
         userId,
         quantity,
@@ -39,6 +39,7 @@ async function addCart(req, res) {
 
     return res.status(201).json({
       message: 'Product added to cart',
+      newCart: newCart,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

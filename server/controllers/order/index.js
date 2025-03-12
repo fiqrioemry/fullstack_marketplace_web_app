@@ -5,6 +5,7 @@ const {
   Address,
   Product,
   sequelize,
+  Store,
   Shipment,
   Transaction,
   OrderDetail,
@@ -18,8 +19,8 @@ const PaymentNotifications = async (req, res) => {
   try {
     const statusResponse = await snap.transaction.notification(req.body);
     const transactionId = statusResponse.order_id;
-    const transactionStatus = statusResponse.transactionStatus;
-
+    const transactionStatus = statusResponse.transaction_status;
+    console.log('transaction status midtrans :', statusResponse);
     const userTransaction = await Transaction.findOne({
       where: { id: transactionId },
       include: [
@@ -45,7 +46,6 @@ const PaymentNotifications = async (req, res) => {
 
       const productStockUpdates = [];
 
-      // Process each order concurrently
       await Promise.all(
         userTransaction.order.map(async (order) => {
           // Update the order status to 'pending'
@@ -137,23 +137,25 @@ const PaymentNotifications = async (req, res) => {
   }
 };
 
-const createNewOrder = async (req, res) => {
+// customer
+const createNewTransaction = async (req, res) => {
   const userId = req.user.userId;
-  const { addressId, orders } = req.body;
+  const { address, orders } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
-    if (!addressId || !Array.isArray(orders) || orders.length === 0) {
+    if (!address || orders.length === 0) {
       return res
         .status(400)
-        .json({ message: 'Order information not complete or wrong' });
+        .json({ message: 'Invalid Order information data' });
     }
 
-    const address = await Address.findOne({
-      where: { id: addressId, userId },
+    const savedAddress = await Address.findOne({
+      where: { id: address.id, userId },
       transaction,
     });
-    if (!address) {
+
+    if (!savedAddress) {
       return res.status(400).json({ message: 'Address not found' });
     }
 
@@ -161,23 +163,25 @@ const createNewOrder = async (req, res) => {
       {
         userId,
         totalAmount: 0,
-        totalShipmentCost: 0,
         amountToPay: 0,
+        totalShipmentCost: 0,
         paymentStatus: 'pending',
       },
       { transaction },
     );
 
     const cartIds = orders.flatMap((order) => order.cartItems);
+
     const cartItems = await Cart.findAll({
       where: { id: cartIds, userId },
       include: [{ model: Product, as: 'product' }],
       transaction,
     });
+
     if (!cartItems || cartItems.length === 0) {
       return res
         .status(400)
-        .json({ message: 'Cart is empty or items not found' });
+        .json({ message: 'Cart Not Found or Has Been Removed' });
     }
 
     const cartMap = new Map(cartItems.map((cart) => [cart.id, cart]));
@@ -204,12 +208,12 @@ const createNewOrder = async (req, res) => {
           userId,
           transactionId: newTransaction.id,
           storeId,
-          addressId,
-          orderNumber: generateOrderNumber(newTransaction.id),
+          addressId: address.id,
           totalPrice: 0,
           shipmentCost,
           totalOrderAmount: 0,
           orderStatus: 'waiting payment',
+          orderNumber: generateOrderNumber(newTransaction.id),
         },
         { transaction },
       );
@@ -229,16 +233,15 @@ const createNewOrder = async (req, res) => {
           throw new Error(`Insufficient stock for product ${product.name}`);
         }
 
-        const itemTotalPrice = cart.quantity * product.price;
-        orderTotalPrice += itemTotalPrice;
+        const totalItemPrice = cart.quantity * product.price;
+        orderTotalPrice += totalItemPrice;
 
-        // Tambahkan data order detail ke array untuk bulkCreate
         orderDetailsToCreate.push({
           orderId: newOrder.id,
+          price: product.price,
           productId: product.id,
           quantity: cart.quantity,
-          price: product.price,
-          totalPrice: itemTotalPrice,
+          totalPrice: totalItemPrice,
         });
 
         midtransItems.push({
@@ -253,9 +256,9 @@ const createNewOrder = async (req, res) => {
 
       midtransItems.push({
         id: `SHIPPING-${newOrder.orderNumber}`,
-        price: shipmentCost,
-        quantity: 1,
         name: `Shipping Cost`,
+        quantity: 1,
+        price: shipmentCost,
       });
 
       const totalOrderAmount = orderTotalPrice + shipmentCost;
@@ -272,7 +275,6 @@ const createNewOrder = async (req, res) => {
       await OrderDetail.bulkCreate(orderDetailsToCreate, { transaction });
     }
 
-    // Hapus cart items yang sudah dipesan
     if (cartIdsToRemove.length > 0) {
       await Cart.destroy({
         where: { id: cartIdsToRemove },
@@ -285,8 +287,8 @@ const createNewOrder = async (req, res) => {
     await newTransaction.update(
       {
         totalAmount,
-        totalShipmentCost,
         amountToPay,
+        totalShipmentCost,
       },
       { transaction },
     );
@@ -297,7 +299,7 @@ const createNewOrder = async (req, res) => {
       message: 'New Transaction waiting for payment process',
       metadata: { transactionId: newTransaction.id },
     });
-
+    console.log('transaction id :', newTransaction.id);
     const parameter = {
       transaction_details: {
         order_id: newTransaction.id,
@@ -305,9 +307,9 @@ const createNewOrder = async (req, res) => {
       },
       item_details: midtransItems,
       customer_details: {
+        phone: address.phone,
         first_name: address.name,
         shipping_address: address.address,
-        phone: address.phone,
       },
     };
 
@@ -327,6 +329,30 @@ const createNewOrder = async (req, res) => {
   }
 };
 
+const getUserTransactions = async (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const transactionData = await Transaction.findAll({
+      where: { userId },
+      include: [
+        { model: Order, as: 'order', include: { model: Store, as: 'store' } },
+      ],
+    });
+
+    const transactions = transactionData.map((data) => {
+      return {
+        id: data.id,
+        totalAmount: data.totalAmount,
+        shipmentCost: data.shipmentCost,
+      };
+    });
+    return res.status(200).json(transactions);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// seller
 const getStoreOrders = async (req, res) => {
   const storeId = req.user.storeId;
   try {
@@ -353,7 +379,7 @@ const getStoreOrders = async (req, res) => {
   }
 };
 
-const updateStoreOrder = async (req, res) => {
+const updateOrderStatus = async (req, res) => {
   const orderId = req.params.orderId;
   const { orderStatus, shipmentNumber } = req.body;
 
@@ -375,11 +401,9 @@ const updateStoreOrder = async (req, res) => {
       return res.status(404).json({ message: 'Order not found.' });
     }
 
-    // Update status order
     await order.update({ orderStatus }, { transaction });
 
     if (orderStatus === 'process') {
-      // Insert or update shipment data
       await Shipment.upsert(
         {
           orderId: order.id,
@@ -423,42 +447,10 @@ const updateStoreOrder = async (req, res) => {
   }
 };
 
-const getUserOrders = async (req, res) => {
-  const userId = req.user.userId;
-  try {
-    const orders = await Order.findAll({
-      where: { userId },
-      include: [
-        {
-          model: OrderDetail,
-          as: 'orderDetail',
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['name', 'price', 'stock'],
-            },
-          ],
-        },
-        {
-          model: Address,
-          as: 'address',
-          attributes: ['address', 'city', 'province', 'district', 'zipcode'],
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
-
-    return res.status(200).json(orders);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
 module.exports = {
-  createNewOrder,
+  createNewTransaction,
   getStoreOrders,
-  getUserOrders,
-  updateStoreOrder,
+  getUserTransactions,
+  updateOrderStatus,
   PaymentNotifications,
 };

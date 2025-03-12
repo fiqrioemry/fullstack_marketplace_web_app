@@ -8,16 +8,25 @@ const {
 } = require('../../controllers/store');
 const router = require('express').Router();
 const { upload } = require('../../middleware/media');
+
 const isAuthenticate = require('../../middleware/isAuthenticate');
+const isSeller = require('../../middleware/isSeller');
 
 router.get('/product', isAuthenticate, getMyStoreProducts);
 router.get('/', isAuthenticate, getMyStoreProfile);
 router.get('/:slug', getStoreInfo);
-router.post('/product', isAuthenticate, upload().array('files'), createProduct);
+router.post(
+  '/product',
+  isAuthenticate,
+  isSeller,
+  upload().array('images', 5),
+  createProduct,
+);
 router.put(
   '/product/:productId',
   isAuthenticate,
-  upload().array('files'),
+  isSeller,
+  upload().array('images', 5),
   updateProduct,
 );
 
