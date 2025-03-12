@@ -5,6 +5,7 @@ const {
   Product,
   sequelize,
   Shipment,
+  User,
   Transaction,
   OrderDetail,
   Notification,
@@ -457,6 +458,84 @@ async function getOrderShipmentDetail(req, res) {
   }
 }
 
+async function confirmOrderDelivery(req, res) {
+  const userId = req.user.userId;
+  const orderId = req.params.orderId;
+  const { status, message } = req.body;
+  const transaction = await sequelize.transaction();
+
+  try {
+    const order = await Order.findByPk(orderId, { transaction });
+
+    if (!order) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Order Not Found' });
+    }
+
+    if (status === 'success') {
+      // Update status pesanan
+      await order.update({ orderStatus: 'success' }, { transaction });
+
+      // Tambahkan balance ke Store yang bersangkutan
+      await Store.update(
+        { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
+        { where: { id: order.storeId }, transaction },
+      );
+
+      // Buat notifikasi untuk Store
+      await Notification.create(
+        {
+          storeId: order.storeId,
+          type: 'order',
+          userId: order.userId,
+          message:
+            'Order is received by customer, and your store balance has been updated.',
+        },
+        { transaction },
+      );
+
+      await transaction.commit();
+      return res.status(200).send({ message: 'Order received successfully' });
+    } else if (status === 'canceled') {
+      // Update status pesanan ke "canceled"
+      await order.update({ orderStatus: 'canceled' }, { transaction });
+
+      // Refund ke balance user
+      await User.update(
+        { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
+        { where: { id: userId }, transaction },
+      );
+
+      // Buat notifikasi ke user
+      await Notification.create(
+        {
+          userId,
+          storeId: order.storeId,
+          type: 'order',
+          message: message || 'Your order has been canceled and refunded.',
+        },
+        { transaction },
+      );
+
+      // Update status pengiriman menjadi "returned"
+      await Shipment.update(
+        { shipmentStatus: 'returned' },
+        { where: { orderId }, transaction },
+      );
+
+      await transaction.commit();
+      return res.status(200).send({ message: 'Order is being returned' });
+    }
+
+    // Jika status tidak valid
+    await transaction.rollback();
+    return res.status(400).json({ message: 'Invalid status provided' });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 async function getDashboardSummary(req, res) {
   try {
     const userId = req.user.userId;
@@ -489,4 +568,5 @@ module.exports = {
   PaymentNotifications,
   getOrderShipmentDetail,
   getDashboardSummary,
+  confirmOrderDelivery,
 };

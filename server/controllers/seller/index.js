@@ -1,12 +1,10 @@
 const {
-  Cart,
   Order,
   Address,
   Product,
   sequelize,
   Shipment,
   User,
-  Transaction,
   OrderDetail,
   Notification,
 } = require('../../models');
@@ -33,16 +31,24 @@ async function autoCompleteOrders() {
       return;
     }
 
-    // Update status order menjadi 'success'
+    // Update status order menjadi 'success' dan tambahkan balance ke Store
     for (const order of ordersToUpdate) {
       await order.update({ orderStatus: 'success' }, { transaction });
 
+      // Tambahkan balance ke store berdasarkan totalOrderAmount
+      await Store.update(
+        { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
+        { where: { id: order.storeId }, transaction },
+      );
+
+      // Buat notifikasi ke Store
       await Notification.create(
         {
           userId: order.userId,
+          storeId: order.storeId,
           type: 'order',
           message:
-            'Your order has been marked as successful after 2 days without a return request.',
+            'Your order has been marked as successful and the store balance has been updated.',
         },
         { transaction },
       );
@@ -50,7 +56,7 @@ async function autoCompleteOrders() {
 
     await transaction.commit();
     console.log(
-      `Berhasil memperbarui ${ordersToUpdate.length} pesanan menjadi "success".`,
+      `Berhasil memperbarui ${ordersToUpdate.length} pesanan menjadi "success" dan memperbarui balance Store.`,
     );
   } catch (error) {
     await transaction.rollback();
@@ -58,6 +64,7 @@ async function autoCompleteOrders() {
   }
 }
 
+// Jalankan Cron Job setiap hari pukul 00:00
 cron.schedule('0 0 * * *', () => {
   console.log('Menjalankan Cron Job untuk memperbarui status order...');
   autoCompleteOrders();
@@ -67,7 +74,10 @@ async function getAllStoreOrders(req, res) {
   const storeId = req.user.storeId;
   try {
     const orders = await Order.findAll({
-      where: { storeId, orderStatus: { [Op.in]: ['pending', 'process'] } },
+      where: {
+        storeId,
+        orderStatus: { [Op.in]: ['pending', 'process', 'success'] },
+      },
     });
 
     if (!orders)
@@ -134,7 +144,7 @@ async function proceedOrder(req, res) {
         storeId,
         type: 'order',
         message: 'Your order has been proceeded for shipment',
-        metadata: shipmentNumber,
+        metadata: { shipmentNumber: shipmentNumber },
       },
       { transaction },
     );
@@ -172,7 +182,10 @@ async function cancelOrder(req, res) {
     }
 
     // Kembalikan saldo pengguna berdasarkan total harga pesanan
-    await user.update({ balance: order.totalOrderAmount }, { transaction });
+    await user.update(
+      { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
+      { transaction },
+    );
 
     // Kembalikan stok produk berdasarkan orderDetail
     for (const item of order.orderDetail) {
@@ -198,7 +211,7 @@ async function cancelOrder(req, res) {
         type: 'order',
         userId: order.userId,
         message: 'Your order has been canceled and your balance refunded.',
-        metadata: order.orderNumber,
+        metadata: { orderId: order.id, orderNumber: order.orderNumber },
       },
       { transaction },
     );
