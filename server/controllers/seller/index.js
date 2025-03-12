@@ -5,11 +5,63 @@ const {
   Product,
   sequelize,
   Shipment,
+  User,
   Transaction,
   OrderDetail,
   Notification,
 } = require('../../models');
 const { Op } = require('sequelize');
+const cron = require('node-cron');
+
+async function autoCompleteOrders() {
+  const transaction = await sequelize.transaction();
+  try {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+    const ordersToUpdate = await Order.findAll({
+      where: {
+        orderStatus: 'delivered',
+        updatedAt: { [Op.lte]: twoDaysAgo },
+      },
+      transaction,
+    });
+
+    if (ordersToUpdate.length === 0) {
+      await transaction.commit();
+      console.log('Tidak ada pesanan yang perlu diperbarui.');
+      return;
+    }
+
+    // Update status order menjadi 'success'
+    for (const order of ordersToUpdate) {
+      await order.update({ orderStatus: 'success' }, { transaction });
+
+      await Notification.create(
+        {
+          userId: order.userId,
+          type: 'order',
+          message:
+            'Your order has been marked as successful after 2 days without a return request.',
+        },
+        { transaction },
+      );
+    }
+
+    await transaction.commit();
+    console.log(
+      `Berhasil memperbarui ${ordersToUpdate.length} pesanan menjadi "success".`,
+    );
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Gagal memperbarui pesanan:', error.message);
+  }
+}
+
+cron.schedule('0 0 * * *', () => {
+  console.log('Menjalankan Cron Job untuk memperbarui status order...');
+  autoCompleteOrders();
+});
 
 async function getAllStoreOrders(req, res) {
   const storeId = req.user.storeId;
@@ -48,7 +100,7 @@ async function getOrderDetail(req, res) {
   }
 }
 
-async function proceedOrderForShipment(req, res) {
+async function proceedOrder(req, res) {
   const storeId = req.user.storeId;
   const orderId = req.params.orderId;
   const shipmentNumber = req.body.shipmentNumber;
@@ -112,7 +164,6 @@ async function cancelOrder(req, res) {
       return res.status(404).json({ message: 'Order Not Found' });
     }
 
-    // Ambil user
     const user = await User.findByPk(order.userId, { transaction });
 
     if (!user) {
@@ -121,15 +172,12 @@ async function cancelOrder(req, res) {
     }
 
     // Kembalikan saldo pengguna berdasarkan total harga pesanan
-    await user.update(
-      { balance: sequelize.literal(`balance + ${order.totalPrice}`) },
-      { transaction },
-    );
+    await user.update({ balance: order.totalOrderAmount }, { transaction });
 
     // Kembalikan stok produk berdasarkan orderDetail
     for (const item of order.orderDetail) {
       await Product.update(
-        { quantity: sequelize.literal(`quantity + ${item.quantity}`) },
+        { quantity: item.quantity },
         { where: { id: item.productId }, transaction },
       );
     }
@@ -146,19 +194,57 @@ async function cancelOrder(req, res) {
     // Buat notifikasi
     await Notification.create(
       {
-        userId: order.userId,
         storeId,
         type: 'order',
+        userId: order.userId,
         message: 'Your order has been canceled and your balance refunded.',
         metadata: order.orderNumber,
       },
       { transaction },
     );
 
-    // Commit transaksi jika semua berhasil
     await transaction.commit();
     return res.status(200).send({
-      message: 'Order canceled, balance refunded, and stock updated.',
+      message: 'Order is canceled',
+    });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+// Khusus untuk courier {simulasi pengiriman telah berhasil diterima}
+async function updateShipmentStatus(req, res) {
+  const orderId = req.params.orderId;
+  const transaction = await sequelize.transaction();
+  try {
+    const order = await Order.findByPk(orderId, {
+      transaction,
+    });
+
+    if (!order) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Order Not Found' });
+    }
+
+    await Shipment.update(
+      { shipmentStatus: 'delivered' },
+      { where: { orderId }, transaction },
+    );
+
+    await Notification.create(
+      {
+        storeId,
+        type: 'order',
+        userId: order.userId,
+        message: 'Your Order has been Delivered.',
+      },
+      { transaction },
+    );
+
+    await transaction.commit();
+    return res.status(200).send({
+      message: 'Shipment is Delivered',
     });
   } catch (error) {
     await transaction.rollback();
@@ -167,6 +253,7 @@ async function cancelOrder(req, res) {
 }
 
 module.exports = {
+  updateShipmentStatus,
   getAllStoreOrders,
   getOrderDetail,
   proceedOrder,

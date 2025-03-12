@@ -74,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
           'waiting payment',
           'pending',
           'process',
+          'success',
           'canceled',
         ),
         allowNull: false,
