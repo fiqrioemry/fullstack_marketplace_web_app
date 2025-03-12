@@ -31,9 +31,21 @@ async function getAllStoreOrders(req, res) {
       shipmentCost: order.shipmentCost,
       totalAmount: order.totalOrderAmount,
       orderStatus: order.orderStatus,
+      address: {
+        name: order.address.name,
+        address: order.address.address,
+        zipcode: order.address.zipcode,
+        phone: order.address.phone,
+      },
+      details: order.orderDetail.map((order) => ({
+        product: order.product,
+        quantity: order.quantity,
+        price: order.price,
+        totalPrice: order.totalPrice,
+      })),
     }));
 
-    return res.status(200).json({ rawOrders });
+    return res.status(200).json({ orders });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
