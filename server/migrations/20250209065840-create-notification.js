@@ -17,7 +17,7 @@ module.exports = {
         allowNull: true,
       },
       type: {
-        type: Sequelize.ENUM('order', 'message', 'promo', 'system'),
+        type: Sequelize.ENUM('order', 'promo'),
         allowNull: false,
       },
       message: {

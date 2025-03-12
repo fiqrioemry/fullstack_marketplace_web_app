@@ -1,5 +1,4 @@
 const { Op } = require('sequelize');
-const { redis } = require('../../config/redis');
 const { User, Address, sequelize } = require('../../models');
 const uploadToCloudinary = require('../../utils/uploadToCloudinary');
 const deleteFromCloudinary = require('../../utils/deleteFromCloudinary');

@@ -8,9 +8,8 @@ const {
 } = require('../../controllers/store');
 const router = require('express').Router();
 const { upload } = require('../../middleware/media');
-
-const isAuthenticate = require('../../middleware/isAuthenticate');
 const isSeller = require('../../middleware/isSeller');
+const isAuthenticate = require('../../middleware/isAuthenticate');
 
 router.get('/product', isAuthenticate, getMyStoreProducts);
 router.get('/', isAuthenticate, getMyStoreProfile);

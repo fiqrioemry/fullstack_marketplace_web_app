@@ -1,11 +1,4 @@
-const {
-  Store,
-  Product,
-  Category,
-  Gallery,
-  sequelize,
-} = require('../../models');
-const fs = require('fs').promises;
+const { Store, Product, Gallery, sequelize } = require('../../models');
 const { Op } = require('sequelize');
 const createSlug = require('../../utils/createSlug');
 const uploadToCloudinary = require('../../utils/uploadToCloudinary');
@@ -13,7 +6,6 @@ const deleteFromCloudinary = require('../../utils/deleteFromCloudinary');
 
 async function getStoreInfo(req, res) {
   const slug = req.params.slug;
-
   try {
     const storeData = await Store.findOne({
       where: { slug },
@@ -23,10 +15,7 @@ async function getStoreInfo(req, res) {
 
     const productsData = await Product.findAll({
       where: { storeId: storeData.id },
-      include: [
-        { model: Gallery, as: 'gallery', attributes: ['image'] },
-        { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
-      ],
+      include: ['gallery', 'category'],
     });
 
     const store = {
@@ -56,15 +45,12 @@ async function getStoreInfo(req, res) {
 }
 
 async function getMyStoreProfile(req, res) {
-  const { userId, storeId, role } = req.user;
+  const { userId, storeId } = req.user;
   try {
-    if (role !== 'seller')
-      return res.status(401).json({ message: 'UnAuthorized Access !!!' });
-
     const storeData = await Store.findByPk(storeId);
 
     if (!storeData || storeData.userId !== userId)
-      return res.status(404).json({ message: 'UnAuthorized Access !!!' });
+      return res.status(403).json({ message: 'Forbidden !!! Access Denied' });
 
     const store = {
       name: store.name,
@@ -77,67 +63,6 @@ async function getMyStoreProfile(req, res) {
     return res.status(200).json(store);
   } catch (error) {
     res.status(500).json({
-      message: error.message,
-    });
-  }
-}
-
-async function updateMyStoreProfile(req, res) {
-  const imageFile = req.files?.image?.[0];
-  const avatarFile = req.files?.avatar?.[0];
-  const { userId, storeId } = req.user;
-  const { name, city, description, updateType } = req.body;
-
-  try {
-    const store = await Store.findByPk(storeId);
-
-    if (!store || store.userId !== userId) {
-      if (avatarFile) await fs.unlink(avatarFile.path);
-      if (imageFile) await fs.unlink(imageFile.path);
-      return res.status(404).json({ message: 'Unauthorized Access' });
-    }
-
-    let avatar = store.avatar;
-    let image = store.image;
-
-    if (avatarFile && (!updateType || updateType.includes('avatar'))) {
-      const updatedAvatar = await uploadToCloudinary(avatarFile.path);
-
-      if (store.avatar) {
-        await deleteFromCloudinary(store.avatar);
-      }
-
-      avatar = updatedAvatar.secure_url;
-      await fs.unlink(avatarFile.path);
-    }
-
-    if (imageFile && (!updateType || updateType.includes('image'))) {
-      const updatedImage = await uploadToCloudinary(imageFile.path);
-
-      if (store.image) {
-        await deleteFromCloudinary(store.image);
-      }
-
-      image = updatedImage.secure_url;
-      await fs.unlink(imageFile.path);
-    }
-
-    const updatedStore = {
-      name: name || store.name,
-      avatar: avatar,
-      image: image,
-      city: city || store.city,
-      description: description || store.description,
-    };
-
-    await store.update(updatedStore);
-
-    return res.status(200).json({
-      message: 'Store Profile is updated',
-      updatedStore,
-    });
-  } catch (error) {
-    return res.status(500).json({
       message: error.message,
     });
   }
@@ -180,19 +105,16 @@ async function getMyStoreProducts(req, res) {
       where: query,
       limit: dataPerPage,
       offset: offset,
-      include: [
-        { model: Gallery, as: 'gallery', attributes: ['image'] },
-        { model: Category, as: 'category', attributes: ['id', 'name', 'slug'] },
-      ],
-      distinct: true,
       order: [[sortBy, orderBy]],
+      include: ['gallery', 'category'],
+      distinct: true,
     });
 
     if (product.count === 0) {
       return res.status(200).json({ products: [] });
     }
 
-    const data = product.rows.map((item) => ({
+    const products = product.rows.map((item) => ({
       id: item.id,
       name: item.name,
       slug: item.slug,
@@ -206,9 +128,9 @@ async function getMyStoreProducts(req, res) {
     const totalPage = Math.ceil(product.count / dataPerPage);
 
     return res.status(200).json({
-      products: data,
-      currentPage,
+      products,
       totalPage,
+      currentPage,
       totalData: product.count,
     });
   } catch (error) {
@@ -275,7 +197,6 @@ async function createProduct(req, res) {
     return res.status(201).json({ message: 'New product is created' });
   } catch (error) {
     await transaction.rollback();
-
     return res.status(500).json({
       message: error.message,
     });
@@ -362,13 +283,14 @@ async function updateProduct(req, res) {
     });
   }
 }
-// tested - completed
+
 async function deleteProduct(req, res) {
   const productId = req.params.productId;
   const transaction = await sequelize.transaction();
 
   try {
     const product = await Product.findByPk(productId);
+
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
@@ -378,9 +300,11 @@ async function deleteProduct(req, res) {
       await deleteFromCloudinary(img.image);
     }
     await Gallery.destroy({ where: { productId }, transaction });
+
     await product.destroy({ transaction });
 
     await transaction.commit();
+
     return res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     await transaction.rollback();
@@ -397,5 +321,4 @@ module.exports = {
   deleteProduct,
   getMyStoreProfile,
   getMyStoreProducts,
-  updateMyStoreProfile,
 };

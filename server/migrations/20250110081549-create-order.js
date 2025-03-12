@@ -50,6 +50,7 @@ module.exports = {
           'waiting payment',
           'pending',
           'process',
+          'success',
           'canceled',
         ),
         allowNull: false,

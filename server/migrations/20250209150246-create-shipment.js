@@ -20,7 +20,13 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       shipmentStatus: {
-        type: Sequelize.ENUM('pending', 'shipped', 'delivered', 'returned'),
+        type: Sequelize.ENUM(
+          'pending',
+          'shipped',
+          'delivered',
+          'returned',
+          'canceled',
+        ),
         allowNull: false,
         defaultValue: 'pending',
       },

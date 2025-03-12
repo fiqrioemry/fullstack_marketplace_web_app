@@ -27,7 +27,7 @@ module.exports = {
       avatar: {
         type: Sequelize.STRING,
       },
-      image: {
+      banner: {
         type: Sequelize.STRING,
       },
       balance: {
