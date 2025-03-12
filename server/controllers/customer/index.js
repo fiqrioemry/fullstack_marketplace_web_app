@@ -444,7 +444,7 @@ async function getOrderDetail(req, res) {
   }
 }
 
-async function getOrderShipmentDetail(req, res) {
+async function getOrderShipment(req, res) {
   const orderId = req.params.orderId;
   try {
     const shipment = await Shipment.findOne({ where: { orderId } });
@@ -475,6 +475,18 @@ async function confirmOrderDelivery(req, res) {
         { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
         { where: { id: order.storeId }, transaction },
       );
+
+      const orderDetails = await OrderDetail.findAll({
+        where: { orderId },
+        transaction,
+      });
+
+      for (const detail of orderDetails) {
+        await Product.update(
+          { sold: sequelize.literal(`sold + ${detail.quantity}`) },
+          { where: { id: detail.productId }, transaction },
+        );
+      }
 
       await Notification.create(
         {
@@ -554,7 +566,7 @@ module.exports = {
   getTransactionDetail,
   createNewTransaction,
   PaymentNotifications,
-  getOrderShipmentDetail,
+  getOrderShipment,
   getDashboardSummary,
   confirmOrderDelivery,
 };
