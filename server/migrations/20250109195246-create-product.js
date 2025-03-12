@@ -41,10 +41,6 @@ module.exports = {
       },
       sold: {
         type: Sequelize.INTEGER,
-        allowNull: true,
-        validate: {
-          min: 0,
-        },
       },
       createdAt: {
         allowNull: false,

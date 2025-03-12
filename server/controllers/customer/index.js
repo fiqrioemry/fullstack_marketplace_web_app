@@ -325,11 +325,18 @@ async function createNewTransaction(req, res) {
 }
 
 async function getAllTransactions(req, res) {
+  const userId = req.user.userId;
   try {
-    const userId = req.user.userId;
     const transactions = await Transaction.findAll({
       where: { userId },
+      include: ['order'],
     });
+
+    if (!transactions)
+      return res
+        .status(200)
+        .json({ message: 'You dont have any transactions', transactions: [] });
+
     return res.status(200).json({ transactions });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -444,10 +451,17 @@ async function getOrderDetail(req, res) {
   }
 }
 
-async function getShipmentInfo(req, res) {
+async function getShipmentDetail(req, res) {
   const orderId = req.params.orderId;
   try {
-    const shipment = await Shipment.findOne({ where: { orderId } });
+    const shipment = await Shipment.findOne(
+      { where: { orderId } },
+      { include: ['order'] },
+    );
+
+    if (!shipment)
+      return res.status(404).send({ message: 'Shipment Not Found' });
+
     return res.status(200).json({ shipment });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -549,7 +563,7 @@ module.exports = {
   getTransactionDetail,
   createNewTransaction,
   PaymentNotifications,
-  getShipmentInfo,
+  getShipmentDetail,
   confirmOrderDelivery,
   cancelOrder,
 };

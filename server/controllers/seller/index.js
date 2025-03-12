@@ -38,7 +38,6 @@ async function autoCompleteOrders() {
           transaction,
         });
 
-        // Update jumlah sold pada product
         for (const detail of orderDetails) {
           await Product.update(
             {
@@ -135,7 +134,7 @@ async function proceedOrder(req, res) {
   const shipmentNumber = req.body.shipmentNumber;
 
   if (!shipmentNumber)
-    return res.status(400).send({ message: 'Shipment number required' });
+    return res.status(400).json({ message: 'Shipment number required' });
 
   const transaction = await sequelize.transaction();
 
@@ -169,7 +168,7 @@ async function proceedOrder(req, res) {
     );
 
     await transaction.commit();
-    return res.status(200).send({ message: 'Order Proceeded for shipment' });
+    return res.status(200).json({ message: 'Order Proceeded for shipment' });
   } catch (error) {
     await transaction.rollback();
     return res.status(500).json({ message: error.message });
@@ -236,7 +235,7 @@ async function cancelOrder(req, res) {
     );
 
     await transaction.commit();
-    return res.status(200).send({
+    return res.status(200).json({
       message: 'Order is canceled',
     });
   } catch (error) {
@@ -275,7 +274,7 @@ async function updateShipmentStatus(req, res) {
     );
 
     await transaction.commit();
-    return res.status(200).send({
+    return res.status(200).json({
       message: 'Shipment is Delivered',
     });
   } catch (error) {
@@ -284,7 +283,96 @@ async function updateShipmentStatus(req, res) {
   }
 }
 
+async function getStoreStatisticSummary(req, res) {
+  const userId = req.user.userId;
+  const storeId = req.user.storeId;
+
+  try {
+    // 🔹 1. Hitung total order (hanya yang 'pending' dan 'success')
+    const totalOrders = await Order.count({
+      where: {
+        storeId,
+        orderStatus: { [Op.in]: ['pending', 'success'] },
+      },
+    });
+
+    // 🔹 2. Hitung total pendapatan (akumulasi totalOrderAmount dari semua order)
+    const totalRevenue = await Order.sum('totalOrderAmount', {
+      where: { storeId },
+    });
+
+    // 🔹 3. Ambil data grafik order berdasarkan hari (hanya 'success')
+    const ordersByDay = await Order.findAll({
+      attributes: [
+        [sequelize.fn('DATE', sequelize.col('createdAt')), 'date'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'order_count'],
+      ],
+      where: { storeId, orderStatus: 'success' },
+      group: ['date'],
+      order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']],
+      raw: true,
+    });
+
+    // 🔹 4. Ambil data grafik pendapatan berdasarkan hari (hanya 'success')
+    const revenueByDay = await Order.findAll({
+      attributes: [
+        [sequelize.fn('DATE', sequelize.col('createdAt')), 'date'],
+        [
+          sequelize.fn('SUM', sequelize.col('totalOrderAmount')),
+          'total_revenue',
+        ],
+      ],
+      where: { storeId, orderStatus: 'success' },
+      group: ['date'],
+      order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']],
+      raw: true,
+    });
+
+    // 🔹 5. Ambil 5 produk terlaris berdasarkan jumlah quantity terjual
+    const topSellingProducts = await OrderDetail.findAll({
+      attributes: [
+        'productId',
+        [sequelize.fn('SUM', sequelize.col('quantity')), 'total_sold'],
+      ],
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['id', 'name', 'price', 'stock', 'sold'],
+        },
+      ],
+      group: [
+        'productId',
+        'product.id',
+        'product.name',
+        'product.price',
+        'product.stock',
+        'product.sold',
+      ],
+      order: [[sequelize.literal('total_sold'), 'DESC']],
+      limit: 5,
+      raw: true,
+      nest: true,
+    });
+
+    // 🔹 Kirimkan response dengan data yang telah dihitung
+    return res.status(200).json({
+      statistic: {
+        totalOrders,
+        totalRevenue,
+        ordersByDay,
+        revenueByDay,
+        topSellingProducts,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching store statistics:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 module.exports = {
+  getStoreStatisticSummary,
   updateShipmentStatus,
   getAllStoreOrders,
   getOrderDetail,
