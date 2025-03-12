@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Store, Product, Category, Gallery } = require('../../models');
+const { Store, Product, Category } = require('../../models');
 
 async function getProduct(req, res) {
   const slug = req.params.slug;

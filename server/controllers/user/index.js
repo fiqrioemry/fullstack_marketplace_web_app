@@ -97,7 +97,6 @@ async function updateProfile(req, res) {
 
 async function getAddress(req, res) {
   const userId = req.user.userId;
-
   try {
     const address = await Address.findAll({ where: { userId } });
 
@@ -120,17 +119,25 @@ async function getAddress(req, res) {
 
 async function addAddress(req, res) {
   const userId = req.user.userId;
-  const { name, phone, address, province, city, zipcode, isMain } = req.body;
+  let { name, phone, address, province, city, zipcode, isMain } = req.body;
 
   try {
     if (!name || !phone || !address || !province || !city || !zipcode) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    if (isMain === true) {
+    // Cek jumlah alamat yang dimiliki user
+    const addressCount = await Address.count({ where: { userId } });
+
+    // Jika ini adalah alamat pertama, otomatis jadikan main address
+    if (addressCount === 0) {
+      isMain = true;
+    } else if (isMain === true) {
+      // Jika ada alamat lain dan isMain true, set semua isMain = false
       await Address.update({ isMain: false }, { where: { userId } });
     }
 
+    // Buat alamat baru dengan status isMain yang sesuai
     const newAddress = await Address.create({
       userId,
       name,

@@ -1,6 +1,6 @@
 'use strict';
 const bcrypt = require('bcrypt');
-const randomAvatar = require('../utils/randomAvatar'); // Import fungsi randomAvatar
+const randomUserAvatar = require('../utils/randomUserAvatar'); // Import fungsi randomAvatar
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
           role: 'seller',
           birthday: '1990-01-01',
           gender: 'male',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '1234567890',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -29,7 +29,7 @@ module.exports = {
           role: 'seller',
           birthday: '1992-02-02',
           gender: 'female',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '0987654321',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -41,7 +41,7 @@ module.exports = {
           role: 'seller',
           birthday: '1985-03-03',
           gender: 'female',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '1122334455',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -53,7 +53,7 @@ module.exports = {
           role: 'seller',
           birthday: '1988-04-04',
           gender: 'male',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '6677889900',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -65,7 +65,7 @@ module.exports = {
           role: 'seller',
           birthday: '1995-05-05',
           gender: 'male',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '4455667788',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -77,7 +77,7 @@ module.exports = {
           role: 'customer',
           birthday: '1995-05-05',
           gender: 'male',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '4455667788',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -89,7 +89,7 @@ module.exports = {
           role: 'admin',
           birthday: '1995-05-05',
           gender: 'male',
-          avatar: randomAvatar(),
+          avatar: randomUserAvatar(),
           phone: '4455667788',
           createdAt: new Date(),
           updatedAt: new Date(),

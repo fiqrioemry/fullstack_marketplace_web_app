@@ -1,11 +1,11 @@
 const {
+  User,
   Cart,
   Order,
   Address,
   Product,
   sequelize,
   Shipment,
-  User,
   Transaction,
   OrderDetail,
   Notification,

@@ -1,10 +1,10 @@
 const {
+  User,
   Order,
   Address,
   Product,
   sequelize,
   Shipment,
-  User,
   OrderDetail,
   Notification,
 } = require('../../models');

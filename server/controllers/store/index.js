@@ -1,7 +1,7 @@
-const { Store, Product, Gallery, sequelize } = require('../../models');
 const { Op } = require('sequelize');
 const createSlug = require('../../utils/createSlug');
 const uploadToCloudinary = require('../../utils/uploadToCloudinary');
+const { Store, Product, Gallery, sequelize } = require('../../models');
 const deleteFromCloudinary = require('../../utils/deleteFromCloudinary');
 
 async function getStoreInfo(req, res) {
@@ -21,7 +21,7 @@ async function getStoreInfo(req, res) {
     const store = {
       slug: slug,
       name: storeData.name,
-      image: storeData.image,
+      banner: storeData.banner,
       city: storeData.city,
       avatar: storeData.avatar,
       description: storeData.description,
@@ -54,7 +54,7 @@ async function getMyStoreProfile(req, res) {
 
     const store = {
       name: store.name,
-      image: store.image,
+      banner: store.banner,
       city: store.city,
       avatar: store.avatar,
       description: store.description,

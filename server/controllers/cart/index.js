@@ -1,4 +1,4 @@
-const { Product, Cart, Store, Gallery } = require('../../models');
+const { Product, Cart } = require('../../models');
 
 async function addCart(req, res) {
   const userId = req.user.userId;

@@ -8,11 +8,12 @@ const { User, Store } = require('../../models');
 const createSlug = require('../../utils/createSlug');
 const generateOtp = require('../../utils/generateOtp');
 const sendEmailOTP = require('../../utils/sendEmailOTP');
-const randomAvatar = require('../../utils/randomAvatar');
+const randomUserAvatar = require('../../utils/randomUserAvatar');
 const {
   generateAccessToken,
   generateRefreshToken,
 } = require('../../utils/generateToken');
+const randomStoreAvatar = require('../../utils/randomStoreAvatar');
 
 async function sendOTP(req, res) {
   const email = req.body.email;
@@ -73,7 +74,7 @@ async function register(req, res) {
       fullname,
       email,
       password: hashedPassword,
-      avatar: randomAvatar(),
+      avatar: randomUserAvatar(),
     });
 
     res.status(201).json({
@@ -247,7 +248,7 @@ async function createStore(req, res) {
       slug,
       city,
       description,
-      avatar: randomAvatar(),
+      avatar: randomStoreAvatar(),
     });
 
     await user.update({ role: 'seller' });
