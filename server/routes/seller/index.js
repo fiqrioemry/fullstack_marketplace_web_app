@@ -11,8 +11,8 @@ const isAuthenticate = require('../../middleware/isAuthenticate');
 
 router.get('/orders', isAuthenticate, isSeller, getAllStoreOrders);
 router.get('/orders/:orderId', isAuthenticate, isSeller, getOrderDetail);
-router.put('/orders/:orderId', isAuthenticate, isSeller, proceedOrder);
-router.put('/orders/:orderId', isAuthenticate, isSeller, cancelOrder);
+router.put('/orders/:orderId/cancel', isAuthenticate, isSeller, cancelOrder);
+router.put('/orders/:orderId/process', isAuthenticate, isSeller, proceedOrder);
 router.put(
   '/orders/:orderId/shipment',
   isAuthenticate,

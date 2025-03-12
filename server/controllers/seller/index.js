@@ -28,14 +28,11 @@ async function autoCompleteOrders() {
       return;
     }
 
-    // Update setiap pesanan dalam transaksi terpisah
     for (const order of ordersToUpdate) {
       const transaction = await sequelize.transaction();
       try {
-        // Ubah status order menjadi "success"
         await order.update({ orderStatus: 'success' }, { transaction });
 
-        // Ambil semua order detail untuk order ini
         const orderDetails = await OrderDetail.findAll({
           where: { orderId: order.id },
           transaction,

@@ -536,27 +536,10 @@ async function confirmOrderDelivery(req, res) {
   }
 }
 
-async function getDashboardSummary(req, res) {
+// TODO : complete the feature for canceling after transaction created but not yet confirmed by seller
+async function cancelOrder(req, res) {
   try {
-    const userId = req.user.userId;
-    const totalTransactions = await Transaction.count({ where: { userId } });
-    const totalOrders = await Order.count({ where: { userId } });
-    const totalSpending = await Transaction.sum('totalAmount', {
-      where: { userId },
-    });
-    const pendingOrders = await Order.count({
-      where: { userId, orderStatus: 'pending' },
-    });
-
-    return res.status(200).json({
-      totalTransactions,
-      totalOrders,
-      totalSpending,
-      pendingOrders,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+  } catch (error) {}
 }
 
 module.exports = {
@@ -567,6 +550,6 @@ module.exports = {
   createNewTransaction,
   PaymentNotifications,
   getOrderShipment,
-  getDashboardSummary,
   confirmOrderDelivery,
+  cancelOrder,
 };

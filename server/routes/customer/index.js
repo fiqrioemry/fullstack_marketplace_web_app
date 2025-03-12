@@ -5,24 +5,32 @@ const {
   PaymentNotifications,
   createNewTransaction,
   getTransactionDetail,
-  getDashboardSummary,
   getOrderShipmentDetail,
+  confirmOrderDelivery,
+  cancelOrder,
 } = require('../../controllers/customer');
 const router = require('express').Router();
 const isAuthenticate = require('../../middleware/isAuthenticate');
 
-router.get('/summary', isAuthenticate, getDashboardSummary);
-router.get('/transactions', isAuthenticate, getAllTransactions);
-router.post('/transactions', isAuthenticate, createNewTransaction);
 router.get(
   '/transactions/:transactionId',
   isAuthenticate,
   getTransactionDetail,
 );
-router.post('/transactions/notifications', PaymentNotifications);
 
 router.get('/orders', isAuthenticate, getAllOrders);
 router.get('/orders/:orderId', isAuthenticate, getOrderDetail);
+router.put('/orders/:orderId/cancel', isAuthenticate, cancelOrder);
+router.put('/orders/:orderId/confirm', isAuthenticate, confirmOrderDelivery);
 router.get('/orders/:orderId/shipment', isAuthenticate, getOrderShipmentDetail);
 
-module.exports = router;
+router.get('/transactions', isAuthenticate, getAllTransactions);
+router.post('/transactions/notifications', PaymentNotifications);
+router.post('/transactions', isAuthenticate, createNewTransaction);
+getOrderDetail: async (orderId) => {
+  return authInstance
+    .get(`/customer/orders/${orderId}`)
+    .then((res) => res.data)
+    .catch(errorHandle);
+},
+  (module.exports = router);
