@@ -7,22 +7,22 @@ const {
   getTransactionDetail,
   getOrderShipmentDetail,
   getDashboardSummary,
-} = require('../../controllers/order');
+} = require('../../controllers/customer');
 const router = require('express').Router();
 const isAuthenticate = require('../../middleware/isAuthenticate');
 
+router.post('/notifications', PaymentNotifications);
 router.get('/summary', isAuthenticate, getDashboardSummary);
 router.get('/transactions', isAuthenticate, getAllTransactions);
 router.post('/transactions', isAuthenticate, createNewTransaction);
-router.get('/notifications', isAuthenticate, PaymentNotifications);
 router.get(
   '/transactions/:transactionId',
   isAuthenticate,
   getTransactionDetail,
 );
 
-router.get('/', isAuthenticate, getAllOrders);
-router.get('/:orderId', isAuthenticate, getOrderDetail);
-router.get('/:orderId/shipment', isAuthenticate, getOrderShipmentDetail);
+router.get('/orders', isAuthenticate, getAllOrders);
+router.get('/orders/:orderId', isAuthenticate, getOrderDetail);
+router.get('/orders/:orderId/shipment', isAuthenticate, getOrderShipmentDetail);
 
 module.exports = router;

@@ -29,10 +29,10 @@ app.use(
   app.use('/api/user', services.userRoute);
   app.use('/api/cart', services.cartRoute);
   app.use('/api/store', services.storeRoute);
-  app.use('/api/order', services.orderRoute);
   app.use('/api/product', services.productRoute);
   app.use('/api/category', services.categoryRoute);
-
+  app.use('/api/seller', services.sellerRoute);
+  app.use('/api/customer', services.customerRoute);
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
