@@ -28,6 +28,14 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
+      // paymentLink: {
+      //   type: Sequelize.TEXT,
+      //   allowNull: true,
+      // },
+      // paymentDue: {
+      //   type: Sequelize.DATE,
+      //   allowNull: true,
+      // },
       paymentStatus: {
         type: Sequelize.ENUM('pending', 'paid', 'expired', 'canceled'),
         allowNull: false,

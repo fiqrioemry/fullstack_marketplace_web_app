@@ -1,11 +1,9 @@
 const {
   Cart,
   Order,
-  User,
   Address,
   Product,
   sequelize,
-  Store,
   Shipment,
   Transaction,
   OrderDetail,
@@ -14,13 +12,13 @@ const {
 const snap = require('../../config/midtrans');
 const generateOrderNumber = require('../../utils/generateOrderNumber');
 
-const PaymentNotifications = async (req, res) => {
+async function PaymentNotifications(req, res) {
   const transaction = await sequelize.transaction();
   try {
     const statusResponse = await snap.transaction.notification(req.body);
-    const transactionId = statusResponse.order_id;
     const transactionStatus = statusResponse.transaction_status;
-    console.log('transaction status midtrans :', statusResponse);
+    const transactionId = statusResponse.order_id;
+
     const userTransaction = await Transaction.findOne({
       where: { id: transactionId },
       include: [
@@ -59,7 +57,6 @@ const PaymentNotifications = async (req, res) => {
             { transaction },
           );
 
-          // Gather product stock updates from each order detail
           order.orderDetail.forEach((orderDetail) => {
             productStockUpdates.push({
               id: orderDetail.productId,
@@ -67,20 +64,18 @@ const PaymentNotifications = async (req, res) => {
             });
           });
 
-          // Create a notification for the store regarding the new paid order
           await Notification.create(
             {
-              storeId: order.storeId,
               type: 'order',
-              message: `You have a new paid order to process: Rp${order.totalOrderAmount}`,
+              storeId: order.storeId,
               metadata: { orderNumber: order.orderNumber },
+              message: `You have a new paid order to process: Rp${order.totalOrderAmount}`,
             },
             { transaction },
           );
         }),
       );
 
-      // Update product stocks concurrently if there are any stock updates
       if (productStockUpdates.length > 0) {
         await Promise.all(
           productStockUpdates.map((item) =>
@@ -92,7 +87,6 @@ const PaymentNotifications = async (req, res) => {
         );
       }
     } else if (transactionStatus === 'expire') {
-      // Update transaction status to 'expired' and cancel each order
       await userTransaction.update(
         { paymentStatus: 'expired' },
         { transaction },
@@ -105,7 +99,6 @@ const PaymentNotifications = async (req, res) => {
         ),
       );
     } else if (transactionStatus === 'cancel') {
-      // Update transaction status to 'canceled' and cancel shipping for each order
       await userTransaction.update(
         { paymentStatus: 'canceled' },
         { transaction },
@@ -119,7 +112,6 @@ const PaymentNotifications = async (req, res) => {
       );
     }
 
-    // Create a notification for the user about the update
     await Notification.create(
       {
         userId: userTransaction.userId,
@@ -135,10 +127,9 @@ const PaymentNotifications = async (req, res) => {
     await transaction.rollback();
     return res.status(500).json({ message: error.message });
   }
-};
+}
 
-// customer
-const createNewTransaction = async (req, res) => {
+async function createNewTransaction(req, res) {
   const userId = req.user.userId;
   const { address, orders } = req.body;
   const transaction = await sequelize.transaction();
@@ -284,22 +275,13 @@ const createNewTransaction = async (req, res) => {
 
     const amountToPay = totalAmount + totalShipmentCost;
 
-    await newTransaction.update(
-      {
-        totalAmount,
-        amountToPay,
-        totalShipmentCost,
-      },
-      { transaction },
-    );
-
     await Notification.create({
       userId,
       type: 'order',
       message: 'New Transaction waiting for payment process',
       metadata: { transactionId: newTransaction.id },
     });
-    console.log('transaction id :', newTransaction.id);
+
     const parameter = {
       transaction_details: {
         order_id: newTransaction.id,
@@ -315,6 +297,20 @@ const createNewTransaction = async (req, res) => {
 
     const transactionMidtrans = await snap.createTransaction(parameter);
 
+    const paymentDueDate = new Date();
+
+    paymentDueDate.setHours(paymentDueDate.getHours() + 24);
+
+    await newTransaction.update(
+      {
+        totalAmount,
+        amountToPay,
+        totalShipmentCost,
+        paymentDue: paymentDueDate,
+        paymentLink: transactionMidtrans.redirect_url,
+      },
+      { transaction },
+    );
     await transaction.commit();
 
     return res.status(201).json({
@@ -327,130 +323,170 @@ const createNewTransaction = async (req, res) => {
     await transaction.rollback();
     return res.status(500).json({ message: error.message });
   }
-};
+}
 
-const getUserTransactions = async (req, res) => {
+async function getAllTransactions(req, res) {
+  try {
+    const userId = req.user.userId;
+
+    const transactions = await Transaction.findAll({
+      where: { userId },
+    });
+
+    return res.status(200).json({ transactions });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function getTransactionDetail(req, res) {
+  const userId = req.user.userId;
+  const transactionId = req.params.transactionId;
+  try {
+    const transaction = await Transaction.findOne({
+      where: { id: transactionId, userId },
+      include: [
+        {
+          model: Order,
+          as: 'order',
+          include: ['orderDetail', 'store', 'address'],
+        },
+      ],
+    });
+
+    if (!transaction)
+      return res.status(404).json({ message: 'Transaction not found' });
+
+    const transactionDetail = {
+      totalAmount: transaction.totalAmount,
+      totalShipmentCost: transaction.totalShipmentCost,
+      amountToPay: transaction.amountToPay,
+      orders: transaction.order.map((order) => ({
+        store: order.store.name,
+        shipmentCost: order.shipmentCost,
+        shipmentAddress: order.address.address,
+        products: order.orderDetail.map((product) => ({
+          name: product.name,
+          price: product.price,
+          quantity: product.quantity,
+          totalPrice: product.totalPrice,
+        })),
+      })),
+    };
+
+    return res.status(200).json(transactionDetail);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function getAllOrders(req, res) {
   const userId = req.user.userId;
   try {
-    const transactionData = await Transaction.findAll({
+    const rawOrders = await Order.findAll({
       where: { userId },
-      include: [
-        { model: Order, as: 'order', include: { model: Store, as: 'store' } },
-      ],
+      include: ['store', 'orderDetail'],
     });
 
-    const transactions = transactionData.map((data) => {
+    if (!rawOrders)
+      return res.status(200).send({
+        message: 'You dont have any orders',
+        orders: [],
+      });
+
+    const orders = rawOrders.map((order) => {
       return {
-        id: data.id,
-        totalAmount: data.totalAmount,
-        shipmentCost: data.shipmentCost,
+        id: order.id,
+        transactionId: order.transactionId,
+        orderNumber: order.orderNumber,
+        totalPrice: order.totalPrice,
+        orderStatus: order.orderStatus,
+        createdAt: order.createdAt,
+        product: order.orderDetail.map(({ quantity, price }) => ({
+          quantity,
+          price,
+        })),
       };
     });
-    return res.status(200).json(transactions);
+    return res.status(200).json({ orders });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-};
+}
 
-// seller
-const getStoreOrders = async (req, res) => {
-  const storeId = req.user.storeId;
+async function getOrderDetail(req, res) {
+  const orderId = req.params.orderId;
   try {
-    if (!storeId) {
-      return res.status(400).json({ message: 'Unauthorized Access' });
-    }
-
-    const orders = await Order.findAll({
-      where: {
-        storeId,
-        orderStatus: 'pending',
-      },
-      include: [
-        {
-          model: Shipment,
-          attributes: ['shipmentStatus', 'shipmentNumber'],
-        },
-      ],
+    const rawOrder = await Order.findOne({
+      where: { id: orderId },
+      include: ['orderDetail', 'store', 'shipment'],
     });
 
-    return res.status(200).json(orders);
+    if (!rawOrder) return res.status(404).json({ message: 'Order not found' });
+
+    const orderDetail = {
+      store: rawOrder.store.name,
+      orderNumber: rawOrder.orderNumber,
+      totalPrice: rawOrder.totalPrice,
+      shipmentCost: rawOrder.shipmentCost,
+      totalAmount: rawOrder.totalOrderAmount,
+      products: rawOrder.orderDetail.map((product) => ({
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity,
+      })),
+      shipmentNumber: rawOrder.shipment.shipmentNumber,
+      shipmentStatus: rawOrder.shipment.shipmentStatus,
+      createdAt: rawOrder.createdAt,
+    };
+
+    return res.status(200).json({ orderDetail });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-};
+}
 
-const updateOrderStatus = async (req, res) => {
-  const orderId = req.params.orderId;
-  const { orderStatus, shipmentNumber } = req.body;
-
-  const transaction = await sequelize.transaction();
+async function getOrderShipmentDetail(req, res) {
   try {
-    if (!['process', 'canceled'].includes(orderStatus)) {
-      return res.status(400).json({ message: 'Invalid order status.' });
-    }
+    const { orderId } = req.params;
+    const shipment = await Shipment.findOne({ where: { orderId } });
 
-    if (orderStatus === 'process' && !shipmentNumber) {
-      return res.status(400).json({
-        message: 'Shipment number is required to process order.',
-      });
-    }
-
-    const order = await Order.findByPk(orderId, { transaction });
-    if (!order) {
-      await transaction.rollback();
-      return res.status(404).json({ message: 'Order not found.' });
-    }
-
-    await order.update({ orderStatus }, { transaction });
-
-    if (orderStatus === 'process') {
-      await Shipment.upsert(
-        {
-          orderId: order.id,
-          shipmentStatus: 'shipped',
-          shipmentNumber,
-        },
-        { transaction },
-      );
-
-      await Notification.create(
-        {
-          userId: order.userId,
-          type: 'order',
-          message: `Your order has been processed for shipment.`,
-          metadata: { orderNumber: order.orderNumber },
-        },
-        { transaction },
-      );
-    } else {
-      await User.increment(
-        { balance: order.totalOrderAmount },
-        { where: { id: order.userId }, transaction },
-      );
-
-      await Notification.create(
-        {
-          userId: order.userId,
-          type: 'order',
-          message: `Your order has been canceled. A refund of ${order.totalOrderAmount} has been issued.`,
-          metadata: { orderNumber: order.orderNumber },
-        },
-        { transaction },
-      );
-    }
-
-    await transaction.commit();
-    return res.status(200).json({ message: 'Order updated successfully.' });
+    return res.status(200).json({ shipment });
   } catch (error) {
-    await transaction.rollback();
     return res.status(500).json({ message: error.message });
   }
-};
+}
+
+async function getDashboardSummary(req, res) {
+  try {
+    const userId = req.user.userId;
+    const totalTransactions = await Transaction.count({ where: { userId } });
+    const totalOrders = await Order.count({ where: { userId } });
+    const totalSpending = await Transaction.sum('totalAmount', {
+      where: { userId },
+    });
+    const pendingOrders = await Order.count({
+      where: { userId, orderStatus: 'pending' },
+    });
+
+    return res.status(200).json({
+      totalTransactions,
+      totalOrders,
+      totalSpending,
+      pendingOrders,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 
 module.exports = {
+  getOrderDetail,
+  getAllOrders,
+  getAllTransactions,
+  getTransactionDetail,
   createNewTransaction,
-  getStoreOrders,
-  getUserTransactions,
-  updateOrderStatus,
   PaymentNotifications,
+  getOrderShipmentDetail,
+  getDashboardSummary,
 };
