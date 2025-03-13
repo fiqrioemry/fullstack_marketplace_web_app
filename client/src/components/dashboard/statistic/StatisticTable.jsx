@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 
-const recentOrders = []; // Jika kosong, akan menampilkan teks default
+const recentOrders = [];
 
 const StatisticTable = () => {
   return (

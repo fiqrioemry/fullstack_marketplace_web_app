@@ -14,7 +14,7 @@ const Account = () => {
   if (!profile) return <SettingsLoading />;
 
   return (
-    <div className="h-screen grid grid-cols-1 md:grid-cols-3 gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <AccountProfileSettings />
       <AccountProfileDisplay />
     </div>

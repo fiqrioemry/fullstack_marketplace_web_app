@@ -77,7 +77,7 @@ export function DialogForm({
                     Cancel
                   </Button>
                   <Button
-                    type="submit"
+                    type="button"
                     onClick={handleSave}
                     disabled={!(formik.isValid && formik.dirty)}
                   >

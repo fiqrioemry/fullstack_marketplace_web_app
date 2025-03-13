@@ -1,12 +1,11 @@
 import { useUserStore } from "@/store/useUserStore";
-import { Card, CardContent } from "@/components/ui/card";
 
 const AccountProfileDisplay = () => {
   const { profile } = useUserStore();
 
   return (
-    <Card className="col-span-2">
-      <CardContent className="space-y-2 p-4">
+    <div className="aspect-ratio col-span-1 md:col-span-2 rounded-lg p-4 border">
+      <div className="space-y-2 p-4">
         <div className="pb-2 border-b mb-2">
           <h3>Account Profile</h3>
         </div>
@@ -30,8 +29,8 @@ const AccountProfileDisplay = () => {
           <h5 className="min-w-48">phone</h5>
           <span>{profile.phone}</span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ const AddressCard = ({ address }) => {
   const { updateAddress, deleteAddress } = useUserStore();
 
   const handleDelete = () => {
-    deleteAddress(address);
+    deleteAddress(address.id);
   };
 
   return (
