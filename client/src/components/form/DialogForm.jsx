@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import FormInput from "./FormInput";
-import InputButton from "./InputButton";
 import { Button } from "@/components/ui/button";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useState, useCallback, useMemo } from "react";
@@ -12,13 +11,13 @@ export function DialogForm({
   state,
   control,
   action,
-  button,
-  variant,
-  size,
+  variant = "edit",
+  textButton = "edit",
+  size = "lg",
   param = null,
 }) {
-  const formik = useFormSchema(action, state, control, param);
   const [isOpen, setIsOpen] = useState(false);
+  const formik = useFormSchema(action, state, control, param);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const isFormDirty = useMemo(() => formik.dirty, [formik.dirty]);
 
@@ -57,7 +56,7 @@ export function DialogForm({
         onOpenChange={(open) => (!open ? handleCloseDialog() : setIsOpen(open))}
       >
         <Button variant={variant} size={size} onClick={() => setIsOpen(true)}>
-          {button}
+          {textButton}
         </Button>
         <DialogContent className="sm:max-w-[425px] p-0 rounded-lg">
           <DialogTitle className="text-center mt-4">
@@ -74,19 +73,16 @@ export function DialogForm({
                 inputStyle={"h-40 md:h-[4rem]"}
               >
                 <div className="flex gap-2 p-2 absolute bottom-0 right-0 left-0 bg-background border-t">
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={handleCancel}
-                  >
+                  <Button type="button" variant="delete" onClick={handleCancel}>
                     Cancel
                   </Button>
-                  <InputButton
-                    type="button"
-                    formik={formik}
-                    action={handleSave}
-                    title="save changes"
-                  />
+                  <Button
+                    type="submit"
+                    onClick={handleSave}
+                    disabled={!(formik.isValid && formik.dirty)}
+                  >
+                    Save changes
+                  </Button>
                 </div>
               </FormInput>
             </div>
@@ -105,13 +101,10 @@ export function DialogForm({
             </p>
           </div>
           <div className="flex justify-center gap-2 ">
-            <Button
-              variant="destructive"
-              onClick={() => handleConfirmation(true)}
-            >
+            <Button variant="delete" onClick={() => handleConfirmation(true)}>
               Yes, discard changes
             </Button>
-            <Button variant="outline" onClick={() => handleConfirmation(false)}>
+            <Button onClick={() => handleConfirmation(false)}>
               No, keep changes
             </Button>
           </div>

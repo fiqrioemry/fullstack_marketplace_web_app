@@ -16,7 +16,7 @@ import { formatToRupiah } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { useShopStore } from "@/store/useShopStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
-import { DeleteBox } from "@/components/modal/DeleteBox";
+import { DeleteForm } from "@/components/form/DeleteForm";
 import { DialogForm } from "@/components/form/DialogForm";
 import { EllipsisVertical, ArrowUpDown } from "lucide-react";
 import { productControl, storeProductFilterState } from "@/config";
@@ -117,27 +117,21 @@ const ProductsList = () => {
                 <TableCell>{formatToRupiah(product.price)}</TableCell>
                 <TableCell>{product.category.name}</TableCell>
                 <TableCell className="text-center">
-                  {/* Dropdown Action Menu */}
                   <DropdownMenu className="w-14">
                     <DropdownMenuTrigger>
                       <EllipsisVertical className="cursor-pointer" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="flex flex-col gap-2 ">
                       <DialogForm
-                        variant="edit"
                         state={product}
-                        button="Update"
                         param={product.id}
                         title="Edit Product"
                         action={updateProduct}
                         control={productControl}
                       />
-                      <DeleteBox
-                        button="Delete"
-                        variant="delete"
-                        data={product.id}
-                        action={deleteProduct}
+                      <DeleteForm
                         title="Delete Product"
+                        onClick={() => deleteProduct(product)}
                         description="Are you sure want to delete this product?"
                       />
                     </DropdownMenuContent>

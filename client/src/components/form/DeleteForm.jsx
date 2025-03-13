@@ -2,29 +2,24 @@
 import {
   Dialog,
   DialogTitle,
+  DialogClose,
   DialogContent,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function DeleteBox({
+export function DeleteForm({
   title,
   description,
-  action,
-  data,
-  size,
+  onClick,
   variant = "delete",
-  button = "delete",
+  size = "lg",
 }) {
-  const handleSubmit = () => {
-    action(data);
-  };
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant={variant} size={size}>
-          {button}
+          Delete
         </Button>
       </DialogTrigger>
       <DialogTitle>
@@ -39,7 +34,7 @@ export function DeleteBox({
                 </Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button variant="delete" onClick={handleSubmit}>
+                <Button variant="delete" onClick={onClick}>
                   delete
                 </Button>
               </DialogClose>

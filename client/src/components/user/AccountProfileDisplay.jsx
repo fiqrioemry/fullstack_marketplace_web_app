@@ -1,10 +1,13 @@
 import { useUserStore } from "@/store/useUserStore";
-const DisplayProfile = () => {
+import { Card, CardContent } from "@/components/ui/card";
+
+const AccountProfileDisplay = () => {
   const { profile } = useUserStore();
+
   return (
-    <div className="col-span-2">
-      <div>
-        <div className="pb-4 border-b">
+    <Card className="col-span-2">
+      <CardContent className="space-y-2 p-4">
+        <div className="pb-2 border-b mb-2">
           <h3>Account Profile</h3>
         </div>
         <div className="flex items-center capitalize gap-4">
@@ -27,9 +30,9 @@ const DisplayProfile = () => {
           <h5 className="min-w-48">phone</h5>
           <span>{profile.phone}</span>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
-export default DisplayProfile;
+export default AccountProfileDisplay;

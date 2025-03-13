@@ -11,7 +11,7 @@ const MultiUploadComponent = ({ formik, value, name, label }) => {
       {Array.isArray(value) && value.length > 0 ? (
         <div className="grid-display-5">
           {value.map((image, index) => (
-            <div className="relative" key={index}>
+            <div className="relative aspect-square" key={index}>
               <button
                 type="button"
                 name={name}
@@ -24,13 +24,13 @@ const MultiUploadComponent = ({ formik, value, name, label }) => {
                 {image instanceof File || image instanceof Blob ? (
                   <img
                     src={URL.createObjectURL(image)}
-                    className="w-full h-48 object-cover aspect-square"
+                    className="w-full border object-cover aspect-square"
                   />
                 ) : (
                   <img
                     src={image}
                     alt={`image-${index}`}
-                    className="w-full h-48 object-cover aspect-square"
+                    className="w-full border object-cover aspect-square"
                   />
                 )}
               </div>
@@ -40,7 +40,7 @@ const MultiUploadComponent = ({ formik, value, name, label }) => {
           {value.length < 5 && (
             <label
               htmlFor={label}
-              className="relative h-48 flex items-center justify-center border bg-gray-100  hover:bg-gray-200  border-dashed rounded-lg transition-colors"
+              className="relative aspect-square flex items-center justify-center border bg-gray-100  hover:bg-gray-200  border-dashed rounded-lg transition-colors"
             >
               <FilePlus size={20} />
               <input
@@ -57,7 +57,7 @@ const MultiUploadComponent = ({ formik, value, name, label }) => {
         </div>
       ) : (
         <label
-          className="h-96 flex items-center justify-center border border-dashed rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+          className="aspect-video flex items-center justify-center border  rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
           htmlFor={label}
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, name)}

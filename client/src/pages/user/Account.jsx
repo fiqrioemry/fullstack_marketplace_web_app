@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useUserStore } from "@/store/useUserStore";
-import DisplayCard from "@/components/user/DisplayCard";
-import DisplayProfile from "@/components/user/DisplayProfile";
 import SettingsLoading from "@/components/loading/SettingsLoading";
+import AccountProfileDisplay from "@/components/user/AccountProfileDisplay";
+import AccountProfileSettings from "@/components/user/AccountProfileSettings";
 
-const Settings = () => {
+const Account = () => {
   const { getProfile, profile } = useUserStore();
 
   useEffect(() => {
@@ -14,11 +14,11 @@ const Settings = () => {
   if (!profile) return <SettingsLoading />;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <DisplayCard />
-      <DisplayProfile />
+    <div className="h-screen grid grid-cols-1 md:grid-cols-3 gap-2">
+      <AccountProfileSettings />
+      <AccountProfileDisplay />
     </div>
   );
 };
 
-export default Settings;
+export default Account;

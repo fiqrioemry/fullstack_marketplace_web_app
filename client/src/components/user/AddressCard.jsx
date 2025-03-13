@@ -1,12 +1,16 @@
 /* eslint-disable react/prop-types */
 import { addressControl } from "@/config";
 import { useUserStore } from "@/store/useUserStore";
-import { DialogForm } from "@/components/form/DialogForm";
-import { DeleteBox } from "@/components/modal/DeleteBox";
 import { Card, CardContent } from "@/components/ui/card";
+import { DialogForm } from "@/components/form/DialogForm";
+import { DeleteForm } from "@/components/form/DeleteForm";
 
 const AddressCard = ({ address }) => {
   const { updateAddress, deleteAddress } = useUserStore();
+
+  const handleDelete = () => {
+    deleteAddress(address);
+  };
 
   return (
     <Card className="mb-4">
@@ -26,20 +30,18 @@ const AddressCard = ({ address }) => {
         </div>
         <div className="flex gap-2">
           <DialogForm
-            variant="edit"
-            button="Edit"
+            size="lg"
             state={address}
-            title="Edit Address"
             param={address.id}
+            title="Edit Address"
             action={updateAddress}
             control={addressControl}
           />
 
           {!address.isMain && (
-            <DeleteBox
-              data={address.id}
-              action={deleteAddress}
-              title="Address deletion"
+            <DeleteForm
+              onClick={handleDelete}
+              title="Address Deleteion"
               description="Are you sure want to delete this address ?"
             />
           )}

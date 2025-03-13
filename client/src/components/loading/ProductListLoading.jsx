@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductListLoading = () => {
   return (
-    <div>
+    <div className="p-4">
       <Skeleton className="h-8 w-full rounded-md mb-6" />
       {Array(5)
         .fill(0)

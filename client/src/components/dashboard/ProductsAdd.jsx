@@ -14,7 +14,7 @@ const ProductsAdd = () => {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-md borderp-4 ">
+      <div className="rounded-md border p-4 ">
         <FormInput formik={productForm} formControl={productControl}>
           <InputButton title="Submit" formik={productForm} loading={loading} />
         </FormInput>

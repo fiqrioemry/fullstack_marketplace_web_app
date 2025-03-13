@@ -19,10 +19,11 @@ const Address = () => {
     <div className="space-y-4">
       <div className="flex justify-end">
         <DialogForm
-          button="Add Address"
+          variant="primary"
           action={addAddress}
           state={addressState}
           title="Form New Address"
+          textButton="Add Address"
           control={addressControl}
         />
       </div>

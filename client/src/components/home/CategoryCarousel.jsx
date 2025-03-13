@@ -1,13 +1,5 @@
-import {
-  Carousel,
-  CarouselItem,
-  CarouselNext,
-  CarouselContent,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import { useProductStore } from "@/store/useProductStore";
 import CategoriesLoading from "@/components/loading/CategoriesLoading";
 
@@ -23,31 +15,24 @@ const CategoryCarousel = () => {
   return (
     <div className="space-y-4">
       <h4>Category List</h4>
-      <Carousel className="w-full">
-        <CarouselContent>
-          {categories.map(({ id, slug, image, name }) => (
-            <CarouselItem
-              key={id}
-              className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
-            >
-              <Link to={`/products?category=${slug}`}>
-                <Card className="p-4">
-                  <CardContent>
-                    <img
-                      className="h-40 w-full aspect-square object-cover"
-                      src={image}
-                      alt={name}
-                    />
-                    <h5 className="text-center mt-4">{name}</h5>
-                  </CardContent>
-                </Card>
-              </Link>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+      <div className="grid grid-cols-4 md:grid-cols-5 gap-2 md:gap-4">
+        {categories.map(({ id, slug, image, name }) => (
+          <div className="aspect-square" key={id}>
+            <Link to={`/products?category=${slug}`}>
+              <div className="p-2 border rounded-lg">
+                <img
+                  className="aspect-square object-cover"
+                  src={image}
+                  alt={name}
+                />
+                <div className="text-center text-[10px] font-normal md:text-sm md:font-medium">
+                  {name}
+                </div>
+              </div>
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

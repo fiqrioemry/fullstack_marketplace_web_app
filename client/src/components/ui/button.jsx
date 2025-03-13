@@ -10,34 +10,23 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+        secondary: "bg-muted text-secondary-foreground hover:bg-secondary/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        cancel:
-          "text-gray-600 border border-gray-400 hover:bg-gray-100 transition ",
-        edit: "text-blue-600 border border-blue-600 hover:bg-blue-100 transition ",
-        delete:
-          "text-white bg-red-500 border border-red-500 hover:bg-red-600 transition ",
-        save: "text-white bg-green-500 border border-green-500 hover:bg-green-600 transition ",
-
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        edit: "text-blue-600 border border-blue-600 hover:bg-blue-100 ",
+        delete: "text-white bg-red-500 border border-red-500 hover:bg-red-600",
       },
       size: {
-        default: "h-8 rounded-md py-2 px-2 min-w-32",
+        default: "h-9 rounded-md py-2 px-2 w-full",
         xs: "h-8 rounded-md px-2",
         sm: "h-8 rounded-md px-4",
-        md: "h-8 rounded-md px-6",
-        lg: "h-9 rounded-md px-8",
+        lg: "h-9 rounded-md px-8 w-32",
         icon: "h-9 w-9",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
     },
   }

@@ -17,7 +17,7 @@ import ShopLayout from "./components/shop/ShopLayout";
 
 // halaman user
 import Address from "./pages/user/Address";
-import Settings from "./pages/user/Settings";
+import Account from "./pages/user/Account";
 import UserOrders from "./pages/user/UserOrders";
 import Transactions from "./pages/user/Transactions";
 import UserLayout from "./components/user/UserLayout";
@@ -89,7 +89,7 @@ function App() {
             }
           >
             <Route path="address" element={<Address />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="settings" element={<Account />} />
             <Route path="orders" element={<UserOrders />} />
             <Route path="transactions" element={<Transactions />} />
             <Route index element={<Navigate to="settings" replace />} />

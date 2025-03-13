@@ -28,7 +28,7 @@ const Checkout = () => {
         <CheckoutAddress transactionForm={transactionForm} />
         <CheckoutOrder transactionForm={transactionForm} />
       </div>
-      <div className="col-span-1">
+      <div className="col-span-2 md:col-span-1">
         <CheckoutTotalPrice transactionForm={transactionForm} />
       </div>
     </CheckoutLayout>

@@ -10,7 +10,7 @@ const ProductCard = ({ products }) => {
           <article className="group">
             <div className="overflow-hidden border rounded-lg">
               <img
-                className="w-full aspect-square object-contain group-hover:scale-110 duration-300"
+                className="w-full aspect-square object-cover group-hover:scale-110 duration-300"
                 src={product.images}
                 alt="product"
               />
