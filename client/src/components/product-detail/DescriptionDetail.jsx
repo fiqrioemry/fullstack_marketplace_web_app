@@ -28,9 +28,9 @@ const DescriptionDetail = ({ product }) => {
             {category.name}
           </Link>
           <h4 className="mb-2">{name}</h4>
-          <span>Rp.{price}</span>
+          <span>{formatToRupiah(price)}</span>
         </div>
-        <div className="border-b border-muted py-4">
+        <div className="border-b border-muted space-y-2 py-4">
           <span className="text-md font-medium">Description :</span>
           <p>{description}</p>
           <p>

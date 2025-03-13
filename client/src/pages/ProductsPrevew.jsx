@@ -14,8 +14,7 @@ import ProductsPagination from "@/components/products-preview/ProductsPagination
 
 const ProductsPreview = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getProducts, products, totalPage, currentPage, loading } =
-    useProductStore();
+  const { getProducts, products, totalPage, currentPage } = useProductStore();
 
   const initialSearchValues = {
     ...searchState,
@@ -59,7 +58,7 @@ const ProductsPreview = () => {
     getProducts(params);
   }, [searchParams]);
 
-  if (!products || loading) return <ProductsPreviewLoading />;
+  if (!products) return <ProductsPreviewLoading />;
 
   return (
     <div className="container mx-auto">

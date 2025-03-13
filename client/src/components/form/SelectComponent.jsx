@@ -12,6 +12,8 @@ const SelectComponent = ({
   placeholder,
   handleChange,
 }) => {
+  if (!options) return null;
+
   return (
     <div>
       <InputLabel formik={formik} name={name} label={label} />

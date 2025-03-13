@@ -392,7 +392,6 @@ export const addressControl = [
   {
     name: 'isMain',
     label: 'set as main address',
-    disbaled: 'isMain' === true,
     type: 'checkbox',
     component: 'single-checked',
   },

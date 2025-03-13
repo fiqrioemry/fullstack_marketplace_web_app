@@ -14,7 +14,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 
 const dashboardMenu = [
   {
-    title: "sales",
+    title: "dashboard",
     path: "/store",
     icon: ChartLine,
   },

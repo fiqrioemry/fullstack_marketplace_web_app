@@ -2,32 +2,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductListLoading = () => {
   return (
-    <>
+    <div>
+      <Skeleton className="h-8 w-full rounded-md mb-6" />
       {Array(5)
         .fill(0)
         .map((_, index) => (
-          <tr key={index} className="border-b border-gray-200">
-            <td className="px-4 py-3">
-              <Skeleton className="h-6 w-8" />
-            </td>
-            <td className="px-4 py-3">
-              <Skeleton className="h-6 w-48" />
-            </td>
-            <td className="px-4 py-3">
-              <Skeleton className="h-6 w-16" />
-            </td>
-            <td className="px-4 py-3">
-              <Skeleton className="h-6 w-24" />
-            </td>
-            <td className="px-4 py-3">
-              <Skeleton className="h-6 w-32" />
-            </td>
-            <td className="px-4 py-3 text-center">
-              <Skeleton className="h-6 w-16" />
-            </td>
-          </tr>
+          <div key={index} className="flex items-center gap-4 mb-6">
+            <Skeleton className="h-6 w-10" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-20 md:w-40" />
+            <Skeleton className="h-6 w-20 md:w-40" />
+            <Skeleton className="h-6 w-20 md:w-40" />
+          </div>
         ))}
-    </>
+    </div>
   );
 };
 

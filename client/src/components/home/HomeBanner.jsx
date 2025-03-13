@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Carousel,
   CarouselItem,
@@ -6,7 +5,7 @@ import {
   CarouselContent,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 
 const HomeBanner = () => {
   const [api, setApi] = useState(null);
@@ -28,19 +27,17 @@ const HomeBanner = () => {
   return (
     <Carousel className="w-full" setApi={setApi}>
       <CarouselContent>
-        {[...Array(3)].map((_, index) => (
-          <CarouselItem key={index}>
-            <Card>
-              <CardContent className="flex items-center justify-center">
-                <img
-                  className="w-full aspect-ratio rounded-lg"
-                  src="https://placehold.co/900x300"
-                  alt="banner"
-                />
-              </CardContent>
-            </Card>
-          </CarouselItem>
-        ))}
+        {Array(10)
+          .fill(0)
+          .map((_, index) => (
+            <CarouselItem key={index}>
+              <img
+                className="w-full aspect-ratio rounded-lg"
+                src="https://placehold.co/900x300"
+                alt="banner"
+              />
+            </CarouselItem>
+          ))}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

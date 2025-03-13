@@ -5,7 +5,6 @@ import callApi from "@/api/callApi";
 export const useAuthStore = create((set, get) => ({
   step: 1,
   user: null,
-  store: null,
   loading: false,
   accessToken: null,
   checkingAuth: true,
@@ -53,6 +52,7 @@ export const useAuthStore = create((set, get) => ({
     try {
       const { message } = await callApi.logout();
       toast.success(message);
+      set({ user: null, accessToken: null });
     } catch (error) {
       console.log(error.message);
     }
