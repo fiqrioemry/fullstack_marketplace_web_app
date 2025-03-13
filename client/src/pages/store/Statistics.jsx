@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { useShopStore } from "@/store/useShopStore";
-import StatisticDisplay from "@/components/dashboard/StatisticDisplay";
 import StoreProfileLoading from "@/components/loading/StoreProfileLoading";
+import StatisticChart from "@/components/dashboard/statistic/StatisticChart";
+import StatisticTable from "@/components/dashboard/statistic/StatisticTable";
+import StatisticHeader from "@/components/dashboard/statistic/StatisticHeader";
 
 const Statistics = () => {
   const { getStoreStatisticSummary, statistic } = useShopStore();
@@ -11,7 +13,14 @@ const Statistics = () => {
   }, [getStoreStatisticSummary]);
 
   if (!statistic) return <StoreProfileLoading />;
-  return <StatisticDisplay />;
+
+  return (
+    <div className="p-6 space-y-6">
+      <StatisticHeader />
+      <StatisticChart />
+      <StatisticTable />
+    </div>
+  );
 };
 
 export default Statistics;
