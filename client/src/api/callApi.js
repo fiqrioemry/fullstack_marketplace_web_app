@@ -94,7 +94,6 @@ const callApi = {
   },
 
   // note : CUSTOMER API Route
-
   // customer profile management
   getProfile: async () => {
     return authInstance

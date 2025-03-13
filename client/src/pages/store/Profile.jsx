@@ -1,7 +1,7 @@
-import ProfileDisplay from "@/components/dashboard/ProfileDisplay";
-import { useShopStore } from "../../store/useShopStore";
 import { useEffect } from "react";
-import StoreProfileLoading from "../../components/loading/StoreProfileLoading";
+import { useShopStore } from "@/store/useShopStore";
+import ProfileDisplay from "@/components/dashboard/ProfileDisplay";
+import StoreProfileLoading from "@/components/loading/StoreProfileLoading";
 
 const Profile = () => {
   const { getStoreProfile, profile } = useShopStore();

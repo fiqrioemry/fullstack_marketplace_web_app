@@ -82,11 +82,11 @@ export const useShopStore = create((set, get) => ({
   deleteProduct: async (productId) => {
     set({ loading: true });
     try {
-      const res = await callApi.deleteProduct(productId);
+      const { message } = await callApi.deleteProduct(productId);
       await get().getStoreProduct();
-      toast.success(res.message);
-    } catch (err) {
-      toast.error(err.message);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
     } finally {
       set({ loading: false });
     }

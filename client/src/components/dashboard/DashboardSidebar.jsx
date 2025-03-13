@@ -2,12 +2,15 @@ import {
   Sidebar,
   SidebarMenu,
   SidebarHeader,
+  SidebarFooter,
   SidebarContent,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/ui/Logo";
 import { Link, useLocation } from "react-router-dom";
 import { Bell, BoxIcon, ChartLine, Settings, Truck } from "lucide-react";
+import Avatar from "../ui/Avatar";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const dashboardMenu = [
   {
@@ -27,7 +30,7 @@ const dashboardMenu = [
   },
   {
     title: "Orders",
-    path: "/store/order",
+    path: "/store/orders",
     icon: Truck,
   },
   {
@@ -39,18 +42,21 @@ const dashboardMenu = [
 
 const DashboardSidebar = () => {
   const location = useLocation();
-  const currentPath = location.pathname.split("/").pop();
+  const { user } = useAuthStore();
+  const currentPath = location.pathname;
 
   return (
     <Sidebar>
       <SidebarContent className="p-2">
         <SidebarHeader>
-          <Logo />
+          <div className="px-1.5">
+            <Logo />
+          </div>
         </SidebarHeader>
 
         <SidebarMenu>
           {dashboardMenu.map((menu) => {
-            const activePath = currentPath === menu.title;
+            const activePath = currentPath === menu.path;
             return (
               <Link
                 to={menu.path}
@@ -67,6 +73,15 @@ const DashboardSidebar = () => {
           })}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter>
+        <div className="justify-start btn-nav">
+          <Avatar user={user} />
+          <div>
+            <h5>{user.fullname}</h5>
+            <span className="text-xs md:text-sm">{user.email}</span>
+          </div>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 };
