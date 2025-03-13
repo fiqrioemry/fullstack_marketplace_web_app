@@ -54,7 +54,7 @@ const ProductsList = () => {
   if (!products) return <ProductListLoading />;
 
   return (
-    <div>
+    <section className="p-4">
       {/* Search Input */}
       <div className="w-full mb-4">
         <Input
@@ -155,7 +155,7 @@ const ProductsList = () => {
         searchForm={searchForm}
         currentPage={currentPage}
       />
-    </div>
+    </section>
   );
 };
 
