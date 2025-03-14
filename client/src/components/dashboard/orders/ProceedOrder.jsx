@@ -1,17 +1,5 @@
-/* eslint-disable react/prop-types */
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { useShopStore } from "@/store/useShopStore";
-
-import { Button } from "@/components/ui/button";
-import { useFormSchema } from "@/hooks/useFormSchema";
-import FormInput from "@/form/FormInput";
-import InputButton from "@/form/InputButton";
+import { DialogForm } from "@/components/form/DialogForm";
 
 const orderState = {
   shipmentNumber: "",
@@ -36,38 +24,16 @@ const orderControl = [
 ];
 
 export function ProceedOrder({ orderId }) {
-  const { proceedStoreOrder, loading } = useShopStore();
-  const orderForm = useFormSchema(
-    proceedStoreOrder,
-    orderState,
-    orderControl,
-    orderId
-  );
+  const { proceedStoreOrder } = useShopStore();
 
   return (
-    <Dialog>
-      <DialogTrigger className="btn btn-nav w-full">
-        Proceed Order
-      </DialogTrigger>
-      <DialogContent>
-        <DialogTitle className="text-center mb-4">Order Process</DialogTitle>
-        <DialogDescription className="text-center mb-4">
-          To Process this order, please enter the Order tracking Number from
-          courier
-        </DialogDescription>
-        <div>
-          <FormInput formik={orderForm} formControl={orderControl}>
-            <div>
-              <Button type="button">Cancel</Button>
-              <InputButton
-                title="proceed order"
-                formik={orderForm}
-                loading={loading}
-              />
-            </div>
-          </FormInput>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <DialogForm
+      param={orderId}
+      state={orderState}
+      control={orderControl}
+      action={proceedStoreOrder}
+      textButton="proceed order"
+      title="Proceed order to shipment"
+    />
   );
 }

@@ -11,10 +11,10 @@ export function DialogForm({
   state,
   control,
   action,
-  variant = "edit",
-  textButton = "edit",
   size = "lg",
   param = null,
+  variant = "edit",
+  textButton = "edit",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const formik = useFormSchema(action, state, control, param);
@@ -62,7 +62,7 @@ export function DialogForm({
           <DialogTitle className="text-center mt-4">
             <h4>{title}</h4>
             <p className="text-gray-600 text-sm font-normal">
-              Save button will active once all fields are filled or Changes
+              Submit button will active once all fields are filled or Changes
             </p>
           </DialogTitle>
           <ScrollArea className="h-96 border pb-8">
@@ -81,7 +81,7 @@ export function DialogForm({
                     onClick={handleSave}
                     disabled={!(formik.isValid && formik.dirty)}
                   >
-                    Save changes
+                    submit
                   </Button>
                 </div>
               </FormInput>
