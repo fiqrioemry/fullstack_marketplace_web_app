@@ -1,11 +1,18 @@
-import { useState } from "react";
-import { format } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Ellipsis } from "lucide-react";
+import { CancelOrder } from "./CancelOrder";
 import { formatToRupiah, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import OrderActions from "./orders/OrderActions";
 import { useShopStore } from "@/store/useShopStore";
 import { Link, useLocation } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react";
+import { format } from "date-fns";
+import ProceedOrder from "./orders/ProceedOrder";
 
 export default function OrdersDisplay() {
   const location = useLocation();
@@ -72,7 +79,17 @@ export default function OrdersDisplay() {
               </div>
             </div>
             <div className="flex items-center justify-end gap-4">
-              <OrderActions />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="border rounded-md p-2">
+                    <Ellipsis size={20} className="cursor-pointer" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="p-0 space-y-2">
+                  <ProceedOrder />
+                  <CancelOrder />
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Link
                 to={`/store/orders/${order.id}`}
                 state={{ background: location }}

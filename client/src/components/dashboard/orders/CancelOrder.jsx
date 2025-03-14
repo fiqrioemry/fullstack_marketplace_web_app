@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function CancelOrder({ onClick, size = "lg", variant = "delete" }) {
+export function CancelOrder({ onClick }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
