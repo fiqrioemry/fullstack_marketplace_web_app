@@ -4,34 +4,28 @@ import {
   YAxis,
   Tooltip,
   BarChart,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useShopStore } from "@/store/useShopStore";
 import { Card, CardContent } from "@/components/ui/card";
 
-// Data contoh untuk grafik harian dan bulanan
-const dailyData = [
-  { name: "Mon", revenue: 5000, orders: 200 },
-  { name: "Tue", revenue: 7000, orders: 250 },
-  { name: "Wed", revenue: 4000, orders: 150 },
-  { name: "Thu", revenue: 8000, orders: 300 },
-  { name: "Fri", revenue: 6000, orders: 220 },
-  { name: "Sat", revenue: 9000, orders: 350 },
-  { name: "Sun", revenue: 6500, orders: 270 },
-];
-
-const monthlyData = [
-  { name: "Jan", revenue: 150000, orders: 3200 },
-  { name: "Feb", revenue: 140000, orders: 3100 },
-  { name: "Mar", revenue: 170000, orders: 4000 },
-  { name: "Apr", revenue: 160000, orders: 3500 },
-  { name: "May", revenue: 180000, orders: 4200 },
-  { name: "Jun", revenue: 190000, orders: 4500 },
-];
-
 const StatisticChart = () => {
-  const [viewMode, setViewMode] = useState("daily");
+  const { statistic } = useShopStore();
+  const [viewMode, setViewMode] = useState("order");
+
+  const chartData = statistic.ordersByDay.map((order) => {
+    const revenueData = statistic.revenueByDay.find(
+      (rev) => rev.date === order.date
+    );
+    return {
+      date: order.date,
+      order_count: order.order_count,
+      total_revenue: revenueData ? parseFloat(revenueData.total_revenue) : 0,
+    };
+  });
 
   return (
     <Card className="md:p-4 p-0">
@@ -40,20 +34,28 @@ const StatisticChart = () => {
         <Button
           size="sm"
           onClick={() =>
-            setViewMode(viewMode === "daily" ? "monthly" : "daily")
+            setViewMode(viewMode === "order" ? "revenue" : "order")
           }
         >
-          {viewMode === "daily" ? "View Monthly" : "View Daily"}
+          {viewMode === "order" ? "View Revenue" : "View Orders"}
         </Button>
       </div>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={viewMode === "daily" ? dailyData : monthlyData}>
-            <XAxis dataKey="name" />
+          <BarChart data={chartData}>
+            <XAxis dataKey="date" tickFormatter={(tick) => tick} />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="revenue" fill="#4F46E5" name="Revenue" />
-            <Bar dataKey="orders" fill="#16A34A" name="Orders" />
+            <Legend />
+            {viewMode === "order" ? (
+              <Bar dataKey="order_count" fill="#4F46E5" name="Orders per Day" />
+            ) : (
+              <Bar
+                dataKey="total_revenue"
+                fill="#22C55E"
+                name="Revenue per Day"
+              />
+            )}
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

@@ -34,27 +34,23 @@ import ProductsList from "./components/dashboard/ProductsList";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 
 // middleware and hooks
-import { useEffect } from "react";
+
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
-import { useAuthStore } from "./store/useAuthStore";
+import useAuthChecking from "./hooks/useAuthChecking";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
+import OrderDetail from "./components/dashboard/orders/OrderDetail";
 
 function App() {
-  const { authCheck, checkingAuth } = useAuthStore();
-  useAuthStore();
-
-  useEffect(() => {
-    authCheck();
-  }, [authCheck]);
+  const { checkingAuth, location, background } = useAuthChecking();
 
   if (checkingAuth) return <PageLoading />;
 
   return (
     <>
       <Toaster />
-      <Routes>
+      <Routes location={background || location}>
         <Route
           path="signin"
           element={
@@ -143,6 +139,11 @@ function App() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
+      {background && (
+        <Routes>
+          <Route path="/store/orders/:orderId" element={<OrderDetail />} />
+        </Routes>
+      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
+import { format } from "date-fns";
 import { profileControl } from "@/config";
 import { formatToRupiah } from "@/lib/utils";
-import { formatDateToISO } from "@/lib/utils";
 import { Calendar, DollarSign } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
@@ -36,7 +36,7 @@ const AccountProfileSettings = () => {
             <Calendar className="w-5 h-5" />
             Joined Date
           </div>
-          <span className="w-1/2">: {formatDateToISO(profile.createdAt)}</span>
+          <span className="w-1/2">: {format(profile.createdAt, "PPP")}</span>
         </div>
       </div>
 

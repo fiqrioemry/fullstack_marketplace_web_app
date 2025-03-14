@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useUserStore } from "@/store/useUserStore";
 
 const AccountProfileDisplay = () => {
@@ -11,23 +12,30 @@ const AccountProfileDisplay = () => {
         </div>
         <div className="flex items-center capitalize gap-4">
           <h5 className="min-w-48">email</h5>
-          <span>{profile.email}</span>
+          <span>: {profile.email}</span>
         </div>
         <div className="flex items-center capitalize gap-4">
           <h5 className="min-w-48">fullname</h5>
-          <span>{profile.fullname}</span>
+          <span>: {profile.fullname}</span>
         </div>
         <div className="flex items-center capitalize gap-4">
           <h5 className="min-w-48">gender</h5>
-          <span>{profile.gender}</span>
+          <span>: {profile.gender ? profile.gender : "-"}</span>
         </div>
         <div className="flex items-center capitalize gap-4">
           <h5 className="min-w-48">birthday</h5>
-          <span>{profile.birthday}</span>
+          <span>
+            <span>
+              :{" "}
+              {profile.birthday
+                ? format(new Date(profile.birthday), "PPP")
+                : "-"}
+            </span>
+          </span>
         </div>
         <div className="flex items-center capitalize gap-4">
           <h5 className="min-w-48">phone</h5>
-          <span>{profile.phone}</span>
+          <span>: {profile.phone ? profile.phone : "-"}</span>
         </div>
       </div>
     </div>

@@ -194,14 +194,13 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  createNewTransactions: async (formData) => {
+  createNewTransaction: async (formData) => {
     set({ loading: true });
+
     try {
-      const { message, transactionUrl } = await callApi.createNewTransactions(
+      const { message, transactionUrl } = await callApi.createNewTransaction(
         formData
       );
-
-      console.log(transactionUrl);
       if (transactionUrl) {
         window.location.href = transactionUrl;
       }

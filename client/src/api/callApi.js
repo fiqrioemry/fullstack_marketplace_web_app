@@ -228,7 +228,6 @@ const callApi = {
   },
 
   // note : ADMIN API Route
-
   // category management
   // TODO : Create feature create new category
   createNewCategory: async () => {

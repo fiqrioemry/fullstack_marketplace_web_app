@@ -27,7 +27,7 @@ const HomeBanner = () => {
   return (
     <Carousel className="w-full" setApi={setApi}>
       <CarouselContent>
-        {Array(10)
+        {Array(3)
           .fill(0)
           .map((_, index) => (
             <CarouselItem key={index}>

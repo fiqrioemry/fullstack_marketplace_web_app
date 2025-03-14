@@ -144,8 +144,8 @@ function FormInput({ formik, formControl, disabled, children }) {
             label={label}
             value={value}
             formik={formik}
-            disabled={disabled}
             placeholder={placeholder}
+            handleChange={handleChange}
           />
         );
       default:

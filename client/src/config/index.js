@@ -307,7 +307,6 @@ export const profileControl = [
   {
     name: 'birthday',
     label: 'birthday',
-    type: 'date',
     placeholder: 'Add your birthday',
     component: 'date',
   },

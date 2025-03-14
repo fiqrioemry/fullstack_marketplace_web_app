@@ -28,9 +28,10 @@ export function AddressSelection({ transactionForm }) {
         <DialogContent className="sm:max-w-lg p-4 rounded-lg">
           <DialogTitle className="flex items-center justify-end">
             <DialogForm
-              button="Add Address"
+              variant="primary"
               action={addAddress}
               state={addressState}
+              textButton="Add address"
               title="Form New Address"
               control={addressControl}
             />

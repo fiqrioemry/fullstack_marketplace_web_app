@@ -4,6 +4,7 @@ import callApi from "@/api/callApi";
 import { useAuthStore } from "./useAuthStore";
 
 export const useShopStore = create((set, get) => ({
+  order: null,
   orders: null,
   profile: null,
   loading: false,
@@ -132,8 +133,8 @@ export const useShopStore = create((set, get) => ({
   getStoreOrderDetail: async (orderId) => {
     set({ orderDetail: null });
     try {
-      const { orderDetail } = await callApi.getStoreOrderDetail(orderId);
-      set({ orderDetail });
+      const { order } = await callApi.getStoreOrderDetail(orderId);
+      set({ order });
     } catch (error) {
       console.error(error.message);
     }
