@@ -19,14 +19,14 @@ export function DeleteForm({
     <Dialog>
       <DialogTrigger asChild>
         <Button variant={variant} size={size}>
-          Delete
+          Cancel
         </Button>
       </DialogTrigger>
       <DialogTitle>
         <DialogContent variant="options" className=" sm:max-w-[525px]">
           <div className="space-y-6">
-            <h4>{title}</h4>
-            <p>{description}</p>
+            <h4>Order Cancellation</h4>
+            <p>Are you sure want to cancel this order</p>
             <div className="flex justify-end items-center space-x-4">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">

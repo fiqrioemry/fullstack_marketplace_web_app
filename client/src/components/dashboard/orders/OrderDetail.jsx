@@ -1,16 +1,16 @@
 import { useEffect } from "react";
+import { formatToRupiah } from "@/lib/utils";
 import { useShopStore } from "@/store/useShopStore";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatToRupiah } from "../../../lib/utils";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { getStoreOrderDetail, order } = useShopStore();
-  console.log(order);
+
   useEffect(() => {
     if (orderId) {
       getStoreOrderDetail(orderId);
@@ -25,7 +25,7 @@ const OrderDetail = () => {
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && navigate(-1)}>
-      <DialogContent className="flex flex-col h-96 max-w-md px-0 py-2 rounded-lg">
+      <DialogContent className="h-96 max-w-md px-0 py-2 rounded-lg">
         <DialogTitle className="px-4 pb-2 border-b">
           <h3>Order Detail</h3>
         </DialogTitle>
@@ -36,15 +36,15 @@ const OrderDetail = () => {
               <h4>Order Information</h4>
               <div className="flex items-center justify-between text-muted-foreground text-xs">
                 <p>Order Number</p>
-                <p>{order?.orderNumber}</p>
+                <span>{order?.orderNumber}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground text-xs">
                 <p>Order Date</p>
-                <p>{order?.createdAt}</p>
+                <span>{order?.createdAt}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground text-xs">
                 <p>Order Status</p>
-                <p>{order?.orderStatus}</p>
+                <span>{order?.orderStatus}</span>
               </div>
             </div>
             <div className="mb-2 py-2 px-4 bg-background">
