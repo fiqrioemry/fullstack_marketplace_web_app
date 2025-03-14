@@ -4,7 +4,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
-import { CancelOrder } from "./CancelOrder";
 import { formatToRupiah, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useShopStore } from "@/store/useShopStore";
@@ -13,12 +12,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { format } from "date-fns";
 import ProceedOrder from "./orders/ProceedOrder";
+import { CancelOrder } from "./orders/CancelOrder";
 
 export default function OrdersDisplay() {
   const location = useLocation();
   const { orders } = useShopStore();
   const [filter, setFilter] = useState("all");
-
   const filteredOrders = orders.filter((order) =>
     filter === "all" ? true : order.orderStatus === filter
   );
@@ -80,12 +79,10 @@ export default function OrdersDisplay() {
             </div>
             <div className="flex items-center justify-end gap-4">
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="border rounded-md p-2">
-                    <Ellipsis size={20} className="cursor-pointer" />
-                  </button>
+                <DropdownMenuTrigger className="border rounded-md p-2">
+                  <Ellipsis size={20} />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="p-0 space-y-2">
+                <DropdownMenuContent>
                   <ProceedOrder />
                   <CancelOrder />
                 </DropdownMenuContent>
