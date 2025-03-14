@@ -62,6 +62,17 @@ const baseValidations = {
     .nullable()
     .typeError('Invalid date')
     .min(Yup.ref('start_date'), 'Must be after start date'),
+
+  // order cancel form
+  cancel_reason: Yup.string()
+    .min(20, 'Min. 20 characters')
+    .required('Required'),
+
+  // order process form
+  shipmentNumber: Yup.string()
+    .min(20, 'Min. 20 characters')
+    .required('Required'),
+  message: Yup.string().min(20, 'Min. 20 characters').required('Required'),
 };
 
 export const newValidationSchema = (fields = []) => {

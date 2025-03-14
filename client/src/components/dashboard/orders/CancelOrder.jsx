@@ -4,37 +4,38 @@ import {
   DialogTitle,
   DialogClose,
   DialogContent,
-  DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useShopStore } from "@/store/useShopStore";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
-export function CancelOrder({ onClick }) {
+export function CancelOrder({ orderId }) {
+  const { cancelStoreOrder } = useShopStore();
+
+  const handleCancelOrder = () => {
+    cancelStoreOrder(orderId);
+  };
+
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <button className="btn btn-nav w-full">Cancel Order</button>
-      </DialogTrigger>
-
-      <DialogContent variant="options" className=" sm:max-w-[525px]">
-        <div className="space-y-6">
-          <DialogHeader>
-            <DialogTitle>Order Cancellation</DialogTitle>
-            <DialogDescription>
-              Are you sure want to cancel this order
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end items-center space-x-4">
-            <DialogClose asChild>
-              <Button variant="secondary">Cancel</Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button variant="delete" onClick={onClick}>
-                Confirm
-              </Button>
-            </DialogClose>
-          </div>
+      <DialogTrigger className="btn btn-nav w-full">Cancel Order</DialogTrigger>
+      <DialogContent>
+        <DialogTitle className="text-center mb-4">
+          Order Cancellation
+        </DialogTitle>
+        <DialogDescription className="text-center mb-4">
+          Are you sure want to cancel this order
+        </DialogDescription>
+        <div className="flex justify-end items-center gap-4">
+          <DialogClose asChild>
+            <Button variant="secondary">Cancel</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button variant="delete" onClick={handleCancelOrder}>
+              Confirm
+            </Button>
+          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>

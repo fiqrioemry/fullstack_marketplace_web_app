@@ -4,50 +4,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
-import { formatToRupiah, cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { useShopStore } from "@/store/useShopStore";
-import { Link, useLocation } from "react-router-dom";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
 import { format } from "date-fns";
 import ProceedOrder from "./orders/ProceedOrder";
+import { formatToRupiah, cn } from "@/lib/utils";
 import { CancelOrder } from "./orders/CancelOrder";
+import { useShopStore } from "@/store/useShopStore";
+import { Link, useLocation } from "react-router-dom";
 
 export default function OrdersDisplay() {
   const location = useLocation();
   const { orders } = useShopStore();
-  const [filter, setFilter] = useState("all");
-  const filteredOrders = orders.filter((order) =>
-    filter === "all" ? true : order.orderStatus === filter
-  );
 
   return (
-    <div className="container mx-auto py-3 md:py-6 px-2">
-      {/* Filter Buttons */}
-      <div className="flex space-x-2 mb-4">
-        <Button
-          variant={filter === "all" ? "default" : "outline"}
-          onClick={() => setFilter("all")}
-        >
-          Semua Status
-        </Button>
-        <Button
-          variant={filter === "pending" ? "default" : "outline"}
-          onClick={() => setFilter("pending")}
-        >
-          Pending
-        </Button>
-        <Button
-          variant={filter === "success" ? "default" : "outline"}
-          onClick={() => setFilter("success")}
-        >
-          Success
-        </Button>
-      </div>
-
-      <ScrollArea className="h-96 py-4 border-t border-b">
-        {filteredOrders.map((order) => (
+    <div className="h-full container mx-auto py-3 md:py-6 px-2">
+      <div className="h-full py-4 border-t border-b">
+        {orders.map((order) => (
           <div className="border rounded-lg p-4 mb-4" key={order.id}>
             <div className="flex justify-between items-center">
               <div>
@@ -84,7 +55,7 @@ export default function OrdersDisplay() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <ProceedOrder />
-                  <CancelOrder />
+                  <CancelOrder orderId={order.id} />
                 </DropdownMenuContent>
               </DropdownMenu>
               <Link
@@ -97,7 +68,7 @@ export default function OrdersDisplay() {
             </div>
           </div>
         ))}
-      </ScrollArea>
+      </div>
     </div>
   );
 }
