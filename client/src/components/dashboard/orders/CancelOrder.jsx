@@ -1,43 +1,35 @@
 /* eslint-disable react/prop-types */
-import {
-  Dialog,
-  DialogTitle,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useShopStore } from "@/store/useShopStore";
-import { DialogDescription } from "@radix-ui/react-dialog";
+import { DialogForm } from "@/components/form/DialogForm";
 
-export function CancelOrder({ orderId }) {
+const cancelOrderState = {
+  cancel_reason: "",
+};
+const cancelOrderControl = [
+  {
+    type: "text",
+    name: "cancel_order",
+    component: "input-text",
+    label: "Reason for cancelation",
+    placeholder: "Write the cancelation reason here",
+  },
+];
+
+const CancelOrder = ({ orderId }) => {
   const { cancelStoreOrder } = useShopStore();
 
-  const handleCancelOrder = () => {
-    cancelStoreOrder(orderId);
-  };
-
   return (
-    <Dialog>
-      <DialogTrigger className="btn btn-nav w-full">Cancel Order</DialogTrigger>
-      <DialogContent>
-        <DialogTitle className="text-center mb-4">
-          Order Cancellation
-        </DialogTitle>
-        <DialogDescription className="text-center mb-4">
-          Are you sure want to cancel this order
-        </DialogDescription>
-        <div className="flex justify-end items-center gap-4">
-          <DialogClose asChild>
-            <Button variant="secondary">Cancel</Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button variant="delete" onClick={handleCancelOrder}>
-              Confirm
-            </Button>
-          </DialogClose>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <DialogForm
+      size="sm"
+      param={orderId}
+      variant="outline"
+      textButton="Cancel order"
+      state={cancelOrderState}
+      action={cancelStoreOrder}
+      control={cancelOrderControl}
+      title={"Order Cancelation Confirmation"}
+    />
   );
-}
+};
+
+export default CancelOrder;

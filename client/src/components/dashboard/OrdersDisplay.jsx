@@ -1,13 +1,7 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Ellipsis } from "lucide-react";
 import { format } from "date-fns";
-import ProceedOrder from "./orders/ProceedOrder";
 import { formatToRupiah, cn } from "@/lib/utils";
-import { CancelOrder } from "./orders/CancelOrder";
+import CancelOrder from "./orders/CancelOrder";
+import ProceedOrder from "./orders/ProceedOrder";
 import { useShopStore } from "@/store/useShopStore";
 import { Link, useLocation } from "react-router-dom";
 
@@ -49,15 +43,9 @@ export default function OrdersDisplay() {
               </div>
             </div>
             <div className="flex items-center justify-end gap-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger className="border rounded-md p-2">
-                  <Ellipsis size={20} />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <ProceedOrder />
-                  <CancelOrder orderId={order.id} />
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ProceedOrder orderId={order.id} />
+              <CancelOrder orderId={order.id} />
+
               <Link
                 to={`/store/orders/${order.id}`}
                 state={{ background: location }}

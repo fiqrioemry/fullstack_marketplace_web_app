@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useShopStore } from "@/store/useShopStore";
 import { DialogForm } from "@/components/form/DialogForm";
 
@@ -23,11 +24,12 @@ const orderControl = [
   },
 ];
 
-export function ProceedOrder({ orderId }) {
+const ProceedOrder = ({ orderId }) => {
   const { proceedStoreOrder } = useShopStore();
 
   return (
     <DialogForm
+      size="sm"
       param={orderId}
       state={orderState}
       control={orderControl}
@@ -36,4 +38,6 @@ export function ProceedOrder({ orderId }) {
       title="Proceed order to shipment"
     />
   );
-}
+};
+
+export default ProceedOrder;

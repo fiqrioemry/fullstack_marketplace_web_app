@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import FormInput from "./FormInput";
+/* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { useFormSchema } from "@/hooks/useFormSchema";
 import { useState, useCallback, useMemo } from "react";
