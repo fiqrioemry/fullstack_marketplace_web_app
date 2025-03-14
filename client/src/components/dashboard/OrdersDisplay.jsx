@@ -76,7 +76,7 @@ export default function OrdersDisplay() {
               <Link
                 to={`/store/orders/${order.id}`}
                 state={{ background: location }}
-                className="btn-accent text-xs md:text-sm"
+                className="btn btn-primary rounded-md text-xs md:text-sm"
               >
                 See detail
               </Link>

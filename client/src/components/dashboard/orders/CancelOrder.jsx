@@ -12,7 +12,7 @@ export function CancelOrder({ onClick, size = "lg", variant = "delete" }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div>Cancel Order</div>
+        <button className="btn btn-nav">Cancel Order</button>
       </DialogTrigger>
       <DialogTitle>
         <DialogContent variant="options" className=" sm:max-w-[525px]">

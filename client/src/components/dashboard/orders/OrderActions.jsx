@@ -16,10 +16,12 @@ const OrderActions = ({ order }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Ellipsis size={20} className="cursor-pointer" />
+        <button className="border rounded-md p-2">
+          <Ellipsis size={20} className="cursor-pointer" />
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-48 space-y-2">
-        <Button>Process</Button>
+      <DropdownMenuContent className="p-0 space-y-2">
+        <button className="btn btn-nav">Process Order</button>
         <CancelOrder onClick={handleCancelOrder} />
       </DropdownMenuContent>
     </DropdownMenu>
