@@ -11,8 +11,8 @@ const { upload } = require('../../middleware/media');
 const isSeller = require('../../middleware/isSeller');
 const isAuthenticate = require('../../middleware/isAuthenticate');
 
-router.get('/product', isAuthenticate, getMyStoreProducts);
 router.get('/', isAuthenticate, getMyStoreProfile);
+router.get('/product', isAuthenticate, getMyStoreProducts);
 router.get('/:slug', getStoreInfo);
 router.post(
   '/product',

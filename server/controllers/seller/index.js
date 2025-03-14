@@ -96,6 +96,7 @@ async function getAllStoreOrders(req, res) {
         storeId,
         orderStatus: { [Op.in]: ['pending', 'process', 'success'] },
       },
+      include: ['orderDetail'],
     });
 
     if (!orders)
@@ -115,7 +116,11 @@ async function getOrderDetail(req, res) {
     const order = await Order.findOne({
       where: { id: orderId },
       include: [
-        { model: OrderDetail, as: 'orderDetail', include: ['product'] },
+        {
+          model: OrderDetail,
+          as: 'orderDetail',
+          include: { model: Product, as: 'product', include: ['gallery'] },
+        },
         { model: Address, as: 'address' },
       ],
     });
@@ -284,7 +289,6 @@ async function updateShipmentStatus(req, res) {
 }
 
 async function getStoreStatisticSummary(req, res) {
-  const userId = req.user.userId;
   const storeId = req.user.storeId;
 
   try {
@@ -296,10 +300,17 @@ async function getStoreStatisticSummary(req, res) {
       },
     });
 
-    // 🔹 2. Hitung total pendapatan (akumulasi totalOrderAmount dari semua order)
-    const totalRevenue = await Order.sum('totalOrderAmount', {
-      where: { storeId },
+    // 🔹 1. Hitung total order (hanya yang 'pending' dan 'success')
+    const pendingOrders = await Order.count({
+      where: {
+        storeId,
+        orderStatus: 'pending',
+      },
     });
+
+    // 🔹 2. Hitung total pendapatan (akumulasi totalOrderAmount dari semua order)
+    const totalRevenue =
+      (await Order.sum('totalOrderAmount', { where: { storeId } })) || 0;
 
     // 🔹 3. Ambil data grafik order berdasarkan hari (hanya 'success')
     const ordersByDay = await Order.findAll({
@@ -307,7 +318,7 @@ async function getStoreStatisticSummary(req, res) {
         [sequelize.fn('DATE', sequelize.col('createdAt')), 'date'],
         [sequelize.fn('COUNT', sequelize.col('id')), 'order_count'],
       ],
-      where: { storeId, orderStatus: 'success' },
+      where: { storeId, orderStatus: { [Op.or]: ['success', 'pending'] } },
       group: ['date'],
       order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']],
       raw: true,
@@ -322,7 +333,7 @@ async function getStoreStatisticSummary(req, res) {
           'total_revenue',
         ],
       ],
-      where: { storeId, orderStatus: 'success' },
+      where: { storeId, orderStatus: { [Op.or]: ['success', 'pending'] } },
       group: ['date'],
       order: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'ASC']],
       raw: true,
@@ -355,13 +366,22 @@ async function getStoreStatisticSummary(req, res) {
       nest: true,
     });
 
+    // 🔹 1. Hitung total order (hanya yang 'pending' dan 'success')
+    const totalProducts = await Product.count({
+      where: {
+        storeId,
+      },
+    });
+
     // 🔹 Kirimkan response dengan data yang telah dihitung
     return res.status(200).json({
       statistic: {
         totalOrders,
+        pendingOrders,
         totalRevenue,
         ordersByDay,
         revenueByDay,
+        totalProducts,
         topSellingProducts,
       },
     });

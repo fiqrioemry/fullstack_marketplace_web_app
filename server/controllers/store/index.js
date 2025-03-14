@@ -47,17 +47,18 @@ async function getStoreInfo(req, res) {
 async function getMyStoreProfile(req, res) {
   const { userId, storeId } = req.user;
   try {
-    const storeData = await Store.findByPk(storeId);
+    const data = await Store.findByPk(storeId);
 
-    if (!storeData || storeData.userId !== userId)
+    if (!data || data.userId !== userId)
       return res.status(403).json({ message: 'Forbidden !!! Access Denied' });
 
     const store = {
-      name: store.name,
-      banner: store.banner,
-      city: store.city,
-      avatar: store.avatar,
-      description: store.description,
+      name: data.name,
+      city: data.city,
+      banner: data.banner,
+      avatar: data.avatar,
+      balance: data.balance,
+      description: data.description,
     };
 
     return res.status(200).json(store);
@@ -68,7 +69,6 @@ async function getMyStoreProfile(req, res) {
   }
 }
 
-// tested - completed
 async function getMyStoreProducts(req, res) {
   const storeId = req.user.storeId;
   try {
@@ -137,7 +137,7 @@ async function getMyStoreProducts(req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
-// tested - completed
+
 async function createProduct(req, res) {
   const files = req.files;
   const storeId = req.user.storeId;

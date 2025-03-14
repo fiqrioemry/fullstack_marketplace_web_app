@@ -20,6 +20,9 @@ async function getProfile(req, res) {
       gender: user.gender,
       fullname: user.fullname,
       birthday: user.birthday,
+      email: user.email,
+      balance: user.balance,
+      createdAt: user.createdAt,
     };
 
     return res.status(200).json({ profile });

@@ -2,6 +2,7 @@ const { Product, Cart } = require('../../models');
 
 async function addCart(req, res) {
   const userId = req.user.userId;
+  const storeId = req.user?.storeId;
   const { productId, quantity } = req.body;
 
   try {
@@ -10,11 +11,17 @@ async function addCart(req, res) {
     }
 
     const product = await Product.findByPk(productId, {
-      attributes: ['stock'],
+      attributes: ['stock', 'storeId'],
     });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
+    }
+
+    if (product.storeId === storeId) {
+      return res
+        .status(400)
+        .json({ message: 'Cannot Add product from own store' });
     }
 
     let newCart = await Cart.findOne({
@@ -65,6 +72,12 @@ async function updateCart(req, res) {
 
     if (cart.userId !== userId) {
       return res.status(401).json({ message: 'Unauthorized request' });
+    }
+
+    if (cart.product?.storeId === storeId) {
+      return res
+        .status(400)
+        .json({ message: 'Cannot Add product from own store' });
     }
 
     if (cart.product.stock < quantity) {
