@@ -8,19 +8,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export function DeleteForm({
-  title,
-  onClick,
-  description,
-  size = "lg",
-  variant = "delete",
-}) {
+export function CancelOrder({ onClick, size = "lg", variant = "delete" }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={variant} size={size}>
-          Cancel
-        </Button>
+        <div>Cancel Order</div>
       </DialogTrigger>
       <DialogTitle>
         <DialogContent variant="options" className=" sm:max-w-[525px]">
@@ -30,12 +22,12 @@ export function DeleteForm({
             <div className="flex justify-end items-center space-x-4">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
-                  cancel
+                  Cancel
                 </Button>
               </DialogClose>
               <DialogClose asChild>
                 <Button variant="delete" onClick={onClick}>
-                  delete
+                  Confirm
                 </Button>
               </DialogClose>
             </div>

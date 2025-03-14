@@ -4,8 +4,8 @@ import { formatToRupiah, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import OrderActions from "./orders/OrderActions";
 import { useShopStore } from "@/store/useShopStore";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useLocation } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function OrdersDisplay() {
   const location = useLocation();

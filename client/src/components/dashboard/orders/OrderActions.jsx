@@ -5,8 +5,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CancelOrder } from "./CancelOrder";
+import toast from "react-hot-toast";
 
-const OrderActions = () => {
+const OrderActions = ({ order }) => {
+  const handleCancelOrder = () => {
+    toast.success("Order is cancelled");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -14,7 +20,7 @@ const OrderActions = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48 space-y-2">
         <Button>Process</Button>
-        <Button variant="delete">Cancel</Button>
+        <CancelOrder onClick={handleCancelOrder} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
