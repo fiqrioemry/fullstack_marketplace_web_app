@@ -7,9 +7,9 @@ export const useUserStore = create((set, get) => ({
   profile: null,
   address: null,
   shipment: null,
+  transaction: null,
   transactions: null,
   orderDetail: null,
-  transactionDetail: null,
   loading: false,
 
   getProfile: async () => {
@@ -138,10 +138,10 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  cancelUserOrder: async (orderId) => {
+  cancelTransaction: async (transactionId) => {
     set({ loading: true });
     try {
-      const { message } = await callApi.cancelUserOrder(orderId);
+      const { message } = await callApi.cancelTransaction(transactionId);
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
@@ -183,12 +183,10 @@ export const useUserStore = create((set, get) => ({
   },
 
   getTransactionDetail: async (transactionId) => {
-    set({ transactionDetail: null });
+    set({ transaction: null });
     try {
-      const { transactionDetail } = await callApi.getTransactionDetail(
-        transactionId
-      );
-      set({ transactionDetail });
+      const { transaction } = await callApi.getTransactionDetail(transactionId);
+      set({ transaction });
     } catch (error) {
       console.error(error.message);
     }

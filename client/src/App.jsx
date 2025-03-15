@@ -41,6 +41,7 @@ import useAuthChecking from "./hooks/useAuthChecking";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
 import OrderDetail from "./components/dashboard/orders/OrderDetail";
+import TransactionDetail from "./components/user/transactions/TransactionDetail";
 
 function App() {
   const { checkingAuth, location, background } = useAuthChecking();
@@ -142,6 +143,10 @@ function App() {
       {background && (
         <Routes>
           <Route path="/store/orders/:orderId" element={<OrderDetail />} />
+          <Route
+            path="/user/transactions/:transactionId"
+            element={<TransactionDetail />}
+          />
         </Routes>
       )}
     </>

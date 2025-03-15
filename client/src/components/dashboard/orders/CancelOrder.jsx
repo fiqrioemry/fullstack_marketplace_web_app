@@ -8,9 +8,9 @@ const cancelOrderState = {
 const cancelOrderControl = [
   {
     type: "text",
-    name: "cancel_order",
+    name: "cancel_reason",
     component: "input-text",
-    label: "Reason for cancelation",
+    label: "Reason",
     placeholder: "Write the cancelation reason here",
   },
 ];

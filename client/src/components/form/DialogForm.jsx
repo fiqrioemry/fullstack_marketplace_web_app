@@ -65,7 +65,7 @@ export function DialogForm({
               Submit button will active once all fields are filled or Changes
             </p>
           </DialogTitle>
-          <ScrollArea className="h-96 border pb-8">
+          <ScrollArea className="max-h-96 border pb-8">
             <div className="p-4">
               <FormInput
                 formik={formik}

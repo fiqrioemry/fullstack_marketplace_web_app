@@ -156,7 +156,11 @@ export const useShopStore = create((set, get) => ({
   proceedStoreOrder: async (formData, orderId) => {
     set({ loading: true });
     try {
-      const { message } = await callApi.proceedStoreOrder(formData, orderId);
+      const { message, data } = await callApi.proceedStoreOrder(
+        formData,
+        orderId
+      );
+      console.log(data);
       toast.success(message);
     } catch (error) {
       toast.error(error.message);

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import { formatToRupiah, cn } from "@/lib/utils";
 import CancelOrder from "./orders/CancelOrder";
+import { formatToRupiah, cn } from "@/lib/utils";
 import ProceedOrder from "./orders/ProceedOrder";
 import { useShopStore } from "@/store/useShopStore";
 import { Link, useLocation } from "react-router-dom";
@@ -42,14 +42,14 @@ export default function OrdersDisplay() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-4">
+            <div className="flex items-center justify-end gap-2">
               <ProceedOrder orderId={order.id} />
               <CancelOrder orderId={order.id} />
 
               <Link
                 to={`/store/orders/${order.id}`}
                 state={{ background: location }}
-                className="btn btn-primary rounded-md text-xs md:text-sm"
+                className="btn btn-primary rounded-md px-4 h-8 text-xs md:text-sm"
               >
                 See detail
               </Link>

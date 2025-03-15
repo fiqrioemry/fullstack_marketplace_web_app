@@ -11,11 +11,11 @@ const NavigationMenu = ({ user }) => {
     <nav className="flex items-center gap-4">
       {!user ? (
         <>
-          <div className="hidden md:flex items-center gap-4">
-            <Link to="signin" className="btn btn-primary">
+          <div className="hidden md:flex items-center gap-2">
+            <Link to="signin" className="btn btn-primary w-32 rounded-md">
               Signin
             </Link>
-            <Link to="signup" className="btn btn-secondary">
+            <Link to="signup" className="btn btn-secondary w-32 rounded-md">
               Signup
             </Link>
           </div>

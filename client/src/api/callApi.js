@@ -156,9 +156,9 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  cancelUserOrder: async (orderId) => {
+  cancelTransaction: async (transactionId) => {
     return authInstance
-      .put(`/customer/orders/${orderId}/cancel`)
+      .put(`/customer/transactions/${transactionId}/cancel`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
