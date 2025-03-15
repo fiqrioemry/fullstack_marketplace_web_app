@@ -25,65 +25,69 @@ const TransactionDetail = () => {
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && navigate(-1)}>
-      <DialogContent className="h-96 max-w-md px-0 py-2 rounded-lg">
-        <DialogTitle className="px-4 pb-2 border-b">
+      <DialogContent className="h-96 max-w-lg py-4 px-0 rounded-xl shadow-lg">
+        <DialogTitle className="border-b text-center pb-2 px-2">
           <h3>Transaction Detail</h3>
         </DialogTitle>
 
         {!transaction ? null : (
-          <ScrollArea className="flex-1 overflow-y-auto bg-muted mb-4">
-            <div className="mb-2 py-2 px-4 bg-background">
-              <h4>Description Product</h4>
+          <ScrollArea className="flex-1 overflow-y-auto  px-2">
+            {/* order */}
+            <div className="p-4 rounded-md border mb-2">
+              <h4 className="mb-2">Order Detail</h4>
               {transaction?.orders.map((item) => (
-                <div key={item.id}>
-                  <div className="flex items-center gap-2 mb-2">
+                <div key={item.id} className="mb-4">
+                  <div className="flex items-center border-t justify-between pt-2 mb-2">
                     <h5>{item.store}</h5>
-                    <div>{item.orderNumber}</div>
+                    <span className="text-xs text-gray-500">
+                      {item.orderNumber}
+                    </span>
                   </div>
-                  <div className="text-xs md:text-sm">
+                  <div className="text-xs space-y-2">
                     {item.details.map((detail) => (
-                      <div key={detail.id}>
-                        <div> {detail.name}</div>
-                        <div className="flex items-center justify-between">
+                      <div key={detail.id} className="border-b pb-2">
+                        <div>{detail.name}</div>
+                        <div className="flex items-center justify-between text-gray-700">
                           <span>
-                            {formatToRupiah(detail.price)}x{detail.quantity}
+                            {formatToRupiah(detail.price)} x {detail.quantity}
                           </span>
-                          <span>{formatToRupiah(detail.totalPrice)}</span>
+                          <span className="font-semibold text-gray-900">
+                            {formatToRupiah(detail.totalPrice)}
+                          </span>
                         </div>
                       </div>
                     ))}
-                    <div className="flex items-center justify-between mb-2">
-                      <span>shipment cost</span>
+                    <div className="flex items-center justify-between">
+                      <span>Shipment Cost</span>
                       <span>{formatToRupiah(item.shipmentCost)}</span>
                     </div>
-                    <div className="pb-2 border-b">
-                      <h5>shipment address</h5>
-                      <span>{item.shipmentAddress}</span>
+                    <div className="mt-2 pt-2 border-t">
+                      <p>Shipment Address</p>
+                      <span className="text-xs text-gray-600">
+                        {item.shipmentAddress}
+                      </span>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mb-2 py-2 px-4 bg-background text-xs space-y-2">
+            {/* Payment  */}
+            <div className="p-4 rounded-md border mb-2">
               <h4>Payment Detail</h4>
-              <div className="flex items-center justify-between ">
-                <p className="text-muted-foreground">Subtotal Product Price</p>
-                <span className="font-medium">
-                  {formatToRupiah(transaction.totalAmount)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-muted-foreground">Total Shipment Cost</p>
-                <span className="font-medium">
-                  {formatToRupiah(transaction.totalShipmentCost)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-muted-foreground">Total Payment</p>
-                <span className="font-medium">
-                  {formatToRupiah(transaction.amountToPay)}
-                </span>
+              <div className="mt-2 border-t text-xs space-y-2">
+                <div className="flex items-center justify-between pt-2">
+                  <p>Subtotal Product Price</p>
+                  <span>{formatToRupiah(transaction.totalAmount)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p>Total Shipment Cost</p>
+                  <span>{formatToRupiah(transaction.totalShipmentCost)}</span>
+                </div>
+                <div className="flex items-center justify-between font-medium">
+                  <h5>Total Payment</h5>
+                  <span>{formatToRupiah(transaction.amountToPay)}</span>
+                </div>
               </div>
             </div>
           </ScrollArea>

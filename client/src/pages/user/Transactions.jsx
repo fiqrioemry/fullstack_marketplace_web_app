@@ -5,7 +5,7 @@ import TransactionCard from "@/components/user/transactions/TransactionCard";
 
 const Transactions = () => {
   const { getAllTransactions, transactions } = useUserStore();
-
+  console.log(transactions);
   useEffect(() => {
     getAllTransactions();
   }, [getAllTransactions]);
@@ -13,12 +13,10 @@ const Transactions = () => {
   if (!transactions) return <TransactionsLoading />;
 
   return (
-    <div className="h-full container mx-auto py-3 md:py-6 px-2">
-      <div className="h-full py-4 border-t border-b">
-        {transactions.map((transaction) => {
-          <TransactionCard transaction={transaction} key={transaction.id} />;
-        })}
-      </div>
+    <div className="container mx-auto py-3 md:py-6 px-2">
+      {transactions.map((transaction) => (
+        <TransactionCard transaction={transaction} key={transaction.id} />
+      ))}
     </div>
   );
 };

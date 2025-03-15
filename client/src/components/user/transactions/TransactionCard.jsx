@@ -2,8 +2,9 @@
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import CancelPolicy from "./CancelPolicy";
+import { CircleAlert } from "lucide-react";
 import CancelTransaction from "./CancelTransaction";
-import { useCountdown } from "@/hooks/useCountdown";
+import { useCountdown } from "@/hooks/useCountDown";
 import { Link, useLocation } from "react-router-dom";
 
 const TransactionCard = ({ transaction }) => {
@@ -12,19 +13,17 @@ const TransactionCard = ({ transaction }) => {
   const isPending = transaction.paymentStatus === "pending";
 
   const createdAt = new Date(transaction.createdAt);
-  const now = new Date();
-  const timeDiff = (now - createdAt) / (1000 * 60 * 60);
+  const timeDiff = (new Date() - createdAt) / (1000 * 60 * 60);
   const withinTimeLimit = isPaid ? timeDiff <= 2 : true;
 
   const hasPendingOrder = transaction.order.some(
     (order) => order.orderStatus === "pending"
   );
-
   const isCancelable =
     (isPending || (isPaid && withinTimeLimit)) && hasPendingOrder;
-
   const paymentDue = new Date(transaction.paymentDue);
   const formattedCountdown = useCountdown(paymentDue);
+
   return (
     <div className="border rounded-lg p-4 mb-4">
       <div className="space-y-1">
@@ -38,9 +37,9 @@ const TransactionCard = ({ transaction }) => {
             {transaction.paymentStatus}
           </span>
 
-          {!isPending && (
-            <div className="text-xs md:text-sm text-red-500">
-              Complete payment. Expired in {formattedCountdown}
+          {isPending && (
+            <div className="flex items-center gap-2 text-xs md:text-sm text-red-500">
+              <CircleAlert /> <span>Expired in {formattedCountdown}</span>
             </div>
           )}
         </div>
@@ -53,7 +52,7 @@ const TransactionCard = ({ transaction }) => {
           </div>
         ))}
         <div>
-          <p className="text-xs text-gray-400">
+          <p className="text-sm text-gray-400">
             Transaction Date :{format(new Date(transaction.createdAt), "PPP")}
           </p>
         </div>
