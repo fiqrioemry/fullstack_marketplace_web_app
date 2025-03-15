@@ -1,7 +1,7 @@
-import OrdersDisplay from "@/components/dashboard/OrdersDisplay";
-import { useShopStore } from "../../store/useShopStore";
 import { useEffect } from "react";
-import PageLoading from "../../components/loading/PageLoading";
+import { useShopStore } from "@/store/useShopStore";
+import PageLoading from "@/components/loading/PageLoading";
+import OrdersDisplay from "@/components/dashboard/OrdersDisplay";
 
 const Orders = () => {
   const { getAllStoreOrders, orders } = useShopStore();
@@ -11,6 +11,7 @@ const Orders = () => {
   }, [getAllStoreOrders]);
 
   if (!orders) return <PageLoading />;
+
   return <OrdersDisplay />;
 };
 

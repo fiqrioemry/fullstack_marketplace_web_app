@@ -26,7 +26,6 @@ export const useUserStore = create((set, get) => ({
     set({ loading: true });
     try {
       const { message, updatedProfile } = await callApi.updateProfile(formData);
-      console.log(message);
       set({ profile: updatedProfile });
       toast.success(message);
     } catch (error) {
@@ -118,10 +117,10 @@ export const useUserStore = create((set, get) => ({
   },
 
   // customer transactions and orders management
-  getAllUserOrders: async () => {
+  getAllUserOrders: async (params) => {
     set({ orders: null });
     try {
-      const { orders } = await callApi.getAllUserOrders();
+      const { orders } = await callApi.getAllUserOrders(params);
       set({ orders });
     } catch (error) {
       console.log(error.message);
@@ -139,7 +138,6 @@ export const useUserStore = create((set, get) => ({
   },
 
   cancelTransaction: async (formData, transactionId) => {
-    console.log(transactionId);
     set({ loading: true });
     try {
       const { message } = await callApi.cancelTransaction(
@@ -176,10 +174,10 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  getAllTransactions: async () => {
+  getAllTransactions: async (params) => {
     set({ transactions: null });
     try {
-      const { transactions } = await callApi.getAllTransactions();
+      const { transactions } = await callApi.getAllTransactions(params);
       set({ transactions });
     } catch (error) {
       console.error(error.message);

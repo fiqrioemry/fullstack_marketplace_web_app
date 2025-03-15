@@ -59,7 +59,9 @@ const TransactionDetail = () => {
                     ))}
                     <div className="flex items-center justify-between">
                       <span>Shipment Cost</span>
-                      <span>{formatToRupiah(item.shipmentCost)}</span>
+                      <span className="font-semibold text-gray-900">
+                        {formatToRupiah(item.shipmentCost)}
+                      </span>
                     </div>
                     <div className="mt-2 pt-2 border-t">
                       <p>Shipment Address</p>
@@ -74,18 +76,18 @@ const TransactionDetail = () => {
 
             {/* Payment  */}
             <div className="p-4 rounded-md border mb-2">
-              <h4>Payment Detail</h4>
-              <div className="mt-2 border-t text-xs space-y-2">
+              <h4>payment detail</h4>
+              <div className="mt-2 border-t text-xs space-y-2 capitalize">
                 <div className="flex items-center justify-between pt-2">
-                  <p>Subtotal Product Price</p>
+                  <p>subtotal product price</p>
                   <span>{formatToRupiah(transaction.totalAmount)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p>Total Shipment Cost</p>
+                  <p>total shipment cost</p>
                   <span>{formatToRupiah(transaction.totalShipmentCost)}</span>
                 </div>
                 <div className="flex items-center justify-between font-medium">
-                  <h5>Total Payment</h5>
+                  <h5>total payment</h5>
                   <span>{formatToRupiah(transaction.amountToPay)}</span>
                 </div>
               </div>

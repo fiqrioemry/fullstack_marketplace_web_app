@@ -1,4 +1,4 @@
-// pages
+// halaman-halaman utama
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import SignUp from "./pages/SignUp";
@@ -21,9 +21,10 @@ import Account from "./pages/user/Account";
 import UserOrders from "./pages/user/UserOrders";
 import Transactions from "./pages/user/Transactions";
 import UserLayout from "./components/user/UserLayout";
+import UserOrderDetail from "./components/user/orders/UserOrderDetail";
+import TransactionDetail from "./components/user/transactions/TransactionDetail";
 
 // halaman store untuk seller
-
 import Orders from "./pages/store/Orders";
 import Profile from "./pages/store/Profile";
 import Products from "./pages/store/Products";
@@ -31,17 +32,15 @@ import Statistics from "./pages/store/Statistics";
 import Notifications from "./pages/store/Notifications";
 import ProductsAdd from "./components/dashboard/ProductsAdd";
 import ProductsList from "./components/dashboard/ProductsList";
+import OrderDetail from "./components/dashboard/orders/OrderDetail";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
 
 // middleware and hooks
-
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
 import useAuthChecking from "./hooks/useAuthChecking";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
-import OrderDetail from "./components/dashboard/orders/OrderDetail";
-import TransactionDetail from "./components/user/transactions/TransactionDetail";
 
 function App() {
   const { checkingAuth, location, background } = useAuthChecking();
@@ -143,6 +142,7 @@ function App() {
       {background && (
         <Routes>
           <Route path="/store/orders/:orderId" element={<OrderDetail />} />
+          <Route path="/user/orders/:orderId" element={<UserOrderDetail />} />
           <Route
             path="/user/transactions/:transactionId"
             element={<TransactionDetail />}

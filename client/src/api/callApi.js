@@ -142,9 +142,9 @@ const callApi = {
   },
 
   // customer transactions and orders management
-  getAllUserOrders: async () => {
+  getAllUserOrders: async (params) => {
     return authInstance
-      .get('/customer/orders')
+      .get(`/customer/orders?status=${params}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
@@ -177,9 +177,10 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  getAllTransactions: async () => {
+  getAllTransactions: async (params) => {
+    console.log(params);
     return authInstance
-      .get('/customer/transactions')
+      .get(`/customer/transactions?status=${params}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },

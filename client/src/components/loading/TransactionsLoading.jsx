@@ -3,13 +3,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 const TransactionsLoading = () => {
   return (
     <div className="space-y-6">
-      <Skeleton className="w-full h-7 rounded-md" />
-      <Skeleton className="w-full h-7 rounded-md" />
-      <Skeleton className="w-full h-7 rounded-md" />
-      <Skeleton className="w-full h-7 rounded-md" />
-      <Skeleton className="w-full h-7 rounded-md" />
-      <Skeleton className="w-full h-7 rounded-md" />
-      <Skeleton className="w-full h-7 rounded-md" />
+      <div className="flex items-center justify-end gap-2">
+        <Skeleton className="h-9 w-32 rounded-md" />
+        <Skeleton className="h-9 w-32 rounded-md" />
+        <Skeleton className="h-9 w-32 rounded-md" />
+        <Skeleton className="h-9 w-32 rounded-md" />
+      </div>
+      <Skeleton className="w-full h-40 rounded-md" />
+      <Skeleton className="w-full h-40 rounded-md" />
     </div>
   );
 };

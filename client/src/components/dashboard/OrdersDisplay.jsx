@@ -5,7 +5,7 @@ import ProceedOrder from "./orders/ProceedOrder";
 import { useShopStore } from "@/store/useShopStore";
 import { Link, useLocation } from "react-router-dom";
 
-export default function OrdersDisplay() {
+const OrdersDisplay = () => {
   const location = useLocation();
   const { orders } = useShopStore();
 
@@ -64,4 +64,6 @@ export default function OrdersDisplay() {
       </div>
     </div>
   );
-}
+};
+
+export default OrdersDisplay;
