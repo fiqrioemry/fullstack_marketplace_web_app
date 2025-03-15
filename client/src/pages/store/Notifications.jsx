@@ -5,8 +5,6 @@ import NotificationCard from "@/components/dashboard/notifications/NotificationC
 const Notifications = () => {
   const { getStoreNotifications, notifications } = useShopStore();
 
-  console.log(notifications);
-
   useEffect(() => {
     getStoreNotifications();
   }, [getStoreNotifications]);

@@ -3,8 +3,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
-import { BellRing, Clock, Truck, CheckCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { BellRing } from "lucide-react";
+import UserNotifications from "./UserNotifcations";
+import StoreNotifcations from "./StoreNotifcations";
 
 const Notifications = () => {
   return (
@@ -14,36 +15,9 @@ const Notifications = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-72 py-2 p-0">
-        <div className="flex items-center justify-between border-b px-2 pb-2">
-          <h4>Notifications</h4>
-
-          <Link to="/user/notifications" className="text-xs btn-accent">
-            See all
-          </Link>
-        </div>
-
-        <div className="p-2">
-          <div className="flex justify-between text-xs mt-3">
-            <Link className="flex flex-col items-center  btn-accent">
-              <Clock className="w-5 h-5" />
-              <span className="mt-1">Pending</span>
-            </Link>
-            <Link className="flex flex-col items-center btn-accent">
-              <CheckCircle className="w-5 h-5 " />
-              <span className="mt-1">Process</span>
-            </Link>
-            <Link className="flex flex-col items-center btn-accent">
-              <Truck className="w-5 h-5 " />
-              <span className="mt-1">Shipped</span>
-            </Link>
-            <Link className="flex flex-col items-center btn-accent">
-              <CheckCircle className="w-5 h-5" />
-              <span className="mt-1">Delivered</span>
-            </Link>
-          </div>
-
-          <Link className="btn btn-primary rounded-md mt-4">Lihat Semua</Link>
-        </div>
+        <h4 className="pb-2 border-b">Notifications</h4>
+        <UserNotifications />
+        <StoreNotifcations />
       </DropdownMenuContent>
     </DropdownMenu>
   );
