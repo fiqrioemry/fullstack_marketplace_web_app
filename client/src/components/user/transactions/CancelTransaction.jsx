@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useShopStore } from "@/store/useShopStore";
+
 import { DialogForm } from "@/components/form/DialogForm";
+import { useUserStore } from "../../../store/useUserStore";
 
 const cancelTransactionState = {
   cancel_reason: "",
@@ -16,7 +17,7 @@ const cancelTransactionControl = [
 ];
 
 const CancelTransaction = ({ transactionId }) => {
-  const { cancelTransaction } = useShopStore();
+  const { cancelTransaction } = useUserStore();
 
   return (
     <DialogForm

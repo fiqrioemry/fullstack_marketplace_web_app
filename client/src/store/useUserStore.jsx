@@ -138,10 +138,14 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  cancelTransaction: async (transactionId) => {
+  cancelTransaction: async (formData, transactionId) => {
+    console.log(transactionId);
     set({ loading: true });
     try {
-      const { message } = await callApi.cancelTransaction(transactionId);
+      const { message } = await callApi.cancelTransaction(
+        formData,
+        transactionId
+      );
       toast.success(message);
     } catch (error) {
       toast.error(error.message);

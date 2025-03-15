@@ -43,8 +43,13 @@ export default function OrdersDisplay() {
               </div>
             </div>
             <div className="flex items-center justify-end gap-2">
-              <ProceedOrder orderId={order.id} />
-              <CancelOrder orderId={order.id} />
+              {order.orderStatus === "pending" && (
+                <ProceedOrder orderId={order.id} />
+              )}
+
+              {order.orderStatus === "pending" && (
+                <CancelOrder orderId={order.id} />
+              )}
 
               <Link
                 to={`/store/orders/${order.id}`}

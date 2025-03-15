@@ -156,9 +156,9 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  cancelTransaction: async (transactionId) => {
+  cancelTransaction: async (formData, transactionId) => {
     return authInstance
-      .put(`/customer/transactions/${transactionId}/cancel`)
+      .put(`/customer/transactions/${transactionId}/cancel`, { formData })
       .then((res) => res.data)
       .catch(errorHandle);
   },
@@ -310,9 +310,9 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  cancelStoreOrder: async (orderId) => {
+  cancelStoreOrder: async (formData, orderId) => {
     return authInstance
-      .put(`/seller/orders/${orderId}/cancel`)
+      .put(`/seller/orders/${orderId}/cancel`, formData)
       .then((res) => res.data)
       .catch(errorHandle);
   },
