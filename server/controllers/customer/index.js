@@ -9,6 +9,7 @@ const {
   Transaction,
   OrderDetail,
   Notification,
+  Store,
 } = require('../../models');
 const snap = require('../../config/midtrans');
 const generateOrderNumber = require('../../utils/generateOrderNumber');
@@ -347,38 +348,44 @@ async function getTransactionDetail(req, res) {
   const userId = req.user.userId;
   const transactionId = req.params.transactionId;
   try {
-    const transaction = await Transaction.findOne({
+    const data = await Transaction.findOne({
       where: { id: transactionId, userId },
       include: [
         {
           model: Order,
           as: 'order',
-          include: ['orderDetail', 'store', 'address'],
+          include: [
+            { model: OrderDetail, as: 'orderDetail', include: ['product'] },
+            { model: Store, as: 'store' },
+            { model: Address, as: 'address' },
+          ],
         },
       ],
     });
 
-    if (!transaction)
+    if (!data)
       return res.status(404).json({ message: 'Transaction not found' });
 
-    const transactionDetail = {
-      totalAmount: transaction.totalAmount,
-      totalShipmentCost: transaction.totalShipmentCost,
-      amountToPay: transaction.amountToPay,
-      orders: transaction.order.map((order) => ({
+    const transaction = {
+      totalAmount: data.totalAmount,
+
+      totalShipmentCost: data.totalShipmentCost,
+      amountToPay: data.amountToPay,
+      orders: data.order.map((order) => ({
+        orderNumber: order.orderNumber,
         store: order.store.name,
         shipmentCost: order.shipmentCost,
         shipmentAddress: order.address.address,
-        products: order.orderDetail.map((product) => ({
-          name: product.name,
-          price: product.price,
-          quantity: product.quantity,
-          totalPrice: product.totalPrice,
+        details: order.orderDetail.map((detail) => ({
+          name: detail.product.name,
+          price: detail.price,
+          quantity: detail.quantity,
+          totalPrice: detail.totalPrice,
         })),
       })),
     };
 
-    return res.status(200).json(transactionDetail);
+    return res.status(200).json({ transaction });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -550,10 +557,111 @@ async function confirmOrderDelivery(req, res) {
   }
 }
 
-// TODO : complete the feature for canceling after transaction created but not yet confirmed by seller
-async function cancelOrder(req, res) {
+async function cancelTransaction(req, res) {
+  const userId = req.user.userId;
+  const transactionId = req.params.transactionId;
+  const cancel_reason = req.body.cancel_reason;
+  const t = await sequelize.transaction();
+
   try {
-  } catch (error) {}
+    // Ambil transaksi beserta order terkait
+    const transaction = await Transaction.findByPk(transactionId, {
+      include: {
+        model: Order,
+        as: 'order',
+        include: {
+          model: OrderDetail,
+          as: 'orderDetail',
+        },
+      },
+      transaction: t,
+    });
+
+    if (!transaction) {
+      await t.rollback();
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    // Validasi status transaksi
+    if (!['pending', 'paid'].includes(transaction.paymentStatus)) {
+      await t.rollback();
+      return res
+        .status(400)
+        .json({ message: 'Transaction cannot be canceled' });
+    }
+
+    // Jika status paid, periksa apakah masih dalam batas waktu 2 jam
+    if (transaction.paymentStatus === 'paid') {
+      const createdAt = new Date(transaction.createdAt);
+      const now = new Date();
+      const timeDiff = (now - createdAt) / (1000 * 60 * 60);
+
+      if (timeDiff > 2) {
+        return res
+          .status(400)
+          .json({ message: 'Cancellation time limit exceeded' });
+      }
+    }
+
+    // Pastikan ada order dengan status "pending"
+    const hasPendingOrder = transaction.order.some(
+      (order) => order.orderStatus === 'pending',
+    );
+    if (!hasPendingOrder) {
+      await t.rollback();
+      return res.status(400).json({
+        message: 'Transaction cannot be canceled as no pending order exists',
+      });
+    }
+
+    // Ubah status semua order dan shipment menjadi "canceled"
+    await Order.update(
+      { orderStatus: 'canceled' },
+      { where: { transactionId }, transaction: t },
+    );
+
+    await Shipment.update(
+      { shipmentStatus: 'canceled' },
+      {
+        where: { orderId: { [Op.in]: transaction.order.map((o) => o.id) } },
+        transaction: t,
+      },
+    );
+
+    // Kembalikan stok produk
+    for (const order of transaction.order) {
+      for (const item of order.orderDetail) {
+        await Product.increment(
+          { quantity: item.quantity },
+          { where: { id: item.productId }, transaction: t },
+        );
+      }
+    }
+
+    // Kirim notifikasi ke setiap store terkait
+    const storeIds = [
+      ...new Set(transaction.order.map((order) => order.storeId)),
+    ];
+    for (const storeId of storeIds) {
+      await Notification.create(
+        {
+          storeId,
+          type: 'order',
+          userId,
+          message: `Order dalam transaksi #${transactionId} telah dibatalkan. Alasan: ${cancel_reason}`,
+        },
+        { transaction: t },
+      );
+    }
+
+    await t.commit();
+    return res
+      .status(200)
+      .json({ message: 'Transaction successfully canceled' });
+  } catch (error) {
+    await t.rollback();
+    return res.status(500).json({ message: error.message });
+  }
 }
 
 module.exports = {
@@ -565,5 +673,5 @@ module.exports = {
   PaymentNotifications,
   getShipmentDetail,
   confirmOrderDelivery,
-  cancelOrder,
+  cancelTransaction,
 };

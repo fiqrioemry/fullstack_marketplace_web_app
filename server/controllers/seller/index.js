@@ -136,16 +136,19 @@ async function getOrderDetail(req, res) {
 async function proceedOrder(req, res) {
   const storeId = req.user.storeId;
   const orderId = req.params.orderId;
-  const shipmentNumber = req.body.shipmentNumber;
-
-  if (!shipmentNumber)
-    return res.status(400).json({ message: 'Shipment number required' });
-
+  const { shipmentNumber, message } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
+    if (!shipmentNumber)
+      return res.status(400).json({ message: 'Shipment number required' });
+
+    if (!message)
+      return res.status(400).json({ message: 'message is required' });
+
     // Cek apakah pesanan ada
     const order = await Order.findByPk(orderId, { transaction });
+
     if (!order) {
       await transaction.rollback();
       return res.status(404).json({ message: 'Order Not Found' });
@@ -166,14 +169,16 @@ async function proceedOrder(req, res) {
         userId: order.userId,
         storeId,
         type: 'order',
-        message: 'Your order has been proceeded for shipment',
+        message: message,
         metadata: { shipmentNumber: shipmentNumber },
       },
       { transaction },
     );
 
     await transaction.commit();
-    return res.status(200).json({ message: 'Order Proceeded for shipment' });
+    return res.status(200).json({
+      message: 'Order Proceeded for shipment',
+    });
   } catch (error) {
     await transaction.rollback();
     return res.status(500).json({ message: error.message });
@@ -183,10 +188,10 @@ async function proceedOrder(req, res) {
 async function cancelOrder(req, res) {
   const storeId = req.user.storeId;
   const orderId = req.params.orderId;
+  const cancel_reason = req.body.cancel_reason;
   const transaction = await sequelize.transaction();
 
   try {
-    // Cek apakah pesanan ada
     const order = await Order.findByPk(orderId, {
       include: [{ model: OrderDetail, as: 'orderDetail' }],
       transaction,
@@ -204,13 +209,11 @@ async function cancelOrder(req, res) {
       return res.status(404).json({ message: 'User Not Found' });
     }
 
-    // Kembalikan saldo pengguna berdasarkan total harga pesanan
     await user.update(
       { balance: sequelize.literal(`balance + ${order.totalOrderAmount}`) },
       { transaction },
     );
 
-    // Kembalikan stok produk berdasarkan orderDetail
     for (const item of order.orderDetail) {
       await Product.update(
         { quantity: item.quantity },
@@ -218,22 +221,19 @@ async function cancelOrder(req, res) {
       );
     }
 
-    // Update status pengiriman ke 'canceled'
     await Shipment.update(
       { shipmentNumber: null, shipmentStatus: 'canceled' },
       { where: { orderId }, transaction },
     );
 
-    // Update status pesanan ke 'canceled'
     await order.update({ orderStatus: 'canceled' }, { transaction });
 
-    // Buat notifikasi
     await Notification.create(
       {
         storeId,
         type: 'order',
         userId: order.userId,
-        message: 'Your order has been canceled and your balance refunded.',
+        message: cancel_reason,
         metadata: { orderId: order.id, orderNumber: order.orderNumber },
       },
       { transaction },

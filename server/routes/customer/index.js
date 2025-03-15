@@ -1,5 +1,5 @@
 const {
-  cancelOrder,
+  cancelTransaction,
   getAllOrders,
   getOrderDetail,
   getShipmentDetail,
@@ -20,12 +20,15 @@ router.get(
 
 router.get('/orders', isAuthenticate, getAllOrders);
 router.get('/orders/:orderId', isAuthenticate, getOrderDetail);
-router.put('/orders/:orderId/cancel', isAuthenticate, cancelOrder); // TODO : Complete feature
 router.get('/orders/:orderId/shipment', isAuthenticate, getShipmentDetail);
 router.put('/orders/:orderId/confirm', isAuthenticate, confirmOrderDelivery);
 
 router.get('/transactions', isAuthenticate, getAllTransactions);
 router.post('/transactions/notifications', PaymentNotifications);
 router.post('/transactions', isAuthenticate, createNewTransaction);
-
+router.put(
+  '/transaction/:transactionId/cancel',
+  isAuthenticate,
+  cancelTransaction,
+);
 module.exports = router;
