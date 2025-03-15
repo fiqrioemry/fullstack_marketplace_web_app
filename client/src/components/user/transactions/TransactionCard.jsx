@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import CancelPolicy from "./CancelPolicy";
 import CancelTransaction from "./CancelTransaction";
 import { useCountdown } from "@/hooks/useCountdown";
 import { Link, useLocation } from "react-router-dom";
 
-export default function TransactionList({ transaction }) {
+const TransactionCard = ({ transaction }) => {
   const location = useLocation();
   const isPaid = transaction.paymentStatus === "paid";
   const isPending = transaction.paymentStatus === "pending";
@@ -25,7 +25,6 @@ export default function TransactionList({ transaction }) {
 
   const paymentDue = new Date(transaction.paymentDue);
   const formattedCountdown = useCountdown(paymentDue);
-
   return (
     <div className="border rounded-lg p-4 mb-4">
       <div className="space-y-1">
@@ -80,4 +79,6 @@ export default function TransactionList({ transaction }) {
       </div>
     </div>
   );
-}
+};
+
+export default TransactionCard;
