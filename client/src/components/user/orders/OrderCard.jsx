@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import { format } from "date-fns";
-import { formatToRupiah, cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag } from "lucide-react";
-import ConfirmOrder from "./ConfirmOrder";
+import CancelUserOrder from "./CancelUserOrder";
+import { formatToRupiah, cn } from "@/lib/utils";
+import ConfirmUserOrder from "./ConfirmUserOrder";
+import { Link, useLocation } from "react-router-dom";
 import CancelPolicy from "../transactions/CancelPolicy";
 
 export default function OrderCard({ order }) {
@@ -31,6 +32,7 @@ export default function OrderCard({ order }) {
         >
           {order.orderStatus}
         </span>
+
         <span className="text-sm font-medium text-muted-foreground">
           {order.orderNumber}
         </span>
@@ -49,7 +51,13 @@ export default function OrderCard({ order }) {
         ))}
       </div>
       <div className="flex items-center justify-end gap-2">
-        {order.orderStatus === "success" && <ConfirmOrder orderId={order.id} />}
+        {order.orderStatus === "success" && (
+          <ConfirmUserOrder orderId={order.id} />
+        )}
+
+        {order.orderStatus === "pending" && (
+          <CancelUserOrder orderId={order.id} />
+        )}
 
         <Link
           to={`/user/orders/${order.id}`}

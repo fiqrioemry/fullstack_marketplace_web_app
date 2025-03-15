@@ -3,13 +3,13 @@ import toast from "react-hot-toast";
 import callApi from "@/api/callApi";
 
 export const useUserStore = create((set, get) => ({
+  order: null,
   orders: null,
   profile: null,
   address: null,
   shipment: null,
   transaction: null,
   transactions: null,
-  orderDetail: null,
   loading: false,
 
   getProfile: async () => {
@@ -127,11 +127,11 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  getUserOrderDetail: async () => {
-    set({ orderDetail: null });
+  getUserOrderDetail: async (orderId) => {
+    set({ order: null });
     try {
-      const { orderDetail } = await callApi.getUserOrderDetail();
-      set({ orderDetail });
+      const { order } = await callApi.getUserOrderDetail(orderId);
+      set({ order });
     } catch (error) {
       console.log(error.message);
     }

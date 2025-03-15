@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useEffect } from "react";
 import { formatToRupiah } from "@/lib/utils";
 import { useUserStore } from "@/store/useUserStore";
@@ -36,19 +37,24 @@ const UserOrderDetail = () => {
               <h4>Order Information</h4>
               <div className="flex items-center justify-between text-muted-foreground text-xs">
                 <p>Order Number</p>
-                <span>{order?.orderNumber}</span>
+                <span>{order.orderNumber}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground text-xs">
                 <p>Order Date</p>
-                <span>{order?.createdAt}</span>
+                <span>{format(order.createdAt, "PPP")}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground text-xs">
                 <p>Order Status</p>
-                <span>{order?.orderStatus}</span>
+                <span>{order.orderStatus}</span>
               </div>
             </div>
             <div className="mb-2 py-2 px-4 bg-background">
-              <h4>Product Detail</h4>
+              <div className="flex items-center justify-between">
+                <h4>Product Detail</h4>
+                <button className="btn-accent text-xs">
+                  see shipment detail
+                </button>
+              </div>
               {order?.orderDetail.map((item) => (
                 <div className="flex items-center gap-2 p-2" key={item.id}>
                   <img
@@ -66,7 +72,10 @@ const UserOrderDetail = () => {
               ))}
             </div>
             <div className="mb-2 py-2 px-4 bg-background text-xs text-muted-foreground space-y-2  capitalize">
-              <h4 className="text-foreground">Shipment Detail</h4>
+              <div>
+                <h4 className="text-foreground">Shipment Detail</h4>
+                <button className="text-xs">see shipment detail</button>
+              </div>
               <div className="flex gap-2">
                 <p className="w-40">name</p>
                 <span>: {order.address.name}</span>

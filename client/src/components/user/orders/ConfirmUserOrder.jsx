@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useShopStore } from "@/store/useShopStore";
+import { useUserStore } from "@/store/useUserStore";
 import { DialogForm } from "@/components/form/DialogForm";
 
 const orderState = {
@@ -24,8 +24,8 @@ const orderControl = [
   },
 ];
 
-const ConfirmOrder = ({ orderId }) => {
-  const { proceedStoreOrder } = useShopStore();
+const ConfirmUserOrder = ({ orderId }) => {
+  const { confirmUserOrder } = useUserStore();
 
   return (
     <DialogForm
@@ -33,11 +33,11 @@ const ConfirmOrder = ({ orderId }) => {
       param={orderId}
       state={orderState}
       control={orderControl}
-      action={proceedStoreOrder}
+      action={confirmUserOrder}
       textButton="Confirm order"
-      title="Proceed order to shipment"
+      title="Confirm Order Completion"
     />
   );
 };
 
-export default ConfirmOrder;
+export default ConfirmUserOrder;

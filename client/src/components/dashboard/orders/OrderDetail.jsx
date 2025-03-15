@@ -31,7 +31,7 @@ const OrderDetail = () => {
         </DialogTitle>
 
         {!order ? null : (
-          <ScrollArea className="flex-1 overflow-y-auto bg-muted mb-4">
+          <ScrollArea className="flex-1 overflow-y-auto bg-muted">
             <div className="mb-2 py-2 px-4 bg-background space-y-2">
               <h4>Order Information</h4>
               <div className="flex items-center justify-between text-muted-foreground text-xs">

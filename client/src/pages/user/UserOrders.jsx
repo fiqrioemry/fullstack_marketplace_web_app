@@ -8,7 +8,7 @@ import TransactionsLoading from "@/components/loading/TransactionsLoading";
 const UserOrders = () => {
   const [filter, setFilter] = useState("");
   const { getAllUserOrders, orders } = useUserStore();
-  console.log(orders);
+
   const handleFilter = (params) => {
     setFilter(params);
   };
