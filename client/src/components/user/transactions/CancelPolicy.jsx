@@ -10,7 +10,7 @@ import { Ellipsis } from "lucide-react";
 const CancelPolicy = () => {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger className="py-1 px-2 rounded-md border">
         <Ellipsis />
       </DialogTrigger>
       <DialogContent>

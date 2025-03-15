@@ -2,15 +2,17 @@
 import { format } from "date-fns";
 import { formatToRupiah, cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import CancelOrder from "@/components/dashboard/orders/CancelOrder";
-import ProceedOrder from "@/components/dashboard/orders/ProceedOrder";
+import { ShoppingBag } from "lucide-react";
+import ConfirmOrder from "./ConfirmOrder";
+import CancelPolicy from "../transactions/CancelPolicy";
 
 export default function OrderCard({ order }) {
   const location = useLocation();
   return (
     <div className="border rounded-lg p-4 mb-4">
       <div className="flex items-center gap-4">
-        <div className="text-sm">
+        <div className="flex items-center gap-2 text-sm">
+          <ShoppingBag size={14} />
           {format(new Date(order.createdAt), "PPP")}
         </div>
         <span
@@ -36,18 +38,18 @@ export default function OrderCard({ order }) {
       <div>
         <h4>{order.store}</h4>
         {order.products.map((product) => (
-          <div key={product.id}>
-            <h5>{product.name}</h5>
-            <div>
-              {product.quantity} x {formatToRupiah(product.price)}
+          <div className="flex items-center gap-2 mb-1" key={product.id}>
+            - <h5>{product.name}</h5>
+            <div className="text-sm md:text-md">
+              <span>
+                {product.quantity}product x {formatToRupiah(product.price)}
+              </span>
             </div>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-end gap-2">
-        {order.orderStatus === "pending" && <ProceedOrder orderId={order.id} />}
-
-        {order.orderStatus === "pending" && <CancelOrder orderId={order.id} />}
+        {order.orderStatus === "success" && <ConfirmOrder orderId={order.id} />}
 
         <Link
           to={`/user/orders/${order.id}`}
@@ -56,6 +58,7 @@ export default function OrderCard({ order }) {
         >
           See detail
         </Link>
+        <CancelPolicy />
       </div>
     </div>
   );
