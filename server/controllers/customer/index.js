@@ -6,13 +6,33 @@ const {
   Product,
   sequelize,
   Shipment,
+  Gallery,
   Transaction,
   OrderDetail,
   Notification,
   Store,
 } = require('../../models');
+const { Op } = require('sequelize');
 const snap = require('../../config/midtrans');
 const generateOrderNumber = require('../../utils/generateOrderNumber');
+
+async function getAllUserNotifications(req, res) {
+  const userId = req.user.userId;
+
+  try {
+    const notifications = await Notification.findAll({ where: { userId } });
+
+    if (!notifications)
+      return res.status(200).json({
+        message: 'You dont have any notifications',
+        notifications: [],
+      });
+
+    return res.status(200).json({ notifications });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 
 async function PaymentNotifications(req, res) {
   const transaction = await sequelize.transaction();
@@ -327,9 +347,13 @@ async function createNewTransaction(req, res) {
 
 async function getAllTransactions(req, res) {
   const userId = req.user.userId;
+  const status = req.query.status;
   try {
     const transactions = await Transaction.findAll({
-      where: { userId },
+      where: {
+        userId,
+        ...(status ? { paymentStatus: status } : {}),
+      },
       include: ['order'],
     });
 
@@ -393,66 +417,63 @@ async function getTransactionDetail(req, res) {
 
 async function getAllOrders(req, res) {
   const userId = req.user.userId;
+  const status = req.query.status;
+
   try {
     const rawOrders = await Order.findAll({
-      where: { userId },
-      include: ['store', 'orderDetail'],
+      where: {
+        userId,
+        ...(status
+          ? { orderStatus: status }
+          : { orderStatus: { [Op.ne]: 'waiting payment' } }),
+      },
+      include: [
+        { model: OrderDetail, as: 'orderDetail', include: ['product'] },
+        { model: Store, as: 'store' },
+      ],
     });
 
-    if (!rawOrders)
+    if (!rawOrders || rawOrders.length === 0)
       return res.status(200).send({
         message: 'You dont have any orders',
         orders: [],
       });
 
-    const orders = rawOrders.map((order) => {
-      return {
-        id: order.id,
-        transactionId: order.transactionId,
-        orderNumber: order.orderNumber,
-        totalPrice: order.totalPrice,
-        orderStatus: order.orderStatus,
-        createdAt: order.createdAt,
-        product: order.orderDetail.map((product) => ({
-          name: product.name,
-          price: product.price,
-          quantity: product.quantity,
-        })),
-      };
-    });
+    const orders = rawOrders.map((order) => ({
+      id: order.id,
+      store: order.store.name,
+      createdAt: order.createdAt,
+      totalPrice: order.totalPrice,
+      orderNumber: order.orderNumber,
+      orderStatus: order.orderStatus,
+      transactionId: order.transactionId,
+      totalProducts: order.orderDetail.length,
+    }));
+
     return res.status(200).json({ orders });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 }
-
 async function getOrderDetail(req, res) {
   const orderId = req.params.orderId;
   try {
-    const rawOrder = await Order.findOne({
+    const order = await Order.findOne({
       where: { id: orderId },
-      include: ['orderDetail', 'store', 'shipment'],
+      include: [
+        {
+          model: OrderDetail,
+          as: 'orderDetail',
+          include: { model: Product, as: 'product', include: ['gallery'] },
+        },
+        { model: Address, as: 'address' },
+        { model: Shipment, as: 'shipment' },
+      ],
     });
 
-    if (!rawOrder) return res.status(404).json({ message: 'Order not found' });
+    if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    const orderDetail = {
-      store: rawOrder.store.name,
-      orderNumber: rawOrder.orderNumber,
-      totalPrice: rawOrder.totalPrice,
-      shipmentCost: rawOrder.shipmentCost,
-      totalAmount: rawOrder.totalOrderAmount,
-      products: rawOrder.orderDetail.map((product) => ({
-        name: product.name,
-        price: product.price,
-        quantity: product.quantity,
-      })),
-      shipmentNumber: rawOrder.shipment.shipmentNumber,
-      shipmentStatus: rawOrder.shipment.shipmentStatus,
-      createdAt: rawOrder.createdAt,
-    };
-
-    return res.status(200).json({ orderDetail });
+    return res.status(200).json({ order });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -564,7 +585,6 @@ async function cancelTransaction(req, res) {
   const t = await sequelize.transaction();
 
   try {
-    // Ambil transaksi beserta order terkait
     const transaction = await Transaction.findByPk(transactionId, {
       include: {
         model: Order,
@@ -582,39 +602,13 @@ async function cancelTransaction(req, res) {
       return res.status(404).json({ message: 'Transaction not found' });
     }
 
-    // Validasi status transaksi
-    if (!['pending', 'paid'].includes(transaction.paymentStatus)) {
+    if (!['pending'].includes(transaction.paymentStatus)) {
       await t.rollback();
       return res
         .status(400)
         .json({ message: 'Transaction cannot be canceled' });
     }
 
-    // Jika status paid, periksa apakah masih dalam batas waktu 2 jam
-    if (transaction.paymentStatus === 'paid') {
-      const createdAt = new Date(transaction.createdAt);
-      const now = new Date();
-      const timeDiff = (now - createdAt) / (1000 * 60 * 60);
-
-      if (timeDiff > 2) {
-        return res
-          .status(400)
-          .json({ message: 'Cancellation time limit exceeded' });
-      }
-    }
-
-    // Pastikan ada order dengan status "pending"
-    const hasPendingOrder = transaction.order.some(
-      (order) => order.orderStatus === 'pending',
-    );
-    if (!hasPendingOrder) {
-      await t.rollback();
-      return res.status(400).json({
-        message: 'Transaction cannot be canceled as no pending order exists',
-      });
-    }
-
-    // Ubah status semua order dan shipment menjadi "canceled"
     await Order.update(
       { orderStatus: 'canceled' },
       { where: { transactionId }, transaction: t },
@@ -632,11 +626,17 @@ async function cancelTransaction(req, res) {
     for (const order of transaction.order) {
       for (const item of order.orderDetail) {
         await Product.increment(
-          { quantity: item.quantity },
+          { stock: item.quantity },
           { where: { id: item.productId }, transaction: t },
         );
       }
     }
+
+    // Update saldo pengguna
+    await User.increment(
+      { balance: transaction.amountToPay },
+      { where: { id: userId }, transaction: t },
+    );
 
     // Kirim notifikasi ke setiap store terkait
     const storeIds = [
@@ -664,6 +664,88 @@ async function cancelTransaction(req, res) {
   }
 }
 
+async function cancelOrder(req, res) {
+  const userId = req.user.userId;
+  const orderId = req.params.orderId;
+  const cancel_reason = req.body.cancel_reason;
+  const transaction = await sequelize.transaction();
+
+  try {
+    const order = await Order.findByPk(orderId, {
+      where: { orderStatus: { [Op.ne]: 'waiting payment' } },
+      include: {
+        model: OrderDetail,
+        as: 'orderDetail',
+      },
+      transaction,
+    });
+
+    if (!order) {
+      await transaction.rollback();
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (!['pending'].includes(transaction.paymentStatus)) {
+      await transaction.rollback();
+      return res.status(400).json({ message: 'Order cannot be canceled' });
+    }
+
+    if (order.orderStatus === 'pending') {
+      const createdAt = new Date(order.createdAt);
+      const now = new Date();
+      const timeDiff = (now - createdAt) / (1000 * 60 * 60);
+
+      if (timeDiff > 2) {
+        return res
+          .status(400)
+          .json({ message: 'Cancellation time limit exceeded' });
+      }
+    }
+
+    await Order.update(
+      { orderStatus: 'canceled' },
+      { where: { orderId }, transaction },
+    );
+
+    await Shipment.update(
+      { shipmentStatus: 'canceled' },
+      {
+        where: { orderId },
+        transaction,
+      },
+    );
+
+    for (const item of order.orderDetail) {
+      await Product.increment(
+        { stock: item.quantity },
+        { where: { id: item.productId }, transaction },
+      );
+    }
+
+    await User.increment(
+      { balance: order.totalOrderAmount },
+      { where: { id: userId }, transaction },
+    );
+
+    await Notification.create(
+      {
+        userId,
+        type: 'order',
+        metadata: orderId,
+        storeId: order.storeId,
+        message: `Order number #${order.orderNumber} has been canceled. Reason: ${cancel_reason}`,
+      },
+      { transaction },
+    );
+
+    await transaction.commit();
+    return res.status(200).json({ message: 'Order successfully canceled' });
+  } catch (error) {
+    await transaction.rollback();
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   getOrderDetail,
   getAllOrders,
@@ -674,4 +756,6 @@ module.exports = {
   getShipmentDetail,
   confirmOrderDelivery,
   cancelTransaction,
+  cancelOrder,
+  getAllUserNotifications,
 };

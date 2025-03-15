@@ -89,20 +89,36 @@ cron.schedule('0 0 * * *', () => {
 });
 
 async function getAllStoreOrders(req, res) {
+  const status = req.query.status;
   const storeId = req.user.storeId;
+
   try {
-    const orders = await Order.findAll({
+    const rawOrders = await Order.findAll({
       where: {
         storeId,
-        orderStatus: { [Op.in]: ['pending', 'process', 'success'] },
+        ...(status
+          ? { orderStatus: status }
+          : { orderStatus: { [Op.ne]: 'waiting payment' } }),
       },
-      include: ['orderDetail'],
+      include: [
+        { model: OrderDetail, as: 'orderDetail', include: ['product'] },
+      ],
     });
 
-    if (!orders)
+    if (!rawOrders)
       return res
         .status(200)
         .json({ message: 'You dont have any order', orders: [] });
+
+    const orders = rawOrders.map((order) => ({
+      id: order.id,
+      createdAt: order.createdAt,
+      totalPrice: order.totalPrice,
+      orderNumber: order.orderNumber,
+      orderStatus: order.orderStatus,
+      transactionId: order.transactionId,
+      totalProducts: order.orderDetail.length,
+    }));
 
     return res.status(200).json({ orders });
   } catch (error) {
@@ -288,6 +304,24 @@ async function updateShipmentStatus(req, res) {
   }
 }
 
+async function getAllStoreNotifications(req, res) {
+  const storeId = req.user.storeId;
+
+  try {
+    const notifications = await Notification.findAll({ where: { storeId } });
+
+    if (!notifications)
+      return res.status(200).json({
+        message: 'You dont have any notifications',
+        notifications: [],
+      });
+
+    return res.status(200).json({ notifications });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 async function getStoreStatisticSummary(req, res) {
   const storeId = req.user.storeId;
 
@@ -392,6 +426,7 @@ async function getStoreStatisticSummary(req, res) {
 }
 
 module.exports = {
+  getAllStoreNotifications,
   getStoreStatisticSummary,
   updateShipmentStatus,
   getAllStoreOrders,

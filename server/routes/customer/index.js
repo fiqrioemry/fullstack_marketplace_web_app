@@ -1,17 +1,20 @@
 const {
-  cancelTransaction,
+  cancelOrder,
   getAllOrders,
   getOrderDetail,
+  cancelTransaction,
   getShipmentDetail,
   getAllTransactions,
   PaymentNotifications,
   createNewTransaction,
   getTransactionDetail,
   confirmOrderDelivery,
+  getAllUserNotifications,
 } = require('../../controllers/customer');
 const router = require('express').Router();
 const isAuthenticate = require('../../middleware/isAuthenticate');
 
+router.get('/notifications', isAuthenticate, getAllUserNotifications);
 router.get(
   '/transactions/:transactionId',
   isAuthenticate,
@@ -27,8 +30,11 @@ router.get('/transactions', isAuthenticate, getAllTransactions);
 router.post('/transactions/notifications', PaymentNotifications);
 router.post('/transactions', isAuthenticate, createNewTransaction);
 router.put(
-  '/transaction/:transactionId/cancel',
+  '/transactions/:transactionId/cancel',
   isAuthenticate,
   cancelTransaction,
 );
+
+router.put('/orders/:orderId/cancel', isAuthenticate, cancelOrder);
+
 module.exports = router;
