@@ -15,7 +15,7 @@ const Statistics = () => {
   if (!statistic) return <StoreProfileLoading />;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-4">
       <StatisticHeader />
       <StatisticChart />
       <StatisticTable />

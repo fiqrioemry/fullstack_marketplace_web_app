@@ -206,6 +206,13 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  getUserNotifications: async () => {
+    return authInstance
+      .get(`/customer/notifications`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
   // customer carts management
   getCarts: async () => {
     return authInstance
@@ -295,10 +302,16 @@ const callApi = {
   },
 
   // store statistic management
-  // TODO : Create feature getStoreStatisticSummary
   getStoreStatisticSummary: async (formData) => {
     return authInstance
       .get(`/seller/statistic`, formData)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getStoreNotifications: async () => {
+    return authInstance
+      .get(`/seller/notifications`)
       .then((res) => res.data)
       .catch(errorHandle);
   },

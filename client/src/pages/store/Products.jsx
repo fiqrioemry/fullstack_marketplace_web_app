@@ -21,7 +21,7 @@ const Products = () => {
   const currentPath = location.pathname;
 
   return (
-    <>
+    <div className="bg-background py-2 rounded-lg">
       <Tabs defaultValue={currentPath}>
         <TabsList className="justify-between md:justify-start">
           {productsMenu.map((menu) => {
@@ -44,7 +44,7 @@ const Products = () => {
       <div className="pt-4 pb-4">
         <Outlet />
       </div>
-    </>
+    </div>
   );
 };
 

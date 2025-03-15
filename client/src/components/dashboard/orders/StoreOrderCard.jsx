@@ -11,7 +11,7 @@ export default function OrderCard({ order }) {
   const location = useLocation();
 
   return (
-    <div className="border rounded-lg p-4 mb-4">
+    <div className="border bg-background rounded-lg p-4 mb-2">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 text-sm">
           <ShoppingBag size={14} />
@@ -35,7 +35,6 @@ export default function OrderCard({ order }) {
         </span>
       </div>
       <div>
-        <h5>{order.store}</h5>
         <div className="flex items-center gap-4 text-sm capitalize">
           <div className="w-40">Total products</div>
           <span>{order.totalProducts} products</span>
@@ -45,7 +44,7 @@ export default function OrderCard({ order }) {
           <span>{formatToRupiah(order.totalPrice)}</span>
         </div>
         <div className="flex items-center gap-4 text-sm capitalize">
-          <div className="w-40"> Order number</div>
+          <div className="w-40">Order number</div>
           <span className="font-medium text-muted-foreground">
             {order.orderNumber}
           </span>
@@ -58,7 +57,6 @@ export default function OrderCard({ order }) {
             <CancelOrder orderId={order.id} />
           </div>
         )}
-
         <Link
           to={`/user/orders/${order.id}`}
           state={{ background: location }}

@@ -14,7 +14,7 @@ const ProfileDisplay = () => {
   };
 
   return (
-    <div className="flex p-4 bg-gray-100 h-full">
+    <div>
       <Card className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6">
         <div className="flex flex-col items-center text-center">
           <img

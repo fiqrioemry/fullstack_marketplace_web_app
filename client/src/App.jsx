@@ -30,10 +30,10 @@ import Profile from "./pages/store/Profile";
 import Products from "./pages/store/Products";
 import Statistics from "./pages/store/Statistics";
 import Notifications from "./pages/store/Notifications";
-import ProductsAdd from "./components/dashboard/ProductsAdd";
-import ProductsList from "./components/dashboard/ProductsList";
 import OrderDetail from "./components/dashboard/orders/OrderDetail";
 import DashboardLayout from "./components/dashboard/DashboardLayout";
+import ProductsAdd from "./components/dashboard/products/ProductsAdd";
+import ProductsList from "./components/dashboard/products/ProductsList";
 
 // middleware and hooks
 import { Toaster } from "react-hot-toast";
@@ -130,8 +130,8 @@ function App() {
           <Route index element={<Statistics />} />
           <Route path="orders" element={<Orders />} />
           <Route path="products" element={<Products />}>
-            <Route path="add" element={<ProductsAdd />} />
             <Route index element={<ProductsList />} />
+            <Route path="add" element={<ProductsAdd />} />
           </Route>
           <Route path="profile" element={<Profile />} />
           <Route path="notification" element={<Notifications />} />

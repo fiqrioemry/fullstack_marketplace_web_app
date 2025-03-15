@@ -18,8 +18,10 @@ const DashboardLayout = () => {
           <Separator orientation="vertical" className="mr-2 h-4" />
           <PageBreadCrumb />
         </header>
-        <div className="flex flex-1 flex-col">
-          <Outlet />
+        <div className="flex flex-1 flex-col bg-muted">
+          <div className="container mx-auto py-3 md:py-6 px-2">
+            <Outlet />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

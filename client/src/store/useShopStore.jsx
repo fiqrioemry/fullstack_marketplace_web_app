@@ -9,6 +9,7 @@ export const useShopStore = create((set, get) => ({
   profile: null,
   loading: false,
   statistic: null,
+  notifications: null,
 
   // product
   products: null,
@@ -182,6 +183,16 @@ export const useShopStore = create((set, get) => ({
       toast.error(error.message);
     } finally {
       set({ loading: false });
+    }
+  },
+
+  getStoreNotifications: async () => {
+    set({ notifications: null });
+    try {
+      const { notifications } = await callApi.getStoreNotifications();
+      set({ notifications });
+    } catch (error) {
+      toast.error(error.message);
     }
   },
 }));

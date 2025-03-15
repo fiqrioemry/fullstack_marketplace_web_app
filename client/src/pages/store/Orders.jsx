@@ -20,7 +20,7 @@ const Orders = () => {
   if (!orders) return <TransactionsLoading />;
 
   return (
-    <div className="container mx-auto py-3 md:py-6 px-2">
+    <>
       <StoreOrdersFilter handleFilter={handleFilter} filter={filter} />
       {orders.length === 0 ? (
         <NoStoreOrderHistory />
@@ -31,7 +31,7 @@ const Orders = () => {
           ))}
         </>
       )}
-    </div>
+    </>
   );
 };
 

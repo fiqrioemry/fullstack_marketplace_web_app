@@ -10,6 +10,7 @@ export const useUserStore = create((set, get) => ({
   shipment: null,
   transaction: null,
   transactions: null,
+  notifications: null,
   loading: false,
 
   getProfile: async () => {
@@ -222,6 +223,16 @@ export const useUserStore = create((set, get) => ({
       console.error(error.message);
     } finally {
       set({ loading: false });
+    }
+  },
+
+  getUserNotifications: async () => {
+    set({ notifications: null });
+    try {
+      const { notifications } = await callApi.getUserNotifications();
+      set({ notifications });
+    } catch (error) {
+      toast.error(error.message);
     }
   },
 }));
