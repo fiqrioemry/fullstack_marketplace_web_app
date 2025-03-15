@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
-import { useShopStore } from "@/store/useShopStore";
+import { useUserStore } from "@/store/useUserStore";
 import { DialogForm } from "@/components/form/DialogForm";
-import { useUserStore } from "../../../store/useUserStore";
 
 const cancelOrderState = {
   cancel_reason: "",

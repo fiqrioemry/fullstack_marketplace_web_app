@@ -163,6 +163,13 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  cancelUserOrder: async (formData, orderId) => {
+    return authInstance
+      .put(`/customer/orders/${orderId}/cancel`, { formData })
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
   confirmOrderDelivery: async (formData, orderId) => {
     return authInstance
       .put(`/customer/orders/${orderId}/confirm`, formData)
@@ -297,9 +304,9 @@ const callApi = {
   },
 
   // store order management
-  getAllStoreOrders: async () => {
+  getAllStoreOrders: async (params) => {
     return authInstance
-      .get('/seller/orders')
+      .get(`/seller/orders?status=${params}`)
       .then((res) => res.data)
       .catch(errorHandle);
   },

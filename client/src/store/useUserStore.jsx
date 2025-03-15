@@ -152,6 +152,18 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
+  cancelUserOrder: async (formData, orderId) => {
+    set({ loading: true });
+    try {
+      const { message } = await callApi.cancelUserOrder(formData, orderId);
+      toast.success(message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   confirmOrderDelivery: async (formData, orderId) => {
     set({ loading: true });
     try {

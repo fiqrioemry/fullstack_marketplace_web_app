@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 import { format } from "date-fns";
+import CancelOrder from "./CancelOrder";
+import ProceedOrder from "./ProceedOrder";
 import { ShoppingBag } from "lucide-react";
-import CancelUserOrder from "./CancelUserOrder";
 import { formatToRupiah, cn } from "@/lib/utils";
-import ConfirmUserOrder from "./ConfirmUserOrder";
 import { Link, useLocation } from "react-router-dom";
-import CancelPolicy from "../transactions/CancelPolicy";
+import CancelPolicy from "@/components/user/transactions/CancelPolicy";
 
 export default function OrderCard({ order }) {
   const location = useLocation();
@@ -52,12 +52,11 @@ export default function OrderCard({ order }) {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2">
-        {order.orderStatus === "success" && (
-          <ConfirmUserOrder orderId={order.id} />
-        )}
-
         {order.orderStatus === "pending" && (
-          <CancelUserOrder orderId={order.id} />
+          <div className="flex items-center gap-2">
+            <ProceedOrder orderId={order.id} />
+            <CancelOrder orderId={order.id} />
+          </div>
         )}
 
         <Link
@@ -72,14 +71,3 @@ export default function OrderCard({ order }) {
     </div>
   );
 }
-
-// {order.products.map((product) => (
-//   <div className="flex items-center gap-2 mb-1" key={product.id}>
-//     - <h5>{product.name}</h5>
-//     <div className="text-sm md:text-md">
-//       <span>
-//         {product.quantity}product x {formatToRupiah(product.price)}
-//       </span>
-//     </div>
-//   </div>
-// ))}

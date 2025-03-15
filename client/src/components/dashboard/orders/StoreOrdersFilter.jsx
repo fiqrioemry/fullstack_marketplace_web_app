@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
-const OrdersFilter = ({ handleFilter, filter }) => {
+const StoreOrdersFilter = ({ handleFilter, filter }) => {
   return (
     <div className="flex items-center justify-end gap-2 mb-2">
       <Button
@@ -37,4 +37,4 @@ const OrdersFilter = ({ handleFilter, filter }) => {
   );
 };
 
-export default OrdersFilter;
+export default StoreOrdersFilter;

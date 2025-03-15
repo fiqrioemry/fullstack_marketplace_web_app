@@ -120,10 +120,10 @@ export const useShopStore = create((set, get) => ({
   },
 
   // store orders management
-  getAllStoreOrders: async () => {
+  getAllStoreOrders: async (params) => {
     set({ orders: null });
     try {
-      const { orders } = await callApi.getAllStoreOrders();
+      const { orders } = await callApi.getAllStoreOrders(params);
       set({ orders });
     } catch (error) {
       console.error(error.message);
