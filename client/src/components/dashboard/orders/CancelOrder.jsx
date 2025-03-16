@@ -16,13 +16,14 @@ const cancelOrderControl = [
 ];
 
 const CancelOrder = ({ orderId }) => {
-  const { cancelStoreOrder } = useShopStore();
+  const { cancelStoreOrder, loading } = useShopStore();
 
   return (
     <DialogForm
       size="sm"
       param={orderId}
       variant="outline"
+      loading={loading}
       textButton="Cancel order"
       state={cancelOrderState}
       action={cancelStoreOrder}

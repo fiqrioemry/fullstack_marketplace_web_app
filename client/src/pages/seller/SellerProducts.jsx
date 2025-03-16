@@ -1,48 +1,38 @@
 import { cn } from "@/lib/utils";
+import { PackagePlus, PackageSearch } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { CreditCard, MapPin, Truck, UserRoundPen } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AddProduct from "@/components/seller/products/AddProduct";
 
-const userMenu = [
+const productsMenu = [
   {
-    title: "settings",
-    path: "/user/settings",
-    icon: UserRoundPen,
+    title: "products",
+    path: "/store/products",
+    icon: PackageSearch,
   },
   {
-    title: "address",
-    path: "/user/address",
-    icon: MapPin,
-  },
-  {
-    title: "transactions",
-    path: "/user/transactions",
-    icon: CreditCard,
-  },
-  {
-    title: "orders",
-    path: "/user/orders",
-    icon: Truck,
+    title: "Add products",
+    path: "/store/products/add",
+    icon: PackagePlus,
   },
 ];
 
-const UserLayout = () => {
+const SellerProducts = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
   return (
-    <main className="py-3 md:py-6">
-      <Tabs defaultValue={currentPath} className="container mx-auto mb-3 px-2">
+    <div className="bg-background py-2 rounded-lg">
+      <AddProduct />
+      <Tabs defaultValue={currentPath}>
         <TabsList className="justify-between md:justify-start">
-          {userMenu.map((menu) => {
+          {productsMenu.map((menu) => {
             const activePath = currentPath === menu.path;
             return (
               <TabsTrigger value={menu.path} key={menu.title} asChild>
                 <Link
                   to={menu.path}
-                  className={cn(
-                    activePath ? "text-blue-700" : "text-foreground"
-                  )}
+                  className={cn(activePath ? "btn-accent" : "text-foreground")}
                   key={menu.title}
                 >
                   {menu.title}
@@ -53,11 +43,11 @@ const UserLayout = () => {
           })}
         </TabsList>
       </Tabs>
-      <section className="container mx-auto mb-3 px-2">
+      <div className="pt-4 pb-4">
         <Outlet />
-      </section>
-    </main>
+      </div>
+    </div>
   );
 };
 
-export default UserLayout;
+export default SellerProducts;

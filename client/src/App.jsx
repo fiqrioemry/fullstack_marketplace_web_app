@@ -25,15 +25,22 @@ import OrderDetailCustomer from "./components/customer/orders/OrderDetailCustome
 import TransactionDetail from "./components/customer/transactions/TransactionDetail";
 
 // halaman store untuk seller
-import Orders from "./pages/store/Orders";
-import Profile from "./pages/store/Profile";
-import Products from "./pages/store/Products";
 import Statistics from "./pages/store/Statistics";
-import Notifications from "./pages/store/Notifications";
-import OrderDetail from "./components/dashboard/orders/OrderDetail";
-import DashboardLayout from "./components/dashboard/DashboardLayout";
+import SellerOrders from "./pages/seller/SellerOrders";
+import SellerProfile from "./pages/seller/SellerProfile";
+import SellerProducts from "./pages/seller/SellerProducts";
+import SellerLayout from "./components/seller/SellerLayout";
+import SellerNotifications from "./pages/seller/SellerNotifications";
 import ProductsAdd from "./components/dashboard/products/ProductsAdd";
 import ProductsList from "./components/dashboard/products/ProductsList";
+import SellerOrderDetail from "./components/seller/orders/SellerOrderDetail";
+
+// halaman untuk admin
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminShipment from "./pages/admin/AdminShipment";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminCategories from "./pages/admin/AdminCategories";
 
 // middleware and hooks
 import { Toaster } from "react-hot-toast";
@@ -41,11 +48,6 @@ import Layout from "./components/layout/Layout";
 import useAuthChecking from "./hooks/useAuthChecking";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AdminRoute, AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminShipment from "./pages/admin/AdminShipment";
-import AdminLayout from "./components/admin/AdminLayout";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminCategories from "./pages/admin/AdminCategories";
 
 function App() {
   const { checkingAuth, location, background } = useAuthChecking();
@@ -125,23 +127,23 @@ function App() {
           />
         </Route>
 
-        {/* store */}
+        {/* seller */}
         <Route
           path="/store"
           element={
             <SellerRoute>
-              <DashboardLayout />
+              <SellerLayout />
             </SellerRoute>
           }
         >
           <Route index element={<Statistics />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="products" element={<Products />}>
+          <Route path="orders" element={<SellerOrders />} />
+          <Route path="products" element={<SellerProducts />}>
             <Route index element={<ProductsList />} />
             <Route path="add" element={<ProductsAdd />} />
           </Route>
-          <Route path="profile" element={<Profile />} />
-          <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={<SellerProfile />} />
+          <Route path="notifications" element={<SellerNotifications />} />
         </Route>
 
         {/* admin */}
@@ -164,7 +166,10 @@ function App() {
 
       {background && (
         <Routes>
-          <Route path="/store/orders/:orderId" element={<OrderDetail />} />
+          <Route
+            path="/store/orders/:orderId"
+            element={<SellerOrderDetail />}
+          />
           <Route
             path="/user/orders/:orderId"
             element={<OrderDetailCustomer />}

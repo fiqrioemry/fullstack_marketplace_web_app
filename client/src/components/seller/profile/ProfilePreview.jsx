@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { useUserStore } from "@/store/useUserStore";
 
-const AccountProfileDisplay = () => {
+const ProfilePreview = () => {
   const { profile } = useUserStore();
 
   return (
@@ -42,4 +42,4 @@ const AccountProfileDisplay = () => {
   );
 };
 
-export default AccountProfileDisplay;
+export default ProfilePreview;

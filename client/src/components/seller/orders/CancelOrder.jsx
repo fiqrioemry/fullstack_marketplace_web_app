@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useUserStore } from "@/store/useUserStore";
+import { useShopStore } from "@/store/useShopStore";
 import { DialogForm } from "@/components/form/DialogForm";
 
 const cancelOrderState = {
@@ -15,8 +15,8 @@ const cancelOrderControl = [
   },
 ];
 
-const CancelUserOrder = ({ orderId }) => {
-  const { cancelUserOrder } = useUserStore();
+const CancelOrder = ({ orderId }) => {
+  const { cancelStoreOrder } = useShopStore();
 
   return (
     <DialogForm
@@ -25,11 +25,11 @@ const CancelUserOrder = ({ orderId }) => {
       variant="outline"
       textButton="Cancel order"
       state={cancelOrderState}
-      action={cancelUserOrder}
+      action={cancelStoreOrder}
       control={cancelOrderControl}
       title={"Order Cancelation Confirmation"}
     />
   );
 };
 
-export default CancelUserOrder;
+export default CancelOrder;
