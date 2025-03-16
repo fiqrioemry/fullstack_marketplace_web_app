@@ -15,14 +15,14 @@ import ShopInfo from "./pages/shop/ShopInfo";
 import ShopProducts from "./pages/shop/ShopProducts";
 import ShopLayout from "./components/shop/ShopLayout";
 
-// halaman user
-import Address from "./pages/user/Address";
-import Account from "./pages/user/Account";
-import UserOrders from "./pages/user/UserOrders";
-import Transactions from "./pages/user/Transactions";
-import UserLayout from "./components/user/UserLayout";
-import UserOrderDetail from "./components/user/orders/UserOrderDetail";
-import TransactionDetail from "./components/user/transactions/TransactionDetail";
+// halaman customer
+import Address from "./pages/customer/Address";
+import Transactions from "./pages/customer/Transactions";
+import CustomerOrders from "./pages/customer/CustomerOrders";
+import CustomerProfile from "./pages/customer/CustomerProfile";
+import CustomerLayout from "./components/customer/CustomerLayout";
+import OrderDetailCustomer from "./components/customer/orders/OrderDetailCustomer";
+import TransactionDetail from "./components/customer/transactions/TransactionDetail";
 
 // halaman store untuk seller
 import Orders from "./pages/store/Orders";
@@ -81,17 +81,19 @@ function App() {
           </Route>
           <Route path="products" element={<ProductsPreview />} />
           <Route path=":shopname/:slug" element={<ProductDetail />} />
+
+          {/* customer */}
           <Route
             path="user"
             element={
               <AuthRoute>
-                <UserLayout />
+                <CustomerLayout />
               </AuthRoute>
             }
           >
             <Route path="address" element={<Address />} />
-            <Route path="settings" element={<Account />} />
-            <Route path="orders" element={<UserOrders />} />
+            <Route path="orders" element={<CustomerOrders />} />
+            <Route path="settings" element={<CustomerProfile />} />
             <Route path="transactions" element={<Transactions />} />
             <Route index element={<Navigate to="settings" replace />} />
           </Route>
@@ -163,7 +165,10 @@ function App() {
       {background && (
         <Routes>
           <Route path="/store/orders/:orderId" element={<OrderDetail />} />
-          <Route path="/user/orders/:orderId" element={<UserOrderDetail />} />
+          <Route
+            path="/user/orders/:orderId"
+            element={<OrderDetailCustomer />}
+          />
           <Route
             path="/user/transactions/:transactionId"
             element={<TransactionDetail />}

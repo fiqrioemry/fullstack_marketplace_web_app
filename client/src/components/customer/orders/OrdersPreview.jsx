@@ -1,13 +1,12 @@
 /* eslint-disable react/prop-types */
 import { format } from "date-fns";
-import { ShoppingBag } from "lucide-react";
-import { CircleAlert } from "lucide-react";
+import OrderCancel from "./OrderCancel";
+import OrderConfirm from "./OrderConfirm";
 import { formatToRupiah, cn } from "@/lib/utils";
-import CancelUserOrder from "./CancelUserOrder";
-import ConfirmUserOrder from "./ConfirmUserOrder";
 import { Link, useLocation } from "react-router-dom";
 import { useCountdown } from "@/hooks/useCountDown";
-import CancelPolicy from "../transactions/CancelPolicy";
+import { ShoppingBag, CircleAlert } from "lucide-react";
+import CancelPolicy from "@/components/customer/transactions/CancelPolicy";
 
 const OrdersPreview = ({ orders }) => {
   if (orders.length === 0) return <NoOrderToShow />;
@@ -76,9 +75,9 @@ const OrderCard = ({ order }) => {
       <OrderDescription order={order} />
 
       <div className="flex items-center justify-end gap-2">
-        {isSuccess && isDelivered && <ConfirmUserOrder orderId={order.id} />}
+        {isSuccess && isDelivered && <OrderConfirm orderId={order.id} />}
 
-        {isPending && <CancelUserOrder orderId={order.id} />}
+        {isPending && <OrderCancel orderId={order.id} />}
 
         <Link
           to={`/user/orders/${order.id}`}
