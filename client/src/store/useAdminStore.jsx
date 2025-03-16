@@ -2,7 +2,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import callApi from "@/api/callApi";
 
-export const useAdminStore = create((set) => ({
+export const useAdminStore = create((set, get) => ({
   users: null,
   statistic: null,
   shipments: null,
@@ -67,20 +67,29 @@ export const useAdminStore = create((set) => ({
   createNewCategory: async (formData) => {
     set({ loading: true });
     try {
-      const { message } = await callApi.createNewCategory(formData);
-      set({ message });
+      const { message, newCategory } = await callApi.createNewCategory(
+        formData
+      );
+      get().setNewCategory(newCategory);
+      toast.success(message);
     } catch (error) {
       console.log(error.message);
     } finally {
       set({ loading: false });
     }
   },
+  setNewCategory: (newCategory) => {
+    set((state) => ({
+      categories: [...state.categories, newCategory],
+    }));
+  },
 
   updateCategory: async (formData, categoryId) => {
     set({ loading: true });
     try {
       const { message } = await callApi.updateCategory(formData, categoryId);
-      set({ message });
+      await get().getCategories();
+      toast.success(message);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -92,11 +101,18 @@ export const useAdminStore = create((set) => ({
     set({ loading: true });
     try {
       const { message } = await callApi.deleteCategory(categoryId);
-      set({ message });
+      get().setDeletedCategory(categoryId);
+      toast.success(message);
     } catch (error) {
       console.log(error.message);
     } finally {
       set({ loading: false });
     }
+  },
+
+  setDeletedCategory: (categoryId) => {
+    set((state) => ({
+      categories: state.categories.filter((cat) => cat.id !== categoryId),
+    }));
   },
 }));

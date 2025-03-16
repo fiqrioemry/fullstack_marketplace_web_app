@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import SettingsLoading from "@/components/loading/SettingsLoading";
-import AccountProfileDisplay from "@/components/user/AccountProfileDisplay";
-import AccountProfileSettings from "@/components/user/AccountProfileSettings";
+import AccountProfileDisplay from "@/components/user/account/AccountProfileDisplay";
+import AccountProfileSettings from "@/components/user/account/AccountProfileSettings";
 
 const Account = () => {
   const { getProfile, profile } = useUserStore();

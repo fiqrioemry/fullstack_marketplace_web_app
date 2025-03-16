@@ -247,7 +247,11 @@ const callApi = {
   // category management
   createNewCategory: async (formData) => {
     return authInstance
-      .post(`/category`, formData)
+      .post(`/category`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       .then((res) => res.data)
       .catch(errorHandle);
   },

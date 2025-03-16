@@ -32,7 +32,7 @@ const baseValidations = {
   otp: Yup.string().min(6, 'Min. 6 digits').required('Required'),
   email: Yup.string().email('Invalid email').required('Required'),
   zipcode: Yup.string().min(5, 'Min. 5 digits').required('Required'),
-  name: Yup.string().min(6, 'Min. 6 characters').required('Required'),
+  name: Yup.string().min(5, 'Min. 5 characters').required('Required'),
   bio: Yup.string().min(20, 'Min. 20 characters').required('Required'),
   title: Yup.string().min(3, 'Min. 3 characters').required('Required'),
   start_date: Yup.date().required('Required').typeError('Invalid date'),

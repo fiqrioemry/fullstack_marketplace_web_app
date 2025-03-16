@@ -20,7 +20,7 @@ const categoryControl = [
 ];
 
 const UpdateCategory = ({ category }) => {
-  const { updateCategory } = useAdminStore();
+  const { updateCategory, loading } = useAdminStore();
 
   return (
     <div className="mb-2">
@@ -30,6 +30,7 @@ const UpdateCategory = ({ category }) => {
         param={category.id}
         state={category}
         textButton={<Edit />}
+        loading={loading}
         control={categoryControl}
         action={updateCategory}
         title={"Update Category"}

@@ -4,7 +4,7 @@ import { DeleteForm } from "@/components/form/DeleteForm";
 import { Trash } from "lucide-react";
 
 const DeleteCategory = ({ category }) => {
-  const { deleteCategory } = useAdminStore();
+  const { deleteCategory, loading } = useAdminStore();
 
   const handleDelete = () => {
     deleteCategory(category.id);
@@ -14,6 +14,7 @@ const DeleteCategory = ({ category }) => {
     <DeleteForm
       size="icon"
       variant="delete"
+      loading={loading}
       textButton={<Trash />}
       onClick={handleDelete}
       title="Category Deletion"

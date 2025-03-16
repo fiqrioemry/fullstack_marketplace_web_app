@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { PackagePlus, PackageSearch } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AddProduct from "../../components/dashboard/products/AddProduct";
 
 const productsMenu = [
   {
@@ -22,6 +23,7 @@ const Products = () => {
 
   return (
     <div className="bg-background py-2 rounded-lg">
+      <AddProduct />
       <Tabs defaultValue={currentPath}>
         <TabsList className="justify-between md:justify-start">
           {productsMenu.map((menu) => {

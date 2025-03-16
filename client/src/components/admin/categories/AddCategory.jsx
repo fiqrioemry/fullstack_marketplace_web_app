@@ -3,7 +3,7 @@ import { useAdminStore } from "@/store/useAdminStore";
 import { DialogForm } from "@/components/form/DialogForm";
 
 const categoryState = {
-  name: "name",
+  name: "",
   image: "",
 };
 
@@ -33,13 +33,14 @@ const AddCategoryButton = () => {
 };
 
 const AddCategory = () => {
-  const { createNewCategory } = useAdminStore();
+  const { createNewCategory, loading } = useAdminStore();
 
   return (
     <div className="mb-2">
       <DialogForm
         size="lg"
         variant="primary"
+        loading={loading}
         state={categoryState}
         control={categoryControl}
         action={createNewCategory}

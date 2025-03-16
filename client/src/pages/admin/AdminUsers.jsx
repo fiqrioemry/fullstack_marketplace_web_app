@@ -4,7 +4,6 @@ import PageLoading from "@/components/loading/PageLoading";
 
 const AdminUsers = () => {
   const { getAllUsers, users } = useAdminStore();
-  console.log(users);
 
   useEffect(() => {
     getAllUsers();
