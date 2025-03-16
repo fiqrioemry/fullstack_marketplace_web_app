@@ -178,10 +178,10 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  getShipmentDetail: async () => {
+  getShipmentDetail: async (orderId) => {
     set({ shipment: null });
     try {
-      const { shipment } = await callApi.getShipmentDetail();
+      const { shipment } = await callApi.getShipmentDetail(orderId);
       set({ shipment });
     } catch (error) {
       console.error(error.message);

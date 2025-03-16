@@ -167,18 +167,6 @@ export const useShopStore = create((set, get) => ({
     }
   },
 
-  updateShipmentStatus: async (orderId) => {
-    set({ loading: true });
-    try {
-      const { message } = await callApi.updateShipmentStatus(orderId);
-      toast.success(message);
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
-
   getStoreNotifications: async () => {
     set({ notifications: null });
     try {

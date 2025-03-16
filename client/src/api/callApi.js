@@ -156,6 +156,13 @@ const callApi = {
       .catch(errorHandle);
   },
 
+  getShipmentDetail: async (orderId) => {
+    return authInstance
+      .get(`/customer/orders/${orderId}/shipment`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
   cancelTransaction: async (formData, transactionId) => {
     return authInstance
       .put(`/customer/transactions/${transactionId}/cancel`, { formData })
@@ -174,13 +181,6 @@ const callApi = {
     console.log(formData);
     return authInstance
       .put(`/customer/orders/${orderId}/confirm`, formData)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  getAllShipments: async (orderId) => {
-    return authInstance
-      .get(`/customer/orders/${orderId}/shipment`)
       .then((res) => res.data)
       .catch(errorHandle);
   },
@@ -245,15 +245,13 @@ const callApi = {
 
   // note : ADMIN API Route
   // category management
-  // TODO : Create feature create new category
-  createNewCategory: async () => {
+  createNewCategory: async (formData) => {
     return authInstance
-      .post(`/category`)
+      .post(`/category`, formData)
       .then((res) => res.data)
       .catch(errorHandle);
   },
 
-  // TODO : Create feature update category
   updateCategory: async (formData, categoryId) => {
     return authInstance
       .put(`/category/${categoryId}`, formData)
@@ -261,7 +259,6 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  // TODO : Create feature delete category
   deleteCategory: async (categoryId) => {
     return authInstance
       .delete(`/category/${categoryId}`)
@@ -269,10 +266,30 @@ const callApi = {
       .catch(errorHandle);
   },
 
-  // TODO : Create feature getUserStatisticSummary
-  getUserStatisticSummary: async () => {
+  getAdminDashboardSummary: async () => {
     return authInstance
-      .get(`/admin/user/statistic`)
+      .get(`/admin/statistic`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getAllUsers: async () => {
+    return authInstance
+      .get(`/admin/users`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  getAllShipments: async () => {
+    return authInstance
+      .get(`/admin/shipments`)
+      .then((res) => res.data)
+      .catch(errorHandle);
+  },
+
+  updateShipmentStatus: async (status, shipmentId) => {
+    return authInstance
+      .put(`/admin/shipments/${shipmentId}`, status)
       .then((res) => res.data)
       .catch(errorHandle);
   },
@@ -342,13 +359,6 @@ const callApi = {
   proceedStoreOrder: async (formData, orderId) => {
     return authInstance
       .put(`/seller/orders/${orderId}/process`, formData)
-      .then((res) => res.data)
-      .catch(errorHandle);
-  },
-
-  updateShipmentStatus: async (orderId, shipmentData) => {
-    return authInstance
-      .put(`/seller/orders/${orderId}/shipment`, shipmentData)
       .then((res) => res.data)
       .catch(errorHandle);
   },

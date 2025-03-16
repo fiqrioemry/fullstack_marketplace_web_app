@@ -40,7 +40,12 @@ import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
 import useAuthChecking from "./hooks/useAuthChecking";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
+import { AdminRoute, AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminShipment from "./pages/admin/AdminShipment";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminCategories from "./pages/admin/AdminCategories";
 
 function App() {
   const { checkingAuth, location, background } = useAuthChecking();
@@ -137,8 +142,24 @@ function App() {
           <Route path="notifications" element={<Notifications />} />
         </Route>
 
+        {/* admin */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="shipments" element={<AdminShipment />} />
+          <Route path="categories" element={<AdminCategories />} />
+        </Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
+
       {background && (
         <Routes>
           <Route path="/store/orders/:orderId" element={<OrderDetail />} />
