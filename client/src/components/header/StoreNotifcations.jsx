@@ -14,7 +14,7 @@ const StoreNotifcations = () => {
 
   if (notifications.length === 0) {
     return (
-      <div className="min-h-24 flex items-center justify-center">
+      <div className="h-24 flex items-center justify-center">
         <div className="text-center text-gray-500 text-sm">
           No notifications for your store
         </div>
@@ -24,17 +24,19 @@ const StoreNotifcations = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-2">
         <h5>Store notifications</h5>
-        <Link className="btn-accent text-xs">see all</Link>
+        <Link to={`/store/notifications`} className="btn-accent text-xs">
+          see all
+        </Link>
       </div>
-      <div className="space-y-2">
+      <div className="py-2">
         {notifications.slice(0, 1).map((notification) => (
           <div
             key={notification.id}
             className={`flex items-start space-x-2 p-2 rounded-md ${
               notification.status === "unread"
-                ? "bg-blue-50 border-l-4 border-blue-500"
+                ? "bg-blue-50 border-l-4 border-r-4 border-blue-500"
                 : "bg-white"
             }`}
           >

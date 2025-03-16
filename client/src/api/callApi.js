@@ -171,6 +171,7 @@ const callApi = {
   },
 
   confirmOrderDelivery: async (formData, orderId) => {
+    console.log(formData);
     return authInstance
       .put(`/customer/orders/${orderId}/confirm`, formData)
       .then((res) => res.data)

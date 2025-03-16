@@ -158,6 +158,7 @@ export const useUserStore = create((set, get) => ({
     try {
       const { message } = await callApi.cancelUserOrder(formData, orderId);
       toast.success(message);
+      await get().getAllUserOrders();
     } catch (error) {
       toast.error(error.message);
     } finally {

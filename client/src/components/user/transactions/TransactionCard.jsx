@@ -24,10 +24,19 @@ const TransactionCard = ({ transaction }) => {
               <ShoppingBag size={14} />
               {format(new Date(transaction.createdAt), "PPP")}
             </div>
+
             <span
               className={cn(
-                isPending ? "bg-red-500" : "bg-blue-500",
-                "text-xs h-5 w-14 rounded-md flex items-center justify-center text-white"
+                transaction.paymentStatus === "expired"
+                  ? "bg-gray-500 text-white"
+                  : transaction.paymentStatus === "paid"
+                  ? "bg-green-500 text-white"
+                  : transaction.paymentStatus === "pending"
+                  ? "bg-yellow-400 text-black"
+                  : transaction.paymentStatus === "canceled"
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-300 text-black",
+                "text-xs h-6 w-20 rounded-md flex items-center justify-center font-medium"
               )}
             >
               {transaction.paymentStatus}

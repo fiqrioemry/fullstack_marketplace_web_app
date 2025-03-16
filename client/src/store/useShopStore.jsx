@@ -144,13 +144,9 @@ export const useShopStore = create((set, get) => ({
   cancelStoreOrder: async (formData, orderId) => {
     set({ loading: true });
     try {
-      console.log(formData);
-      const { message, order } = await callApi.cancelStoreOrder(
-        formData,
-        orderId
-      );
+      const { message } = await callApi.cancelStoreOrder(formData, orderId);
       toast.success(message);
-      console.log(order);
+      await get().getAllStoreOrders();
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -161,11 +157,8 @@ export const useShopStore = create((set, get) => ({
   proceedStoreOrder: async (formData, orderId) => {
     set({ loading: true });
     try {
-      const { message, data } = await callApi.proceedStoreOrder(
-        formData,
-        orderId
-      );
-      console.log(data);
+      const { message } = await callApi.proceedStoreOrder(formData, orderId);
+      await get().getAllStoreOrders();
       toast.success(message);
     } catch (error) {
       toast.error(error.message);

@@ -5,7 +5,6 @@ import ProceedOrder from "./ProceedOrder";
 import { ShoppingBag } from "lucide-react";
 import { formatToRupiah, cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import CancelPolicy from "@/components/user/transactions/CancelPolicy";
 
 export default function OrderCard({ order }) {
   const location = useLocation();
@@ -58,13 +57,12 @@ export default function OrderCard({ order }) {
           </div>
         )}
         <Link
-          to={`/user/orders/${order.id}`}
+          to={`/store/orders/${order.id}`}
           state={{ background: location }}
           className="btn btn-primary rounded-md px-4 h-8 text-xs md:text-sm"
         >
           See detail
         </Link>
-        <CancelPolicy />
       </div>
     </div>
   );

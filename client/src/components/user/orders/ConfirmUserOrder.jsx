@@ -3,29 +3,30 @@ import { useUserStore } from "@/store/useUserStore";
 import { DialogForm } from "@/components/form/DialogForm";
 
 const orderState = {
-  shipmentNumber: "",
+  status: "",
   message: "",
 };
 
 const orderControl = [
   {
-    name: "shipmentNumber",
-    label: "shipment number",
+    name: "status",
+    label: "order confirmation",
     type: "text",
-    placeholder: "Enter Shipment number from courier",
-    component: "input-text",
+    placeholder: "select confirmation",
+    component: "select",
+    option: ["complete order", "request for refund"],
   },
   {
     name: "message",
     label: "message",
     type: "text",
-    placeholder: "Enter a message for customer",
+    placeholder: "Leave a message for seller",
     component: "input-text",
   },
 ];
 
 const ConfirmUserOrder = ({ orderId }) => {
-  const { confirmUserOrder } = useUserStore();
+  const { confirmOrderDelivery } = useUserStore();
 
   return (
     <DialogForm
@@ -33,7 +34,7 @@ const ConfirmUserOrder = ({ orderId }) => {
       param={orderId}
       state={orderState}
       control={orderControl}
-      action={confirmUserOrder}
+      action={confirmOrderDelivery}
       textButton="Confirm order"
       title="Confirm Order Completion"
     />

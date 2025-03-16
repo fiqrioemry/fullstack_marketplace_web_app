@@ -6,9 +6,14 @@ import { formatToRupiah, cn } from "@/lib/utils";
 import ConfirmUserOrder from "./ConfirmUserOrder";
 import { Link, useLocation } from "react-router-dom";
 import CancelPolicy from "../transactions/CancelPolicy";
+import { CircleAlert } from "lucide-react";
+import { useCountdown } from "@/hooks/useCountDown";
 
 export default function OrderCard({ order }) {
   const location = useLocation();
+  const autoCancelation = new Date(order.createdAt);
+  autoCancelation.setDate(autoCancelation.getDate() + 1);
+  const formattedCountdown = useCountdown(autoCancelation);
 
   return (
     <div className="border rounded-lg p-4 mb-4">
@@ -20,20 +25,29 @@ export default function OrderCard({ order }) {
         <span
           className={cn(
             order.orderStatus === "waiting payment"
-              ? "bg-yellow-500"
+              ? "bg-yellow-400 text-black"
               : order.orderStatus === "pending"
-              ? "bg-red-500"
+              ? "bg-orange-500 text-white"
               : order.orderStatus === "process"
-              ? "bg-blue-500"
+              ? "bg-blue-500 text-white"
               : order.orderStatus === "success"
-              ? "bg-green-500"
-              : "bg-red-500",
-            "text-xs h-6 w-14 rounded-md flex items-center justify-center text-white"
+              ? "bg-green-500 text-white"
+              : order.orderStatus === "canceled"
+              ? "bg-gray-400 text-white opacity-70"
+              : "bg-red-500 text-white",
+            "text-xs h-6 w-20 rounded-md flex items-center justify-center font-medium"
           )}
         >
           {order.orderStatus}
         </span>
+        {order.orderStatus === "pending" && (
+          <div className="flex items-center gap-2 text-xs md:text-sm text-red-500">
+            <CircleAlert />
+            <span>Auto Cancelation in :{formattedCountdown}</span>
+          </div>
+        )}
       </div>
+
       <div>
         <h5>{order.store}</h5>
         <div className="flex items-center gap-4 text-sm capitalize">
@@ -52,9 +66,10 @@ export default function OrderCard({ order }) {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2">
-        {order.orderStatus === "success" && (
-          <ConfirmUserOrder orderId={order.id} />
-        )}
+        {order.orderStatus === "process" &&
+          order.shipment.shipmentStatus === "delivered" && (
+            <ConfirmUserOrder orderId={order.id} />
+          )}
 
         {order.orderStatus === "pending" && (
           <CancelUserOrder orderId={order.id} />

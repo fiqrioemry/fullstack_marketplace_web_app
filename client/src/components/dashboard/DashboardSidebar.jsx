@@ -35,7 +35,7 @@ const dashboardMenu = [
   },
   {
     title: "Notifications",
-    path: "/store/Notification",
+    path: "/store/notifications",
     icon: Bell,
   },
 ];

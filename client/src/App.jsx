@@ -134,7 +134,7 @@ function App() {
             <Route path="add" element={<ProductsAdd />} />
           </Route>
           <Route path="profile" element={<Profile />} />
-          <Route path="notification" element={<Notifications />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

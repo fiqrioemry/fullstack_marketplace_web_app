@@ -17,7 +17,6 @@ export function useCountdown(targetTime) {
 
   const formatTimeLeft = () => {
     if (timeLeft <= 0) return "Expired";
-
     const hours = Math.floor(timeLeft / (1000 * 60 * 60));
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
