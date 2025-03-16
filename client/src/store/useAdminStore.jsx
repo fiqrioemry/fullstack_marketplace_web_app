@@ -4,16 +4,16 @@ import callApi from "@/api/callApi";
 
 export const useAdminStore = create((set) => ({
   users: null,
-  dashboard: null,
+  statistic: null,
   shipments: null,
   categories: null,
   loading: false,
 
   getAdminDashboardSummary: async () => {
-    set({ dashboard: null });
+    set({ statistic: null });
     try {
-      const { dashboard } = await callApi.getAdminDashboardSummary();
-      set({ dashboard });
+      const { statistic } = await callApi.getAdminDashboardSummary();
+      set({ statistic });
     } catch (error) {
       console.error(error.message);
     }

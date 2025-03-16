@@ -41,7 +41,7 @@ export const AdminRoute = ({ children }) => {
   const { user } = useAuthStore();
 
   if (!user || user.role !== "admin") {
-    return <Navigate to="/" />;
+    return <Navigate to="*" />;
   }
   return <Fragment>{children}</Fragment>;
 };
