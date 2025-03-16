@@ -41,10 +41,10 @@ function FormInput({ formik, formControl, disabled, children }) {
         return (
           <SingleUploadComponent
             name={name}
-            type={type}
             label={label}
             value={value}
             formik={formik}
+            placeholder={placeholder}
           />
         );
 

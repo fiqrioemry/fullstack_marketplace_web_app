@@ -9,6 +9,7 @@ import { DialogForm } from "@/components/form/DialogForm";
 
 const AccountProfileSettings = () => {
   const { updateProfile, profile, loading } = useUserStore();
+
   const profileForm = useFormSchema(updateProfile, profile, profileControl);
 
   return (
