@@ -27,7 +27,6 @@ const ProductsPreview = () => {
     maxPrice: searchParams.get("maxPrice") || "",
     sortBy: searchParams.get("sortBy") || "",
     orderBy: searchParams.get("orderBy") || "",
-    page: searchParams.get("page") || 1,
   };
 
   const searchForm = useFormSchema(getProducts, initialSearchValues);
@@ -64,12 +63,13 @@ const ProductsPreview = () => {
     <div className="container mx-auto">
       <div className="px-2 py-3 md:py-6 space-y-4">
         <PageBreadCrumb />
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 pt-2">
-          <div className="col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-5 md:gap-4 gap-0 pt-2">
+          <div className="col-span-1 mb-4 md:mb-0">
             <ProductsFilter searchForm={searchForm} />
           </div>
           <div className="col-span-4">
             <ProductsSorting searchForm={searchForm} />
+
             {products.length > 0 ? (
               <>
                 <ProductCard products={products} />

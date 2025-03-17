@@ -24,13 +24,19 @@ const useHandleCart = (product) => {
   };
 
   const handleAddToCart = () => {
-    if (!user) navigate("/signin");
-    addCart(product.id, quantity);
+    if (!user) {
+      navigate("/signin");
+    } else {
+      addCart(product.id, quantity);
+    }
   };
 
   const handleCheckout = () => {
-    if (!user) navigate("/signin");
-    handleDirectCheckout(product.id, quantity);
+    if (!user) {
+      navigate("/signin");
+    } else {
+      handleDirectCheckout(product.id, quantity);
+    }
   };
 
   return {

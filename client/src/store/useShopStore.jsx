@@ -17,7 +17,6 @@ export const useShopStore = create((set, get) => ({
   totalData: 0,
   currentPage: 1,
 
-  // TODO : Create feature getStoreStatisticSummary
   getStoreStatisticSummary: async () => {
     set({ statistic: null });
     try {
@@ -43,6 +42,19 @@ export const useShopStore = create((set, get) => ({
   },
 
   // store products management
+  getStoreProducts: async (searchParams) => {
+    try {
+      set({ loading: true });
+      const { products, totalPage, totalData, currentPage } =
+        await callApi.getStoreProducts(searchParams);
+      set({ products, totalPage, totalData, currentPage });
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   createProduct: async (formData) => {
     set({ loading: true });
     try {
@@ -63,19 +75,6 @@ export const useShopStore = create((set, get) => ({
       toast.success(message);
     } catch (error) {
       toast.error(error.message);
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  getStoreProducts: async (searchParams) => {
-    try {
-      set({ loading: true });
-      const { products, totalPage, totalData, currentPage } =
-        await callApi.getStoreProducts(searchParams);
-      set({ products, totalPage, totalData, currentPage });
-    } catch (error) {
-      console.log(error.message);
     } finally {
       set({ loading: false });
     }

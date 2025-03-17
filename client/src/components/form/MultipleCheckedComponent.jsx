@@ -22,8 +22,6 @@ const MultipleCheckedComponent = ({
     [formik, value, name]
   );
 
-  if (!options) return null;
-
   return (
     <div>
       <InputLabel formik={formik} label={label} name={name} />

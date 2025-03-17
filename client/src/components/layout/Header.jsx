@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { searchState } from "@/config";
 import Logo from "@/components/ui/Logo";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -14,7 +13,7 @@ const Header = () => {
   const { user } = useAuthStore();
   const { searchProducts, results, searching } = useProductStore();
   const { searchForm, searchRef, openSearch, handleSearch, handleBlur } =
-    useSearchProducts(searchProducts, searchState);
+    useSearchProducts(searchProducts);
 
   const handleSubmit = () => {
     navigate(`/products?search=${searchForm.values.search}`);

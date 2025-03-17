@@ -8,8 +8,8 @@ const DateComponent = ({
   name,
   label,
   value,
-  placeholder,
   disabled,
+  placeholder,
 }) => {
   return (
     <div className="mb-4">

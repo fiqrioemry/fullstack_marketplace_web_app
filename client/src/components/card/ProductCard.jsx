@@ -33,7 +33,7 @@ const ProductCard = ({ products }) => {
               </span>
               <h5 className="font-medium">
                 {product.name.length > 25
-                  ? product.name.slice(0, 25) + "..."
+                  ? product.name.slice(0, 20) + "..."
                   : product.name}
               </h5>
               <span className="text-sm">{formatToRupiah(product.price)}</span>

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useShopStore } from "@/store/useShopStore";
 import StoreProfileLoading from "@/components/loading/StoreProfileLoading";
-import StatisticChart from "@/components/seller/statistic/StatisticChart";
-import StatisticTable from "@/components/seller/statistic/StatisticTable";
-import StatisticHeader from "@/components/seller/statistic/StatisticHeader";
+import StatisticChart from "@/components/seller/statistics/StatisticChart";
+import StatisticTable from "@/components/seller/Statistics/StatisticTable";
+import StatisticHeader from "@/components/seller/statistics/StatisticHeader";
 
 const Statistics = () => {
   const { getStoreStatisticSummary, statistic } = useShopStore();

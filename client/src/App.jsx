@@ -21,18 +21,18 @@ import Transactions from "./pages/customer/Transactions";
 import CustomerOrders from "./pages/customer/CustomerOrders";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import CustomerLayout from "./components/customer/CustomerLayout";
-import OrderDetailCustomer from "./components/customer/orders/OrderDetailCustomer";
+import CustomerOrderDetail from "./components/customer/orders/CustomerOrderDetail";
 import TransactionDetail from "./components/customer/transactions/TransactionDetail";
 
 // halaman store untuk seller
-import Statistics from "./pages/store/Statistics";
+import Statistics from "./pages/seller/Statistics";
 import SellerOrders from "./pages/seller/SellerOrders";
 import SellerProfile from "./pages/seller/SellerProfile";
 import SellerProducts from "./pages/seller/SellerProducts";
 import SellerLayout from "./components/seller/SellerLayout";
+import ProductsAdd from "./components/seller/products/ProductsAdd";
+import ProductsList from "./components/seller/products/ProductsList";
 import SellerNotifications from "./pages/seller/SellerNotifications";
-import ProductsAdd from "./components/dashboard/products/ProductsAdd";
-import ProductsList from "./components/dashboard/products/ProductsList";
 import SellerOrderDetail from "./components/seller/orders/SellerOrderDetail";
 
 // halaman untuk admin
@@ -95,9 +95,9 @@ function App() {
           >
             <Route path="address" element={<Address />} />
             <Route path="orders" element={<CustomerOrders />} />
-            <Route path="settings" element={<CustomerProfile />} />
+            <Route path="profile" element={<CustomerProfile />} />
             <Route path="transactions" element={<Transactions />} />
-            <Route index element={<Navigate to="settings" replace />} />
+            <Route index element={<Navigate to="profile" replace />} />
           </Route>
 
           <Route
@@ -172,7 +172,7 @@ function App() {
           />
           <Route
             path="/user/orders/:orderId"
-            element={<OrderDetailCustomer />}
+            element={<CustomerOrderDetail />}
           />
           <Route
             path="/user/transactions/:transactionId"

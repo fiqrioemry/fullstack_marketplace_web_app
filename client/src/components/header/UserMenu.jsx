@@ -12,8 +12,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 const NavMenu = [
   {
-    title: "settings",
-    href: "/user/settings",
+    title: "profile",
+    href: "/user/profile",
   },
   {
     title: "address",

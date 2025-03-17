@@ -12,26 +12,19 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import DeleteProduct from "./DeleteProduct";
+import UpdateProduct from "./UpdateProduct";
 import { formatToRupiah } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { storeProductFilterState } from "@/config";
 import { useShopStore } from "@/store/useShopStore";
 import { useFormSchema } from "@/hooks/useFormSchema";
-import { DeleteForm } from "@/components/form/DeleteForm";
-import { DialogForm } from "@/components/form/DialogForm";
 import { EllipsisVertical, ArrowUpDown } from "lucide-react";
-import { productControl, storeProductFilterState } from "@/config";
 import ProductListLoading from "@/components/loading/ProductListLoading";
 import ProductsPagination from "@/components/products-preview/ProductsPagination";
 
 const ProductsList = () => {
-  const {
-    products,
-    totalPage,
-    currentPage,
-    updateProduct,
-    deleteProduct,
-    getStoreProducts,
-  } = useShopStore();
+  const { products, totalPage, currentPage, getStoreProducts } = useShopStore();
   const searchForm = useFormSchema(getStoreProducts, storeProductFilterState);
 
   const handleSort = (key) => {
@@ -121,19 +114,9 @@ const ProductsList = () => {
                     <DropdownMenuTrigger>
                       <EllipsisVertical className="cursor-pointer" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="flex flex-col gap-2 ">
-                      <DialogForm
-                        state={product}
-                        param={product.id}
-                        title="Edit Product"
-                        action={updateProduct}
-                        control={productControl}
-                      />
-                      <DeleteForm
-                        title="Delete Product"
-                        onClick={() => deleteProduct(product)}
-                        description="Are you sure want to delete this product?"
-                      />
+                    <DropdownMenuContent className="flex flex-col">
+                      <UpdateProduct product={product} />
+                      <DeleteProduct productId={product.id} />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-const OrderDetailCustomer = () => {
+const CustomerOrderDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { orderId } = useParams();
@@ -45,7 +45,7 @@ const OrderDetailCustomer = () => {
   );
 };
 
-export default OrderDetailCustomer;
+export default CustomerOrderDetail;
 
 const OrderDetailInformation = ({ order }) => {
   return (

@@ -1,10 +1,18 @@
+/* eslint-disable no-unused-vars */
+import { useSearchParams } from "react-router-dom";
 import { useFormSchema } from "./useFormSchema";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const useSearchProducts = (searchFunction, searchState) => {
+const useSearchProducts = (searchFunction) => {
   const searchRef = useRef(null);
   const debounceRef = useRef(null);
   const [openSearch, setOpenSearch] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const searchState = {
+    search: searchParams.get("search") || "",
+  };
+
   const searchForm = useFormSchema(searchFunction, searchState);
 
   const handleSearch = () => {
@@ -15,6 +23,7 @@ const useSearchProducts = (searchFunction, searchState) => {
     if (!document.hasFocus()) return;
     setOpenSearch(false);
   };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {

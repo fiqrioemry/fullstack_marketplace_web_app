@@ -13,13 +13,7 @@ const StoreNotifcations = () => {
   if (!notifications) return null;
 
   if (notifications.length === 0) {
-    return (
-      <div className="h-24 flex items-center justify-center">
-        <div className="text-center text-gray-500 text-sm">
-          No notifications for your store
-        </div>
-      </div>
-    );
+    return <NoNotificationToShow />;
   }
 
   return (
@@ -66,3 +60,13 @@ const StoreNotifcations = () => {
 };
 
 export default StoreNotifcations;
+
+const NoNotificationToShow = () => {
+  return (
+    <div className="h-24 flex items-center justify-center">
+      <div className="text-center text-gray-500 text-sm">
+        No notifications for your store
+      </div>
+    </div>
+  );
+};

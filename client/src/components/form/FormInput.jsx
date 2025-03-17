@@ -5,8 +5,8 @@ import DateComponent from "./DateComponent";
 import { Input } from "@/components/ui/input";
 import SelectComponent from "./SelectComponent";
 import { Textarea } from "@/components/ui/textarea";
-import InputNumberComponent from "./InputNumberComponent";
 import { useProductStore } from "@/store/useProductStore";
+import InputNumberComponent from "./InputNumberComponent";
 import MultiUploadComponent from "./MultiUploadComponent";
 import SingleUploadComponent from "./SingleUploadComponent";
 import SingleCheckedComponent from "./SingleCheckedComponent";
@@ -17,14 +17,16 @@ function FormInput({ formik, formControl, disabled, children }) {
 
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [getCategories]);
+
+  if (!categories) return null;
 
   function renderComponentByType(control) {
-    const { label, name, type, placeholder, maxLength, option } = control;
+    let { label, name, type, placeholder, maxLength, options } = control;
     const value = formik.values[name];
     const handleBlur = formik.handleBlur;
     const handleChange = formik.handleChange;
-    const options = name === "category" ? categories : option;
+    options = name === "category" ? categories : options;
 
     switch (control.component) {
       case "multi-upload":

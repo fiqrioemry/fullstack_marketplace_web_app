@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { Bell, CheckCircle } from "lucide-react";
-import { useUserStore } from "../../store/useUserStore";
+import { useUserStore } from "@/store/useUserStore";
+
 const UserNotifications = () => {
   const { notifications, getUserNotifications } = useUserStore();
+
   useEffect(() => {
     getUserNotifications();
   }, [getUserNotifications]);

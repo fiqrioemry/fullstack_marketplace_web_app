@@ -8,50 +8,12 @@ const province = [
 
 const city = ['Medan', 'Jakarta', 'Bandung', 'Semarang', 'Surabaya'];
 
-export const CustomerNavLinks = [
-  {
-    title: 'profile',
-    href: '/user/profile',
-  },
-  {
-    title: 'address',
-    href: '/user/address',
-  },
-  {
-    title: 'transaction',
-    href: '/user/transaction',
-  },
-];
-
-export const SellerNavLinks = [
-  {
-    title: 'dashboard',
-    href: '/store',
-  },
-
-  {
-    title: 'profile',
-    href: '/store/profile',
-  },
-  {
-    title: 'products',
-    href: '/store/products',
-  },
-  {
-    title: 'order',
-    href: '/store/order',
-  },
-  {
-    title: 'notification',
-    href: '/store/notifications',
-  },
-];
-
 export const checkoutState = {
   address: null,
   orders: [],
 };
 
+// Login
 export const loginState = {
   email: '',
   password: '',
@@ -74,17 +36,12 @@ export const loginControl = [
   },
 ];
 
+// register
 export const registerState = {
   fullname: '',
   email: '',
   password: '',
   otp: '',
-};
-
-export const sortState = {
-  sortBy: '',
-  orderBy: 'asc',
-  page: 1,
 };
 
 export const registerControl = [
@@ -137,16 +94,16 @@ export const verifyOTPControl = [
 export const filterControl = [
   {
     name: 'category',
-    label: 'select category',
+    label: 'category',
     type: 'checkbox',
     component: 'multiple-checked',
   },
   {
     name: 'city',
-    label: 'select city',
+    label: 'city',
     type: 'checkbox',
     component: 'multiple-checked',
-    option: city,
+    options: city,
   },
   {
     name: 'minPrice',
@@ -164,43 +121,14 @@ export const filterControl = [
   },
 ];
 
-export const searchState = {
-  search: '',
-  category: [],
-  city: [],
-  minPrice: '',
-  maxPrice: '',
-  sortBy: '',
-  orderBy: '',
-  page: 1,
-  limit: 10,
-};
-
-export const shipmentMethods = [
-  {
-    method: 'nextday',
-    time: 'Estimated Time Today or Tomorrow',
-    price: 5.99,
-  },
-  {
-    method: 'regular',
-    time: 'Estimated Time 4 - 7 Days',
-    price: 3.99,
-  },
-  {
-    method: 'cargo',
-    time: 'Estimated Time 1 - 2 Weeks',
-    price: 1.99,
-  },
-];
-
+// seller product
 export const productState = {
   name: '',
-  categoryId: '',
-  description: '',
   price: '',
   stock: 1,
   images: [],
+  categoryId: '',
+  description: '',
 };
 
 export const productControl = [
@@ -246,15 +174,8 @@ export const productControl = [
     component: 'select',
   },
 ];
-export const storeProductFilterState = {
-  sortBy: 'createdAt',
-  orderBy: 'desc',
-  page: 1,
-  limit: 5,
-  search: '',
-};
 
-// change to a new feature :
+// open store :
 export const openStoreState = {
   name: '',
   description: '',
@@ -283,19 +204,11 @@ export const openStoreControl = [
     type: 'select',
     placeholder: 'Select your city',
     component: 'select',
-    option: city,
+    options: city,
   },
 ];
 
-export const profileState = {
-  fullname: '',
-  birthday: '',
-  gender: '',
-  phone: '',
-  email: '',
-  avatar: '',
-};
-
+// profile
 export const profileControl = [
   {
     name: 'fullname',
@@ -316,7 +229,7 @@ export const profileControl = [
     type: 'select',
     placeholder: 'Select your gender',
     component: 'select',
-    option: ['male', 'female'],
+    options: ['male', 'female'],
   },
   {
     name: 'phone',
@@ -328,6 +241,7 @@ export const profileControl = [
   },
 ];
 
+// address
 export const addressState = {
   name: '',
   isMain: false,
@@ -361,7 +275,7 @@ export const addressControl = [
     type: 'select',
     placeholder: 'Enter receipient province',
     component: 'select',
-    option: province,
+    options: province,
   },
   {
     name: 'city',
@@ -369,7 +283,7 @@ export const addressControl = [
     type: 'select',
     placeholder: 'Enter receipient city',
     component: 'select',
-    option: city,
+    options: city,
   },
   {
     name: 'zipcode',
@@ -395,3 +309,23 @@ export const addressControl = [
     component: 'single-checked',
   },
 ];
+
+export const storeProductFilterState = {
+  sortBy: 'createdAt',
+  orderBy: 'desc',
+  page: 1,
+  limit: 5,
+  search: '',
+};
+
+export const searchState = {
+  search: '',
+  category: [],
+  city: [],
+  minPrice: '',
+  maxPrice: '',
+  sortBy: '',
+  orderBy: '',
+  page: 1,
+  limit: 10,
+};

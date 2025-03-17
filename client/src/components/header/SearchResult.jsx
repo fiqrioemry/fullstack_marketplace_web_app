@@ -14,7 +14,8 @@ const SearchResult = ({ results, searchForm, searching }) => {
 
   if (searching) return <SearchLoading />;
 
-  if (results.length === 0) return <p className="py-2">No Product Found</p>;
+  if (results.length === 0)
+    return <p className="py-4 px-6 text-sm">No Product Found</p>;
 
   return (
     <div className="p-2">

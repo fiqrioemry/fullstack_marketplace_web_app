@@ -5,8 +5,8 @@ import { CreditCard, MapPin, Truck, UserRoundPen } from "lucide-react";
 
 const customerMenu = [
   {
-    title: "settings",
-    path: "/user/settings",
+    title: "profile",
+    path: "/user/profile",
     icon: UserRoundPen,
   },
   {

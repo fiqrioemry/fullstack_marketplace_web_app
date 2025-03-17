@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
-import OrdersFilter from "@/components/user/orders/OrdersFilter";
+import OrdersFilter from "@/components/customer/orders/OrdersFilter";
 import OrdersPreview from "@/components/customer/orders/OrdersPreview";
 import TransactionsLoading from "@/components/loading/TransactionsLoading";
 

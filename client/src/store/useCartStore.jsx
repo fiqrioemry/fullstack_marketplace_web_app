@@ -78,9 +78,13 @@ export const useCartStore = create(
       },
 
       handleDirectCheckout: async (productId, quantity) => {
-        const { newCart } = await callApi.addCart(productId, quantity);
-        set({ checkoutItem: newCart.id });
-        window.location.href = "/cart/checkout";
+        try {
+          const { newCart } = await callApi.addCart(productId, quantity);
+          set({ checkoutItem: newCart.id });
+          window.location.href = "/cart/checkout";
+        } catch (error) {
+          toast.error(error.message);
+        }
       },
 
       // Menambah atau menghapus satu item dari checkoutItem
