@@ -3,12 +3,11 @@ import { useCallback } from "react";
 import InputLabel from "./InputLabel";
 
 const MultipleCheckedComponent = ({
-  formik,
-  type,
-  label,
-  value,
-  options,
   name,
+  value,
+  label,
+  formik,
+  options,
   disabled,
 }) => {
   const handleChange = useCallback(
@@ -24,7 +23,8 @@ const MultipleCheckedComponent = ({
 
   return (
     <div>
-      <InputLabel formik={formik} label={label} name={name} />
+      {label && <InputLabel formik={formik} label={label} name={name} />}
+
       {options.map((option) => (
         <div
           className="flex items-center space-x-3 py-2 px-3"
@@ -32,7 +32,7 @@ const MultipleCheckedComponent = ({
         >
           <input
             id={option.id || option}
-            type={type}
+            type="checkbox"
             disabled={disabled}
             checked={value.includes(option.slug || option)}
             onChange={() => handleChange(option.slug || option)}

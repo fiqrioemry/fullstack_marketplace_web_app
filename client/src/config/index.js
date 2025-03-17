@@ -327,5 +327,4 @@ export const searchState = {
   sortBy: '',
   orderBy: '',
   page: 1,
-  limit: 10,
 };

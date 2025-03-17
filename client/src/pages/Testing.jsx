@@ -11,6 +11,7 @@ import ProductsSorting from "@/components/products-preview/ProductsSorting";
 import ProductsNotFound from "@/components/products-preview/ProductsNotFound";
 import ProductsPreviewLoading from "@/components/loading/ProductsPreviewLoading";
 import ProductsPagination from "@/components/products-preview/ProductsPagination";
+import TestingFilter from "./TestingFilter";
 
 const ProductsPreview = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -54,7 +55,6 @@ const ProductsPreview = () => {
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams);
-
     getProducts(params);
   }, [searchParams]);
 
@@ -66,23 +66,15 @@ const ProductsPreview = () => {
         <PageBreadCrumb />
         <div className="grid grid-cols-1 md:grid-cols-5 md:gap-4 gap-0 pt-2">
           <div className="col-span-1 mb-4 md:mb-0">
-            <ProductsFilter searchForm={searchForm} />
+            <TestingFilter form={searchForm} />
           </div>
           <div className="col-span-4">
-            <ProductsSorting searchForm={searchForm} />
-
-            {products.length > 0 ? (
-              <>
-                <ProductCard products={products} />
-                <ProductsPagination
-                  totalPage={totalPage}
-                  searchForm={searchForm}
-                  currentPage={currentPage}
-                />
-              </>
-            ) : (
-              <ProductsNotFound />
-            )}
+            <ProductCard products={products} />
+            <ProductsPagination
+              totalPage={totalPage}
+              searchForm={searchForm}
+              currentPage={currentPage}
+            />
           </div>
         </div>
       </div>

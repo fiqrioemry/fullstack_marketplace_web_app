@@ -48,6 +48,7 @@ import Layout from "./components/layout/Layout";
 import useAuthChecking from "./hooks/useAuthChecking";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AdminRoute, AuthRoute, NonAuthRoute, SellerRoute } from "./middleware";
+import Testing from "./pages/Testing";
 
 function App() {
   const { checkingAuth, location, background } = useAuthChecking();
@@ -74,6 +75,7 @@ function App() {
             </NonAuthRoute>
           }
         />
+        <Route path="testing" element={<Testing />} />
 
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
