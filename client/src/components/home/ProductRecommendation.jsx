@@ -9,7 +9,6 @@ const ProductRecommendation = () => {
   const { products, getProducts } = useProductStore();
 
   useEffect(() => {
-    console.log(limit);
     getProducts({ limit });
   }, [getProducts, limit]);
 

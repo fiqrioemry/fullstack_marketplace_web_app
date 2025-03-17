@@ -6,7 +6,6 @@ import {
   TableHead,
   TableHeader,
 } from "@/components/ui/table";
-import { useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,32 +17,18 @@ import { formatToRupiah } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { storeProductFilterState } from "@/config";
 import { useShopStore } from "@/store/useShopStore";
-import { useFormSchema } from "@/hooks/useFormSchema";
+import useSearchAndSort from "@/hooks/useSearchAndSort";
 import { EllipsisVertical, ArrowUpDown } from "lucide-react";
 import ProductListLoading from "@/components/loading/ProductListLoading";
 import ProductsPagination from "@/components/products-preview/ProductsPagination";
 
 const ProductsList = () => {
   const { products, totalPage, currentPage, getStoreProducts } = useShopStore();
-  const searchForm = useFormSchema(getStoreProducts, storeProductFilterState);
 
-  const handleSort = (key) => {
-    const isSameSort = searchForm.values.sortBy === key;
-    const newOrder =
-      isSameSort && searchForm.values.orderBy === "asc" ? "desc" : "asc";
-    searchForm.setFieldValue("sortBy", key);
-    searchForm.setFieldValue("orderBy", newOrder);
-    searchForm.handleSubmit();
-  };
-
-  useEffect(() => {
-    const debounceSearch = setTimeout(() => {
-      searchForm.handleSubmit();
-    }, 500);
-
-    return () => clearTimeout(debounceSearch);
-  }, [searchForm.values]);
-
+  const { form, handleSort } = useSearchAndSort(
+    getStoreProducts,
+    storeProductFilterState
+  );
   if (!products) return <ProductListLoading />;
 
   return (
@@ -54,8 +39,8 @@ const ProductsList = () => {
           type="text"
           name="search"
           placeholder="Search products..."
-          value={searchForm.values.search}
-          onChange={searchForm.handleChange}
+          value={form.values.search}
+          onChange={form.handleChange}
         />
       </div>
 
@@ -92,11 +77,10 @@ const ProductsList = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* Loading State */}
           {products.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center text-gray-500">
-                {searchForm.values.search
+                {form.values.search
                   ? "No product name results"
                   : "Your Store don’t have any product. Try to add one!"}
               </TableCell>
@@ -129,7 +113,7 @@ const ProductsList = () => {
       {/* Pagination */}
       <ProductsPagination
         totalPage={totalPage}
-        searchForm={searchForm}
+        form={form}
         currentPage={currentPage}
       />
     </section>
