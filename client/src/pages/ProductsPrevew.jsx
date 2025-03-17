@@ -71,7 +71,10 @@ const ProductsPreview = () => {
         <PageBreadCrumb />
         <div className="grid grid-cols-1 md:grid-cols-5 md:gap-4 gap-0 pt-2">
           <div className="col-span-1 mb-4 md:mb-0">
-            <ProductsFilter form={searchForm} setSearchParams />
+            <ProductsFilter
+              form={searchForm}
+              setSearchParams={setSearchParams}
+            />
           </div>
           <div className="col-span-4">
             <ProductsSorting form={searchForm} />
