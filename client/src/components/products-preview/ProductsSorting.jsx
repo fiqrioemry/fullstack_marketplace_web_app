@@ -9,10 +9,10 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 
-const ProductsSorting = ({ searchForm }) => {
+const ProductsSorting = ({ form }) => {
   const handleChange = (value) => {
     const [sortBy, orderBy] = value.split(":");
-    searchForm.setValues((prevValues) => ({
+    form.setValues((prevValues) => ({
       ...prevValues,
       sortBy,
       orderBy,

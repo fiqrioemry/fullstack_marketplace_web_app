@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import InputLabel from "./InputLabel";
+import { useProductStore } from "../../store/useProductStore";
 
 const MultipleCheckedComponent = ({
   name,

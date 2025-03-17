@@ -30,20 +30,26 @@ const ProductsPreview = () => {
   };
 
   const searchForm = useFormSchema(getProducts, initialSearchValues);
+  const { city, category, sortBy, orderBy, page } = searchForm.values;
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
 
     Object.entries(searchForm.values).forEach(([key, value]) => {
-      if (Array.isArray(value) && value.length > 0) {
-        newSearchParams.set(key, value.join(","));
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          newSearchParams.set(key, value.join(","));
+        } else {
+          newSearchParams.delete(key);
+        }
       } else if (value && value !== "") {
         newSearchParams.set(key, value);
+      } else {
+        newSearchParams.delete(key);
       }
     });
-
     setSearchParams(newSearchParams);
-  }, [searchForm.values]);
+  }, [city, category, sortBy, orderBy, page]);
 
   useEffect(() => {
     searchForm.setValues((prev) => ({
@@ -54,7 +60,6 @@ const ProductsPreview = () => {
 
   useEffect(() => {
     const params = Object.fromEntries(searchParams);
-
     getProducts(params);
   }, [searchParams]);
 
@@ -66,17 +71,17 @@ const ProductsPreview = () => {
         <PageBreadCrumb />
         <div className="grid grid-cols-1 md:grid-cols-5 md:gap-4 gap-0 pt-2">
           <div className="col-span-1 mb-4 md:mb-0">
-            <ProductsFilter searchForm={searchForm} />
+            <ProductsFilter form={searchForm} setSearchParams />
           </div>
           <div className="col-span-4">
-            <ProductsSorting searchForm={searchForm} />
+            <ProductsSorting form={searchForm} />
 
             {products.length > 0 ? (
               <>
                 <ProductCard products={products} />
                 <ProductsPagination
                   totalPage={totalPage}
-                  searchForm={searchForm}
+                  form={searchForm}
                   currentPage={currentPage}
                 />
               </>

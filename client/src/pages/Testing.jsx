@@ -11,9 +11,8 @@ import ProductsSorting from "@/components/products-preview/ProductsSorting";
 import ProductsNotFound from "@/components/products-preview/ProductsNotFound";
 import ProductsPreviewLoading from "@/components/loading/ProductsPreviewLoading";
 import ProductsPagination from "@/components/products-preview/ProductsPagination";
-import TestingFilter from "./TestingFilter";
 
-const ProductsPreview = () => {
+const Testing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { getProducts, products, totalPage, currentPage } = useProductStore();
 
@@ -31,20 +30,26 @@ const ProductsPreview = () => {
   };
 
   const searchForm = useFormSchema(getProducts, initialSearchValues);
+  const { city, category, sortBy, orderBy, page } = searchForm.values;
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams();
 
     Object.entries(searchForm.values).forEach(([key, value]) => {
-      if (Array.isArray(value) && value.length > 0) {
-        newSearchParams.set(key, value.join(","));
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          newSearchParams.set(key, value.join(","));
+        } else {
+          newSearchParams.delete(key);
+        }
       } else if (value && value !== "") {
         newSearchParams.set(key, value);
+      } else {
+        newSearchParams.delete(key);
       }
     });
-
     setSearchParams(newSearchParams);
-  }, [searchForm.values]);
+  }, [city, category, sortBy, orderBy, page]);
 
   useEffect(() => {
     searchForm.setValues((prev) => ({
@@ -66,15 +71,26 @@ const ProductsPreview = () => {
         <PageBreadCrumb />
         <div className="grid grid-cols-1 md:grid-cols-5 md:gap-4 gap-0 pt-2">
           <div className="col-span-1 mb-4 md:mb-0">
-            <TestingFilter form={searchForm} />
+            <ProductsFilter
+              form={searchForm}
+              setSearchParams={setSearchParams}
+            />
           </div>
           <div className="col-span-4">
-            <ProductCard products={products} />
-            <ProductsPagination
-              totalPage={totalPage}
-              searchForm={searchForm}
-              currentPage={currentPage}
-            />
+            <ProductsSorting searchForm={searchForm} />
+
+            {products.length > 0 ? (
+              <>
+                <ProductCard products={products} />
+                <ProductsPagination
+                  totalPage={totalPage}
+                  searchForm={searchForm}
+                  currentPage={currentPage}
+                />
+              </>
+            ) : (
+              <ProductsNotFound />
+            )}
           </div>
         </div>
       </div>
@@ -82,4 +98,4 @@ const ProductsPreview = () => {
   );
 };
 
-export default ProductsPreview;
+export default Testing;

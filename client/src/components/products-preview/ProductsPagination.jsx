@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
-const ProductsPagination = ({ totalPage, currentPage, searchForm }) => {
+const ProductsPagination = ({ totalPage, currentPage, form }) => {
   if (totalPage <= 1) return null;
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPage) {
-      searchForm.setValues((prev) => ({ ...prev, page: page }));
+      form.setValues((prev) => ({ ...prev, page: page }));
     }
   };
 

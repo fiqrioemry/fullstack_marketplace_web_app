@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-
 import {
   Accordion,
   AccordionItem,
@@ -7,19 +6,41 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { useProductStore } from "@/store/useProductStore";
 import MultipleCheckedComponent from "@/components/form/MultipleCheckedComponent";
+import InputNumberComponent from "../components/form/InputNumberComponent";
 
 const cityOptions = ["medan", "jakarta", "semarang", "bandung", "surabaya"];
 
-const TestingFilter = ({ form }) => {
+const TestingFilter = ({ form, setSearchParams }) => {
+  const { minPrice, maxPrice } = form.values;
   const { categories, getCategories } = useProductStore();
 
   useEffect(() => {
     getCategories();
   }, [getCategories]);
 
+  const updateSearchParams = () => {
+    const newSearchParams = new URLSearchParams(window.location.search);
+
+    if (minPrice) {
+      newSearchParams.set("minPrice", minPrice);
+    } else {
+      newSearchParams.delete("minPrice");
+    }
+
+    if (maxPrice) {
+      newSearchParams.set("maxPrice", maxPrice);
+    } else {
+      newSearchParams.delete("maxPrice");
+    }
+
+    setSearchParams(newSearchParams);
+  };
+
   if (!categories) return null;
+
   return (
     <div>
       <h3>Filter</h3>
@@ -30,7 +51,6 @@ const TestingFilter = ({ form }) => {
             <MultipleCheckedComponent
               formik={form}
               name="category"
-              options={categories}
               value={form.values.category}
             />
           </AccordionContent>
@@ -51,18 +71,32 @@ const TestingFilter = ({ form }) => {
         <AccordionItem value="price">
           <AccordionTrigger>Price</AccordionTrigger>
           <AccordionContent>
-            <input
-              name="minPrice"
-              className="py-2 px-4 border w-full"
-              placeholder="Minimum price"
-            />
+            <form
+              className="space-y-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateSearchParams();
+              }}
+            >
+              <InputNumberComponent
+                formik={form}
+                name="minPrice"
+                value={minPrice}
+                onBlur={updateSearchParams}
+                placeholder="Enter minimum price"
+              />
+              <InputNumberComponent
+                formik={form}
+                name="maxPrice"
+                value={maxPrice}
+                onBlur={updateSearchParams}
+                placeholder="Enter maximum price"
+              />
 
-            <input
-              name="maxPrice"
-              value={form.values.maxPrice}
-              className="py-2 px-4 border w-full"
-              placeholder="Maximum price"
-            />
+              <Button size="lg" className="w-full" type="submit">
+                Apply Change
+              </Button>
+            </form>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
