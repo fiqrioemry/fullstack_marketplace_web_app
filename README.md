@@ -1,7 +1,8 @@
+# MARKETPLACE API 
 
 ## How to run this Project
 
-### via docker (rekomendasi) :
+### 1.via docker (rekomendasi) :
 - Install Docker Desktop terlebih dahulu jika belum tersedia di perangkatmu → https://www.docker.com/products/docker-desktop
 
 - Jalankan Docker Desktop hingga status-nya "Running".
@@ -16,6 +17,28 @@ docker-compose up --build
 -  Tunggu sampai container berhasil berjalan. Jika berhasil, akses API di port local yang telah didefinisikan pada .env
 
 -   Gunakan Postman atau Curl untuk menguji endpoint-endpoint API.
+
+### 2. Manual menggunakan CLI :
+- Pastikan kamu sudah menginstall : Go (versi 1.20+), MySQL dan Redis
+- Buka mysql dan buat database fullstack_marketplace_db secara manual. dengan SQL cmd :
+``` SQL
+
+CREATE DATABASE fullstack_marketplace_db
+
+```
+- Buat file .env dan isi seperti konfigurasi di bawah.
+- Jalankan redis melalui terminal dengan cara (penting untuk memeriksa versi redis atau jalankan melalui wsl -d ubuntu jika kamu sudah menginstall wsl)
+```
+redis-cli
+ping
+
+```
+
+- jika sudah berhasil dan redis merespon dengan 'pong'. lanjut untuk menjalankan via CLI dengan mengetikkan di root folder project kamu :
+```
+go run .\cmd\main.go
+
+```
 
 ## Route yang Tersedia dan Penjelasannya
 Berikut adalah daftar lengkap endpoint API yang tersedia dalam proyek ini, dikelompokkan berdasarkan fungsionalitas dan otorisasi akses.
