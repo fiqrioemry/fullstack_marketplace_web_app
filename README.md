@@ -40,6 +40,10 @@ go run .\cmd\main.go
 
 ```
 
+### Catatan :
+- file bantuan untuk pengujian API sudah terdapat didalam root project bernama api-test.json
+- file untuk insert data kedalam table database sudah tersedia di file data.sql
+
 ## Route yang Tersedia dan Penjelasannya
 Berikut adalah daftar lengkap endpoint API yang tersedia dalam proyek ini, dikelompokkan berdasarkan fungsionalitas dan otorisasi akses.
 
@@ -125,7 +129,7 @@ PUT	/api/user/address/:addressId	Memperbarui alamat pengguna
 DELETE	/api/user/address/:addressId	Menghapus alamat tertentu
  ```
 
-### **⚠️ Semua endpoint yang dilindungi menggunakan middleware autentikasi JWT, role-based access (customer/seller/admin), serta validasi API key untuk keamanan tambahan. pastikan kamu menyertakan API-KEY dalam request header dipostman**
+### **⚠️ Semua endpoint yang dilindungi menggunakan middleware autentikasi JWT, role-based access (customer/seller/admin), serta validasi API key untuk keamanan tambahan. pastikan kamu menyertakan API-KEY dalam request header dipostman. saya lupa file postman di root hasil ekspor belum menyertakan api-key**
 
 ## Configurasi file .env
 
