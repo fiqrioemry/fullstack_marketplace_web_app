@@ -3,9 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -13,24 +11,15 @@ import (
 var RedisClient *redis.Client
 
 func InitRedis() {
-
-	host := os.Getenv("DB_HOST")
-	portStr := os.Getenv("REDIS_PORT")
-
-	port, err := strconv.Atoi(portStr)
-	if err != nil {
-		log.Fatalf("REDIS_PORT tidak valid: %v", err)
-	}
+	addr := fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
 
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%d", host, port),
+		Addr: addr,
 	})
 
-	ctx := context.Background()
-	_, err = RedisClient.Ping(ctx).Result()
+	_, err := RedisClient.Ping(context.Background()).Result()
 	if err != nil {
-		log.Fatalf("Gagal koneksi ke Redis: %v", err)
+		fmt.Printf("Gagal koneksi ke Redis: %v\n", err)
+		os.Exit(1)
 	}
-
-	fmt.Println("Redis connected on port", port)
 }
