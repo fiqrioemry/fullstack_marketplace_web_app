@@ -14,8 +14,8 @@ REDIS_PORT=6379
 
 # ======= App Settings =======
 PORT=5001
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
+NODE_ENV=development or later for production
+CLIENT_URL=http://localhost:5173 or your domain www.domain.com
 
 # ======= Token Config =======
 REFRESH_TOKEN=your-refresh-token-secret
@@ -39,4 +39,4 @@ USER_PASSWORD=your-smtp-app-password
 # ======= Google OAuth Config =======
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+GOOGLE_CALLBACK_URL=http://localhost:5001/api/auth/google/callback or use your domain -> https://www.domain.com/api/auth/google/callback
