@@ -59,7 +59,10 @@ POST	/api/auth/logout	Logout dan menghapus token
 POST	/api/auth/create-store	Membuat toko baru untuk akun seller
 GET	/api/auth/google	Inisialisasi login via Google OAuth
 GET	/api/auth/google/callback	Callback dari Google OAuth
-🛒 Cart Routes (/api/cart)
+```
+
+```plaintext
+### Cart Routes (/api/cart)
 Method	Endpoint	Deskripsi
 GET	/api/cart	Mendapatkan daftar item di keranjang
 POST	/api/cart	Menambahkan produk ke keranjang
