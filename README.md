@@ -2,23 +2,23 @@
 ## How to run this Project
 
 ### via docker (rekomendasi) :
-- 1. Install Docker Desktop terlebih dahulu jika belum tersedia di perangkatmu → https://www.docker.com/products/docker-desktop
+- Install Docker Desktop terlebih dahulu jika belum tersedia di perangkatmu → https://www.docker.com/products/docker-desktop
 
-- 2. Jalankan Docker Desktop hingga status-nya "Running".
+- Jalankan Docker Desktop hingga status-nya "Running".
 
-- 3. Buat file .env di root folder proyek (di sebelah docker-compose.yml), lalu isi dengan konfigurasi contoh di paling bawah readme ini.
+-  Buat file .env di root folder proyek (di sebelah docker-compose.yml), lalu isi dengan konfigurasi contoh di paling bawah readme ini.
 
-- 4. Jalankan perintah berikut untuk membangun dan menjalankan semua service (app, MySQL, Redis, dsb):
+-  Jalankan perintah berikut untuk membangun dan menjalankan semua service (app, MySQL, Redis, dsb):
 ```
 docker-compose up --build
 
 ```
-- 5.  Tunggu sampai container berhasil berjalan. Jika berhasil, akses API di port local yang telah didefinisikan pada .env
+-  Tunggu sampai container berhasil berjalan. Jika berhasil, akses API di port local yang telah didefinisikan pada .env
 
-- 6.  Gunakan Postman atau Curl untuk menguji endpoint-endpoint API.
+-   Gunakan Postman atau Curl untuk menguji endpoint-endpoint API.
 
 ## Route yang Tersedia dan Penjelasannya
-- Berikut adalah daftar lengkap endpoint API yang tersedia dalam proyek ini, dikelompokkan berdasarkan fungsionalitas dan otorisasi akses.
+Berikut adalah daftar lengkap endpoint API yang tersedia dalam proyek ini, dikelompokkan berdasarkan fungsionalitas dan otorisasi akses.
 
 ### Auth Routes (/api/auth)
 ```plaintext
