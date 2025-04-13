@@ -71,6 +71,7 @@ POST	/api/auth/create-store	      -- Membuat toko baru untuk akun seller
 GET	/api/auth/google	              -- Inisialisasi login via Google OAuth
 GET	/api/auth/google/callback	      -- Callback dari Google OAuth
 ```
+
 ### Cart Routes (/api/cart)
 
 ```plaintext
@@ -84,7 +85,7 @@ DELETE	/api/cart/:cartId	          -- Menghapus item dari keranjang
 
 ```plaintext
 GET	/api/category	                  -- Mendapatkan semua kategori produk
-POST	/api/category	                -- Menambahkan kategori baru (admin only)
+POST	/api/category	              -- Menambahkan kategori baru (admin only)
 PUT	/api/category/:categoryId	      -- Memperbarui data kategori (admin only)
 DELETE	/api/category/:categoryId	  -- Menghapus kategori produk (admin only)
 ```
@@ -92,9 +93,9 @@ DELETE	/api/category/:categoryId	  -- Menghapus kategori produk (admin only)
 ### Notification Routes (/api/notification)
 
 ```plaintext
-POST	/api/notification	            -- Membuat notifikasi pesanan
+POST	/api/notification	        -- Membuat notifikasi pesanan
 GET	/api/notification/customer	    -- Melihat semua notifikasi untuk customer
-GET	/api/notification/seller	      -- Melihat semua notifikasi untuk seller
+GET	/api/notification/seller	    -- Melihat semua notifikasi untuk seller
 ```
 
 ### Order & Transaction Routes
@@ -103,13 +104,13 @@ GET	/api/notification/seller	      -- Melihat semua notifikasi untuk seller
 
 ```plaintext
 GET	/api/customer/transaction	                -- Mendapatkan semua transaksi
-POST	/api/customer/transaction	              -- Membuat transaksi baru
+POST	/api/customer/transaction	            -- Membuat transaksi baru
 PUT	/api/customer/transaction/:transactionId	-- Membatalkan transaksi
 GET	/api/customer/transaction/:transactionId	-- Melihat detail transaksi tertentu
-GET	/api/customer/order	                      -- Melihat semua pesanan customer
+GET	/api/customer/order	                        -- Melihat semua pesanan customer
 GET	/api/customer/order/:orderId	            -- Melihat detail pesanan
 GET	/api/customer/order/:orderId/shipment	    -- Melihat informasi pengiriman pesanan
-PUT	/api/customer/order/:orderId/cancel	      -- Membatalkan pesanan
+PUT	/api/customer/order/:orderId/cancel	        -- Membatalkan pesanan
 PUT	/api/customer/order/:orderId/confirm	    -- Konfirmasi pesanan diterima oleh customer
 ```
 
@@ -117,29 +118,29 @@ PUT	/api/customer/order/:orderId/confirm	    -- Konfirmasi pesanan diterima oleh
 
 ```plaintext
 GET	/api/seller/order	                       -- Mendapatkan semua pesanan ke toko seller
-GET	/api/seller/order/:orderId	             -- Mendapatkan detail pesanan dari customer
+GET	/api/seller/order/:orderId	               -- Mendapatkan detail pesanan dari customer
 PUT	/api/seller/order/:orderId/cancel	       -- Seller membatalkan pesanan
-PUT	/api/seller/order/:orderId/confirm	     -- Seller mengonfirmasi pengiriman pesanan
+PUT	/api/seller/order/:orderId/confirm	       -- Seller mengonfirmasi pengiriman pesanan
 ```
 
 ### Product Routes (/api/product)
 
 ```plaintext
 GET	/api/product	                           -- Mendapatkan semua produk (filter & search)
-GET	/api/product/:slug	                     -- Mendapatkan detail produk berdasarkan slug
+GET	/api/product/:slug	                       -- Mendapatkan detail produk berdasarkan slug
 GET	/api/product/store/:slug	               -- Mendapatkan info toko dari produk tertentu
 ```
 
 ### Store Routes (/api/store)
 
 ```plaintext
-POST	/api/store/product	                  -- Menambahkan produk baru ke toko
-GET	/api/store/summary	                    -- Mendapatkan ringkasan performa toko
-GET	/api/store/profile	                    -- Melihat profil toko
-PUT	/api/store/profile	                    -- Memperbarui profil toko
-GET	/api/store/product	                    -- Melihat semua produk milik toko
-PUT	/api/store/product/:productId	          -- Memperbarui produk tertentu
-DELETE	/api/store/product/:productId	      -- Menghapus produk dari toko
+POST	/api/store/product	                    -- Menambahkan produk baru ke toko
+GET	/api/store/summary	                        -- Mendapatkan ringkasan performa toko
+GET	/api/store/profile	                        -- Melihat profil toko
+PUT	/api/store/profile	                        -- Memperbarui profil toko
+GET	/api/store/product	                        -- Melihat semua produk milik toko
+PUT	/api/store/product/:productId	            -- Memperbarui produk tertentu
+DELETE	/api/store/product/:productId	        -- Menghapus produk dari toko
 ```
 
 ### User Profile & Address Routes (/api/user)
